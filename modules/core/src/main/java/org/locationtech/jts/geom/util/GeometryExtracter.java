@@ -79,9 +79,9 @@ public class GeometryExtracter
    * @param geometryType Geometry type to extract (null means all types)
    * @param list the list to add the extracted elements to
    */
-  public static List extract(Geometry geom, String geometryType, List list)
+  public static List<Geometry> extract(Geometry geom, String geometryType, List<Geometry> list)
   {
-  	if (geom.getGeometryType() == geometryType) {
+  	if (geom.getGeometryType().equals(geometryType)) {
   		list.add(geom);
   	}
   	else if (geom instanceof GeometryCollection) {
@@ -131,17 +131,16 @@ public class GeometryExtracter
    * @param geometryType Geometry type to extract (null means all types)
    * @param comps the list to extract into
    */
-  public GeometryExtracter(String geometryType, List comps)
+  public GeometryExtracter(String geometryType, List<Geometry> comps)
   {
   	this.geometryType = geometryType;
     this.comps = comps;
   }
   
   protected static boolean isOfType(Geometry geom, String geometryType) {
-    if (geom.getGeometryType() == geometryType) return true;
-    if (geometryType == Geometry.TYPENAME_LINESTRING
-      && geom.getGeometryType() == Geometry.TYPENAME_LINEARRING) return true;
-    return false;
+    if (geom.getGeometryType().equals(geometryType)) return true;
+      return geometryType.equals(Geometry.TYPENAME_LINESTRING)
+              && geom.getGeometryType().equals(Geometry.TYPENAME_LINEARRING);
   }
 
   public void filter(Geometry geom) {
