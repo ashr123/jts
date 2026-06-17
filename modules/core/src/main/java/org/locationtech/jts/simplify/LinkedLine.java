@@ -21,7 +21,7 @@ public class LinkedLine {
   private static final int NO_COORD_INDEX = -1;
 
   private final Coordinate[] coord;
-  private boolean isRing;
+  private final boolean isRing;
   private int size;
   private int[] next = null;
   private int[] prev = null;
@@ -39,10 +39,8 @@ public class LinkedLine {
   }
   
   public boolean isCorner(int i) {
-    if (! isRing() 
-        && (i == 0 || i == coord.length - 1))
-        return false;
-    return true;
+      return isRing()
+              || (i != 0 && i != coord.length - 1);
   }
   
   private int[] createNextLinks(int size) {

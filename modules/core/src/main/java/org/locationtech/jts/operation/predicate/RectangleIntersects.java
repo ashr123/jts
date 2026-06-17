@@ -12,7 +12,6 @@
 
 package org.locationtech.jts.operation.predicate;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.algorithm.RectangleLineIntersector;
@@ -58,9 +57,9 @@ public class RectangleIntersects
     return rp.intersects(b);
   }
 
-  private Polygon rectangle;
+  private final Polygon rectangle;
 
-  private Envelope rectEnv;
+  private final Envelope rectEnv;
 
   /**
    * Create a new intersects computer for a rectangle.
@@ -108,10 +107,7 @@ public class RectangleIntersects
      */
     RectangleIntersectsSegmentVisitor riVisitor = new RectangleIntersectsSegmentVisitor(rectangle);
     riVisitor.applyTo(geom);
-    if (riVisitor.intersects())
-      return true;
-
-    return false;
+      return riVisitor.intersects();
   }
 }
 
@@ -124,7 +120,7 @@ public class RectangleIntersects
  */
 class EnvelopeIntersectsVisitor extends ShortCircuitedGeometryVisitor
 {
-  private Envelope rectEnv;
+  private final Envelope rectEnv;
 
   private boolean intersects = false;
 
@@ -175,7 +171,6 @@ class EnvelopeIntersectsVisitor extends ShortCircuitedGeometryVisitor
     if (elementEnv.getMinY() >= rectEnv.getMinY()
         && elementEnv.getMaxY() <= rectEnv.getMaxY()) {
       intersects = true;
-      return;
     }
   }
 
@@ -195,9 +190,9 @@ class EnvelopeIntersectsVisitor extends ShortCircuitedGeometryVisitor
  */
 class GeometryContainsPointVisitor extends ShortCircuitedGeometryVisitor
 {
-  private CoordinateSequence rectSeq;
+  private final CoordinateSequence rectSeq;
 
-  private Envelope rectEnv;
+  private final Envelope rectEnv;
 
   private boolean containsPoint = false;
 
@@ -262,8 +257,8 @@ class GeometryContainsPointVisitor extends ShortCircuitedGeometryVisitor
  */
 class RectangleIntersectsSegmentVisitor extends ShortCircuitedGeometryVisitor
 {
-  private Envelope rectEnv;
-  private RectangleLineIntersector rectIntersector;
+  private final Envelope rectEnv;
+  private final RectangleLineIntersector rectIntersector;
 
   private boolean hasIntersection = false;
 
@@ -304,18 +299,17 @@ class RectangleIntersectsSegmentVisitor extends ShortCircuitedGeometryVisitor
     // check segment intersections
     // get all lines from geometry component
     // (there may be more than one if it's a multi-ring polygon)
-    List lines = LinearComponentExtracter.getLines(geom);
+    List<LineString> lines = LinearComponentExtracter.getLines(geom);
     checkIntersectionWithLineStrings(lines);
   }
 
-  private void checkIntersectionWithLineStrings(List lines)
+  private void checkIntersectionWithLineStrings(List<? extends LineString> lines)
   {
-    for (Iterator i = lines.iterator(); i.hasNext(); ) {
-      LineString testLine = (LineString) i.next();
-      checkIntersectionWithSegments(testLine);
-      if (hasIntersection)
-        return;
-    }
+      for (LineString testLine : lines) {
+          checkIntersectionWithSegments(testLine);
+          if (hasIntersection)
+              return;
+      }
   }
 
   private void checkIntersectionWithSegments(LineString testLine)

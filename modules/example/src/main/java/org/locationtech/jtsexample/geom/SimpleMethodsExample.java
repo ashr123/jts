@@ -42,17 +42,17 @@ public class SimpleMethodsExample
   public static void main(String[] args) {
     SimpleMethodsExample example = new SimpleMethodsExample();
     try {
-      example.run();
+      SimpleMethodsExample.run();
     }
     catch (Exception ex) {
       ex.printStackTrace();
     }
   }
 
-  public SimpleMethodsExample() {
+  private SimpleMethodsExample() {
   }
 
-  public void run()
+  public static void run()
     throws ParseException
   {
     GeometryFactory fact = new GeometryFactory();

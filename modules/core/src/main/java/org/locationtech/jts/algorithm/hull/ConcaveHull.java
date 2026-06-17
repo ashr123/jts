@@ -163,17 +163,16 @@ public class ConcaveHull
     return hull.getHull();
   }
   
-  private static int PARAM_EDGE_LENGTH = 1;
-  private static int PARAM_ALPHA = 2;
+  private static final int PARAM_EDGE_LENGTH = 1;
+  private static final int PARAM_ALPHA = 2;
   
-  private Geometry inputGeometry;
+  private final Geometry inputGeometry;
   private double maxEdgeLengthRatio = -1;
-  private double alpha = -1;
-  private boolean isHolesAllowed = false;
+    private boolean isHolesAllowed = false;
   
   private int criteriaType = PARAM_EDGE_LENGTH;
   private double maxSizeInHull = 0.0;
-  private GeometryFactory geomFactory;
+  private final GeometryFactory geomFactory;
 
 
   /**
@@ -240,8 +239,7 @@ public class ConcaveHull
    * @param alpha the alpha radius
    */
   public void setAlpha(double alpha) {
-    this.alpha = alpha;
-    maxSizeInHull = alpha;
+      maxSizeInHull = alpha;
     criteriaType = PARAM_ALPHA;
   }
   
@@ -272,10 +270,9 @@ public class ConcaveHull
     if (triList.isEmpty())
       return inputGeometry.convexHull();
     
-    computeHull(triList);    
+    computeHull(triList);
 
-    Geometry hull = toGeometry(triList, geomFactory);
-    return hull;
+      return toGeometry(triList, geomFactory);
   }
 
   private void setSize(List<HullTri> triList) {
@@ -353,7 +350,7 @@ public class ConcaveHull
   }
   
   private PriorityQueue<HullTri> createBorderQueue(List<HullTri> triList) {
-    PriorityQueue<HullTri> queue = new PriorityQueue<HullTri>();
+    PriorityQueue<HullTri> queue = new PriorityQueue<>();
     for (HullTri tri : triList) {
       addBorderTri(tri, queue);
     }
@@ -419,7 +416,7 @@ public class ConcaveHull
    * @return
    */
   private static List<HullTri> findCandidateHoles(List<HullTri> triList, double maxSizeInHull) {
-    List<HullTri> candidates = new ArrayList<HullTri>();
+    List<HullTri> candidates = new ArrayList<>();
     for (HullTri tri : triList) {
       //-- tris below the size threshold are in the hull, so NOT in a hole
       if (tri.getSize() < maxSizeInHull) continue;
@@ -441,7 +438,7 @@ public class ConcaveHull
    * @param triHole triangle which is a hole
    */
   private void removeHole(List<HullTri> triList, HullTri triHole) {
-    PriorityQueue<HullTri> queue = new PriorityQueue<HullTri>();
+    PriorityQueue<HullTri> queue = new PriorityQueue<>();
     queue.add(triHole);
     
     while (! queue.isEmpty()) {
@@ -466,7 +463,7 @@ public class ConcaveHull
     }
   }
   
-  private boolean isRemovableBorder(HullTri tri) {
+  private static boolean isRemovableBorder(HullTri tri) {
     /**
      * Tri must have exactly 2 adjacent tris (i.e. a single boundary edge).
      * If it it has only 0 or 1 adjacent then removal would remove a vertex.
@@ -480,7 +477,7 @@ public class ConcaveHull
     return ! tri.isConnecting();
   }
   
-  private boolean isRemovableHole(HullTri tri) {
+  private static boolean isRemovableHole(HullTri tri) {
     /**
      * Tri must have exactly 2 adjacent tris (i.e. a single boundary edge).
      * If it it has only 0 or 1 adjacent then removal would remove a vertex.

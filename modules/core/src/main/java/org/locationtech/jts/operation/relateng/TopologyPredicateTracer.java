@@ -38,7 +38,7 @@ public class TopologyPredicateTracer {
   
   private static class PredicateTracer implements TopologyPredicate 
   {
-    private TopologyPredicate pred;
+    private final TopologyPredicate pred;
   
     private PredicateTracer(TopologyPredicate pred) {
       this.pred = pred;

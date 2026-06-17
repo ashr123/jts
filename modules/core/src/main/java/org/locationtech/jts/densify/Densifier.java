@@ -96,7 +96,7 @@ public class Densifier {
 		return coordList.toCoordinateArray();
 	}
 
-	private Geometry inputGeom;
+	private final Geometry inputGeom;
 
 	private double distanceTolerance;
 
@@ -147,8 +147,8 @@ public class Densifier {
 	}
 
 	static class DensifyTransformer extends GeometryTransformer {
-	  double distanceTolerance;
-    private boolean isValidated;
+	  final double distanceTolerance;
+    private final boolean isValidated;
 	  
 	  DensifyTransformer(double distanceTolerance, boolean isValidated) {
 	    this.distanceTolerance = distanceTolerance;

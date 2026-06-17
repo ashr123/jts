@@ -67,7 +67,7 @@ import org.locationtech.jts.io.WKTWriter;
  *
  *@version 1.7
  */
-public class PrecisionModel implements Serializable, Comparable
+public class PrecisionModel implements Serializable, Comparable<PrecisionModel>
 {
 	/**
 	 * Determines which of two {@link PrecisionModel}s is the most precise
@@ -93,12 +93,12 @@ public class PrecisionModel implements Serializable, Comparable
       implements Serializable
   {
     private static final long serialVersionUID = -5528602631731589822L;
-    private static Map nameToTypeMap = new HashMap();
+    private static final Map<String, Type> nameToTypeMap = new HashMap<>();
     public Type(String name) {
         this.name = name;
         nameToTypeMap.put(name, this);
     }
-    private String name;
+    private final String name;
     public String toString() { return name; }
     
     
@@ -139,7 +139,7 @@ public class PrecisionModel implements Serializable, Comparable
   /**
    * The type of PrecisionModel this represents.
    */
-  private Type modelType;
+  private final Type modelType;
   /**
    * The scale factor which determines the number of decimal places in fixed precision.
    */
@@ -328,7 +328,7 @@ public class PrecisionModel implements Serializable, Comparable
    *         multiplying by the scale
    * @deprecated Offsets are no longer used
    */
-  public double getOffsetX() {
+  public static double getOffsetX() {
     //We actually don't use offsetX and offsetY anymore ... [Jon Aquino]
     return 0;
   }
@@ -342,7 +342,7 @@ public class PrecisionModel implements Serializable, Comparable
    *         multiplying by the scale
    * @deprecated Offsets are no longer used
    */
-  public double getOffsetY() {
+  public static double getOffsetY() {
     return 0;
   }
 
@@ -388,9 +388,8 @@ public class PrecisionModel implements Serializable, Comparable
    *      external representation of <code>internal</code>
    * @deprecated no longer needed, since internal representation is same as external representation
    */
-  public Coordinate toExternal(Coordinate internal) {
-    Coordinate external = new Coordinate(internal);
-    return external;
+  public static Coordinate toExternal(Coordinate internal) {
+      return new Coordinate(internal);
   }
 
   /**
@@ -401,7 +400,7 @@ public class PrecisionModel implements Serializable, Comparable
    *      external representation of <code>internal</code>
    * @deprecated no longer needed, since internal representation is same as external representation
    */
-  public void toExternal(Coordinate internal, Coordinate external) {
+  public static void toExternal(Coordinate internal, Coordinate external) {
       external.x = internal.x;
       external.y = internal.y;
   }
@@ -423,8 +422,7 @@ public class PrecisionModel implements Serializable, Comparable
   	if (Double.isNaN(val) || Double.isInfinite(val)) return val;
   	
   	if (modelType == FLOATING_SINGLE) {
-  		float floatSingleVal = (float) val;
-  		return (double) floatSingleVal;
+        return (float) val;
   	}
   	if (modelType == FIXED) {
   	  if (gridSize > 0) {
@@ -481,9 +479,7 @@ public class PrecisionModel implements Serializable, Comparable
     final int prime = 31;
     int result = 1;
     result = prime * result + ((modelType == null) ? 0 : modelType.hashCode());
-    long temp;
-    temp = Double.doubleToLongBits(scale);
-    result = prime * result + (int) (temp ^ (temp >>> 32));
+      result = prime * result + Double.hashCode(scale);
     return result;
   }
   
@@ -500,11 +496,10 @@ public class PrecisionModel implements Serializable, Comparable
    *@return    a negative integer, zero, or a positive integer as this <code>PrecisionModel</code>
    *      is less than, equal to, or greater than the specified <code>PrecisionModel</code>
    */
-  public int compareTo(Object o) {
-    PrecisionModel other = (PrecisionModel) o;
+  public int compareTo(PrecisionModel o) {
 
-    int sigDigits = getMaximumSignificantDigits();
-    int otherSigDigits = other.getMaximumSignificantDigits();
+      int sigDigits = getMaximumSignificantDigits();
+    int otherSigDigits = o.getMaximumSignificantDigits();
     return Integer.compare(sigDigits, otherSigDigits);
 //    if (sigDigits > otherSigDigits)
 //      return 1;
@@ -524,5 +519,3 @@ public class PrecisionModel implements Serializable, Comparable
 //    return 0;
   }
 }
-
-

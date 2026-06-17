@@ -24,7 +24,7 @@ import org.locationtech.jts.geom.CoordinateSequenceFactory;
 public class ExtendedCoordinateSequenceFactory
     implements CoordinateSequenceFactory
 {
-    private static ExtendedCoordinateSequenceFactory instance = new ExtendedCoordinateSequenceFactory();
+    private static final ExtendedCoordinateSequenceFactory instance = new ExtendedCoordinateSequenceFactory();
 
     private ExtendedCoordinateSequenceFactory() {
     }
@@ -48,9 +48,7 @@ public class ExtendedCoordinateSequenceFactory
     }
 
     public CoordinateSequence create(CoordinateSequence coordSeq) {
-      return coordSeq instanceof ExtendedCoordinateSequence
-          ? new ExtendedCoordinateSequence((ExtendedCoordinateSequence) coordSeq)
-          : new ExtendedCoordinateSequence(coordSeq);
+      return new ExtendedCoordinateSequence(coordSeq);
     }
 
     /**

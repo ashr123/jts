@@ -30,7 +30,7 @@ public class SegmentPointComparatorFullTest
  extends TestCase
 {
 
-  private PrecisionModel pm = new PrecisionModel(1.0);
+  private final PrecisionModel pm = new PrecisionModel(1.0);
 
   public SegmentPointComparatorFullTest(String name) {
     super(name);
@@ -80,14 +80,13 @@ public class SegmentPointComparatorFullTest
     LineSegment seg = new LineSegment(seg0, seg1);
 
     for (int i = 0; i < 4; i++) {
-      double dist = i;
 
-      double gridSize = 1 / pm.getScale();
+        double gridSize = 1 / pm.getScale();
 
-      checkPointsAtDistance(seg, dist, dist + 1.0 * gridSize);
-      checkPointsAtDistance(seg, dist, dist + 2.0 * gridSize);
-      checkPointsAtDistance(seg, dist, dist + 3.0 * gridSize);
-      checkPointsAtDistance(seg, dist, dist + 4.0 * gridSize);
+      checkPointsAtDistance(seg, i, (double) i + 1.0 * gridSize);
+      checkPointsAtDistance(seg, i, (double) i + 2.0 * gridSize);
+      checkPointsAtDistance(seg, i, (double) i + 3.0 * gridSize);
+      checkPointsAtDistance(seg, i, (double) i + 4.0 * gridSize);
     }
   }
 
@@ -114,12 +113,12 @@ public class SegmentPointComparatorFullTest
     }
   }
 
-  private void checkNodePosition(LineSegment seg, Coordinate p0, Coordinate p1, int expectedPositionValue)
+  private static void checkNodePosition(LineSegment seg, Coordinate p0, Coordinate p1, int expectedPositionValue)
   {
     int octant = Octant.octant(seg.p0, seg.p1);
     int posValue = SegmentPointComparator.compare(octant, p0, p1);
     //System.out.println(octant + " " + p0 + " " + p1 + " " + posValue);
-    assertTrue(posValue == expectedPositionValue);
+      assertEquals(posValue, expectedPositionValue);
   }
 
 }

@@ -82,7 +82,7 @@ class EdgeRing {
   public static List<PolygonizeDirectedEdge> findDirEdgesInRing(PolygonizeDirectedEdge startDE)
   {
     PolygonizeDirectedEdge de = startDE;
-    List<PolygonizeDirectedEdge> edges = new ArrayList<PolygonizeDirectedEdge>();
+    List<PolygonizeDirectedEdge> edges = new ArrayList<>();
     do {
       edges.add(de);
       de = de.getNext();
@@ -92,9 +92,9 @@ class EdgeRing {
     return edges;
   }
   
-  private GeometryFactory factory;
+  private final GeometryFactory factory;
 
-  private List<PolygonizeDirectedEdge> deList = new ArrayList<PolygonizeDirectedEdge>();
+  private final List<PolygonizeDirectedEdge> deList = new ArrayList<>();
   
   // cache the following data for efficiency
   private LinearRing ring = null;
@@ -165,7 +165,7 @@ class EdgeRing {
    */
   public void addHole(LinearRing hole) {
     if (holes == null)
-      holes = new ArrayList<LinearRing>();
+      holes = new ArrayList<>();
     holes.add(hole);
   }
 
@@ -177,7 +177,7 @@ class EdgeRing {
     holeER.setShell(this);
     LinearRing hole = holeER.getRing();
     if (holes == null)
-      holes = new ArrayList<LinearRing>();
+      holes = new ArrayList<>();
     holes.add(hole);
   }
 
@@ -192,11 +192,10 @@ class EdgeRing {
     if (holes != null) {
       holeLR = new LinearRing[holes.size()];
       for (int i = 0; i < holes.size(); i++) {
-        holeLR[i] = (LinearRing) holes.get(i);
+        holeLR[i] = holes.get(i);
       }
     }
-    Polygon poly = factory.createPolygon(ring, holeLR);
-    return poly;
+      return factory.createPolygon(ring, holeLR);
   }
 
   /**
@@ -339,9 +338,9 @@ class EdgeRing {
   private static void addEdge(Coordinate[] coords, boolean isForward, CoordinateList coordList)
   {
     if (isForward) {
-      for (int i = 0; i < coords.length; i++) {
-        coordList.add(coords[i], false);
-      }
+        for (Coordinate coord : coords) {
+            coordList.add(coord, false);
+        }
     }
     else {
       for (int i = coords.length - 1; i >= 0; i--) {
@@ -416,11 +415,10 @@ class EdgeRing {
      * A shell is an outer shell if any edge is also in an outer hole.
      * A hole is an outer hole if it is not contained by a shell.
      */
-    for (int i = 0; i < deList.size(); i++) {
-      PolygonizeDirectedEdge de = (PolygonizeDirectedEdge) deList.get(i);
-      EdgeRing adjRing = ((PolygonizeDirectedEdge) de.getSym()).getRing();
-      if (adjRing.isOuterHole()) return adjRing;
-    }
+      for (PolygonizeDirectedEdge de : deList) {
+          EdgeRing adjRing = ((PolygonizeDirectedEdge) de.getSym()).getRing();
+          if (adjRing.isOuterHole()) return adjRing;
+      }
     return null;    
   }
 
@@ -430,16 +428,15 @@ class EdgeRing {
    */
   public void updateIncluded() {
     if (isHole()) return;
-    for (int i = 0; i < deList.size(); i++) {
-      PolygonizeDirectedEdge de = (PolygonizeDirectedEdge) deList.get(i);
-      EdgeRing adjShell = ((PolygonizeDirectedEdge) de.getSym()).getRing().getShell();
-      
-      if (adjShell != null && adjShell.isIncludedSet()) {
-        // adjacent ring has been processed, so set included to inverse of adjacent included
-        setIncluded(! adjShell.isIncluded());
-        return;
+      for (PolygonizeDirectedEdge de : deList) {
+          EdgeRing adjShell = ((PolygonizeDirectedEdge) de.getSym()).getRing().getShell();
+
+          if (adjShell != null && adjShell.isIncludedSet()) {
+              // adjacent ring has been processed, so set included to inverse of adjacent included
+              setIncluded(!adjShell.isIncluded());
+              return;
+          }
       }
-    }
   }
 
   /**

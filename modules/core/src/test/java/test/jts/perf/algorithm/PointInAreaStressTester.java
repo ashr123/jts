@@ -29,14 +29,14 @@ import org.locationtech.jts.util.Stopwatch;
  */
 public class PointInAreaStressTester 
 {
-	private GeometryFactory geomFactory;
-	private Geometry area;
+	private final GeometryFactory geomFactory;
+	private final Geometry area;
 	private boolean ignoreBoundaryResults = true;
 	
 	private int numPts = 10000;
 	private PointOnGeometryLocator pia1;
 	private PointOnGeometryLocator pia2;
-	private int[] locationCount = new int[3];
+	private final int[] locationCount = new int[3];
 		
 	public PointInAreaStressTester(GeometryFactory geomFactory, Geometry area)
 	{
@@ -134,5 +134,3 @@ public class PointInAreaStressTester
 	}
 	
 }
-
-

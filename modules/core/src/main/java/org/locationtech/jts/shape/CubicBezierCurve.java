@@ -118,11 +118,10 @@ public class CubicBezierCurve {
     CubicBezierCurve curve = new CubicBezierCurve(geom, controlPoints);
     return curve.getResult();
   }
-  
-  private double minSegmentLength = 0.0;
-  private int numVerticesPerSegment = 16;
 
-  private Geometry inputGeom;
+    private static final int numVerticesPerSegment = 16;
+
+  private final Geometry inputGeom;
   private double alpha =-1;
   private double skew = 0;
   private Geometry controlPoints = null;
@@ -190,19 +189,15 @@ public class CubicBezierCurve {
     bezierCurvePts = new Coordinate[numVerticesPerSegment];
     interpolationParam = computeInterpolationParameters(numVerticesPerSegment);
 
-    return GeometryMapper.flatMap(inputGeom, 1, new GeometryMapper.MapOp() {
-      
-      @Override
-      public Geometry map(Geometry geom) {
-        if (geom instanceof LineString) {
-          return bezierLine((LineString) geom);
-        }
-        if (geom instanceof Polygon ) {
-          return bezierPolygon((Polygon) geom);
-        } 
-        //-- Points
-        return geom.copy();
+    return GeometryMapper.flatMap(inputGeom, 1, geom -> {
+      if (geom instanceof LineString) {
+        return bezierLine((LineString) geom);
       }
+      if (geom instanceof Polygon ) {
+        return bezierPolygon((Polygon) geom);
+      }
+      //-- Points
+      return geom.copy();
     });
   }
   
@@ -215,23 +210,19 @@ public class CubicBezierCurve {
     bezierCurvePts = new Coordinate[numVerticesPerSegment];
     interpolationParam = computeInterpolationParameters(numVerticesPerSegment);
 
-    return GeometryMapper.flatMap(inputGeom, 1, new GeometryMapper.MapOp() {
-      
-      @Override
-      public Geometry map(Geometry geom) {
-        if (geom instanceof LineString) {
-          Coordinate[] control = controlPoints(geom.getCoordinates(), false);
-          return geom.getFactory().createLineString(control);
-        }
-        if (geom instanceof Polygon ) {
-          Polygon poly = (Polygon) geom;
-          Coordinate[] control = controlPoints(poly.getExteriorRing().getCoordinates(), true);
-          //TODO: include holes as well
-          return geom.getFactory().createLineString(control);
-        } 
-        //-- Points
-        return geom.copy();
+    return GeometryMapper.flatMap(inputGeom, 1, geom -> {
+      if (geom instanceof LineString) {
+        Coordinate[] control = controlPoints(geom.getCoordinates(), false);
+        return geom.getFactory().createLineString(control);
       }
+      if (geom instanceof Polygon ) {
+        Polygon poly = (Polygon) geom;
+        Coordinate[] control = controlPoints(poly.getExteriorRing().getCoordinates(), true);
+        //TODO: include holes as well
+        return geom.getFactory().createLineString(control);
+      }
+      //-- Points
+      return geom.copy();
     });
   }
   
@@ -303,7 +294,8 @@ public class CubicBezierCurve {
       Coordinate ctrl0, Coordinate crtl1,
       CoordinateList curvePts) {
     double len = p0.distance(p1);
-    if ( len < minSegmentLength ) {
+      double minSegmentLength = 0.0;
+      if ( len < minSegmentLength) {
       // segment too short - copy input coordinate
       curvePts.add(new Coordinate(p0));
 
@@ -439,12 +431,11 @@ public class CubicBezierCurve {
     double vliney = p1.y - p0.y;
     // rotate line vector by 90
     double vrotx = -vliney;
-    double vroty = vlinex;
 
-    double midx = (p0.x + p1.x) / 2;
+      double midx = (p0.x + p1.x) / 2;
     double midy = (p0.y + p1.y) / 2;
 
-    return reflectPointInLine(c, new Coordinate(midx, midy), new Coordinate(midx + vrotx, midy + vroty));
+    return reflectPointInLine(c, new Coordinate(midx, midy), new Coordinate(midx + vrotx, midy + vlinex));
   }
 
   private static Coordinate reflectPointInLine(Coordinate p, Coordinate p0, Coordinate p1) {
@@ -468,10 +459,10 @@ public class CubicBezierCurve {
    * @param param interpolation parameters
    * @param curve array to hold generated points
    */
-  private void cubicBezier(final Coordinate p0, 
-      final Coordinate p1, final Coordinate ctrl1, 
-      final Coordinate ctrl2, double[][] param, 
-      Coordinate[] curve) {
+  private static void cubicBezier(final Coordinate p0,
+                                  final Coordinate p1, final Coordinate ctrl1,
+                                  final Coordinate ctrl2, double[][] param,
+                                  Coordinate[] curve) {
 
     int n = curve.length;
     curve[0] = new Coordinate(p0);

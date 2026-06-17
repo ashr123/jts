@@ -22,7 +22,7 @@ import org.locationtech.jts.operation.valid.IsValidOp;
  */
 public class IsValidTester {
 
-  public IsValidTester() {
+  private IsValidTester() {
   }
   public static void main(String[] args) throws Exception {
     WKTReader reader = new WKTReader(new GeometryFactory());

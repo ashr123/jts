@@ -25,7 +25,10 @@ import org.locationtech.jts.io.WKTFileReader;
 import org.locationtech.jts.io.WKTReader;
 
 public class IOUtil {
-	  public static Geometry read(String wkt)
+    private IOUtil() {
+    }
+
+    public static Geometry read(String wkt)
 	  {
 		  WKTReader rdr = new WKTReader();
 	    try {
@@ -39,10 +42,10 @@ public class IOUtil {
     public static List<Geometry> readWKT(String[] inputWKT)
     throws ParseException
     {
-      List<Geometry> geometries = new ArrayList<Geometry>();
-      for (int i = 0; i < inputWKT.length; i++) {
-          geometries.add(IOUtil.reader.read(inputWKT[i]));
-      }
+      List<Geometry> geometries = new ArrayList<>();
+        for (String s : inputWKT) {
+            geometries.add(IOUtil.reader.read(s));
+        }
       return geometries;
     }
 
@@ -70,7 +73,7 @@ public class IOUtil {
       return geoms;
     }
 
-    public static WKTReader reader = new WKTReader();
+    public static final WKTReader reader = new WKTReader();
     
   @SuppressWarnings("unchecked")
   public static List<Geometry> readWKBHexFile(String filename) 
@@ -78,7 +81,7 @@ public class IOUtil {
   {
     WKBReader reader = new WKBReader();
     WKBHexFileReader fileReader = new WKBHexFileReader(filename, reader);
-    return (List<Geometry>) fileReader.read();
+    return fileReader.read();
   }
 
   public static List<Geometry> readFile(String filename)

@@ -17,7 +17,6 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.util.GeometricShapeFactory;
 
 /**
@@ -49,8 +48,7 @@ public class SineStarFactory
     gsf.setNumPoints(nPts);
     gsf.setArmLengthRatio(armLengthRatio);
     gsf.setNumArms(nArms);
-    Geometry poly = gsf.createSineStar();
-    return poly;
+      return gsf.createSineStar();
   }
   
 	protected int numArms = 8;
@@ -145,7 +143,6 @@ public class SineStarFactory
     pts[iPt] = new Coordinate(pts[0]);
 
     LinearRing ring = geomFact.createLinearRing(pts);
-    Polygon poly = geomFact.createPolygon(ring);
-    return poly;
+      return geomFact.createPolygon(ring);
   }
 }

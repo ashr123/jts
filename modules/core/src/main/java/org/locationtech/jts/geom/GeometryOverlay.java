@@ -12,7 +12,6 @@
 package org.locationtech.jts.geom;
 
 import org.locationtech.jts.geom.util.GeometryCollectionMapper;
-import org.locationtech.jts.geom.util.GeometryMapper;
 import org.locationtech.jts.operation.overlay.OverlayOp;
 import org.locationtech.jts.operation.overlay.snap.SnapIfNeededOverlayOp;
 import org.locationtech.jts.operation.overlayng.OverlayNGRobust;
@@ -35,23 +34,26 @@ import org.locationtech.jts.operation.union.UnaryUnionOp;
  */
 class GeometryOverlay 
 {
-  public static String OVERLAY_PROPERTY_NAME = "jts.overlay";
+  public static final String OVERLAY_PROPERTY_NAME = "jts.overlay";
   
-  public static String OVERLAY_PROPERTY_VALUE_NG = "ng";
-  public static String OVERLAY_PROPERTY_VALUE_OLD = "old";
+  public static final String OVERLAY_PROPERTY_VALUE_NG = "ng";
+  public static final String OVERLAY_PROPERTY_VALUE_OLD = "old";
   
   /**
    * Currently the original JTS overlay implementation is the default
    */
-  public static boolean OVERLAY_NG_DEFAULT = false;
+  public static final boolean OVERLAY_NG_DEFAULT = false;
 
   private static boolean isOverlayNG = OVERLAY_NG_DEFAULT;
 
   static {
     setOverlayImpl(System.getProperty(OVERLAY_PROPERTY_NAME));
   }
-  
-  /**
+
+    private GeometryOverlay() {
+    }
+
+    /**
    * This function is provided primarily for unit testing.
    * It is not recommended to use it dynamically, since 
    * that may result in inconsistent overlay behaviour.
@@ -105,11 +107,7 @@ class GeometryOverlay
       final Geometry g2 = b;
       return GeometryCollectionMapper.map(
           (GeometryCollection) a,
-          new GeometryMapper.MapOp() {
-            public Geometry map(Geometry g) {
-              return g.intersection(g2);
-            }
-      });
+              g -> g.intersection(g2));
     }
 
     // No longer needed since GCs are handled by previous code

@@ -24,7 +24,7 @@ import junit.framework.TestCase;
  */
 public class BufferResultValidatorTest extends TestCase {
 
-	WKTReader rdr = new WKTReader();
+	final WKTReader rdr = new WKTReader();
 	
   public BufferResultValidatorTest(String name) {
     super(name);

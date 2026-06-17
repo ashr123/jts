@@ -13,7 +13,6 @@
 package org.locationtech.jts.triangulate;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.locationtech.jts.algorithm.Orientation;
 import org.locationtech.jts.geom.Coordinate;
@@ -32,9 +31,8 @@ import org.locationtech.jts.triangulate.quadedge.Vertex;
  */
 public class IncrementalDelaunayTriangulator 
 {
-	private QuadEdgeSubdivision subdiv;
-	private boolean isUsingTolerance = false;
-  private boolean isForceConvex = true;
+	private final QuadEdgeSubdivision subdiv;
+    private boolean isForceConvex = true;
 
 	/**
 	 * Creates a new triangulator using the given {@link QuadEdgeSubdivision}.
@@ -45,7 +43,7 @@ public class IncrementalDelaunayTriangulator
 	 */
 	public IncrementalDelaunayTriangulator(QuadEdgeSubdivision subdiv) {
 		this.subdiv = subdiv;
-		isUsingTolerance = subdiv.getTolerance() > 0.0;
+        boolean isUsingTolerance = subdiv.getTolerance() > 0.0;
 		
 	}
 
@@ -75,11 +73,10 @@ public class IncrementalDelaunayTriangulator
 	 * 
    * @throws LocateFailureException if the location algorithm fails to converge in a reasonable number of iterations
 	 */
-	public void insertSites(Collection vertices) {
-		for (Iterator i = vertices.iterator(); i.hasNext();) {
-			Vertex v = (Vertex) i.next();
-			insertSite(v);
-		}
+	public void insertSites(Collection<? extends Vertex> vertices) {
+        for (Vertex v : vertices) {
+            insertSite(v);
+        }
 	}
 
 	/**
@@ -191,8 +188,7 @@ public class IncrementalDelaunayTriangulator
     Coordinate p = e.orig().getCoordinate();
     Coordinate pp = e.oPrev().dest().getCoordinate();
     Coordinate pn = e.oNext().dest().getCoordinate();
-    boolean isConcave = Orientation.COUNTERCLOCKWISE == Orientation.index(pp, pn, p);
-    return isConcave;
+      return Orientation.COUNTERCLOCKWISE == Orientation.index(pp, pn, p);
   }
 
   /**

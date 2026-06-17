@@ -21,8 +21,11 @@ import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jtstest.geomfunction.Metadata;
 
 public class EditFunctions {
-  
-  @Metadata(description="Add a hole (closed line or polygon) to a polygon")
+
+    private EditFunctions() {
+    }
+
+    @Metadata(description="Add a hole (closed line or polygon) to a polygon")
   public static Geometry addHole(
       Geometry polyGeom, 
       Geometry hole) {

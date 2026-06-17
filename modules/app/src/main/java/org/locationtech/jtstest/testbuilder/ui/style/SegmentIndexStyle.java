@@ -42,9 +42,7 @@ public class SegmentIndexStyle
     this.color = color;
   }
 
-  protected void paint(int index, Point2D p0, Point2D p1, int lineType, Viewport vp, Graphics2D gr)
-  throws Exception
-  {
+  protected void paint(int index, Point2D p0, Point2D p1, int lineType, Viewport vp, Graphics2D gr) {
     double len = p0.distance(p1);
     // don't try and label very short segments
     // can't compute label location for zero-length segments

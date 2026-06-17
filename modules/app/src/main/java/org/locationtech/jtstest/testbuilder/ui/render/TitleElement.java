@@ -27,21 +27,19 @@ public class TitleElement {
 
   private static final int DEFAULT_FONT_SIZE = 14;
 
-  private Viewport viewport;
-  private String title = "";
+    private String title = "";
   
-  private Font font = new Font(FontGlyphReader.FONT_SANSERIF, Font.BOLD, DEFAULT_FONT_SIZE);
+  private static final Font font = new Font(FontGlyphReader.FONT_SANSERIF, Font.BOLD, DEFAULT_FONT_SIZE);
   private int borderSize = 1;
 
   private boolean isBorderEnabled = true;
 
   private Color fillClr = Color.WHITE;
 
-  private Paint borderColor;;
+  private Paint borderColor;
 
-  public TitleElement(Viewport viewport) {
-    this.viewport = viewport;
-  }
+    public TitleElement(Viewport viewport) {
+    }
   public void setBorderEnabled(boolean isBorderEnabled) {
     this.isBorderEnabled  = isBorderEnabled;
   }

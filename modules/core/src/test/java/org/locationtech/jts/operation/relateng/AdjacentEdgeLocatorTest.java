@@ -20,7 +20,7 @@ import test.jts.GeometryTestCase;
 
 public class AdjacentEdgeLocatorTest extends GeometryTestCase {
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(AdjacentEdgeLocatorTest.class);
   }
   

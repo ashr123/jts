@@ -43,8 +43,11 @@ import org.locationtech.jts.geom.Dimension;
  * @see RelateNode
  */
 class PolygonNodeConverter {
-  
-  /**
+
+    private PolygonNodeConverter() {
+    }
+
+    /**
    * Converts a list of sections of valid polygon rings
    * to have "self-touching" structure.
    * There are the same number of output sections as input ones.
@@ -66,7 +69,7 @@ class PolygonNodeConverter {
       return convertHoles(sections);
     }
     //-- at least one shell is present.  Handle multiple ones if present
-    List<NodeSection> convertedSections = new ArrayList<NodeSection>();
+    List<NodeSection> convertedSections = new ArrayList<>();
     int nextShellIndex = shellIndex;
     do {
       nextShellIndex = convertShellAndHoles(sections, nextShellIndex, convertedSections);
@@ -99,7 +102,7 @@ class PolygonNodeConverter {
   }
 
   private static List<NodeSection> convertHoles(List<NodeSection> sections) {
-    List<NodeSection> convertedSections = new ArrayList<NodeSection>();
+    List<NodeSection> convertedSections = new ArrayList<>();
     NodeSection copySection = sections.get(0);
     for (int i = 0; i < sections.size(); i++) {
       int inext = next(sections, i);
@@ -119,7 +122,7 @@ class PolygonNodeConverter {
   }
 
   private static List<NodeSection> extractUnique(List<NodeSection> sections) {
-    List<NodeSection> uniqueSections = new ArrayList<NodeSection>();
+    List<NodeSection> uniqueSections = new ArrayList<>();
     NodeSection lastUnique = sections.get(0);
     uniqueSections.add(lastUnique);
     for (NodeSection ns : sections) {

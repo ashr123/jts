@@ -15,12 +15,9 @@ package test.jts.perf.operation.distance;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.util.SineStarFactory;
 import org.locationtech.jts.operation.distance.DistanceOp;
 import org.locationtech.jts.operation.distance.IndexedFacetDistance;
-import org.locationtech.jts.util.GeometricShapeFactory;
-import org.locationtech.jts.util.Stopwatch;
 
 import test.jts.perf.PerformanceTestCase;
 import test.jts.perf.PerformanceTestRunner;
@@ -30,7 +27,7 @@ public class DistanceGeomPairPerfTest extends PerformanceTestCase
 
   static final int MAX_ITER = 100;
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     PerformanceTestRunner.run(DistanceGeomPairPerfTest.class);
   }
 
@@ -90,7 +87,7 @@ public class DistanceGeomPairPerfTest extends PerformanceTestCase
   }
 
   
-  Geometry createSineStar(int nPts, double offset)
+  static Geometry createSineStar(int nPts, double offset)
   {
     SineStarFactory gsf = new SineStarFactory();
     gsf.setCentre(new Coordinate(0, 0));
@@ -98,10 +95,6 @@ public class DistanceGeomPairPerfTest extends PerformanceTestCase
     gsf.setNumPoints(nPts);
     gsf.setCentre(new Coordinate(0, offset));
 
-    Geometry g2 = gsf.createSineStar().getBoundary();
-    
-    return g2;
+      return gsf.createSineStar().getBoundary();
   }
 }
-  
-  

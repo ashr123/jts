@@ -14,7 +14,7 @@ import test.jts.perf.PerformanceTestCase;
 import test.jts.perf.PerformanceTestRunner;
 
 public class IndexedPointInAreaPerfTest extends PerformanceTestCase {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     PerformanceTestRunner.run(IndexedPointInAreaPerfTest.class);
   }
   
@@ -49,7 +49,7 @@ public class IndexedPointInAreaPerfTest extends PerformanceTestCase {
     }
   }
       
-  private boolean isInside(IndexedPointInAreaLocator locator, Coordinate coord) {
+  private static boolean isInside(IndexedPointInAreaLocator locator, Coordinate coord) {
     return locator.locate(coord) == Location.INTERIOR;
   }
 }

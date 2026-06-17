@@ -22,7 +22,10 @@ import org.locationtech.jtstest.geomfunction.Metadata;
 
 public class OffsetCurveFunctions {
 
-  public static Geometry offsetCurve(Geometry geom, double distance)
+    private OffsetCurveFunctions() {
+    }
+
+    public static Geometry offsetCurve(Geometry geom, double distance)
   {
     return OffsetCurve.getCurve(geom, distance);
   }
@@ -80,8 +83,7 @@ public class OffsetCurveFunctions {
   public static Geometry rawCurve(Geometry geom, double distance)
   {
     Coordinate[] pts = OffsetCurve.rawOffset((LineString) geom, distance);
-    Geometry curve = geom.getFactory().createLineString(pts);
-    return curve;
+      return geom.getFactory().createLineString(pts);
   }
 
   public static Geometry rawCurveWithParams(Geometry geom,       
@@ -100,8 +102,7 @@ public class OffsetCurveFunctions {
     if (joinStyle >= 0) bufferParams.setJoinStyle(joinStyle);
     if (mitreLimit >= 0) bufferParams.setMitreLimit(mitreLimit);     
     Coordinate[] pts = OffsetCurve.rawOffset((LineString) geom, distance, bufferParams);
-    Geometry curve = geom.getFactory().createLineString(pts);
-    return curve;
+      return geom.getFactory().createLineString(pts);
   }
 
 

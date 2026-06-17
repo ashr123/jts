@@ -18,7 +18,7 @@ import test.jts.GeometryTestCase;
  */
 public class DDOrientationIndexAccuracyTest extends GeometryTestCase {
 
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		TestRunner.run(DDOrientationIndexAccuracyTest.class);
 	}
 
@@ -30,7 +30,7 @@ public class DDOrientationIndexAccuracyTest extends GeometryTestCase {
 		checkLine45(1, 100, 100);
 	}
 
-	private void checkLine45(int width, int nPts, double precision) {
+	private static void checkLine45(int width, int nPts, double precision) {
 		Coordinate p1 = new Coordinate(0, width);
 		Coordinate p2 = new Coordinate(width, 0);
 		for (int i = 0; i <= nPts; i++) {
@@ -44,7 +44,7 @@ public class DDOrientationIndexAccuracyTest extends GeometryTestCase {
 	
 
 
-	private void checkPointOnSeg(Coordinate p1, Coordinate p2, Coordinate q) {
+	private static void checkPointOnSeg(Coordinate p1, Coordinate p2, Coordinate q) {
 		System.out.println("  Pt: " + WKTWriter.toPoint(q) + "  seg: " + WKTWriter.toLineString(p1, p2)
 		+ " --- DDstd = " + orientationDet(p1, p2, q, DD_STD)
 		+ " --- DDdec = " + orientationDet(p1, p2, q, DD_DEC)
@@ -75,17 +75,9 @@ public class DDOrientationIndexAccuracyTest extends GeometryTestCase {
 		return DD.valueOf(x);
 	}
 
-	static interface DDConverter {
+	interface DDConverter {
 		DD convert(double x);
 	}
-	static final DDConverter DD_STD = new DDConverter() {
-		public DD convert(double x) {
-			return DD.valueOf(x);
-		}
-	};
-	static final DDConverter DD_DEC = new DDConverter() {
-		public DD convert(double x) {
-			return DD.valueOf(x + "");
-		}
-	};
+	static final DDConverter DD_STD = DD::valueOf;
+	static final DDConverter DD_DEC = x -> DD.valueOf(String.valueOf(x));
 }

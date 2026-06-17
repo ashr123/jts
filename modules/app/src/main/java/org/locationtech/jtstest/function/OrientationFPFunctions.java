@@ -16,15 +16,17 @@ import org.locationtech.jts.geom.Geometry;
 
 public class OrientationFPFunctions {
 
-  public static int orientationIndex(Geometry segment, Geometry ptGeom) {
+    private OrientationFPFunctions() {
+    }
+
+    public static int orientationIndex(Geometry segment, Geometry ptGeom) {
     if (segment.getNumPoints() != 2 || ptGeom.getNumPoints() != 1) {
       throw new IllegalArgumentException("A must have two points and B must have one");
     }
     Coordinate[] segPt = segment.getCoordinates();
     
     Coordinate p = ptGeom.getCoordinate();
-    int index = orientationIndex(segPt[0], segPt[1], p);
-    return index;
+      return orientationIndex(segPt[0], segPt[1], p);
   }
 
   private static int orientationIndex(Coordinate p1, Coordinate p2, Coordinate q) {
@@ -33,10 +35,6 @@ public class OrientationFPFunctions {
     double dx2 = q.x - p2.x;
     double dy2 = q.y - p2.y;
     double det = dx1 * dy2 - dx2 * dy1;
-    if (det > 0.0)
-      return 1;
-    if (det < 0.0)
-      return -1;
-    return 0;
+      return Double.compare(det, 0.0);
   }
 }

@@ -22,8 +22,11 @@ import org.locationtech.jts.geom.Geometry;
  */
 public class SmallHoleRemover {
 
-  private static class IsSmall implements HoleRemover.Predicate {
-    private double area;
+    private SmallHoleRemover() {
+    }
+
+    private static class IsSmall implements HoleRemover.Predicate {
+    private final double area;
 
     public IsSmall(double area) {
       this.area = area;

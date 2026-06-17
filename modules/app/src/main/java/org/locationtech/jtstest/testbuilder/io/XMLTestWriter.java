@@ -12,7 +12,6 @@
 package org.locationtech.jtstest.testbuilder.io;
 
 import java.io.File;
-import java.util.Iterator;
 
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
@@ -45,30 +44,29 @@ public class XMLTestWriter
          + precisionModel.getScale() + "\"/>";
   }
 
-  private WKTWriter wktWriter = new WKTWriter();
-  private WKBWriter wkbWriter = new WKBWriter();
+  private final WKTWriter wktWriter = new WKTWriter();
+  private final WKBWriter wkbWriter = new WKBWriter();
 
   public XMLTestWriter() {
   }
 
   public String getTestXML(Geometry geometry, String opName, String[] arguments, boolean useWKT) {
-    String xml = "  <test>\n";
-    xml += "    <op name=\"" + opName + "\" arg1=\"A\"";
+    StringBuilder xml = new StringBuilder("  <test>\n");
+    xml.append("    <op name=\"").append(opName).append("\" arg1=\"A\"");
     int j = 2;
-    for (int i = 0; i < arguments.length; i++) {
-      String argument = arguments[i];
-      Assert.isTrue(argument != null);
-      xml += " arg" + j + "=\"" + argument  + "\"";
-      j++;
-    }
-    xml += ">\n";
-    xml += getWKTorWKB(geometry, useWKT) + "\n";
-    xml += "    </op>\n";
-    xml += "  </test>\n";
-    return xml;
+      for (String argument : arguments) {
+          Assert.isTrue(argument != null);
+          xml.append(" arg").append(j).append("=\"").append(argument).append("\"");
+          j++;
+      }
+    xml.append(">\n");
+    xml.append(getWKTorWKB(geometry, useWKT)).append("\n");
+    xml.append("    </op>\n");
+    xml.append("  </test>\n");
+    return xml.toString();
   }
 
-  private boolean isGdbcTestCase(TestCase testCase) {
+  private static boolean isGdbcTestCase(TestCase testCase) {
     if (testCase.getName() == null || testCase.getDescription() == null) {
       return false;
     }
@@ -80,29 +78,26 @@ public class XMLTestWriter
     if (nameColonIndex == -1 || descriptionColonIndex == -1) {
       return false;
     }
-    if (nameColonIndex != descriptionColonIndex) {
-      return false;
-    }
-    return true;
+      return nameColonIndex == descriptionColonIndex;
   }
 
-  public String getDescriptionForXmlFromGdbcTestCase(TestCase testCase) {
+  public static String getDescriptionForXmlFromGdbcTestCase(TestCase testCase) {
     int descriptionColonIndex = testCase.getDescription().indexOf(":");
     return "<desc>" + StringUtil.escapeHTML(testCase.getName() + " ["
         + testCase.getDescription().substring(1+descriptionColonIndex).trim()
         + "]") + "</desc>\n";
   }
 
-  public String getDescriptionForXml(Testable testCase) {
+  public static String getDescriptionForXml(Testable testCase) {
   	/*
     if (isGdbcTestCase(testCase)) {
       return getDescriptionForXmlFromGdbcTestCase(testCase);
     }
     */
-    if (testCase.getDescription() != null && testCase.getDescription().length() > 0) {
+    if (testCase.getDescription() != null && !testCase.getDescription().isEmpty()) {
       return "<desc>" + StringUtil.escapeHTML(testCase.getDescription()) + "</desc>\n";
     }
-    if (testCase.getName() != null && testCase.getName().length() > 0) {
+    if (testCase.getName() != null && !testCase.getName().isEmpty()) {
       return "<desc>" + StringUtil.escapeHTML(testCase.getName()) + "</desc>\n";
     }
     return "<desc> " 
@@ -127,7 +122,7 @@ public class XMLTestWriter
     return dimCode;
   }
   
-  public String getTestXML(TestRunnerTestCaseAdapter adapter) {
+  public static String getTestXML(TestRunnerTestCaseAdapter adapter) {
     return adapter.getTestRunnerTestCase().toXml();
   }
   
@@ -139,16 +134,16 @@ public class XMLTestWriter
   public String getTestXML(Testable testCase, boolean useWKT) {
     Geometry geom0 = testCase.getGeometry(0);
     Geometry geom1 = testCase.getGeometry(1);
-    StringBuffer xml = new StringBuffer();
+    StringBuilder xml = new StringBuilder();
     xml.append("<case>\n");
     xml.append(getDescriptionForXml(testCase));
     if (geom0 != null) {
       String wkt0 = getWKTorWKB(geom0, useWKT);
-      xml.append("  <a>\n" + wkt0 + "\n    </a>\n");
+      xml.append("  <a>\n").append(wkt0).append("\n    </a>\n");
     }
     if (geom1 != null) {
       String wkt1 = getWKTorWKB(geom1, useWKT);
-      xml.append("  <b>\n" + wkt1 + "\n    </b>\n");
+      xml.append("  <b>\n").append(wkt1).append("\n    </b>\n");
     }
     xml.append("</case>\n");
     return xml.toString();
@@ -162,10 +157,10 @@ public class XMLTestWriter
   }
   
   public String getTestXML(TestCaseList tcList) {
-    StringBuffer xml = new StringBuffer();
+    StringBuilder xml = new StringBuilder();
     for (int i = 0; i < tcList.getList().size(); i++) {
       xml.append("\n");
-      xml.append(getTestXML((Testable) tcList.getList().get(i)));
+      xml.append(getTestXML(tcList.getList().get(i)));
     }
     xml.append("\n");
     return xml.toString();
@@ -181,34 +176,34 @@ public class XMLTestWriter
   }
 
   public static String getRunDescription(TestCaseList l) {
-    for (Iterator i = l.getList().iterator(); i.hasNext(); ) {
-      TestCaseEdit tce = (TestCaseEdit) i.next();
-      if (tce.getTestable() instanceof TestRunnerTestCaseAdapter) {
-        TestRunnerTestCaseAdapter a = (TestRunnerTestCaseAdapter) tce.getTestable();
-        String description = a.getTestRunnerTestCase().getTestRun().getDescription();
-        if (description != null && description.length() > 0) {
-          return "  <desc>" + StringUtil.escapeHTML(description)
-               + "</desc>" + StringUtil.newLine;
-        }
-        return "";
+      for (Object o : l.getList()) {
+          TestCaseEdit tce = (TestCaseEdit) o;
+          if (tce.getTestable() instanceof TestRunnerTestCaseAdapter) {
+              TestRunnerTestCaseAdapter a = (TestRunnerTestCaseAdapter) tce.getTestable();
+              String description = a.getTestRunnerTestCase().getTestRun().getDescription();
+              if (description != null && !description.isEmpty()) {
+                  return "  <desc>" + StringUtil.escapeHTML(description)
+                          + "</desc>" + StringUtil.newLine;
+              }
+              return "";
+          }
       }
-    }
     return "";
   }
 
   public static String getRunWorkspace(TestCaseList l) {
-    for (Iterator i = l.getList().iterator(); i.hasNext(); ) {
-      TestCaseEdit tce = (TestCaseEdit) i.next();
-      if (tce.getTestable() instanceof TestRunnerTestCaseAdapter) {
-        TestRunnerTestCaseAdapter a = (TestRunnerTestCaseAdapter) tce.getTestable();
-        File workspace = a.getTestRunnerTestCase().getTestRun().getWorkspace();
-        if (workspace != null) {
-          return "  <workspace file=\"" + StringUtil.escapeHTML(workspace.toString())
-               + "\"/>" + StringUtil.newLine;
-        }
-        return "";
+      for (Object o : l.getList()) {
+          TestCaseEdit tce = (TestCaseEdit) o;
+          if (tce.getTestable() instanceof TestRunnerTestCaseAdapter) {
+              TestRunnerTestCaseAdapter a = (TestRunnerTestCaseAdapter) tce.getTestable();
+              File workspace = a.getTestRunnerTestCase().getTestRun().getWorkspace();
+              if (workspace != null) {
+                  return "  <workspace file=\"" + StringUtil.escapeHTML(workspace.toString())
+                          + "\"/>" + StringUtil.newLine;
+              }
+              return "";
+          }
       }
-    }
     return "";
   }
 

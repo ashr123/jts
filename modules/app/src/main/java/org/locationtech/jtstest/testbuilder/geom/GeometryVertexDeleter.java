@@ -20,9 +20,12 @@ import org.locationtech.jts.geom.util.GeometryEditor;
 
 public class GeometryVertexDeleter 
 {
-  public static Geometry delete(Geometry geom, 
-      LineString line, 
-      int vertexIndex)
+    private GeometryVertexDeleter() {
+    }
+
+    public static Geometry delete(Geometry geom,
+                                  LineString line,
+                                  int vertexIndex)
   {
     GeometryEditor editor = new GeometryEditor();
     editor.setCopyUserData(true);
@@ -32,8 +35,8 @@ public class GeometryVertexDeleter
   private static class DeleteVertexOperation
     extends GeometryEditor.CoordinateOperation
   {
-    private LineString line;
-    private int vertexIndex;
+    private final LineString line;
+    private final int vertexIndex;
     private Coordinate newVertex;
     
     public DeleteVertexOperation(LineString line, int vertexIndex)

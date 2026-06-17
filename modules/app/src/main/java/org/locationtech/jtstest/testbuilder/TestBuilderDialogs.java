@@ -29,10 +29,13 @@ import org.locationtech.jtstest.util.FileUtil;
 
 public class TestBuilderDialogs {
 
-  private static JFileChooser directoryChooser = new JFileChooser();;
-  private static JFileChooser fileChooser = new JFileChooser();;
-  
-  public static void saveAsXML(JTSTestBuilderFrame tbFrame, TestBuilderModel tbModel) {
+  private static final JFileChooser directoryChooser = new JFileChooser();
+    private static final JFileChooser fileChooser = new JFileChooser();
+
+    private TestBuilderDialogs() {
+    }
+
+    public static void saveAsXML(JTSTestBuilderFrame tbFrame, TestBuilderModel tbModel) {
     try {
       fileChooser.removeChoosableFileFilter(SwingUtil.JAVA_FILE_FILTER);
       fileChooser.addChoosableFileFilter(SwingUtil.XML_FILE_FILTER);
@@ -133,8 +136,7 @@ public class TestBuilderDialogs {
         if (extensionIndex > 0) {
           className = className.substring(0, extensionIndex);
         }
-        ;
-        FileUtil.setContents(fileChooser.getSelectedFile().getPath(), JavaTestWriter.getRunJava(className, tbModel));
+          FileUtil.setContents(fileChooser.getSelectedFile().getPath(), JavaTestWriter.getRunJava(className, tbModel));
       }
     }
     catch (Exception x) {

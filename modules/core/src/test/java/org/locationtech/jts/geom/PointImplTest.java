@@ -28,11 +28,11 @@ import junit.textui.TestRunner;
  */
 public class PointImplTest extends TestCase {
 
-  PrecisionModel precisionModel = new PrecisionModel(1000);
-  GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
-  WKTReader reader = new WKTReader(geometryFactory);
+  final PrecisionModel precisionModel = new PrecisionModel(1000);
+  final GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
+  final WKTReader reader = new WKTReader(geometryFactory);
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(suite());
   }
 
@@ -55,7 +55,7 @@ public class PointImplTest extends TestCase {
   public void testEquals3() throws Exception {
     Point p1 = (Point) reader.read("POINT(1.235 5.678)");
     Point p2 = (Point) reader.read("POINT(1.234 5.678)");
-    assertTrue(! p1.equals(p2));
+      assertFalse(p1.equals(p2));
   }
 
   public void testEquals4() throws Exception {
@@ -67,13 +67,13 @@ public class PointImplTest extends TestCase {
   public void testEquals5() throws Exception {
     Point p1 = (Point) reader.read("POINT(1.2334 5.678)");
     Point p2 = (Point) reader.read("POINT(1.2335 5.678)");
-    assertTrue(! p1.equals(p2));
+      assertFalse(p1.equals(p2));
   }
 
   public void testEquals6() throws Exception {
     Point p1 = (Point) reader.read("POINT(1.2324 5.678)");
     Point p2 = (Point) reader.read("POINT(1.2325 5.678)");
-    assertTrue(! p1.equals(p2));
+      assertFalse(p1.equals(p2));
   }
 
   public void testNegRounding1() throws Exception {
@@ -84,7 +84,7 @@ public class PointImplTest extends TestCase {
     Point p2 = (Point) reader.read("POINT(-1.2325 5.678)");
     Point p3 = (Point) reader.read("POINT(-1.2324 5.678)");
 
-    assertTrue(! p1.equals(p2));
+      assertFalse(p1.equals(p2));
     assertTrue(p3.equals(p2));
 
     assertTrue(p1.equals(pLo));

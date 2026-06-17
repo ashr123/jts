@@ -147,9 +147,8 @@ public class MinimumBoundingTriangle {
 		final Polygon triangle;
 
 		private final Side sideC;
-		private Side sideA, sideB;
 
-		TriangleForIndex(int c, int a, int b) {
+        TriangleForIndex(int c, int a, int b) {
 			a = floorMod(Math.max(a, c + 1), n);
 			b = floorMod(Math.max(b, c + 2), n);
 			sideC = side(c);
@@ -181,7 +180,9 @@ public class MinimumBoundingTriangle {
 			}
 
 			// Decide construction based on low/high and relative distances
-			if (low(b, gammaB) || dist(b, sideC) < dist(floorMod(a - 1, n), sideC) - tol) {
+            Side sideB;
+            Side sideA;
+            if (low(b, gammaB) || dist(b, sideC) < dist(floorMod(a - 1, n), sideC) - tol) {
 				Side tempSideB = side(b);
 				Side tempSideA = side(a);
 
@@ -246,17 +247,17 @@ public class MinimumBoundingTriangle {
 
 			double bx = base.p2.x - base.p1.x;
 			double by = base.p2.y - base.p1.y;
-			double nx = -by, ny = bx; // normal to base
-			double nLen = MathUtil.hypot(nx, ny);
+			double nx = -by;  // normal to base
+            double nLen = MathUtil.hypot(nx, bx);
 			if (nLen == 0) {
 				return null;
 			}
 
 			// Signed distance of point from base
-			double signedP = ((point.x - base.p1.x) * nx + (point.y - base.p1.y) * ny) / nLen;
+			double signedP = ((point.x - base.p1.x) * nx + (point.y - base.p1.y) * bx) / nLen;
 
 			// Change in signed distance per unit t along 'on'
-			double denom = (dxOn * nx + dyOn * ny) / nLen;
+			double denom = (dxOn * nx + dyOn * bx) / nLen;
 
 			// Use analytic solution if well-conditioned
 			if (Math.abs(denom) > tol) {
@@ -397,7 +398,7 @@ public class MinimumBoundingTriangle {
 		}
 	}
 
-	private class Side {
+	private static class Side {
 
 		final Coordinate p1, p2;
 		final double slope, intercept;

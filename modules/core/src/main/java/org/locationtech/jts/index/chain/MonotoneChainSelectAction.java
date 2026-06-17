@@ -23,7 +23,7 @@ public class MonotoneChainSelectAction
   // these envelopes are used during the MonotoneChain search process
   //Envelope tempEnv1 = new Envelope();
 
-  LineSegment selectedSegment = new LineSegment();
+  final LineSegment selectedSegment = new LineSegment();
 
   /**
    * This method is overridden 

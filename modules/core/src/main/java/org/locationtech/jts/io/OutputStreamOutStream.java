@@ -20,7 +20,7 @@ import java.io.OutputStream;
 public class OutputStreamOutStream
 	implements OutStream
 {
-  private OutputStream os;
+  private final OutputStream os;
 
   public OutputStreamOutStream(OutputStream os)
   {

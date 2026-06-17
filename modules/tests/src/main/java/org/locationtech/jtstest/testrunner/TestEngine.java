@@ -28,8 +28,8 @@ public class TestEngine
   // default is to run all tests
   private int testCaseIndexToRun = -1;
   private boolean running = false;
-  private List<TestRun> testRuns = new ArrayList<TestRun>();
-  private TestReader testReader = new TestReader();
+  private List<TestRun> testRuns = new ArrayList<>();
+  private final TestReader testReader = new TestReader();
 
   private Date start = null;
   private Date end = null;
@@ -111,7 +111,7 @@ public class TestEngine
     return count;
   }
 
-  public List getParsingProblems() {
+  public List<String> getParsingProblems() {
     return Collections.unmodifiableList(testReader.getParsingProblems());
   }
 
@@ -147,8 +147,8 @@ public class TestEngine
     running = false;
   }
   
-  private List<Test> getTests(TestRun testRun) {
-    List<Test> tests = new ArrayList<Test>();
+  private static List<Test> getTests(TestRun testRun) {
+    List<Test> tests = new ArrayList<>();
     for (TestCase testCase : testRun.getTestCases() ) {
       tests.addAll(testCase.getTests());
     }
@@ -156,7 +156,7 @@ public class TestEngine
   }
 
   private List<Test> getTests() {
-    List<Test> tests = new ArrayList<Test>();
+    List<Test> tests = new ArrayList<>();
     for (TestRun testRun : testRuns ) {
       tests.addAll(getTests(testRun));
     }
@@ -169,7 +169,7 @@ public class TestEngine
    *  Creates TestRun's, one for each test File.
    */
   private List<TestRun> createTestRunsFromFiles() {
-    List<TestRun> testRuns = new ArrayList<TestRun>();
+    List<TestRun> testRuns = new ArrayList<>();
     int runIndex = 0;
     for (File testFile : testFiles ) {
       runIndex++;

@@ -29,7 +29,7 @@ import test.jts.GeometryTestCase;
 public class RelateNGBoundaryNodeRuleTest
     extends GeometryTestCase
 {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(RelateNGBoundaryNodeRuleTest.class);
   }
 

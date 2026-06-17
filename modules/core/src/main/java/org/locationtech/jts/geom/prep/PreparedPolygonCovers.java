@@ -73,8 +73,7 @@ class PreparedPolygonCovers
 	 */
 	protected boolean fullTopologicalPredicate(Geometry geom)
 	{
-		boolean result = prepPoly.getGeometry().covers(geom);
-		return result;
+        return prepPoly.getGeometry().covers(geom);
 	}
 	
 }

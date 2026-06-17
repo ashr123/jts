@@ -11,7 +11,6 @@
  */
 package test.jts.perf.algorithm;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.algorithm.RayCrossingCounter;
@@ -45,14 +44,12 @@ import org.locationtech.jts.noding.SegmentString;
 public class MCIndexedPointInAreaLocator 
 	implements PointOnGeometryLocator
 {
-	private Geometry areaGeom;
-	private MCIndexedGeometry index;
-	private double maxXExtent;
+    private MCIndexedGeometry index;
+	private final double maxXExtent;
 		
 	public MCIndexedPointInAreaLocator(Geometry g)
 	{
-		areaGeom = g;
-		if (! (g instanceof Polygonal))
+        if (! (g instanceof Polygonal))
 			throw new IllegalArgumentException("Argument must be Polygonal");
 		buildIndex(g);
     Envelope env = g.getEnvelopeInternal();
@@ -75,25 +72,24 @@ public class MCIndexedPointInAreaLocator
 		RayCrossingCounter rcc = new RayCrossingCounter(p);
 		MCSegmentCounter mcSegCounter = new MCSegmentCounter(rcc);
 		Envelope rayEnv = new Envelope(p.x, maxXExtent, p.y, p.y);
-		List mcs = index.query(rayEnv);
+		List<MonotoneChain> mcs = index.query(rayEnv);
 		countSegs(rcc, rayEnv, mcs, mcSegCounter);
-		
+
 		return rcc.getLocation();
 	}
-	
-	private void countSegs(RayCrossingCounter rcc, Envelope rayEnv, List monoChains, MCSegmentCounter mcSegCounter)
+
+	private static void countSegs(RayCrossingCounter rcc, Envelope rayEnv, List<MonotoneChain> monoChains, MCSegmentCounter mcSegCounter)
 	{
-		for (Iterator i = monoChains.iterator(); i.hasNext(); ) {
-			MonotoneChain mc = (MonotoneChain) i.next();
-			mc.select(rayEnv, mcSegCounter);
-			// short-circuit if possible
-			if (rcc.isOnSegment()) return;
-		}
+        for (MonotoneChain mc : monoChains) {
+            mc.select(rayEnv, mcSegCounter);
+            // short-circuit if possible
+            if (rcc.isOnSegment()) return;
+        }
 	}
 	
   static class MCSegmentCounter extends MonotoneChainSelectAction
   {
-  	RayCrossingCounter rcc;
+  	final RayCrossingCounter rcc;
 
     public MCSegmentCounter(RayCrossingCounter rcc)
     {
@@ -110,37 +106,33 @@ public class MCIndexedPointInAreaLocator
 
 class MCIndexedGeometry
 {
-  private SpatialIndex index= new STRtree();
+  private final SpatialIndex<MonotoneChain> index= new STRtree<>();
 
 	public MCIndexedGeometry(Geometry geom)
 	{
 		init(geom);
 	}
-	
+
 	private void init(Geometry geom)
 	{
-		List lines = LinearComponentExtracter.getLines(geom);
-		for (Iterator i = lines.iterator(); i.hasNext(); ) {
-			LineString line = (LineString) i.next();
-			Coordinate[] pts = line.getCoordinates();
-			addLine(pts);
-		}
+		List<LineString> lines = LinearComponentExtracter.getLines(geom);
+        for (LineString line : lines) {
+            Coordinate[] pts = line.getCoordinates();
+            addLine(pts);
+        }
 	}
-	
+
 	private void addLine(Coordinate[] pts)
 	{
 			SegmentString segStr = new BasicSegmentString(pts, null);
-	    List segChains = MonotoneChainBuilder.getChains(segStr.getCoordinates(), segStr);
-	    for (Iterator i = segChains.iterator(); i.hasNext(); ) {
-	      MonotoneChain mc = (MonotoneChain) i.next();
-	      index.insert(mc.getEnvelope(), mc);
-	    }
+	    List<MonotoneChain> segChains = MonotoneChainBuilder.getChains(segStr.getCoordinates(), segStr);
+        for (MonotoneChain mc : segChains) {
+            index.insert(mc.getEnvelope(), mc);
+        }
 	}
-	
-	public List query(Envelope searchEnv)
+
+	public List<MonotoneChain> query(Envelope searchEnv)
 	{
 		return index.query(searchEnv);
 	}
 }
-
-

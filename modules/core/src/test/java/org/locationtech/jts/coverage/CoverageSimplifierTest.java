@@ -17,7 +17,7 @@ import junit.textui.TestRunner;
 import test.jts.GeometryTestCase;
 
 public class CoverageSimplifierTest extends GeometryTestCase {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(CoverageSimplifierTest.class);
   }
   
@@ -384,29 +384,29 @@ public class CoverageSimplifierTest extends GeometryTestCase {
   //=================================
 
 
-  private void checkNoop(Geometry[] input) {
+  private static void checkNoop(Geometry[] input) {
     Geometry[] actual = CoverageSimplifier.simplify(input, 0);
     checkEqual(input, actual);
   }
   
-  private void checkResult(Geometry[] input, double[] tolerances, Geometry[] expected) {
+  private static void checkResult(Geometry[] input, double[] tolerances, Geometry[] expected) {
     Geometry[] actual = CoverageSimplifier.simplify(input, tolerances);
     checkEqual(expected, actual);
   }
   
-  private void checkResult(Geometry[] input, double tolerance, Geometry[] expected) {
+  private static void checkResult(Geometry[] input, double tolerance, Geometry[] expected) {
     Geometry[] actual = CoverageSimplifier.simplify(input, tolerance);
     checkEqual(expected, actual);
   }
   
-  private void checkResultRemovalSize(Geometry[] input, double tolerance, double removalFactor, Geometry[] expected) {
+  private static void checkResultRemovalSize(Geometry[] input, double tolerance, double removalFactor, Geometry[] expected) {
     CoverageSimplifier simplifier = new CoverageSimplifier(input);
     simplifier.setRemovableRingSizeFactor(removalFactor);
     Geometry[] actual = simplifier.simplify(tolerance);
     checkEqual(expected, actual);
   }
   
-  private void checkResultInner(Geometry[] input, double tolerance, Geometry[] expected) {
+  private static void checkResultInner(Geometry[] input, double tolerance, Geometry[] expected) {
     Geometry[] actual = CoverageSimplifier.simplifyInner(input, tolerance);
     checkEqual(expected, actual);
   }

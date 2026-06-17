@@ -20,6 +20,7 @@
 package org.locationtech.jtstest.testbuilder.io.shapefile;
 
 import java.io.BufferedInputStream;
+import java.io.Closeable;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,7 +42,7 @@ import org.locationtech.jts.geom.Polygon;
 
 
 
-public class Shapefile  
+public class Shapefile implements Closeable
 {
 
 
@@ -99,8 +100,7 @@ public class Shapefile
         {
             throw new IOException("Could not make a connection to the URL: " + baseURL);
         }
-        EndianDataInputStream sfile = new EndianDataInputStream(myInputStream);
-        return sfile;
+        return new EndianDataInputStream(myInputStream);
     }
 
 
@@ -108,15 +108,15 @@ public class Shapefile
      * Initialises a shapefile from disk.
      * Use Shapefile(String) if you don't want to use LEDataInputStream directly (recomened)
      */
-    public GeometryCollection read(GeometryFactory geometryFactory) throws IOException,ShapefileException,Exception{
-       EndianDataInputStream file = getInputStream();
+    public GeometryCollection read(GeometryFactory geometryFactory) throws Exception{
+       try (EndianDataInputStream file = getInputStream()) {
         if(file==null) throw new IOException("Failed connection or no content for "+baseURL);
         ShapefileHeader mainHeader = new ShapefileHeader(file);
         if(mainHeader.getVersion() < VERSION){System.err.println("Sf-->Warning, Shapefile format ("+mainHeader.getVersion()+") older that supported ("+VERSION+"), attempting to read anyway");}
         if(mainHeader.getVersion() > VERSION){System.err.println("Sf-->Warning, Shapefile format ("+mainHeader.getVersion()+") newer that supported ("+VERSION+"), attempting to read anyway");}
 
         Geometry body;
-        ArrayList<Geometry> list = new ArrayList<Geometry>();
+        ArrayList<Geometry> list = new ArrayList<>();
         int type=mainHeader.getShapeType();
         ShapeHandler handler = getShapeHandler(type);
         if(handler==null)throw new ShapeTypeNotSupportedException("Unsuported shape type:"+type);
@@ -148,11 +148,11 @@ public class Shapefile
         }catch(EOFException e){
 
         }
-        return geometryFactory.createGeometryCollection((Geometry[])list.toArray(new Geometry[]{}));
+        return geometryFactory.createGeometryCollection(list.toArray(new Geometry[]{}));
+       }
     }
 
     private EndianDataInputStream file;
-    private ShapefileHeader mainHeader;
     private ShapeHandler handler;
     private int recordNumber;
     
@@ -161,17 +161,17 @@ public class Shapefile
      * Use Shapefile(String) if you don't want to use LEDataInputStream directly (recomened)
      */
     public void readStream(GeometryFactory geometryFactory)
-        throws IOException,ShapefileException,Exception
+        throws Exception
     {
       geomFactory = geometryFactory;
        file = getInputStream();
         if(file==null) throw new IOException("Failed connection or no content for "+baseURL);
-        mainHeader = new ShapefileHeader(file);
-        if(mainHeader.getVersion() < VERSION){System.err.println("Sf-->Warning, Shapefile format ("+mainHeader.getVersion()+") older that supported ("+VERSION+"), attempting to read anyway");}
-        if(mainHeader.getVersion() > VERSION){System.err.println("Sf-->Warning, Shapefile format ("+mainHeader.getVersion()+") newer that supported ("+VERSION+"), attempting to read anyway");}
+        ShapefileHeader mainHeader = new ShapefileHeader(file);
+        if(mainHeader.getVersion() < VERSION){System.err.println("Sf-->Warning, Shapefile format ("+ mainHeader.getVersion()+") older that supported ("+VERSION+"), attempting to read anyway");}
+        if(mainHeader.getVersion() > VERSION){System.err.println("Sf-->Warning, Shapefile format ("+ mainHeader.getVersion()+") newer that supported ("+VERSION+"), attempting to read anyway");}
 
         //ArrayList list = new ArrayList();
-        int type=mainHeader.getShapeType();
+        int type= mainHeader.getShapeType();
         handler = getShapeHandler(type);
         if(handler==null)throw new ShapeTypeNotSupportedException("Unsuported shape type:"+type);
 
@@ -216,7 +216,7 @@ public class Shapefile
     public void close()
         throws IOException
     {
-      file.close();
+      if (file != null) file.close();
     }
 
        //ShapeFileDimentions =>    2=x,y ; 3=x,y,m ; 4=x,y,z,m
@@ -235,8 +235,9 @@ public class Shapefile
             case(POINTZ):return ("Points Z");
             case(POINTM):return ("Points M");
             case(ARC):return ("Arcs");
-            case(ARCM):return ("ArcsM");
-            case(ARCZ):return ("ArcsM");
+            case(ARCM):
+            case(ARCZ):
+                return ("ArcsM");
             case(POLYGON):return ("Polygon");
             case(POLYGONM):return ("PolygonM");
             case(POLYGONZ):return ("PolygonZ");
@@ -322,27 +323,11 @@ public class Shapefile
     }
 
     public synchronized void readIndex(InputStream is) throws IOException {
-        EndianDataInputStream file = null;
-        try{
-            BufferedInputStream in = new BufferedInputStream(is);
-            file = new EndianDataInputStream(in);
-        }catch(Exception e){System.err.println(e);}
-        ShapefileHeader head = new ShapefileHeader(file);
+        try (EndianDataInputStream file = new EndianDataInputStream(new BufferedInputStream(is))) {
+            ShapefileHeader head = new ShapefileHeader(file);
 
-        int pos=0,len=0;
-        //file.setLittleEndianMode(false);
-        file.close();
+            int pos=0,len=0;
+            //file.setLittleEndianMode(false);
+        }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-

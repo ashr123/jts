@@ -13,7 +13,6 @@ package org.locationtech.jts.operation.linemerge;
 
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.geom.Coordinate;
@@ -29,8 +28,8 @@ import org.locationtech.jts.geom.LineString;
  * @version 1.7
  */
 public class EdgeString {
-  private GeometryFactory factory;
-  private List directedEdges = new ArrayList();
+  private final GeometryFactory factory;
+  private final List<LineMergeDirectedEdge> directedEdges = new ArrayList<>();
   private Coordinate[] coordinates = null;
   /**
    * Constructs an EdgeString with the given factory used to convert this EdgeString
@@ -52,18 +51,16 @@ public class EdgeString {
       int forwardDirectedEdges = 0;
       int reverseDirectedEdges = 0;
       CoordinateList coordinateList = new CoordinateList();
-      for (Iterator i = directedEdges.iterator(); i.hasNext();) {
-        LineMergeDirectedEdge directedEdge = (LineMergeDirectedEdge) i.next();
-        if (directedEdge.getEdgeDirection()) {
-          forwardDirectedEdges++;
-        }
-        else {
-          reverseDirectedEdges++;
-        }
-        coordinateList.add(((LineMergeEdge) directedEdge.getEdge()).getLine()
+        for (LineMergeDirectedEdge directedEdge : directedEdges) {
+            if (directedEdge.getEdgeDirection()) {
+                forwardDirectedEdges++;
+            } else {
+                reverseDirectedEdges++;
+            }
+            coordinateList.add(((LineMergeEdge) directedEdge.getEdge()).getLine()
                             .getCoordinates(), false,
-          directedEdge.getEdgeDirection());
-      }
+                    directedEdge.getEdgeDirection());
+        }
       coordinates = coordinateList.toCoordinateArray();
       if (reverseDirectedEdges > forwardDirectedEdges) {
         CoordinateArrays.reverse(coordinates);

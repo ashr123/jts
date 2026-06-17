@@ -18,7 +18,10 @@ package org.locationtech.jts.util;
  */
 public class Assert {
 
-  /**
+    private Assert() {
+    }
+
+    /**
    *  Throws an <code>AssertionFailedException</code> if the given assertion is
    *  not true.
    *
@@ -98,4 +101,3 @@ public class Assert {
          + (message != null ? ": " + message : ""));
   }
 }
-

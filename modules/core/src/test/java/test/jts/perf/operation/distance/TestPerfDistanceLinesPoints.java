@@ -39,7 +39,7 @@ public class TestPerfDistanceLinesPoints
 {
   static final boolean USE_INDEXED_DIST = true;
   
-  static GeometryFactory geomFact = new GeometryFactory();
+  static final GeometryFactory geomFact = new GeometryFactory();
   
   static final int MAX_ITER = 1;
   static final int NUM_TARGET_ITEMS = 4000;
@@ -50,7 +50,7 @@ public class TestPerfDistanceLinesPoints
   public static void main(String[] args) {
     TestPerfDistanceLinesPoints test = new TestPerfDistanceLinesPoints();
     try {
-      test.test();
+      test();
     }
     catch (Exception ex)
     {
@@ -58,14 +58,12 @@ public class TestPerfDistanceLinesPoints
     }
   }
 
-  boolean verbose = true;
+  static final boolean verbose = true;
 
-  public TestPerfDistanceLinesPoints() {
+  private TestPerfDistanceLinesPoints() {
   }
 
-  public void test()
-  throws Exception
-  {
+  public static void test() {
   
     //test(200);
     //if (true) return;
@@ -84,9 +82,7 @@ public class TestPerfDistanceLinesPoints
     //test(100000);
   }
   
-  public void test(int num)
-  throws Exception
-  {
+  public static void test(int num) {
     //Geometry lines = createLine(EXTENT, num);
     Geometry target = createDiagonalCircles(EXTENT, NUM_TARGET_ITEMS);
     Geometry[] pts = createPoints(target.getEnvelopeInternal(), num);
@@ -99,7 +95,7 @@ public class TestPerfDistanceLinesPoints
     test(pts, target);
   }
   
-  public void xtest(int num)
+  public static void xtest(int num)
   throws Exception
   {
     Geometry target = loadData("C:\\proj\\JTS\\test\\g2e\\ffmwdec08.wkt");
@@ -109,7 +105,7 @@ public class TestPerfDistanceLinesPoints
     test(pts, target, true);
   }
   
-  public void test(Geometry[] pts, Geometry target)
+  public static void test(Geometry[] pts, Geometry target)
   {
     if (verbose) {
       System.out.println();
@@ -120,7 +116,7 @@ public class TestPerfDistanceLinesPoints
     test(pts, target, false);    
   }
   
-  public void test(Geometry[] pts, Geometry target, boolean useFastDist)
+  public static void test(Geometry[] pts, Geometry target, boolean useFastDist)
   {
     
     Stopwatch sw = new Stopwatch();
@@ -137,23 +133,22 @@ public class TestPerfDistanceLinesPoints
     }
   }
 
-  void computeDistance(Geometry[] pts, Geometry geom)
+  static void computeDistance(Geometry[] pts, Geometry geom)
   {
     IndexedFacetDistance bbd = null;
     if (USE_INDEXED_DIST)
       bbd = new IndexedFacetDistance(geom);
-    for (int i = 0; i < pts.length; i++ ) {
-      if (USE_INDEXED_DIST) {
-        double dist = bbd.distance(pts[i]);
+      for (Geometry pt : pts) {
+          if (USE_INDEXED_DIST) {
+              double dist = bbd.distance(pt);
 //        double dist = bbd.getDistanceWithin(pts[i].getCoordinate(), 100000);
+          } else {
+              double dist = geom.distance(pt);
+          }
       }
-      else { 
-       double dist = geom.distance(pts[i]);
-      }
-    }
   }
   
-  Geometry createDiagonalCircles(double extent, int nSegs)
+  static Geometry createDiagonalCircles(double extent, int nSegs)
   {
     Polygon[] circles = new Polygon[nSegs];
     double inc = extent / nSegs;
@@ -167,7 +162,7 @@ public class TestPerfDistanceLinesPoints
 
   }
   
-  Geometry createLine(double extent, int nSegs)
+  static Geometry createLine(double extent, int nSegs)
   {
     Coordinate[] pts = 
       new Coordinate[] {
@@ -183,7 +178,7 @@ public class TestPerfDistanceLinesPoints
 
   }
   
-  Geometry createDiagonalLine(double extent, int nSegs)
+  static Geometry createDiagonalLine(double extent, int nSegs)
   {
     Coordinate[] pts = new Coordinate[nSegs + 1];
     pts[0] = new Coordinate(0,0);
@@ -195,7 +190,7 @@ public class TestPerfDistanceLinesPoints
     return geomFact.createLineString(pts);
   }
   
-  Geometry[] createPoints(Envelope extent, int nPtsSide)
+  static Geometry[] createPoints(Envelope extent, int nPtsSide)
   {
     Geometry[] pts = new Geometry[nPtsSide * nPtsSide];
     int index = 0;
@@ -212,19 +207,17 @@ public class TestPerfDistanceLinesPoints
     return pts;
   }
   
-  Geometry loadData(String file) 
+  static Geometry loadData(String file)
   throws Exception 
   {
-    List geoms = loadWKT(file);
+    List<Geometry> geoms = loadWKT(file);
     return geomFact.buildGeometry(geoms);
   }
 
-  List loadWKT(String filename) throws Exception {
+  static List<Geometry> loadWKT(String filename) throws Exception {
     WKTReader rdr = new WKTReader();
     WKTFileReader fileRdr = new WKTFileReader(filename, rdr);
     return fileRdr.read();
   }
 
 }
-  
-  

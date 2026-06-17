@@ -19,6 +19,8 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Lineal;
 import org.locationtech.jts.util.Assert;
 
+import java.util.Arrays;
+
 /**
  * Extracts the subline of a linear {@link Geometry} between
  * two {@link LinearLocation}s on the line.
@@ -42,7 +44,7 @@ class ExtractLineByLocation
     return ls.extract(start, end);
   }
 
-  private Geometry line;
+  private final Geometry line;
 
   public ExtractLineByLocation(Geometry line) {
     this.line = line;
@@ -64,7 +66,7 @@ class ExtractLineByLocation
     return computeLinear(start, end);
   }
 
-  private Geometry reverse(Geometry linear)
+  private static Geometry reverse(Geometry linear)
   {
     if (linear instanceof Lineal)
       return linear.reverse();
@@ -97,14 +99,12 @@ class ExtractLineByLocation
 
     if (! start.isVertex())
       newCoordinates.add(start.getCoordinate(line));
-    for (int i = startSegmentIndex; i <= lastSegmentIndex; i++) {
-      newCoordinates.add(coordinates[i]);
-    }
+      newCoordinates.addAll(Arrays.asList(coordinates).subList(startSegmentIndex, lastSegmentIndex + 1));
     if (! end.isVertex())
       newCoordinates.add(end.getCoordinate(line));
 
     // ensure there is at least one coordinate in the result
-    if (newCoordinates.size() <= 0)
+    if (newCoordinates.isEmpty())
       newCoordinates.add(start.getCoordinate(line));
 
     Coordinate[] newCoordinateArray = newCoordinates.toCoordinateArray();

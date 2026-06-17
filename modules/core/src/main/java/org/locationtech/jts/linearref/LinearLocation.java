@@ -26,7 +26,7 @@ import org.locationtech.jts.geom.MultiLineString;
  * and query the geometry it references.
  */
 public class LinearLocation
-    implements Comparable
+    implements Comparable<LinearLocation>
 {
    /**
     * Gets a location which refers to the end of a linear {@link Geometry}.
@@ -306,9 +306,7 @@ public class LinearLocation
     if (segmentIndex == lineComp.getNumPoints() && segmentFraction != 0.0)
       return false;
 
-    if (segmentFraction < 0.0 || segmentFraction > 1.0)
-      return false;
-    return true;
+      return !(segmentFraction < 0.0) && !(segmentFraction > 1.0);
   }
 
   /**
@@ -319,8 +317,7 @@ public class LinearLocation
    *@return    a negative integer, zero, or a positive integer as this <code>LineStringLocation</code>
    *      is less than, equal to, or greater than the specified <code>LineStringLocation</code>
    */
-  public int compareTo(Object o) {
-    LinearLocation other = (LinearLocation) o;
+  public int compareTo(LinearLocation other) {
     // compare component indices
     if (componentIndex < other.componentIndex) return -1;
     if (componentIndex > other.componentIndex) return 1;
@@ -328,10 +325,8 @@ public class LinearLocation
     if (segmentIndex < other.segmentIndex) return -1;
     if (segmentIndex > other.segmentIndex) return 1;
     // same segment, so compare segment fraction
-    if (segmentFraction < other.segmentFraction) return -1;
-    if (segmentFraction > other.segmentFraction) return 1;
-    // same location
-    return 0;
+      return Double.compare(segmentFraction, other.segmentFraction);
+      // same location
   }
 
   /**
@@ -351,10 +346,8 @@ public class LinearLocation
     if (segmentIndex < segmentIndex1) return -1;
     if (segmentIndex > segmentIndex1) return 1;
     // same segment, so compare segment fraction
-    if (segmentFraction < segmentFraction1) return -1;
-    if (segmentFraction > segmentFraction1) return 1;
-    // same location
-    return 0;
+      return Double.compare(segmentFraction, segmentFraction1);
+      // same location
   }
 
   /**
@@ -381,10 +374,8 @@ public class LinearLocation
     if (segmentIndex0 < segmentIndex1) return -1;
     if (segmentIndex0 > segmentIndex1) return 1;
     // same segment, so compare segment fraction
-    if (segmentFraction0 < segmentFraction1) return -1;
-    if (segmentFraction0 > segmentFraction1) return 1;
-    // same location
-    return 0;
+      return Double.compare(segmentFraction0, segmentFraction1);
+      // same location
   }
 
   /**
@@ -401,10 +392,8 @@ public class LinearLocation
   	if (loc.segmentIndex - segmentIndex == 1 
   			&& loc.segmentFraction == 0.0) 
   		return true;
-  	if (segmentIndex - loc.segmentIndex == 1 
-  			&& segmentFraction == 0.0) 
-  		return true;
-  	return false;
+      return segmentIndex - loc.segmentIndex == 1
+              && segmentFraction == 0.0;
   }
 
   /**

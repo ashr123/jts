@@ -20,7 +20,10 @@ import org.locationtech.jts.triangulate.polygon.PolygonTriangulator;
 
 public class TriangulatePolyFunctions 
 {
-  public static Geometry triangulate(Geometry geom)
+    private TriangulatePolyFunctions() {
+    }
+
+    public static Geometry triangulate(Geometry geom)
   {
     return PolygonTriangulator.triangulate(geom);
   }

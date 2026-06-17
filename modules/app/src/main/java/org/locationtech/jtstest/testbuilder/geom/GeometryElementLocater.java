@@ -13,7 +13,6 @@
 package org.locationtech.jtstest.testbuilder.geom;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
@@ -36,26 +35,25 @@ public class GeometryElementLocater {
   public static Geometry extractElements(Geometry parentGeom, Geometry aoi)
   {
     GeometryElementLocater locater = new GeometryElementLocater(parentGeom);
-    List locs = locater.getElements(aoi);
-    List geoms = extractLocationGeometry(locs);
-    if (geoms.size() <= 0)
+    List<GeometryLocation> locs = locater.getElements(aoi);
+    List<Geometry> geoms = extractLocationGeometry(locs);
+    if (geoms.isEmpty())
       return null;
-    if (geoms.size() == 1) 
-      return (Geometry) geoms.get(0);
+    if (geoms.size() == 1)
+      return geoms.get(0);
     // if parent was a GC, ensure returning a GC
-    if (parentGeom.getGeometryType().equals("GeometryCollection"))
+    if ("GeometryCollection".equals(parentGeom.getGeometryType()))
       return parentGeom.getFactory().createGeometryCollection(GeometryFactory.toGeometryArray(geoms));
     // otherwise return MultiGeom
     return parentGeom.getFactory().buildGeometry(geoms);
   }
   
-  private static List extractLocationGeometry(List locs)
+  private static List<Geometry> extractLocationGeometry(List<GeometryLocation> locs)
   {
-    List geoms = new ArrayList();
-    for (Iterator i = locs.iterator(); i.hasNext();) {
-      GeometryLocation loc = (GeometryLocation) i.next();
-      geoms.add(loc.getElement());
-    }
+    List<Geometry> geoms = new ArrayList<>();
+      for (GeometryLocation loc : locs) {
+          geoms.add(loc.getElement());
+      }
     return geoms;
   }
   
@@ -65,8 +63,8 @@ public class GeometryElementLocater {
   }
 
   
-  private Geometry parentGeom;
-  private List<GeometryLocation> elements = new ArrayList();
+  private final Geometry parentGeom;
+  private final List<GeometryLocation> elements = new ArrayList<>();
   private Geometry aoi;
 
   public GeometryElementLocater(Geometry parentGeom) {
@@ -92,7 +90,7 @@ public class GeometryElementLocater {
     //Coordinate queryPt = queryPt;
     //this.tolerance = tolerance;
     this.aoi = aoi;
-    findElements(new Stack(), parentGeom, elements);
+    findElements(new Stack<>(), parentGeom, elements);
     return elements;
   }
 
@@ -103,7 +101,7 @@ public class GeometryElementLocater {
     return parentGeom.getFactory().toGeometry(env);
   }
   
-  private void findElements(Stack path, Geometry geom, List elements)
+  private void findElements(Stack<Integer> path, Geometry geom, List<GeometryLocation> elements)
   {
     if (geom instanceof GeometryCollection) {
       for (int i = 0; i < geom.getNumGeometries(); i++ ) {

@@ -33,7 +33,7 @@ import org.locationtech.jtstest.testbuilder.io.SVGTestWriter;
  *
  */
 public class GeometryOutput {
-  private CommandOutput out;
+  private final CommandOutput out;
 
   public GeometryOutput(CommandOutput out) {
     this.out = out;
@@ -62,7 +62,7 @@ public class GeometryOutput {
     out.println(txt);
   }
 
-  private String writeWKB(Geometry geom, int srid) {
+  private static String writeWKB(Geometry geom, int srid) {
     WKBWriter writer;
     if (JTSOpRunner.isCustomSRID(srid)) {
       writer = new WKBWriter(2, true);

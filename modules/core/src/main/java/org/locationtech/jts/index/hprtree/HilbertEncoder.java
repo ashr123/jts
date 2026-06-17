@@ -15,11 +15,11 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.shape.fractal.HilbertCode;
 
 public class HilbertEncoder {
-  private int level;
-  private double minx;
-  private double miny;
-  private double strideX;
-  private double strideY;
+  private final int level;
+  private final double minx;
+  private final double miny;
+  private final double strideX;
+  private final double strideY;
 
   public HilbertEncoder(int level, Envelope extent) {
     this.level = level;

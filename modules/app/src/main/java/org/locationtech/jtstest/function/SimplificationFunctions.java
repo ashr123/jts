@@ -19,7 +19,10 @@ import org.locationtech.jts.simplify.VWSimplifier;
 import org.locationtech.jtstest.geomfunction.Metadata;
 
 public class SimplificationFunctions {
-	public static Geometry simplifyDP(Geometry g, double distance)	
+    private SimplificationFunctions() {
+    }
+
+    public static Geometry simplifyDP(Geometry g, double distance)
 	{		return DouglasPeuckerSimplifier.simplify(g, distance);	}
 
   public static Geometry simplifyTP(Geometry g, double distance)  

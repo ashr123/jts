@@ -58,11 +58,11 @@ public class GeometryCollection extends Geometry {
   }
 
   public Coordinate getCoordinate() {
-    for (int i = 0; i < geometries.length; i++) {
-      if (! geometries[i].isEmpty()) {
-        return geometries[i].getCoordinate();
+      for (Geometry geometry : geometries) {
+          if (!geometry.isEmpty()) {
+              return geometry.getCoordinate();
+          }
       }
-    }
     return null;
   }
 
@@ -78,22 +78,22 @@ public class GeometryCollection extends Geometry {
   public Coordinate[] getCoordinates() {
     Coordinate[] coordinates = new Coordinate[getNumPoints()];
     int k = -1;
-    for (int i = 0; i < geometries.length; i++) {
-      Coordinate[] childCoordinates = geometries[i].getCoordinates();
-      for (int j = 0; j < childCoordinates.length; j++) {
-        k++;
-        coordinates[k] = childCoordinates[j];
+      for (Geometry geometry : geometries) {
+          Coordinate[] childCoordinates = geometry.getCoordinates();
+          for (Coordinate childCoordinate : childCoordinates) {
+              k++;
+              coordinates[k] = childCoordinate;
+          }
       }
-    }
     return coordinates;
   }
 
   public boolean isEmpty() {
-    for (int i = 0; i < geometries.length; i++) {
-      if (!geometries[i].isEmpty()) {
-        return false;
+      for (Geometry geometry : geometries) {
+          if (!geometry.isEmpty()) {
+              return false;
+          }
       }
-    }
     return true;
   }
 
@@ -122,9 +122,9 @@ public class GeometryCollection extends Geometry {
   
   public int getBoundaryDimension() {
     int dimension = Dimension.FALSE;
-    for (int i = 0; i < geometries.length; i++) {
-      dimension = Math.max(dimension, ((Geometry) geometries[i]).getBoundaryDimension());
-    }
+      for (Geometry geometry : geometries) {
+          dimension = Math.max(dimension, geometry.getBoundaryDimension());
+      }
     return dimension;
   }
 
@@ -138,9 +138,9 @@ public class GeometryCollection extends Geometry {
 
   public int getNumPoints() {
     int numPoints = 0;
-    for (int i = 0; i < geometries.length; i++) {
-      numPoints += ((Geometry) geometries[i]).getNumPoints();
-    }
+      for (Geometry geometry : geometries) {
+          numPoints += geometry.getNumPoints();
+      }
     return numPoints;
   }
 
@@ -162,18 +162,18 @@ public class GeometryCollection extends Geometry {
   public double getArea()
   {
     double area = 0.0;
-    for (int i = 0; i < geometries.length; i++) {
-      area += geometries[i].getArea();
-    }
+      for (Geometry geometry : geometries) {
+          area += geometry.getArea();
+      }
     return area;
   }
 
   public double getLength()
   {
     double sum = 0.0;
-    for (int i = 0; i < geometries.length; i++) {
-      sum += (geometries[i]).getLength();
-    }
+      for (Geometry geometry : geometries) {
+          sum += geometry.getLength();
+      }
     return sum;
   }
 
@@ -186,7 +186,7 @@ public class GeometryCollection extends Geometry {
       return false;
     }
     for (int i = 0; i < geometries.length; i++) {
-      if (!((Geometry) geometries[i]).equalsExact(otherCollection.geometries[i], tolerance)) {
+      if (!geometries[i].equalsExact(otherCollection.geometries[i], tolerance)) {
         return false;
       }
     }
@@ -194,36 +194,36 @@ public class GeometryCollection extends Geometry {
   }
 
   public void apply(CoordinateFilter filter) {
-	    for (int i = 0; i < geometries.length; i++) {
-	      geometries[i].apply(filter);
-	    }
+      for (Geometry geometry : geometries) {
+          geometry.apply(filter);
+      }
 	  }
 
   public void apply(CoordinateSequenceFilter filter) {
     if (geometries.length == 0)
       return;
-    for (int i = 0; i < geometries.length; i++) {
-      geometries[i].apply(filter);
-      if (filter.isDone()) {
-        break;
+      for (Geometry geometry : geometries) {
+          geometry.apply(filter);
+          if (filter.isDone()) {
+              break;
+          }
       }
-    }
     if (filter.isGeometryChanged())
       geometryChanged();
   }
 
   public void apply(GeometryFilter filter) {
     filter.filter(this);
-    for (int i = 0; i < geometries.length; i++) {
-      geometries[i].apply(filter);
-    }
+      for (Geometry geometry : geometries) {
+          geometry.apply(filter);
+      }
   }
 
   public void apply(GeometryComponentFilter filter) {
     filter.filter(this);
-    for (int i = 0; i < geometries.length; i++) {
-      geometries[i].apply(filter);
-    }
+      for (Geometry geometry : geometries) {
+          geometry.apply(filter);
+      }
   }
 
   /**
@@ -246,23 +246,23 @@ public class GeometryCollection extends Geometry {
   }
 
   public void normalize() {
-    for (int i = 0; i < geometries.length; i++) {
-      geometries[i].normalize();
-    }
+      for (Geometry geometry : geometries) {
+          geometry.normalize();
+      }
     Arrays.sort(geometries);
   }
 
   protected Envelope computeEnvelopeInternal() {
     Envelope envelope = new Envelope();
-    for (int i = 0; i < geometries.length; i++) {
-      envelope.expandToInclude(geometries[i].getEnvelopeInternal());
-    }
+      for (Geometry geometry : geometries) {
+          envelope.expandToInclude(geometry.getEnvelopeInternal());
+      }
     return envelope;
   }
 
   protected int compareToSameClass(Object o) {
-    TreeSet theseElements = new TreeSet(Arrays.asList(geometries));
-    TreeSet otherElements = new TreeSet(Arrays.asList(((GeometryCollection) o).geometries));
+    TreeSet<Geometry> theseElements = new TreeSet<>(Arrays.asList(geometries));
+    TreeSet<Geometry> otherElements = new TreeSet<>(Arrays.asList(((GeometryCollection) o).geometries));
     return compare(theseElements, otherElements);
   }
 
@@ -309,4 +309,3 @@ public class GeometryCollection extends Geometry {
     return new GeometryCollection(geometries, factory);
   }
 }
-

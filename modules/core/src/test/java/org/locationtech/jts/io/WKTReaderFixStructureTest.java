@@ -5,12 +5,12 @@ import test.jts.GeometryTestCase;
 
 public class WKTReaderFixStructureTest extends GeometryTestCase {
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(WKTReaderFixStructureTest.class);
   }
 
-  private WKTReader readerFix;
-  private WKTReader reader;
+  private final WKTReader readerFix;
+  private final WKTReader reader;
 
   public WKTReaderFixStructureTest(String name) {
     super(name);

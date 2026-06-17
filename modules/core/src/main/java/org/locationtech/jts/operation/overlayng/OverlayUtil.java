@@ -32,7 +32,10 @@ import org.locationtech.jts.util.Assert;
  */
 class OverlayUtil {
 
-  /**
+    private OverlayUtil() {
+    }
+
+    /**
    * A null-handling wrapper for {@link PrecisionModel#isFloating()}
    * 
    * @param pm
@@ -72,9 +75,8 @@ class OverlayUtil {
         inputGeom.getGeometry(0), 
         inputGeom.getGeometry(1), 
         resultEnv);
-    
-    Envelope safeEnv = safeEnv( clipEnv, pm );
-    return safeEnv;
+
+      return safeEnv( clipEnv, pm );
   }
 
   /**
@@ -214,8 +216,7 @@ class OverlayUtil {
     if (pm.makePrecise(envB.getMinX()) > pm.makePrecise(envA.getMaxX())) return true;
     if (pm.makePrecise(envB.getMaxX()) < pm.makePrecise(envA.getMinX())) return true;
     if (pm.makePrecise(envB.getMinY()) > pm.makePrecise(envA.getMaxY())) return true;
-    if (pm.makePrecise(envB.getMaxY()) < pm.makePrecise(envA.getMinY())) return true;
-    return false;
+      return pm.makePrecise(envB.getMaxY()) < pm.makePrecise(envA.getMinY());
   }
 
   /**
@@ -308,7 +309,7 @@ class OverlayUtil {
    * @return a geometry structured according to the overlay result semantics
    */
   static Geometry createResultGeometry(List<Polygon> resultPolyList, List<LineString> resultLineList, List<Point> resultPointList, GeometryFactory geometryFactory) {
-    List<Geometry> geomList = new ArrayList<Geometry>();
+    List<Geometry> geomList = new ArrayList<>();
     
     // TODO: for mixed dimension, return collection of Multigeom for each dimension (breaking change)
     
@@ -323,7 +324,7 @@ class OverlayUtil {
   }
 
   static Geometry toLines(OverlayGraph graph, boolean isOutputEdges, GeometryFactory geomFact) {
-    List<LineString> lines = new ArrayList<LineString>();
+    List<LineString> lines = new ArrayList<>();
     for (OverlayEdge edge : graph.getEdges()) {
       boolean includeEdge = isOutputEdges || edge.isInResultArea();
       if (! includeEdge) continue;

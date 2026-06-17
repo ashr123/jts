@@ -32,8 +32,11 @@ import org.locationtech.jtstest.geomfunction.Metadata;
  *
  */
 public class OverlayNGOptFunctions {
-  
-  private static Geometry fastCoversIntersection(Geometry a, Geometry b) {
+
+    private OverlayNGOptFunctions() {
+    }
+
+    private static Geometry fastCoversIntersection(Geometry a, Geometry b) {
     IntersectionMatrix im = a.relate(b);
     if (! im.isIntersects()) return createEmpty(a);
     if (im.isCovers()) return b.copy();
@@ -85,7 +88,7 @@ public class OverlayNGOptFunctions {
   }
   
   public static Geometry intersectionOrigPrepNoCache(Geometry a, Geometry b) {
-    PreparedGeometry pg = (new PreparedGeometryFactory()).create(a);
+    PreparedGeometry pg = PreparedGeometryFactory.create(a);
     if (! pg.intersects(b)) return null;
     if (pg.covers(b)) return b.copy();
     return a.intersection(b);
@@ -134,7 +137,7 @@ public class OverlayNGOptFunctions {
   }
   
   public static Geometry intersectionPrepNoCache(Geometry a, Geometry b) {
-    PreparedGeometry pg = (new PreparedGeometryFactory()).create(a);
+    PreparedGeometry pg = PreparedGeometryFactory.create(a);
     if (! pg.intersects(b)) return null;
     if (pg.covers(b)) return b.copy();
     return OverlayNGRobust.overlay(a, b, OverlayNG.INTERSECTION);
@@ -147,7 +150,7 @@ public class OverlayNGOptFunctions {
   private static PreparedGeometry cacheFetch(Geometry g) {
     if (g != cacheKey) {
       cacheKey = g;
-      cache = (new PreparedGeometryFactory()).create(g);
+      cache = PreparedGeometryFactory.create(g);
     }
     return cache;
   }

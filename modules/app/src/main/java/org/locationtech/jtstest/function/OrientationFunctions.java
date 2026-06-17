@@ -19,7 +19,10 @@ import org.locationtech.jts.geom.Polygon;
 
 public class OrientationFunctions {
 
-  public static boolean isCCW(Geometry g)
+    private OrientationFunctions() {
+    }
+
+    public static boolean isCCW(Geometry g)
   {
     Coordinate[] ptsRing = OrientationFunctions.getRing(g);
     if (ptsRing == null) return false;
@@ -33,8 +36,7 @@ public class OrientationFunctions {
     Coordinate[] segPt = segment.getCoordinates();
     
     Coordinate p = ptGeom.getCoordinate();
-    int index = Orientation.index(segPt[0], segPt[1], p);
-    return index;
+      return Orientation.index(segPt[0], segPt[1], p);
   }
 
   static Coordinate[] getRing(Geometry g) {

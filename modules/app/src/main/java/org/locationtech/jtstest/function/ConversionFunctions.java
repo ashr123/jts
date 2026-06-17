@@ -21,19 +21,21 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.GeometryCollectionIterator;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.Polygonal;
 import org.locationtech.jts.geom.util.LinearComponentExtracter;
 import org.locationtech.jts.geom.util.PolygonExtracter;
 
 public class ConversionFunctions 
 {
-  public static Geometry pointsToLine(Geometry g)
+    private ConversionFunctions() {
+    }
+
+    public static Geometry pointsToLine(Geometry g)
   {
     Coordinate[] pts = g.getCoordinates();
-    LineString line = g.getFactory().createLineString(pts);
-    return line;
+      return g.getFactory().createLineString(pts);
   }
   
   public static Geometry lineToPolygon(Geometry g)
@@ -67,7 +69,7 @@ public class ConversionFunctions
   public static Geometry toMultiPolygon(Geometry g1, Geometry g2)
   {
     Geometry geoms = FunctionsUtil.buildGeometry(g1, g2);
-    List polys = PolygonExtracter.getPolygons(g1);
+    List<Polygon> polys = PolygonExtracter.getPolygons(g1);
     PolygonExtracter.getPolygons(g2, polys);
     return FunctionsUtil.getFactoryOrDefault(g1, g2)
         .createMultiPolygon( GeometryFactory.toPolygonArray(polys));
@@ -75,14 +77,14 @@ public class ConversionFunctions
 
   public static Geometry toGeometryCollection(Geometry g1, Geometry g2)
   {
-    List atomicGeoms = new ArrayList();
+    List<Geometry> atomicGeoms = new ArrayList<>();
     if (g1 != null) addComponents(g1, atomicGeoms);
     if (g2 != null) addComponents(g2, atomicGeoms);
     return FunctionsUtil.getFactoryOrDefault(g1, g2).createGeometryCollection(
         GeometryFactory.toGeometryArray(atomicGeoms));
   }
 
-  private static void addComponents(Geometry g, List atomicGeoms)
+  private static void addComponents(Geometry g, List<Geometry> atomicGeoms)
   {
     if (! (g instanceof GeometryCollection)) {
       atomicGeoms.add(g);
@@ -91,7 +93,7 @@ public class ConversionFunctions
 
     GeometryCollectionIterator it = new GeometryCollectionIterator(g);
     while (it.hasNext()) {
-      Geometry gi = (Geometry) it.next();
+      Geometry gi = it.next();
       if (! (gi instanceof GeometryCollection))
         atomicGeoms.add(gi);
     }

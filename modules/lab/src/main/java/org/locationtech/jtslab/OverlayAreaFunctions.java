@@ -19,7 +19,10 @@ import org.locationtech.jts.operation.overlayarea.OverlayArea;
 
 public class OverlayAreaFunctions {
 
-  public static double areaSingle(Geometry g) {
+    private OverlayAreaFunctions() {
+    }
+
+    public static double areaSingle(Geometry g) {
     return GeometryArea.area(g);
   }
   
@@ -55,8 +58,7 @@ public class OverlayAreaFunctions {
   }
   
   public static double intAreaOrig(Geometry geom0, Geometry geom1) {
-    double intArea = geom0.intersection(geom1).getArea();
-    return intArea;
+      return geom0.intersection(geom1).getArea();
   }
   
   static PreparedGeometry geomPrepCache = null;
@@ -91,17 +93,14 @@ public class OverlayAreaFunctions {
   private static double intAreaFullPrep(Geometry geom, PreparedGeometry geomPrep, Geometry geom1) {
     if (! geomPrep.intersects(geom1)) return 0.0;
     if (geomPrep.contains(geom1)) return geom1.getArea();
-    double intArea = geom.intersection(geom1).getArea();
-    return intArea;
+      return geom.intersection(geom1).getArea();
   }
   
   public static double checkIntArea(Geometry geom0, Geometry geom1) {
     double intArea = intersectionArea(geom0, geom1);
     
     double intAreaStd = geom0.intersection(geom1).getArea();
-    
-    double diff = Math.abs(intArea - intAreaStd)/Math.max(intArea, intAreaStd);
-    
-    return diff;
+
+      return Math.abs(intArea - intAreaStd)/Math.max(intArea, intAreaStd);
   }
 }

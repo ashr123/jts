@@ -68,9 +68,7 @@ class EdgeKey implements Comparable<EdgeKey> {
     // first points are equal, compare second
     if (p1x < ek.p1x) return -1;
     if (p1x > ek.p1x) return 1;
-    if (p1y < ek.p1y) return -1;
-    if (p1y > ek.p1y) return 1;
-    return 0;
+      return Double.compare(p1y, ek.p1y);
   }
   
   public boolean equals(Object o) {
@@ -107,8 +105,7 @@ class EdgeKey implements Comparable<EdgeKey> {
    * @return a hashcode for x
    */
   public static int hashCode(double x) {
-    long f = Double.doubleToLongBits(x);
-    return (int)(f^(f>>>32));
+      return Double.hashCode(x);
   }
   
   public String toString() {
@@ -116,7 +113,7 @@ class EdgeKey implements Comparable<EdgeKey> {
       + ", " +  format(p1x, p1y) + ")";
   }
   
-  private String format(double x, double y) {
+  private static String format(double x, double y) {
     return OrdinateFormat.DEFAULT.format(x) + " " + OrdinateFormat.DEFAULT.format(y);
   }
 }

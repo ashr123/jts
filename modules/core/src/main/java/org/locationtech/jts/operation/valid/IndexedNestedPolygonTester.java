@@ -34,8 +34,8 @@ import org.locationtech.jts.index.strtree.STRtree;
  */
 class IndexedNestedPolygonTester
 {
-  private MultiPolygon multiPoly;
-  private SpatialIndex index;
+  private final MultiPolygon multiPoly;
+  private SpatialIndex<Integer> index;
   private IndexedPointInAreaLocator[] locators;
   private Coordinate nestedPt;
 
@@ -47,7 +47,7 @@ class IndexedNestedPolygonTester
 
   private void loadIndex()
   {
-    index = new STRtree();
+    index = new STRtree<>();
 
     for (int i = 0; i < multiPoly.getNumGeometries(); i++) {
       Polygon poly = (Polygon) multiPoly.getGeometryN(i);
@@ -115,8 +115,8 @@ class IndexedNestedPolygonTester
    * @param locator the locator for the outer polygon
    * @return a nested point, if one exists, or null
    */
-  private Coordinate findNestedPoint(LinearRing shell, 
-      Polygon possibleOuterPoly, IndexedPointInAreaLocator locator) 
+  private static Coordinate findNestedPoint(LinearRing shell,
+                                            Polygon possibleOuterPoly, IndexedPointInAreaLocator locator)
   {    
     /**
      * Try checking two points, since checking point location is fast.

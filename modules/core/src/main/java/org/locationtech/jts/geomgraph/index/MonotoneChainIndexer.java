@@ -46,19 +46,19 @@ import org.locationtech.jts.util.IntArrayList;
  */
 public class MonotoneChainIndexer {
 
-  public static int[] toIntArray(List list)
+  public static int[] toIntArray(List<? extends Integer> list)
   {
     int[] array = new int[list.size()];
     for (int i = 0; i < array.length; i++) {
-      array[i] = ((Integer) list.get(i)).intValue();
+      array[i] = list.get(i).intValue();
     }
     return array;
   }
 
-  public MonotoneChainIndexer() {
+  private MonotoneChainIndexer() {
   }
 
-  public int[] getChainStartIndices(Coordinate[] pts)
+  public static int[] getChainStartIndices(Coordinate[] pts)
   {
     // find the startpoint (and endpoints) of all monotone chains in this edge
     int start = 0;
@@ -75,11 +75,11 @@ public class MonotoneChainIndexer {
     return startIndexList.toArray();
   }  
   
-  public int[] OLDgetChainStartIndices(Coordinate[] pts)
+  public static int[] OLDgetChainStartIndices(Coordinate[] pts)
   {
     // find the startpoint (and endpoints) of all monotone chains in this edge
     int start = 0;
-    List startIndexList = new ArrayList();
+    List<Integer> startIndexList = new ArrayList<>();
     startIndexList.add(start);
     do {
       int last = findChainEnd(pts, start);
@@ -87,14 +87,13 @@ public class MonotoneChainIndexer {
       start = last;
     } while (start < pts.length - 1);
     // copy list to an array of ints, for efficiency
-    int[] startIndex = toIntArray(startIndexList);
-    return startIndex;
+      return toIntArray(startIndexList);
   }
 
   /**
    * @return the index of the last point in the monotone chain
    */
-  private int findChainEnd(Coordinate[] pts, int start)
+  private static int findChainEnd(Coordinate[] pts, int start)
   {
     // determine quadrant for chain
     int chainQuad = Quadrant.quadrant(pts[start], pts[start + 1]);

@@ -172,8 +172,8 @@ public class RelateNG
     return new RelateNG(a, true, bnRule);
   }
   
-  private BoundaryNodeRule boundaryNodeRule;
-  private RelateGeometry geomA;
+  private final BoundaryNodeRule boundaryNodeRule;
+  private final RelateGeometry geomA;
   private MCIndexSegmentSetMutualIntersector edgeMutualInt;
   
   private RelateNG(Geometry inputA, boolean isPrepared) {
@@ -282,15 +282,12 @@ public class RelateNG
       }
       isInteracts = true;
     }
-    if (! isInteracts 
-        && predicate.requireInteraction()
-        && ! geomA.getEnvelope().intersects(envB)) {
-      return false;
-    }
-    return true;
+      return isInteracts
+              || !predicate.requireInteraction()
+              || geomA.getEnvelope().intersects(envB);
   }
 
-  private boolean finishValue(TopologyPredicate predicate) {
+  private static boolean finishValue(TopologyPredicate predicate) {
     predicate.finish();
     return predicate.value();
   }
@@ -330,8 +327,8 @@ public class RelateNG
     }
   }  
 
-  private void computeAtPoints(RelateGeometry geom, boolean isA, 
-      RelateGeometry geomTarget, TopologyComputer topoComputer) {
+  private static void computeAtPoints(RelateGeometry geom, boolean isA,
+                                      RelateGeometry geomTarget, TopologyComputer topoComputer) {
     
     boolean isResultKnown = false;
     isResultKnown = computePoints(geom, isA, geomTarget, topoComputer);
@@ -361,8 +358,8 @@ public class RelateNG
     computeAreaVertex(geom, isA, geomTarget, topoComputer);
   }
   
-  private boolean computePoints(RelateGeometry geom, boolean isA, RelateGeometry geomTarget,
-      TopologyComputer topoComputer) { 
+  private static boolean computePoints(RelateGeometry geom, boolean isA, RelateGeometry geomTarget,
+                                       TopologyComputer topoComputer) {
     if (! geom.hasDimension(Dimension.P)) {
       return false;
     }
@@ -382,26 +379,26 @@ public class RelateNG
     return false;
   }
 
-  private void computePoint(boolean isA, Coordinate pt, RelateGeometry geomTarget, TopologyComputer topoComputer) {
+  private static void computePoint(boolean isA, Coordinate pt, RelateGeometry geomTarget, TopologyComputer topoComputer) {
       int locDimTarget = geomTarget.locateWithDim(pt);
       int locTarget = DimensionLocation.location(locDimTarget);
       int dimTarget = DimensionLocation.dimension(locDimTarget, topoComputer.getDimension(! isA));
       topoComputer.addPointOnGeometry(isA, locTarget, dimTarget, pt);
   }
   
-  private boolean computeLineEnds(RelateGeometry geom, boolean isA, RelateGeometry geomTarget,
-      TopologyComputer topoComputer) {
+  private static boolean computeLineEnds(RelateGeometry geom, boolean isA, RelateGeometry geomTarget,
+                                         TopologyComputer topoComputer) {
     if (! geom.hasDimension(Dimension.L)) {
       return false;
     }
     
     boolean hasExteriorIntersection = false;
-    Iterator geomi = new GeometryCollectionIterator(geom.getGeometry());
+    Iterator<Geometry> geomi = new GeometryCollectionIterator(geom.getGeometry());
     while (geomi.hasNext()) {
-      Geometry elem = (Geometry) geomi.next();
-      if (elem.isEmpty()) 
+      Geometry elem = geomi.next();
+      if (elem.isEmpty())
         continue;
-      
+
       if (elem instanceof LineString) {
         //-- once an intersection with target exterior is recorded, skip further known-exterior points
         if (hasExteriorIntersection 
@@ -440,8 +437,8 @@ public class RelateNG
    * @param topoComputer
    * @return true if the line endpoint is in the exterior of the target
    */
-  private boolean computeLineEnd(RelateGeometry geom, boolean isA, Coordinate pt,
-      RelateGeometry geomTarget, TopologyComputer topoComputer) {
+  private static boolean computeLineEnd(RelateGeometry geom, boolean isA, Coordinate pt,
+                                        RelateGeometry geomTarget, TopologyComputer topoComputer) {
     int locDimLineEnd = geom.locateLineEndWithDim(pt);
     int dimLineEnd = DimensionLocation.dimension(locDimLineEnd, topoComputer.getDimension(isA));
     //-- skip line ends which are in a GC area
@@ -456,7 +453,7 @@ public class RelateNG
     return locTarget == Location.EXTERIOR;
   }
 
-  private boolean computeAreaVertex(RelateGeometry geom, boolean isA, RelateGeometry geomTarget, TopologyComputer topoComputer) {
+  private static boolean computeAreaVertex(RelateGeometry geom, boolean isA, RelateGeometry geomTarget, TopologyComputer topoComputer) {
     if (! geom.hasDimension(Dimension.A)) {
       return false;
     }
@@ -465,12 +462,12 @@ public class RelateNG
       return false;
 
     boolean hasExteriorIntersection = false;
-    Iterator geomi = new GeometryCollectionIterator(geom.getGeometry());
+    Iterator<Geometry> geomi = new GeometryCollectionIterator(geom.getGeometry());
     while (geomi.hasNext()) {
-      Geometry elem = (Geometry) geomi.next();
-      if (elem.isEmpty()) 
+      Geometry elem = geomi.next();
+      if (elem.isEmpty())
         continue;
-      
+
       if (elem instanceof Polygon) {
         //-- once an intersection with target exterior is recorded, skip further known-exterior points
         if (hasExteriorIntersection 
@@ -493,7 +490,7 @@ public class RelateNG
     return false;
   }
 
-  private boolean computeAreaVertex(RelateGeometry geom, boolean isA, LinearRing ring, RelateGeometry geomTarget, TopologyComputer topoComputer) {
+  private static boolean computeAreaVertex(RelateGeometry geom, boolean isA, LinearRing ring, RelateGeometry geomTarget, TopologyComputer topoComputer) {
     //TODO: use extremal (highest) point to ensure one is on boundary of polygon cluster
     Coordinate pt = ring.getCoordinate();
     

@@ -17,7 +17,10 @@ import org.locationtech.jts.geom.Geometry;
 
 public class PointLocationFunctions {
 
-  public static boolean isPointInRing(Geometry g1, Geometry g2) {
+    private PointLocationFunctions() {
+    }
+
+    public static boolean isPointInRing(Geometry g1, Geometry g2) {
     Geometry ring = g1;
     Geometry pt = g2;
     if (g1.getNumPoints() == 1) {

@@ -28,8 +28,7 @@ public class Key {
   {
     double dx = interval.getWidth();
     //int level = BinaryPower.exponent(dx) + 1;
-    int level = DoubleBits.exponent(dx) + 1;
-    return level;
+      return DoubleBits.exponent(dx) + 1;
   }
 
 

@@ -19,7 +19,7 @@ import test.jts.GeometryTestCase;
 
 public class SparsePolygonUnionTest extends GeometryTestCase {
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(SparsePolygonUnionTest.class);
   }
   

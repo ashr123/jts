@@ -46,7 +46,7 @@ public class SegmentStringNodingTest  extends TestCase {
 
   WKTReader rdr = new WKTReader();
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(SegmentStringNodingTest.class);
   }
 
@@ -64,17 +64,16 @@ public class SegmentStringNodingTest  extends TestCase {
     checkNodedStrings(wkt, pm);
   }
   
-  private void checkNodedStrings(String wkt, PrecisionModel pm) throws ParseException {
+  private static void checkNodedStrings(String wkt, PrecisionModel pm) throws ParseException {
     Geometry g = new WKTReader().read(wkt);
     List<NodedSegmentString> strings = new ArrayList<>();
     strings.add(new NodedSegmentString(g.getCoordinates(), null));
     new SnapRoundingNoder(pm).computeNodes(strings);
     
-    @SuppressWarnings("unchecked")
-    List<NodedSegmentString> noded = NodedSegmentString.getNodedSubstrings(strings);
-    for (NodedSegmentString s : noded) {
+    List<SegmentString> noded = NodedSegmentString.getNodedSubstrings(strings);
+    for (SegmentString s : noded) {
       assertTrue("Found a 1-point segmentstring", s.size() >= 2);
-      assertTrue("Found a collapsed edge", ! isCollapsed(s) );
+        assertFalse("Found a collapsed edge", isCollapsed(s));
     }
   }
 
@@ -86,12 +85,11 @@ public class SegmentStringNodingTest  extends TestCase {
    * @param s a segmentString
    * @return true if the segmentString is collapsed
    */
-  private boolean isCollapsed(SegmentString s) {
+  private static boolean isCollapsed(SegmentString s) {
     if (s.size() != 3) return false;
     boolean isEndsEqual = s.getCoordinate(0).equals2D(s.getCoordinate(2));
     boolean isMiddleDifferent = ! s.getCoordinate(0).equals2D(s.getCoordinate(1));
-    boolean isCollapsed = isEndsEqual && isMiddleDifferent;
-    return isCollapsed;
+      return isEndsEqual && isMiddleDifferent;
   }
   
 

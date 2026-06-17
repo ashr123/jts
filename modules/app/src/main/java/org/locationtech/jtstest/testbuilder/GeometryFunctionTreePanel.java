@@ -16,7 +16,6 @@ import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -24,8 +23,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.border.Border;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -44,11 +41,11 @@ import org.locationtech.jtstest.testbuilder.event.GeometryFunctionListener;
  */
 public class GeometryFunctionTreePanel extends JPanel {
   
-  JScrollPane jScrollPane = new JScrollPane();
+  final JScrollPane jScrollPane = new JScrollPane();
 
-	JTree tree = new JTree();
+	final JTree tree = new JTree();
 
-	BorderLayout borderLayout = new BorderLayout();
+	final BorderLayout borderLayout = new BorderLayout();
 
 	Border border1;
 
@@ -62,7 +59,7 @@ public class GeometryFunctionTreePanel extends JPanel {
 		return null;
 	}
 
-	private class GeometryFunctionRenderer extends DefaultTreeCellRenderer {
+	private static class GeometryFunctionRenderer extends DefaultTreeCellRenderer {
     private final ImageIcon binaryIcon = new ImageIcon(this.getClass()
         .getResource("BinaryGeomFunction.png"));
 
@@ -112,7 +109,7 @@ public class GeometryFunctionTreePanel extends JPanel {
 		}
 	}
 
-	private void jbInit() throws Exception {
+	private void jbInit() {
 		setSize(200, 250);
 		border1 = BorderFactory.createEmptyBorder(4, 4, 4, 4);
 		setLayout(borderLayout);
@@ -136,47 +133,43 @@ public class GeometryFunctionTreePanel extends JPanel {
 
 			}
 		});
-		tree.addTreeSelectionListener(new TreeSelectionListener() {
-			public void valueChanged(TreeSelectionEvent e) {
-				GeometryFunction fun = getFunction();
-				if (fun != null)
-					fireFunctionSelected(new GeometryFunctionEvent(fun));
-			}
-		});
+		tree.addTreeSelectionListener(e -> {
+            GeometryFunction fun = getFunction();
+            if (fun != null)
+                fireFunctionSelected(new GeometryFunctionEvent(fun));
+        });
 	}
 
 	public GeometryFunction getFunction() {
 		return getFunctionFromNode(tree.getLastSelectedPathComponent());
 	}
 
-	public void populate(DoubleKeyMap funcs) {
+	public void populate(DoubleKeyMap<String, String, GeometryFunction> funcs) {
 		tree.setModel(createModel(funcs));
 	}
 
-	private TreeModel createModel(DoubleKeyMap funcMap) {
+	private static TreeModel createModel(DoubleKeyMap<String, String, GeometryFunction> funcMap) {
 		DefaultMutableTreeNode top = new DefaultMutableTreeNode();
 
-		Collection categories = funcMap.keySet();
-		for (Iterator i = categories.iterator(); i.hasNext();) {
-			String category = (String) i.next();
-			DefaultMutableTreeNode catNode = new DefaultMutableTreeNode(category);
-			top.add(catNode);
+		Collection<String> categories = funcMap.keySet();
+        for (String category : categories) {
+            DefaultMutableTreeNode catNode = new DefaultMutableTreeNode(category);
+            top.add(catNode);
 
-			Collection funcs = funcMap.values(category);
-			for (Iterator j = funcs.iterator(); j.hasNext();) {
-				Object func = j.next();
-				catNode.add(new DefaultMutableTreeNode(func));
-			}
-		}
+            Collection<GeometryFunction> funcs = funcMap.values(category);
+            for (GeometryFunction func : funcs) {
+                catNode.add(new DefaultMutableTreeNode(func));
+            }
+        }
 		return new DefaultTreeModel(top);
 	}
 
-	private transient Vector eventListeners;
+	private transient Vector<GeometryFunctionListener> eventListeners;
 
 	public synchronized void removeGeometryFunctionListener(
 			GeometryFunctionListener l) {
 		if (eventListeners != null && eventListeners.contains(l)) {
-			Vector v = (Vector) eventListeners.clone();
+			Vector<GeometryFunctionListener> v = (Vector<GeometryFunctionListener>) eventListeners.clone();
 			v.removeElement(l);
 			eventListeners = v;
 		}
@@ -184,7 +177,7 @@ public class GeometryFunctionTreePanel extends JPanel {
 
 	public synchronized void addGeometryFunctionListener(
 			GeometryFunctionListener l) {
-		Vector v = eventListeners == null ? new Vector(2) : (Vector) eventListeners
+		Vector<GeometryFunctionListener> v = eventListeners == null ? new Vector<>(2) : (Vector<GeometryFunctionListener>) eventListeners
 				.clone();
 		if (!v.contains(l)) {
 			v.addElement(l);
@@ -194,20 +187,20 @@ public class GeometryFunctionTreePanel extends JPanel {
 
 	protected void fireFunctionSelected(GeometryFunctionEvent e) {
 		if (eventListeners != null) {
-			Vector listeners = eventListeners;
+			Vector<GeometryFunctionListener> listeners = eventListeners;
 			int count = listeners.size();
 			for (int i = 0; i < count; i++) {
-				((GeometryFunctionListener) listeners.elementAt(i)).functionSelected(e);
+				listeners.elementAt(i).functionSelected(e);
 			}
 		}
 	}
 
 	protected void fireFunctionInvoked(GeometryFunctionEvent e) {
 		if (eventListeners != null) {
-			Vector listeners = eventListeners;
+			Vector<GeometryFunctionListener> listeners = eventListeners;
 			int count = listeners.size();
 			for (int i = 0; i < count; i++) {
-				((GeometryFunctionListener) listeners.elementAt(i)).functionInvoked(e);
+				listeners.elementAt(i).functionInvoked(e);
 			}
 		}
 	}

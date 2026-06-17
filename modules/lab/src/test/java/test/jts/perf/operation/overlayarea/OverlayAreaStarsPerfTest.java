@@ -21,7 +21,7 @@ import test.jts.perf.PerformanceTestRunner;
 
 public class OverlayAreaStarsPerfTest extends PerformanceTestCase
 {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     PerformanceTestRunner.run(OverlayAreaStarsPerfTest.class);
   }
   boolean verbose = true;
@@ -54,15 +54,13 @@ public class OverlayAreaStarsPerfTest extends PerformanceTestCase
     System.out.println(">>> Full Intersection area = " + area);
   }
   
-  Geometry createSineStar(int nPts, double offset)
+  static Geometry createSineStar(int nPts, double offset)
   {
     SineStarFactory gsf = new SineStarFactory();
     gsf.setCentre(new Coordinate(0, offset));
     gsf.setSize(100);
     gsf.setNumPoints(nPts);
-    
-    Geometry g = gsf.createSineStar();
-    
-    return g;
+
+      return gsf.createSineStar();
   }
 }

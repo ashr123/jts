@@ -13,15 +13,16 @@
 package test.jts.perf.algorithm;
 
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
 
 public class AreaPrecisionPerfTest
 {
-  public static void main(String[] args) throws Exception
-  {
+    private AreaPrecisionPerfTest() {
+    }
+
+    public static void main(String[] args) {
 
     double originX = 1000000;
     double originY = 5000000;
@@ -41,10 +42,10 @@ public class AreaPrecisionPerfTest
       // close ring
       coordinates[nrVertices] = coordinates[0];
       
-      Geometry g1 = new GeometryFactory().createLinearRing(coordinates);
+      LinearRing g1 = new GeometryFactory().createLinearRing(coordinates);
       LinearRing[] holes = new LinearRing[] {};
-      Polygon polygon = (Polygon) new GeometryFactory().createPolygon(
-          (LinearRing) g1, holes);
+      Polygon polygon = new GeometryFactory().createPolygon(
+              g1, holes);
       System.out.println(polygon);
       
       double area = originalSignedArea(coordinates);

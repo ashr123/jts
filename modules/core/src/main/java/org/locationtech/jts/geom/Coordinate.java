@@ -276,8 +276,7 @@ public class Coordinate implements Comparable<Coordinate>, Cloneable, Serializab
    */
   public boolean isValid() {
     if (! Double.isFinite(x)) return false;
-    if (! Double.isFinite(y)) return false;
-    return true;
+      return Double.isFinite(y);
   }
   
   /**
@@ -292,10 +291,7 @@ public class Coordinate implements Comparable<Coordinate>, Cloneable, Serializab
     if (x != other.x) {
       return false;
     }
-    if (y != other.y) {
-      return false;
-    }
-    return true;
+      return y == other.y;
   }
 
   /**
@@ -312,10 +308,7 @@ public class Coordinate implements Comparable<Coordinate>, Cloneable, Serializab
     if (! NumberUtil.equalsWithTolerance(this.x, c.x, tolerance)) {
       return false;
     }
-    if (! NumberUtil.equalsWithTolerance(this.y, c.y, tolerance)) {
-      return false;
-    }
-    return true;
+      return NumberUtil.equalsWithTolerance(this.y, c.y, tolerance);
   }
   
   /**
@@ -377,13 +370,10 @@ public class Coordinate implements Comparable<Coordinate>, Cloneable, Serializab
    *      is less than, equal to, or greater than the specified <code>Coordinate</code>
    */
   public int compareTo(Coordinate o) {
-    Coordinate other = (Coordinate) o;
 
-    if (x < other.x) return -1;
-    if (x > other.x) return 1;
-    if (y < other.y) return -1;
-    if (y > other.y) return 1;
-    return 0;
+      if (x < o.x) return -1;
+    if (x > o.x) return 1;
+      return Double.compare(y, o.y);
   }
 
   /**
@@ -397,9 +387,8 @@ public class Coordinate implements Comparable<Coordinate>, Cloneable, Serializab
 
   public Object clone() {
     try {
-      Coordinate coord = (Coordinate) super.clone();
 
-      return coord; // return the clone
+        return super.clone(); // return the clone
     } catch (CloneNotSupportedException e) {
       Assert.shouldNeverReachHere(
           "this shouldn't happen because this class is Cloneable");
@@ -486,8 +475,7 @@ public class Coordinate implements Comparable<Coordinate>, Cloneable, Serializab
    * @return a hashcode for x
    */
   public static int hashCode(double x) {
-    long f = Double.doubleToLongBits(x);
-    return (int)(f^(f>>>32));
+      return Double.hashCode(x);
   }
 
 
@@ -563,8 +551,7 @@ public class Coordinate implements Comparable<Coordinate>, Cloneable, Serializab
 
       if (dimensionsToTest <= 2) return 0;
 
-      int compZ = compare(c1.getZ(), c2.getZ());
-      return compZ;
+        return compare(c1.getZ(), c2.getZ());
     }
   }
 

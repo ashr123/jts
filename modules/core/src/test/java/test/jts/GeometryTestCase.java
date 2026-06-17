@@ -61,7 +61,7 @@ public abstract class GeometryTestCase extends TestCase{
     return geomFactory;
   }
   
-  protected void checkValid(Geometry geom) {
+  protected static void checkValid(Geometry geom) {
     assertTrue(geom.isValid());
   }
   
@@ -72,7 +72,7 @@ public abstract class GeometryTestCase extends TestCase{
    * @param expected the expected value
    * @param actual the actual value
    */
-  protected void checkEqual(Geometry expected, Geometry actual) {
+  protected static void checkEqual(Geometry expected, Geometry actual) {
     checkEqual("", expected, actual);
   }
 
@@ -83,7 +83,7 @@ public abstract class GeometryTestCase extends TestCase{
    * @param expected the expected value
    * @param actual the actual value
    */
-  protected void checkEqual(String msg, Geometry expected, Geometry actual) {
+  protected static void checkEqual(String msg, Geometry expected, Geometry actual) {
     Geometry actualNorm = actual == null ? null : actual.norm();
     Geometry expectedNorm = expected == null ? null : expected.norm();
     boolean equal;
@@ -106,7 +106,7 @@ public abstract class GeometryTestCase extends TestCase{
    * @param expected the expected value
    * @param actual the actual value
    */
-  protected void checkEqualExact(Geometry expected, Geometry actual) {
+  protected static void checkEqualExact(Geometry expected, Geometry actual) {
     boolean equal = actual.equalsExact(expected);
     if (! equal) {
       System.out.format(CHECK_EQUAL_FAIL, expected, actual );
@@ -114,7 +114,7 @@ public abstract class GeometryTestCase extends TestCase{
     assertTrue(equal);
   }
 
-  protected void checkEqualExact(Geometry expected, Geometry actual, double tolerance) {
+  protected static void checkEqualExact(Geometry expected, Geometry actual, double tolerance) {
     boolean equal = actual.equalsExact(expected, tolerance);
     if (! equal) {
       System.out.format(CHECK_EQUAL_FAIL, expected, actual );
@@ -122,7 +122,7 @@ public abstract class GeometryTestCase extends TestCase{
     assertTrue(equal);
   }
 
-  protected void checkEqual(Geometry expected, Geometry actual, double tolerance) {
+  protected static void checkEqual(Geometry expected, Geometry actual, double tolerance) {
     Geometry actualNorm = actual.norm();
     Geometry expectedNorm = expected.norm();
     boolean equal = actualNorm.equalsExact(expectedNorm, tolerance);
@@ -156,7 +156,7 @@ public abstract class GeometryTestCase extends TestCase{
     assertTrue(equal);
   }
   
-  private boolean equalsExactMultipleDimension(Geometry a, Geometry b, int dimension) {
+  private static boolean equalsExactMultipleDimension(Geometry a, Geometry b, int dimension) {
     if (a.getClass() != b.getClass()) return false;
     if (a.getNumGeometries() != b.getNumGeometries()) return false;
     if (a instanceof Point) {
@@ -178,7 +178,7 @@ public abstract class GeometryTestCase extends TestCase{
     return false;
   }
 
-  private boolean equalsExactMultipleDimensionPolygon(Polygon a, Polygon b, int dimension) {
+  private static boolean equalsExactMultipleDimensionPolygon(Polygon a, Polygon b, int dimension) {
     LinearRing aShell = a.getExteriorRing();
     LinearRing bShell = b.getExteriorRing();
     if (! isEqualDim(aShell.getCoordinateSequence(), bShell.getCoordinateSequence(), dimension))
@@ -194,47 +194,47 @@ public abstract class GeometryTestCase extends TestCase{
     return true;
   }
 
-  protected void checkEqual(Geometry[] expected, Geometry[] actual) {
+  protected static void checkEqual(Geometry[] expected, Geometry[] actual) {
     assertEquals("Array length", expected.length, actual.length);
     for (int i = 0; i < expected.length; i++) {
       checkEqual("element " + i, expected[i], actual[i]);      
     }
   }
 
-  protected void checkEqual(Collection expected, Collection actual) {
+  protected void checkEqual(Collection<? extends Geometry> expected, Collection<? extends Geometry> actual) {
     checkEqual(toGeometryCollection(expected),toGeometryCollection(actual) );
   }
 
-  GeometryCollection toGeometryCollection(Collection geoms) {
+  GeometryCollection toGeometryCollection(Collection<? extends Geometry> geoms) {
     return geomFactory.createGeometryCollection(GeometryFactory.toGeometryArray(geoms));
   }
   
-  protected void checkEqualXY(Coordinate expected, Coordinate actual) {
+  protected static void checkEqualXY(Coordinate expected, Coordinate actual) {
     assertEquals("Coordinate X", expected.getX(), actual.getX() );
     assertEquals("Coordinate Y", expected.getY(), actual.getY() );
   }
   
-  protected void checkEqualXYZ(Coordinate expected, Coordinate actual) {
+  protected static void checkEqualXYZ(Coordinate expected, Coordinate actual) {
     assertEquals("Coordinate X", expected.getX(), actual.getX() );
     assertEquals("Coordinate Y", expected.getY(), actual.getY() );
     assertEquals("Coordinate Z", expected.getZ(), actual.getZ() );
   }
-  protected void checkEqualXY(String message, Coordinate expected, Coordinate actual) {
+  protected static void checkEqualXY(String message, Coordinate expected, Coordinate actual) {
     assertEquals(message + " X", expected.getX(), actual.getX() );
     assertEquals(message + " Y", expected.getY(), actual.getY() );
   }
   
-  protected void checkEqualXY(Coordinate expected, Coordinate actual, double tolerance) {
+  protected static void checkEqualXY(Coordinate expected, Coordinate actual, double tolerance) {
     assertEquals("Coordinate X", expected.getX(), actual.getX(), tolerance);
     assertEquals("Coordinate Y", expected.getY(), actual.getY(), tolerance);
   }
   
-  protected void checkEqualXY(String message, Coordinate expected, Coordinate actual, double tolerance) {
+  protected static void checkEqualXY(String message, Coordinate expected, Coordinate actual, double tolerance) {
     assertEquals(message + " X", expected.getX(), actual.getX(), tolerance);
     assertEquals(message + " Y", expected.getY(), actual.getY(), tolerance);
   }
   
-  protected void checkEqual(LineSegment expected, LineSegment actual, double tolerance) {
+  protected static void checkEqual(LineSegment expected, LineSegment actual, double tolerance) {
     boolean equal;
     if (actual == null || expected == null) {
       equal = actual == null && expected == null;
@@ -248,22 +248,15 @@ public abstract class GeometryTestCase extends TestCase{
     assertTrue(equal);
   }
   
-  private boolean isEqual(LineSegment actual, LineSegment expected, double tolerance) {
+  private static boolean isEqual(LineSegment actual, LineSegment expected, double tolerance) {
     return expected.getCoordinate(0).equals2D(actual.getCoordinate(0), tolerance)
         && expected.getCoordinate(1).equals2D(actual.getCoordinate(1), tolerance);
     
   }
 
-  protected void checkNoAlias(Geometry geom, Geometry geom2) {
+  protected static void checkNoAlias(Geometry geom, Geometry geom2) {
     Geometry geom2Copy = geom2.copy();
-    geom.apply(new CoordinateFilter() {
-
-      @Override
-      public void filter(Coordinate coord) {
-        coord.x = coord.x + 1;
-      }
-      
-    });
+    geom.apply((CoordinateFilter) coord -> coord.x = coord.x + 1);
     boolean equal = geom2.equalsExact(geom2Copy);
     if (! equal) {
       System.out.println(CHECK_NO_AlIAS_FAIL);
@@ -299,19 +292,19 @@ public abstract class GeometryTestCase extends TestCase{
       throw new RuntimeException(e.getMessage());
     }
   }
-  protected List readList(String[] wkt) {
-    ArrayList geometries = new ArrayList(wkt.length);
-    for (int i = 0; i < wkt.length; i++) {
-      geometries.add(read(wkt[i]));
-    }
+  protected List<Geometry> readList(String[] wkt) {
+    ArrayList<Geometry> geometries = new ArrayList<>(wkt.length);
+      for (String s : wkt) {
+          geometries.add(read(s));
+      }
     return geometries;
   }
 
-  public static List readList(WKTReader reader, String[] wkt) {
-    ArrayList geometries = new ArrayList(wkt.length);
-    for (int i = 0; i < wkt.length; i++) {
-      geometries.add(read(reader, wkt[i]));
-    }
+  public static List<Geometry> readList(WKTReader reader, String[] wkt) {
+    ArrayList<Geometry> geometries = new ArrayList<>(wkt.length);
+      for (String s : wkt) {
+          geometries.add(read(reader, s));
+      }
     return geometries;
   }
 

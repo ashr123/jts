@@ -13,7 +13,6 @@
 package org.locationtech.jtstest.function;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,17 +20,19 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jtstest.testbuilder.AppConstants;
-import org.locationtech.jtstest.testbuilder.GeometryEditPanel;
 import org.locationtech.jtstest.testbuilder.JTSTestBuilder;
 import org.locationtech.jtstest.testbuilder.JTSTestBuilderFrame;
-import org.locationtech.jtstest.testbuilder.ui.render.GeometryPainter;
+import org.locationtech.jtstest.testbuilder.controller.JTSTestBuilderController;
 
 
 public class FunctionsUtil {
 
 	public static final Envelope DEFAULT_ENVELOPE = new Envelope(0, 100, 0, 100);
-	
-	public static Envelope getEnvelopeOrDefault(Geometry g)
+
+    private FunctionsUtil() {
+    }
+
+    public static Envelope getEnvelopeOrDefault(Geometry g)
 	{
 		if (g == null) return DEFAULT_ENVELOPE;
 		return g.getEnvelopeInternal();
@@ -61,17 +62,17 @@ public class FunctionsUtil {
   
   public static void showIndicator(Geometry geom, Color lineClr)
   {
-    JTSTestBuilder.controller().indicatorShow(geom, lineClr);
+    JTSTestBuilderController.indicatorShow(geom, lineClr);
   }
   
-  public static Geometry buildGeometry(List geoms, Geometry parentGeom)
+  public static Geometry buildGeometry(List<? extends Geometry> geoms, Geometry parentGeom)
   {
-    if (geoms.size() <= 0)
+    if (geoms.isEmpty())
       return null;
-    if (geoms.size() == 1) 
-      return (Geometry) geoms.get(0);
+    if (geoms.size() == 1)
+      return geoms.get(0);
     // if parent was a GC, ensure returning a GC
-    if (parentGeom != null && parentGeom.getGeometryType().equals("GeometryCollection"))
+    if (parentGeom != null && "GeometryCollection".equals(parentGeom.getGeometryType()))
       return parentGeom.getFactory().createGeometryCollection(GeometryFactory.toGeometryArray(geoms));
     // otherwise return MultiGeom
     return getFactoryOrDefault(parentGeom).buildGeometry(geoms);
@@ -81,7 +82,7 @@ public class FunctionsUtil {
   {
     GeometryFactory gf = getFactory(geoms);
     
-    List<Geometry> geomList = new ArrayList<Geometry>();
+    List<Geometry> geomList = new ArrayList<>();
     for (Geometry geom : geoms) {
       if (geom != null) {
         geomList.add(geom);
@@ -131,7 +132,7 @@ public class FunctionsUtil {
   
   public static List<Geometry> elements(Geometry g)
   {
-    List<Geometry> comp = new ArrayList<Geometry>();
+    List<Geometry> comp = new ArrayList<>();
     for (int i = 0; i < g.getNumGeometries(); i++) {
       comp.add(g.getGeometryN(i));
     }

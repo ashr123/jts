@@ -26,6 +26,9 @@ import java.util.List;
  */
 public class OrientationTransformer {
 
+    private OrientationTransformer() {
+    }
+
     /**
      * Transforms a geometry using the Right Hand Rule specifications defined
      * in the latest GeoJSON specification.

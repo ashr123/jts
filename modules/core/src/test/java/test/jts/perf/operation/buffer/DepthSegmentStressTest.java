@@ -40,13 +40,12 @@ public class DepthSegmentStressTest
   private static final int NUM_RUNS = 1000;
   private static final int NUM_RAND_SEGS = 200;
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     (new DepthSegmentStressTest()).run();
   }
 
-  private static GeometryFactory geomFact = new GeometryFactory();
-  private List<DepthSegment> segSet;
-  private int iter = 0;
+  private static final GeometryFactory geomFact = new GeometryFactory();
+    private int iter = 0;
   
   public DepthSegmentStressTest()
   {
@@ -59,20 +58,19 @@ public class DepthSegmentStressTest
     }
   }  
   
-  public void runCompare(int numRandomSegs)
+  public static void runCompare(int numRandomSegs)
   {
-    segSet = createNodedSegments(numRandomSegs);
+      List<DepthSegment> segSet = createNodedSegments(numRandomSegs);
     
     for (int i = 0; i < SEG_FIELD_SIZE; i += 10) {
-      double queryYOrd = i;
-      List<DepthSegment> result = query(segSet, queryYOrd);
+        List<DepthSegment> result = query(segSet, i);
       
       
       checkTriplets(result);
     }
   }
 
-  private void checkTriplets(List<DepthSegment> result) {
+  private static void checkTriplets(List<DepthSegment> result) {
     for (int i1 = 0; i1 < result.size(); i1++) {
       for (int i2 = i1 + 1; i2 < result.size(); i2++) {
         for (int i3 = i2 + 1; i3 < result.size(); i3++) {
@@ -82,7 +80,7 @@ public class DepthSegmentStressTest
     }
   }
   
-  public void checkCompareContract(DepthSegment seg1, DepthSegment seg2, DepthSegment seg3)
+  public static void checkCompareContract(DepthSegment seg1, DepthSegment seg2, DepthSegment seg3)
   {
     if (! isSymmetric(seg1, seg2)) {
       isSymmetric(seg1, seg2);
@@ -93,19 +91,19 @@ public class DepthSegmentStressTest
     }   
   }
   
-  private void reportError(String validityCheck, 
-      DepthSegment seg1, DepthSegment seg2) {
+  private static void reportError(String validityCheck,
+                                  DepthSegment seg1, DepthSegment seg2) {
     System.out.println(validityCheck + " FAILS: " + seg1 + " / " + seg2);
     throw new RuntimeException(validityCheck + " FAILS!");
   }
 
-  public boolean isSymmetric(DepthSegment seg1, DepthSegment seg2) {
+  public static boolean isSymmetric(DepthSegment seg1, DepthSegment seg2) {
     int cmp12 = seg1.compareTo(seg2);
     int cmp21 = seg2.compareTo(seg1);
     return cmp12 == -cmp21;
   }
   
-  public boolean isTransitive(DepthSegment seg1, DepthSegment seg2, DepthSegment seg3) {
+  public static boolean isTransitive(DepthSegment seg1, DepthSegment seg2, DepthSegment seg3) {
     int cmp12 = seg1.compareTo(seg2);
     int cmp23 = seg2.compareTo(seg3);
     int cmp13 = seg1.compareTo(seg3);
@@ -119,7 +117,7 @@ public class DepthSegmentStressTest
   //----------------------------------------------------------------
   
   static List<DepthSegment> query(List<DepthSegment> segs, double y) {
-    List<DepthSegment> result = new ArrayList<DepthSegment>();
+    List<DepthSegment> result = new ArrayList<>();
     for (DepthSegment ds : segs) {
       if (y >= ds.minY() && y <= ds.maxY()) 
         result.add(ds);
@@ -128,7 +126,7 @@ public class DepthSegmentStressTest
   }
   
   static List<DepthSegment> createNodedSegments(int nSegs) {
-    List<DepthSegment> segList = new ArrayList<DepthSegment>();
+    List<DepthSegment> segList = new ArrayList<>();
     Geometry segs = createRandomSegments(nSegs);
     Geometry nodedSegs = UnaryUnionNG.union(segs, new PrecisionModel(1));
     //System.out.println(nodedSegs);
@@ -149,7 +147,7 @@ public class DepthSegmentStressTest
   }
   
   static Geometry createRandomSegments(int nSegs) {
-    List<Geometry> lines = new ArrayList<Geometry>();
+    List<Geometry> lines = new ArrayList<>();
 
     for (int i = 0; i < nSegs; i++) {
       double x0 = randint(SEG_FIELD_SIZE);
@@ -175,7 +173,7 @@ public class DepthSegmentStressTest
  * A copy of ubgraphDepthLocater.DepthSegment, which is private.
  */
 class DepthSegment
-    implements Comparable
+    implements Comparable<DepthSegment>
 {
   public static DepthSegment create(Coordinate p0, Coordinate p1) {
     Coordinate lo = p0;
@@ -188,14 +186,12 @@ class DepthSegment
     return new DepthSegment(seg, 0);
   }
   
-  private LineSegment upwardSeg;
-  private int leftDepth;
+  private final LineSegment upwardSeg;
 
-  public DepthSegment(LineSegment seg, int depth)
+    public DepthSegment(LineSegment seg, int depth)
   {
     // input seg is assumed to be upward
     upwardSeg = new LineSegment(seg);
-    this.leftDepth = depth;
   }
   
   public double maxY() {
@@ -222,12 +218,12 @@ class DepthSegment
    * <li>0 : if the segments are identical 
    * </ul>
    * 
-   * @param obj a DepthSegment
+   * @param otherDepthSeg a DepthSegment
    * @return the comparison value
    */
-  public int compareTo(Object obj)
+  public int compareTo(DepthSegment otherDepthSeg)
   {
-    LineSegment otherSeg = ((DepthSegment) obj).upwardSeg;
+    LineSegment otherSeg = otherDepthSeg.upwardSeg;
     
     /**
      * If segments are disjoint in X, X values provides ordering.
@@ -281,7 +277,7 @@ class DepthSegment
     return 0;
   }
   
-  private int comparePointInSegYExtent(Coordinate p, LineSegment seg) {
+  private static int comparePointInSegYExtent(Coordinate p, LineSegment seg) {
     if (p.y >= seg.minY() && p.y <= seg.maxY()) {
       //-- flip sign, since orientation and order relation are opposite
       int orient = seg.orientationIndex(p);
@@ -300,12 +296,11 @@ class DepthSegment
     return upwardSeg.p0.x == upwardSeg.p1.x;
   }
   
-  public boolean envelopesOverlap(LineSegment seg1, LineSegment seg2) {
+  public static boolean envelopesOverlap(LineSegment seg1, LineSegment seg2) {
     if (seg1.maxX() <= seg2.minX()) return false;
     if (seg2.maxX() <= seg1.minX()) return false;
     if (seg1.maxY() <= seg2.minY()) return false;
-    if (seg2.maxY() <= seg1.minY()) return false;
-    return true;
+      return !(seg2.maxY() <= seg1.minY());
   }
 
   public String toString()
@@ -314,4 +309,3 @@ class DepthSegment
   }
 
 }
-

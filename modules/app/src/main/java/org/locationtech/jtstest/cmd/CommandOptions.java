@@ -47,7 +47,8 @@ public class CommandOptions {
   public static final String FORMAT_WKT = "wkt";
   public static final String FORMAT_GEOJSON = "geojson";
   public static final String FORMAT_SVG = "svg";
-  
 
 
+    private CommandOptions() {
+    }
 }

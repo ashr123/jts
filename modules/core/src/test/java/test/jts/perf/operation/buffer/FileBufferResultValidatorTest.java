@@ -14,7 +14,6 @@ package test.jts.perf.operation.buffer;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.geom.Geometry;
@@ -32,9 +31,9 @@ import junit.framework.TestCase;
  */
 public class FileBufferResultValidatorTest extends TestCase {
 
-  static int MAX_FEATURE = 1;
+  static final int MAX_FEATURE = 1;
   
-	WKTReader rdr = new WKTReader();
+	final WKTReader rdr = new WKTReader();
 
   public FileBufferResultValidatorTest(String name) {
     super(name);
@@ -57,10 +56,10 @@ public class FileBufferResultValidatorTest extends TestCase {
     runTest(new WKTFileReader(new InputStreamReader(is), rdr));
   }
 
-  void runTest(WKTFileReader fileRdr)
+  static void runTest(WKTFileReader fileRdr)
   throws Exception
   {
-    List polys = fileRdr.read();
+    List<Geometry> polys = fileRdr.read();
 
     runAll(polys, 0.01);
     runAll(polys, 0.1);
@@ -71,23 +70,22 @@ public class FileBufferResultValidatorTest extends TestCase {
 
   }
 
-  void runAll(List geoms, double dist)
+  static void runAll(List<? extends Geometry> geoms, double dist)
   {
   	Stopwatch sw = new Stopwatch();
     //System.out.println("Geom count = " + geoms.size() + "   distance = " + dist);
   	int count = 0;
-    for (Iterator i = geoms.iterator(); i.hasNext(); ) {
-      Geometry g = (Geometry) i.next();
-      runBuffer(g, dist);
-      runBuffer(g.reverse(), dist);
-      //System.out.print(".");
-      count++;
-      if (count > MAX_FEATURE) return;
-    }
+      for (Geometry g : geoms) {
+          runBuffer(g, dist);
+          runBuffer(g.reverse(), dist);
+          //System.out.print(".");
+          count++;
+          if (count > MAX_FEATURE) return;
+      }
     //System.out.println("  " + sw.getTimeString());
 
   }
-  void runBuffer(Geometry g, double dist)
+  static void runBuffer(Geometry g, double dist)
   {
   	Geometry buf = g.buffer(dist);
     BufferResultValidator validator = new BufferResultValidator(g, dist, buf);

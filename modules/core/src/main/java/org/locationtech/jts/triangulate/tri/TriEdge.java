@@ -57,9 +57,7 @@ class TriEdge {
     if ( !(arg instanceof TriEdge) )
       return false;
     TriEdge other = (TriEdge) arg;
-    if ( p0.equals(other.p0) && p1.equals(other.p1) )
-      return true;
-    return false;
+      return p0.equals(other.p0) && p1.equals(other.p1);
   }
   
   public String toString() {

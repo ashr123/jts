@@ -78,11 +78,11 @@ public class MultiLineString
     if (isEmpty()) {
       return false;
     }
-    for (int i = 0; i < geometries.length; i++) {
-      if (!((LineString) geometries[i]).isClosed()) {
-        return false;
+      for (Geometry geometry : geometries) {
+          if (!((LineString) geometry).isClosed()) {
+              return false;
+          }
       }
-    }
     return true;
   }
 
@@ -138,4 +138,3 @@ public class MultiLineString
     return Geometry.TYPECODE_MULTILINESTRING;
   }
 }
-

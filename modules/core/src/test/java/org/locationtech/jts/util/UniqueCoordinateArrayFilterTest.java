@@ -31,7 +31,7 @@ public class UniqueCoordinateArrayFilterTest
     junit.textui.TestRunner.run(UniqueCoordinateArrayFilterTest.class);
   }
 
-  public void testFilter() throws Exception {
+  public void testFilter() {
     Geometry g = read(
           "MULTIPOINT(10 10, 20 20, 30 30, 20 20, 10 10)");
     UniqueCoordinateArrayFilter f = new UniqueCoordinateArrayFilter();

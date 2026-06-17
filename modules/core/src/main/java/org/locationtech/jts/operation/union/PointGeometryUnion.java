@@ -41,9 +41,9 @@ public class PointGeometryUnion
 		return unioner.union();
 	}
 	
-	private Geometry pointGeom;
-	private Geometry otherGeom;
-	private GeometryFactory geomFact;
+	private final Geometry pointGeom;
+	private final Geometry otherGeom;
+	private final GeometryFactory geomFact;
 	
 	public PointGeometryUnion(Puntal pointGeom, Geometry otherGeom)
 	{
@@ -56,7 +56,7 @@ public class PointGeometryUnion
 	{
 		PointLocator locater = new PointLocator();
 		// use a set to eliminate duplicates, as required for union
-		Set exteriorCoords = new TreeSet();
+		Set<Coordinate> exteriorCoords = new TreeSet<>();
 		
 		for (int i =0 ; i < pointGeom.getNumGeometries(); i++) {
 			Point point = (Point) pointGeom.getGeometryN(i);
@@ -67,7 +67,7 @@ public class PointGeometryUnion
 		}
 		
 		// if no points are in exterior, return the other geom
-		if (exteriorCoords.size() == 0)
+		if (exteriorCoords.isEmpty())
 			return otherGeom;
 		
 		// make a puntal geometry of appropriate size

@@ -12,6 +12,7 @@
 package org.locationtech.jts.operation.relateng;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.locationtech.jts.geom.Coordinate;
@@ -21,7 +22,7 @@ import junit.textui.TestRunner;
 import test.jts.GeometryTestCase;
 
 public class PolygonNodeConverterTest extends GeometryTestCase {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(PolygonNodeConverterTest.class);
   }
   
@@ -96,7 +97,7 @@ public class PolygonNodeConverterTest extends GeometryTestCase {
         );
   }
   
-  private void checkConversion(List<NodeSection> input, List<NodeSection> expected) {
+  private static void checkConversion(List<NodeSection> input, List<NodeSection> expected) {
     List<NodeSection> actual = PolygonNodeConverter.convert(input);
     boolean isEqual = checkSectionsEqual(actual, expected);
     if (! isEqual) {
@@ -106,15 +107,15 @@ public class PolygonNodeConverterTest extends GeometryTestCase {
     assertTrue(isEqual);
   }
 
-  private String formatSections(List<NodeSection> sections) {
+  private static String formatSections(List<NodeSection> sections) {
     StringBuilder sb = new StringBuilder();
     for (NodeSection ns : sections) {
-      sb.append(ns + "\n");
+      sb.append(ns).append("\n");
     }
     return sb.toString();
   }
 
-  private boolean checkSectionsEqual(List<NodeSection> ns1, List<NodeSection> ns2) {
+  private static boolean checkSectionsEqual(List<NodeSection> ns1, List<NodeSection> ns2) {
     if (ns1.size() != ns2.size())
       return false;
     sort(ns1);
@@ -127,28 +128,25 @@ public class PolygonNodeConverterTest extends GeometryTestCase {
     return true;
   }
 
-  private void sort(List<NodeSection> ns) {
+  private static void sort(List<NodeSection> ns) {
     ns.sort(new NodeSection.EdgeAngleComparator());
   }
 
-  private List<NodeSection> collect(NodeSection... sections) {
-    List<NodeSection> sectionList = new ArrayList<NodeSection>();
-    for (NodeSection s : sections) {
-      sectionList.add(s);
-    }
+  private static List<NodeSection> collect(NodeSection... sections) {
+      List<NodeSection> sectionList = new ArrayList<>(Arrays.asList(sections));
     return sectionList;
   }
 
-  private NodeSection sectionHole(double v0x, double v0y, double nx, double ny, double v1x, double v1y) {
+  private static NodeSection sectionHole(double v0x, double v0y, double nx, double ny, double v1x, double v1y) {
     return section(1, v0x, v0y, nx, ny, v1x, v1y);
   }
 
-  private NodeSection section(int ringId, double v0x, double v0y, double nx, double ny, double v1x, double v1y) {
+  private static NodeSection section(int ringId, double v0x, double v0y, double nx, double ny, double v1x, double v1y) {
     return new NodeSection(true, Dimension.A, 1, ringId, null, false, 
         new Coordinate(v0x, v0y), new Coordinate(nx, ny), new Coordinate(v1x, v1y)); 
   }
 
-  private NodeSection sectionShell(double v0x, double v0y, double nx, double ny, double v1x, double v1y) {
+  private static NodeSection sectionShell(double v0x, double v0y, double nx, double ny, double v1x, double v1y) {
     return section(0, v0x, v0y, nx, ny, v1x, v1y);
   }
 }

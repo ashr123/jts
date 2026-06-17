@@ -68,7 +68,7 @@ class TPVWSimplifier {
  
   private CornerArea cornerArea;
   private double removableSizeFactor = 1.0;
-  private Edge[] edges;
+  private final Edge[] edges;
   
   public TPVWSimplifier(Edge[] edges) {
     this.edges = edges;
@@ -86,10 +86,9 @@ class TPVWSimplifier {
     EdgeIndex edgeIndex = new EdgeIndex();
     add(edges, edgeIndex);
 
-    for (int i = 0 ; i < edges.length; i++) {
-      Edge edge = edges[i];
-      edge.simplify(cornerArea, edgeIndex);
-    }
+      for (Edge edge : edges) {
+          edge.simplify(cornerArea, edgeIndex);
+      }
   }
 
   private void add(Edge[] edges, EdgeIndex edgeIndex) {
@@ -109,13 +108,13 @@ class TPVWSimplifier {
     private static final int MIN_RING_SIZE = 4;
     
     private LinkedLine linkedLine;
-    private boolean isFreeRing;
-    private int nPts;
-    private Coordinate[] pts;
+    private final boolean isFreeRing;
+    private final int nPts;
+    private final Coordinate[] pts;
     private VertexSequencePackedRtree vertexIndex;
-    private Envelope envelope;
+    private final Envelope envelope;
     private boolean isRemoved = false;
-    private boolean isRemovable;
+    private final boolean isRemovable;
     private double distanceTolerance = 0.0;
 
     /**
@@ -206,7 +205,7 @@ class TPVWSimplifier {
     }
 
     private PriorityQueue<Corner> createQueue(double areaTolerance, CornerArea cornerArea) {
-      PriorityQueue<Corner> cornerQueue = new PriorityQueue<Corner>();
+      PriorityQueue<Corner> cornerQueue = new PriorityQueue<>();
       int minIndex = (linkedLine.isRing() && isFreeRing) ? 0 : 1;
       int maxIndex = nPts - 1;
       for (int i = minIndex; i < maxIndex; i++) {
@@ -260,8 +259,8 @@ class TPVWSimplifier {
      * @param edge the hull to test
      * @return true if there is an intersecting vertex
      */
-    private boolean hasIntersectingVertex(Corner corner, Envelope cornerEnv, 
-        Edge edge) {
+    private static boolean hasIntersectingVertex(Corner corner, Envelope cornerEnv,
+                                                 Edge edge) {
       int[] result = edge.query(cornerEnv);
       for (int index : result) {
 
@@ -322,8 +321,8 @@ class TPVWSimplifier {
   
   private static class EdgeIndex {
 
-    STRtree index = new STRtree(); 
-    
+    final STRtree<Edge> index = new STRtree<>();
+
     public void add(Edge edge) {
       index.insert(edge.getEnvelope(), edge);
     }

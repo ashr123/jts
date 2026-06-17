@@ -64,7 +64,7 @@ public class JTSOpRunner {
 
   private InputStream stdIn = System.in;
   private boolean captureGeometry = false;
-  private List<Geometry> resultGeoms = new ArrayList<Geometry>();
+  private final List<Geometry> resultGeoms = new ArrayList<>();
   
   private CommandOutput out;
   private GeometryOutput geomOut;
@@ -208,7 +208,7 @@ public class JTSOpRunner {
     }
   }
 
-  private GeometryFactory createGeometryFactory(int srid) {
+  private static GeometryFactory createGeometryFactory(int srid) {
     if (srid > 0) {
       return new GeometryFactory(new PrecisionModel(), srid);
     }
@@ -238,7 +238,7 @@ public class JTSOpRunner {
   
   private static List<Geometry> explode(List<Geometry> geoms) {
     if (geoms == null) return null;
-    List<Geometry> geomsEx = new ArrayList<Geometry>();
+    List<Geometry> geomsEx = new ArrayList<>();
     for (Geometry geom : geoms) {
       explode(geom, geomsEx);
     }
@@ -252,7 +252,7 @@ public class JTSOpRunner {
   }
 
   private static List<Geometry> toList(Geometry geometry) {
-    List<Geometry> geoms = new ArrayList<Geometry>();
+    List<Geometry> geoms = new ArrayList<>();
     geoms.add(geometry);
     return geoms;
   }
@@ -267,8 +267,7 @@ public class JTSOpRunner {
   }
 
   private void executeFunction() {
-    GeometryFunction baseFun = getFunction(param.operation);
-    GeometryFunction func = baseFun;
+      GeometryFunction func = getFunction(param.operation);
     if (param.isFilter) {
       func = new FilterGeometryFunction(func, param.filterOp, param.filterVal);
     }
@@ -322,7 +321,7 @@ public class JTSOpRunner {
     hdrSave = "";
     //printlnInfo(hdr);
     for (int i = 0; i < fun.getNumInvocations(); i++) {
-      Object funArgs[] = fun.getArgs(i);
+      List<Object> funArgs = fun.getArgs(i);
       GeometryFunction func = fun.getFunction();
       String arg = fun.getValue(i);
       
@@ -337,7 +336,7 @@ public class JTSOpRunner {
     }
   }
   
-  private Object executeFunctionRepeat(Geometry geomA, GeometryFunction func, Object[] funArgs) {
+  private Object executeFunctionRepeat(Geometry geomA, GeometryFunction func, List<Object> funArgs) {
     Object result = null;
     for (int i = 0; i < param.repeat; i++) {
       if (param.repeat > 1) {
@@ -348,7 +347,7 @@ public class JTSOpRunner {
     return result;
   }
   
-  private Object executeFunctionOnce(Geometry geomA, GeometryFunction func, Object[] funArgs) {
+  private Object executeFunctionOnce(Geometry geomA, GeometryFunction func, List<Object> funArgs) {
     Stopwatch timer = new Stopwatch();
     Object result = null;
     try {
@@ -382,7 +381,7 @@ public class JTSOpRunner {
     return result;
   }
 
-  private String errorMsg(Throwable ex) {
+  private static String errorMsg(Throwable ex) {
     String msg = "ERROR excuting function: " + ex.getMessage() + "\n";
     msg += toStackString(ex);
     if (ex.getCause() != null) {
@@ -392,12 +391,11 @@ public class JTSOpRunner {
     return msg;
   }
 
-  private String toStackString(Throwable ex) {
+  private static String toStackString(Throwable ex) {
     StringWriter sw = new StringWriter();
     PrintWriter pw = new PrintWriter(sw);
     ex.printStackTrace(pw);
-    String stack = sw.toString();
-    return stack;
+      return sw.toString();
   }
   
   private void logError(String msg) {
@@ -480,9 +478,9 @@ public class JTSOpRunner {
   
   private static String opSummary(GeometryFunction func, String arg) {
     StringBuilder sb = new StringBuilder();
-    sb.append("Op: " + func.getCategory() + "." + func.getName() );
+    sb.append("Op: ").append(func.getCategory()).append(".").append(func.getName());
     if (arg != null) {
-      sb.append(" " + arg);
+      sb.append(" ").append(arg);
     }
     return sb.toString();
   }
@@ -519,9 +517,9 @@ public class JTSOpRunner {
     if (outputFormat == null) return;
     
     if (captureGeometry) {
-      resultGeoms.add((Geometry) geom);
+      resultGeoms.add(geom);
     }
-    geomOut.printGeometry((Geometry) geom, srid, outputFormat);
+    geomOut.printGeometry(geom, srid, outputFormat);
   }
   
   private void printlnInfo(String s) {
@@ -552,7 +550,7 @@ public class JTSOpRunner {
     return info;
   }
   
-  private void checkFunctionArgs(GeometryFunction func, List<Geometry> geomB, String[] argList) {
+  private static void checkFunctionArgs(GeometryFunction func, List<Geometry> geomB, String[] argList) {
     Class<?>[] paramTypes = func.getParameterTypes();
     int nParam = paramTypes.length;
     
@@ -598,9 +596,9 @@ public class JTSOpRunner {
 }
 
 class FunctionInvoker {
-  private GeometryFunction func;
+  private final GeometryFunction func;
   private Geometry b;
-  private String[] args;
+  private final String[] args;
 
   public FunctionInvoker(GeometryFunction fun, String[] args) {
     this.func = fun;
@@ -630,30 +628,30 @@ class FunctionInvoker {
     }
     return args[i];
   }
-  public Object[] getArgs(int i) {
+  public List<Object> getArgs(int i) {
     String arg = args == null ? null : args[i];
     return createFunctionArgs(func, b, arg);
   }
-  
-  private Object[] createFunctionArgs(GeometryFunction func, Geometry geomB, String arg1) {
+
+  private static List<Object> createFunctionArgs(GeometryFunction func, Geometry geomB, String arg1) {
     Class<?>[] paramTypes = func.getParameterTypes();
-    Object[] paramVal = new Object[paramTypes.length];
-    
+    List<Object> paramVal = new ArrayList<>();
+
     int iparam = 0;
     if (func.isBinary()) {
-      paramVal[0] = geomB;
+      paramVal.add(geomB);
       iparam++;
     }
     // just handling one scalar arg for now
-    if (iparam < paramVal.length) {
-      paramVal[iparam] = SwingUtil.coerce(arg1, paramTypes[iparam]);
+    if (iparam < paramTypes.length) {
+      paramVal.add(SwingUtil.coerce(arg1, paramTypes[iparam]));
     }
     return paramVal;
   }
 }
 class IndexedGeometry
 {
-  private SpatialIndex index = null;
+  private SpatialIndex<Integer> index = null;
   private List<Integer> allIndexes = null;
   
   public IndexedGeometry(List<Geometry> geoms, boolean isIndexed)
@@ -667,7 +665,7 @@ class IndexedGeometry
   }
   
   private void initList(List<Geometry> geoms) {
-    allIndexes = new ArrayList<Integer>();
+    allIndexes = new ArrayList<>();
     for (int i = 0; i < geoms.size(); i++) {
       allIndexes.add(i);
     }
@@ -675,14 +673,13 @@ class IndexedGeometry
 
   private void initIndex(List<Geometry> geoms)
   {
-    index = new STRtree();
+    index = new STRtree<>();
     for (int i = 0; i < geoms.size(); i++) {
       Geometry comp = geoms.get(i);
-      index.insert(comp.getEnvelopeInternal(), new Integer(i));
+      index.insert(comp.getEnvelopeInternal(), i);
     }
   }
-  
-  @SuppressWarnings("unchecked")
+
   public List<Integer> query(Geometry geom)
   {
     if (index != null) {

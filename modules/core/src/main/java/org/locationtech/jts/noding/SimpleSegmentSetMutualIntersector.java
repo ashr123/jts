@@ -12,7 +12,6 @@
 package org.locationtech.jts.noding;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.locationtech.jts.geom.Coordinate;
 
@@ -26,14 +25,14 @@ import org.locationtech.jts.geom.Coordinate;
  */
 public class SimpleSegmentSetMutualIntersector implements SegmentSetMutualIntersector
 {
-  private final Collection baseSegStrings;
+  private final Collection<? extends SegmentString> baseSegStrings;
 
   /**
    * Constructs a new intersector for a given set of {@link SegmentString}s.
    * 
    * @param segStrings the base segment strings to intersect
    */
-  public SimpleSegmentSetMutualIntersector(Collection segStrings)
+  public SimpleSegmentSetMutualIntersector(Collection<? extends SegmentString> segStrings)
   {
 	  this.baseSegStrings = segStrings;
   }
@@ -46,16 +45,14 @@ public class SimpleSegmentSetMutualIntersector implements SegmentSetMutualInters
    * @param segStrings set of segments to intersect
    * @param segInt segment intersector to use
    */
-  public void process(Collection segStrings, SegmentIntersector segInt) {
-    for (Iterator i = baseSegStrings.iterator(); i.hasNext(); ) {
-    	SegmentString baseSS = (SegmentString) i.next();
-    	for (Iterator j = segStrings.iterator(); j.hasNext(); ) {
-	      	SegmentString ss = (SegmentString) j.next();
-	      	intersect(baseSS, ss, segInt);
-	        if (segInt.isDone()) 
-	        	return;
-    	}
-    }
+  public void process(Collection<? extends SegmentString> segStrings, SegmentIntersector segInt) {
+      for (SegmentString baseSS : baseSegStrings) {
+          for (SegmentString ss : segStrings) {
+              intersect(baseSS, ss, segInt);
+              if (segInt.isDone())
+                  return;
+          }
+      }
   }
 
   /**
@@ -66,7 +63,7 @@ public class SimpleSegmentSetMutualIntersector implements SegmentSetMutualInters
    * @param ss1 a segment string
    * @param segInt the segment intersector to use
    */
-  private void intersect(SegmentString ss0, SegmentString ss1, SegmentIntersector segInt)
+  private static void intersect(SegmentString ss0, SegmentString ss1, SegmentIntersector segInt)
   {
     Coordinate[] pts0 = ss0.getCoordinates();
     Coordinate[] pts1 = ss1.getCoordinates();

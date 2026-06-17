@@ -26,11 +26,11 @@ extends PerformanceTestCase {
   private static final int ITEM_ENV_SIZE = 10;
   private static final int QUERY_ENV_SIZE = 40;
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     PerformanceTestRunner.run(HPRtreePerfTest.class);
   }
   
-  private HPRtree index;
+  private HPRtree<String> index;
 
   public HPRtreePerfTest(String name) {
     super(name);
@@ -47,7 +47,7 @@ extends PerformanceTestCase {
   {
     System.out.println("----- Tree size: " + size);
     
-    index = new HPRtree(NODE_SIZE);
+    index = new HPRtree<>(NODE_SIZE);
     int side = (int) Math.sqrt(size);
     loadGrid(side, index);
     
@@ -56,7 +56,7 @@ extends PerformanceTestCase {
     System.out.println("Build time = " + sw.getTimeString());
   }
 
-  private static void loadGrid(int side, SpatialIndex index) {
+  private static void loadGrid(int side, SpatialIndex<String> index) {
     for (int i = 0; i < side; i++) {
       for (int j = 0; j < side; j++) {
         Envelope env = new Envelope(i, i + ITEM_ENV_SIZE, j, j + ITEM_ENV_SIZE);

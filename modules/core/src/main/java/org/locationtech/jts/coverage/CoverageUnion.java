@@ -31,7 +31,10 @@ import org.locationtech.jts.geom.TopologyException;
  *
  */
 public class CoverageUnion {
-  /**
+    private CoverageUnion() {
+    }
+
+    /**
    * Unions a polygonal coverage.
    * 
    * @param coverage the polygons in the coverage

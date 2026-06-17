@@ -34,8 +34,8 @@ import org.locationtech.jts.geom.Geometry;
  */
 public class BufferCurveMaximumDistanceFinder 
 {
-	private Geometry inputGeom;
-  private PointPairDistance maxPtDist = new PointPairDistance();
+	private final Geometry inputGeom;
+  private final PointPairDistance maxPtDist = new PointPairDistance();
 
 	public BufferCurveMaximumDistanceFinder(Geometry inputGeom)
 	{
@@ -68,9 +68,9 @@ public class BufferCurveMaximumDistanceFinder
 	}
 	
   public static class MaxPointDistanceFilter implements CoordinateFilter {
-		private PointPairDistance maxPtDist = new PointPairDistance();
-		private PointPairDistance minPtDist = new PointPairDistance();
-		private Geometry geom;
+		private final PointPairDistance maxPtDist = new PointPairDistance();
+		private final PointPairDistance minPtDist = new PointPairDistance();
+		private final Geometry geom;
 
 		public MaxPointDistanceFilter(Geometry geom) {
 			this.geom = geom;
@@ -90,9 +90,9 @@ public class BufferCurveMaximumDistanceFinder
   public static class MaxMidpointDistanceFilter 
   	implements CoordinateSequenceFilter 
   	{
-		private PointPairDistance maxPtDist = new PointPairDistance();
-		private PointPairDistance minPtDist = new PointPairDistance();
-		private Geometry geom;
+		private final PointPairDistance maxPtDist = new PointPairDistance();
+		private final PointPairDistance minPtDist = new PointPairDistance();
+		private final Geometry geom;
 
 		public MaxMidpointDistanceFilter(Geometry geom) {
 			this.geom = geom;

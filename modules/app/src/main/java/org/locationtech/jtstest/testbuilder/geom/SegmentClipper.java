@@ -23,8 +23,11 @@ import org.locationtech.jts.geom.Envelope;
  *
  */
 public class SegmentClipper {
-  
-  public static void clip(Coordinate p0, Coordinate p1, Envelope env) {
+
+    private SegmentClipper() {
+    }
+
+    public static void clip(Coordinate p0, Coordinate p1, Envelope env) {
     clipEndpoint(p0, p1, env.getMinX(), env.getMinY(), env.getMaxX(), env.getMaxY());
     clipEndpoint(p1, p0, env.getMinX(), env.getMinY(), env.getMaxX(), env.getMaxY());
   }

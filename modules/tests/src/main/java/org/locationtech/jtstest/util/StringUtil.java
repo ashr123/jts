@@ -21,7 +21,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -40,7 +39,10 @@ import org.locationtech.jts.util.Assert;
  */
 public class StringUtil 
 {
-    public final static String newLine = System.getProperty("line.separator");
+    public final static String newLine = System.lineSeparator();
+
+    private StringUtil() {
+    }
 
     public static String removeFromEnd(String s, String strToRemove)
     {
@@ -85,17 +87,17 @@ public class StringUtil
     }
 
     public static String getStackTrace(Throwable t, int depth) {
-        String stackTrace = "";
+        StringBuilder stackTrace = new StringBuilder();
         StringReader stringReader = new StringReader(getStackTrace(t));
         LineNumberReader lineNumberReader = new LineNumberReader(stringReader);
         for (int i = 0; i < depth; i++) {
             try {
-                stackTrace += lineNumberReader.readLine() + newLine;
+                stackTrace.append(lineNumberReader.readLine()).append(newLine);
             } catch (IOException e) {
                 Assert.shouldNeverReachHere();
             }
         }
-        return stackTrace;
+        return stackTrace.toString();
     }
 
     /**
@@ -125,14 +127,14 @@ public class StringUtil
      *  Returns true if substring is indeed a substring of string.
      */
     public static boolean contains(String string, String substring) {
-        return string.indexOf(substring) > -1;
+        return string.contains(substring);
     }
 
     /**
      *  Returns a string with all occurrences of oldChar replaced by newStr
      */
     public static String replace(String str, char oldChar, String newStr) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (int i = 0; i < str.length(); i++) {
             char ch = str.charAt(i);
             if (ch == oldChar) {
@@ -149,7 +151,7 @@ public class StringUtil
      *  character
      */
     public static String stringOfChar(char ch, int count) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (int i = 0; i < count; i++) {
             buf.append(ch);
         }
@@ -173,9 +175,9 @@ public class StringUtil
     /**
      *  Returns the elements of v in uppercase
      */
-    public static Vector toUpperCase(Vector v) {
-        Vector result = new Vector();
-        for (Enumeration e = v.elements(); e.hasMoreElements();) {
+    public static Vector<String> toUpperCase(Vector<?> v) {
+        Vector<String> result = new Vector<>();
+        for (Enumeration<?> e = v.elements(); e.hasMoreElements();) {
             String s = e.nextElement().toString();
             result.add(s.toUpperCase());
         }
@@ -185,10 +187,10 @@ public class StringUtil
     /**
      *  Returns the elements of v in lowercase
      */
-    public static Vector toLowerCase(List v) {
-        Vector result = new Vector();
-        for (Iterator i = v.iterator(); i.hasNext();) {
-            String s = i.next().toString();
+    public static Vector<String> toLowerCase(List<?> v) {
+        Vector<String> result = new Vector<>();
+        for (Object o : v) {
+            String s = o.toString();
             result.add(s.toLowerCase());
         }
         return result;
@@ -198,11 +200,10 @@ public class StringUtil
      *  Returns the elements of c separated by commas and enclosed in
      *  single-quotes
      */
-    public static String toCommaDelimitedStringInQuotes(Collection c) {
-        StringBuffer result = new StringBuffer();
-        for (Iterator i = c.iterator(); i.hasNext();) {
-            Object o = i.next();
-            result.append(",'" + o.toString() + "'");
+    public static String toCommaDelimitedStringInQuotes(Collection<?> c) {
+        StringBuilder result = new StringBuilder();
+        for (Object o : c) {
+            result.append(",'").append(o.toString()).append("'");
         }
         return result.substring(1);
     }
@@ -210,14 +211,13 @@ public class StringUtil
     /**
      *  Returns the elements of c separated by commas. c must not be empty.
      */
-    public static String toCommaDelimitedString(Collection c) {
+    public static String toCommaDelimitedString(Collection<?> c) {
         if (c.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        StringBuffer result = new StringBuffer();
-        for (Iterator i = c.iterator(); i.hasNext();) {
-            Object o = i.next();
-            result.append(", " + o.toString());
+        StringBuilder result = new StringBuilder();
+        for (Object o : c) {
+            result.append(", ").append(o.toString());
         }
         return result.substring(1);
     }
@@ -225,8 +225,8 @@ public class StringUtil
     /**
      *  Converts the comma-delimited string into a List of trimmed strings.
      */
-    public static List fromCommaDelimitedString(String s) {
-        ArrayList result = new ArrayList();
+    public static List<String> fromCommaDelimitedString(String s) {
+        ArrayList<String> result = new ArrayList<>();
         StringTokenizer tokenizer = new StringTokenizer(s, ",");
         while (tokenizer.hasMoreTokens()) {
             result.add(tokenizer.nextToken().trim());
@@ -247,7 +247,7 @@ public class StringUtil
      *  false. Posted by Steve Chapel <schapel@breakthr.com> on UseNet
      */
     public static void replace(StringBuffer orig, String o, String n, boolean all) {
-        if (orig == null || o == null || o.length() == 0 || n == null) {
+        if (orig == null || o == null || o.isEmpty() || n == null) {
             throw new IllegalArgumentException("Null or zero-length String");
         }
         int i = 0;
@@ -311,21 +311,21 @@ public class StringUtil
         //Strip the tags from the HTML description
         boolean skipping = false;
         boolean writing = false;
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         StringTokenizer tokenizer = new StringTokenizer(original, "<>", true);
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken();
-            if (token.equalsIgnoreCase("<")) {
+            if ("<".equalsIgnoreCase(token)) {
                 skipping = true;
                 writing = false;
                 continue;
             }
-            if (token.equalsIgnoreCase(">")) {
+            if (">".equalsIgnoreCase(token)) {
                 skipping = false;
                 continue;
             }
             if (!skipping) {
-                if (token.trim().length() == 0) {
+                if (token.trim().isEmpty()) {
                     continue;
                 }
                 if (!writing) {
@@ -352,7 +352,7 @@ public class StringUtil
      *  columns.
      */
     public static String wrap(String s, int n) {
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         boolean wrapPending = false;
         for (int i = 0; i < s.length(); i++) {
             if (i % n == 0 && i > 0) {
@@ -411,7 +411,7 @@ public class StringUtil
      */
     public static String removeConsecutiveDuplicates(String s) {
         String previous = "??";
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         for (int i = 0; i < s.length(); i++) {
             String c = s.charAt(i) + "";
             if (!previous.equalsIgnoreCase(c)) {

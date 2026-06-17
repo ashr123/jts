@@ -31,7 +31,7 @@ public class GeometryGraphOperation
   /**
    * The operation args into an array so they can be accessed by index
    */
-  protected GeometryGraph[] arg;  // the arg(s) of the operation
+  protected final GeometryGraph[] arg;  // the arg(s) of the operation
 
   public GeometryGraphOperation(Geometry g0, Geometry g1)
   {
@@ -58,7 +58,7 @@ public class GeometryGraphOperation
     setComputationPrecision(g0.getPrecisionModel());
 
     arg = new GeometryGraph[1];
-    arg[0] = new GeometryGraph(0, g0);;
+    arg[0] = new GeometryGraph(0, g0);
   }
 
   public Geometry getArgGeometry(int i) { return arg[i].getGeometry(); }

@@ -51,8 +51,7 @@ public class RelateOp
   public static IntersectionMatrix relate(Geometry a, Geometry b)
   {
     RelateOp relOp = new RelateOp(a, b);
-    IntersectionMatrix im = relOp.getIntersectionMatrix();
-    return im;
+      return relOp.getIntersectionMatrix();
   }
 
   /**
@@ -67,11 +66,10 @@ public class RelateOp
   public static IntersectionMatrix relate(Geometry a, Geometry b, BoundaryNodeRule boundaryNodeRule)
   {
     RelateOp relOp = new RelateOp(a, b, boundaryNodeRule);
-    IntersectionMatrix im = relOp.getIntersectionMatrix();
-    return im;
+      return relOp.getIntersectionMatrix();
   }
 
-  private RelateComputer relate;
+  private final RelateComputer relate;
 
   /**
    * Creates a new Relate operation, using the default (OGC SFS) Boundary Node Rule.

@@ -183,7 +183,7 @@ public class GeometryEditor
       return factory.createPolygon();
     }
 
-    ArrayList holes = new ArrayList();
+    ArrayList<LinearRing> holes = new ArrayList<>();
     for (int i = 0; i < newPolygon.getNumInteriorRing(); i++) {
       LinearRing hole = (LinearRing) edit(newPolygon.getInteriorRingN(i), operation);
       if (hole == null || hole.isEmpty()) {
@@ -193,7 +193,7 @@ public class GeometryEditor
     }
 
     return factory.createPolygon(shell,
-                                 (LinearRing[]) holes.toArray(new LinearRing[] {  }));
+                                 holes.toArray(new LinearRing[] {  }));
   }
 
   private GeometryCollection editGeometryCollection(
@@ -204,7 +204,7 @@ public class GeometryEditor
         factory);
     
     // edit the component geometries
-    ArrayList geometries = new ArrayList();
+    ArrayList<Geometry> geometries = new ArrayList<>();
     for (int i = 0; i < collectionForType.getNumGeometries(); i++) {
       Geometry geometry = edit(collectionForType.getGeometryN(i), operation);
       if (geometry == null || geometry.isEmpty()) {
@@ -214,18 +214,18 @@ public class GeometryEditor
     }
 
     if (collectionForType.getClass() == MultiPoint.class) {
-      return factory.createMultiPoint((Point[]) geometries.toArray(
+      return factory.createMultiPoint(geometries.toArray(
             new Point[] {  }));
     }
     if (collectionForType.getClass() == MultiLineString.class) {
-      return factory.createMultiLineString((LineString[]) geometries.toArray(
+      return factory.createMultiLineString(geometries.toArray(
             new LineString[] {  }));
     }
     if (collectionForType.getClass() == MultiPolygon.class) {
-      return factory.createMultiPolygon((Polygon[]) geometries.toArray(
+      return factory.createMultiPolygon(geometries.toArray(
             new Polygon[] {  }));
     }
-    return factory.createGeometryCollection((Geometry[]) geometries.toArray(
+    return factory.createGeometryCollection(geometries.toArray(
           new Geometry[] {  }));
   }
 

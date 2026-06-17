@@ -28,7 +28,10 @@ import org.locationtech.jtstest.geomfunction.Metadata;
 
 public class ValidationFunctions
 {
-  /**
+    private ValidationFunctions() {
+    }
+
+    /**
    * Validates all geometries in a collection independently.
    * Errors are returned as points at the invalid location
    * 
@@ -37,7 +40,7 @@ public class ValidationFunctions
    */
   public static Geometry invalidLocations(Geometry g)
   {
-    List invalidLoc = new ArrayList();
+    List<Geometry> invalidLoc = new ArrayList<>();
     for (int i = 0; i < g.getNumGeometries(); i++) {
       Geometry geom = g.getGeometryN(i);
       IsValidOp ivop = new IsValidOp(geom);
@@ -51,7 +54,7 @@ public class ValidationFunctions
   
   public static Geometry invalidGeoms(Geometry g)
   {
-    List invalidGeoms = new ArrayList();
+    List<Geometry> invalidGeoms = new ArrayList<>();
     for (int i = 0; i < g.getNumGeometries(); i++) {
       Geometry geom = g.getGeometryN(i);
       IsValidOp ivop = new IsValidOp(geom);

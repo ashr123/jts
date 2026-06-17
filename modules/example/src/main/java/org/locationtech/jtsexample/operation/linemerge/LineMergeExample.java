@@ -27,12 +27,12 @@ import org.locationtech.jts.operation.linemerge.LineMerger;
  * @version 1.7
  */
 public class LineMergeExample {
-  private WKTReader reader = new WKTReader();
+  private final WKTReader reader = new WKTReader();
 
   public LineMergeExample() {
   }
 
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) {
     LineMergeExample test = new LineMergeExample();
     try {
       test.run();
@@ -41,19 +41,19 @@ public class LineMergeExample {
     }
   }
 
-  void run() throws Exception {
-    Collection lineStrings = getData();
+  void run() {
+    Collection<Geometry> lineStrings = getData();
     
     LineMerger lineMerger = new LineMerger();
     lineMerger.add(lineStrings);
-    Collection mergedLineStrings = lineMerger.getMergedLineStrings();
+    Collection<?> mergedLineStrings = lineMerger.getMergedLineStrings();
     
     System.out.println("Lines formed (" + mergedLineStrings.size() + "):");
     System.out.println(mergedLineStrings);
   }
 
-  Collection getData() {
-    Collection lines = new ArrayList();
+  Collection<Geometry> getData() {
+    Collection<Geometry> lines = new ArrayList<>();
     lines.add(read("LINESTRING (220 160, 240 150, 270 150, 290 170)"));
     lines.add(read("LINESTRING (60 210, 30 190, 30 160)"));
     lines.add(read("LINESTRING (70 430, 100 430, 120 420, 140 400)"));
@@ -73,9 +73,8 @@ public class LineMergeExample {
 
   Geometry read(String lineWKT) {
     try {
-      Geometry geom = reader.read(lineWKT);
 
-      return geom;
+        return reader.read(lineWKT);
     } catch (Exception ex) {
       ex.printStackTrace();
     }

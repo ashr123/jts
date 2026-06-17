@@ -127,7 +127,7 @@ public class KMLReader {
         coordinates = matcher.replaceAll(" ");
 
         double[] parsedOrdinates = {Double.NaN, Double.NaN, Double.NaN};
-        List<Coordinate> coordinateList = new ArrayList();
+        List<Coordinate> coordinateList = new ArrayList<>();
 
         int spaceIdx = coordinates.indexOf(' ');
         int currentIdx = 0;
@@ -339,7 +339,7 @@ public class KMLReader {
         return null;
     }
 
-    private void moveToElement(XMLStreamReader xmlStreamReader, String elementName, String endElementName) throws XMLStreamException, ParseException {
+    private static void moveToElement(XMLStreamReader xmlStreamReader, String elementName, String endElementName) throws XMLStreamException, ParseException {
         boolean elementFound = false;
 
         while (xmlStreamReader.hasNext() && !(xmlStreamReader.isEndElement() && xmlStreamReader.getLocalName().equals(endElementName))) {
@@ -356,11 +356,11 @@ public class KMLReader {
         }
     }
 
-    private void raiseParseError(String template, Object... parameters) throws ParseException {
+    private static void raiseParseError(String template, Object... parameters) throws ParseException {
         throw new ParseException(String.format(template, parameters));
     }
 
-    private <T> T[] prepareTypedArray(List<Geometry> geometryList, Class<T> geomClass) {
+    private static <T> T[] prepareTypedArray(List<Geometry> geometryList, Class<T> geomClass) {
         return geometryList.toArray((T[]) Array.newInstance(geomClass, geometryList.size()));
     }
 

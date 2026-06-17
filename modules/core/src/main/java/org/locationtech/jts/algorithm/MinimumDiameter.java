@@ -87,8 +87,7 @@ public class MinimumDiameter
   private Coordinate[] convexHullPts = null;
   private LineSegment minBaseSeg = new LineSegment();
   private Coordinate minWidthPt = null;
-  private int minPtIndex;
-  private double minWidth = 0.0;
+    private double minWidth = 0.0;
 
   /**
    * Compute a minimum diameter for a given {@link Geometry}.
@@ -248,9 +247,8 @@ public class MinimumDiameter
     }
     // found maximum width for this segment - update global min dist if appropriate
     if (maxPerpDistance < minWidth) {
-      minPtIndex = maxIndex;
-      minWidth = maxPerpDistance;
-      minWidthPt = pts[minPtIndex];
+        minWidth = maxPerpDistance;
+      minWidthPt = pts[maxIndex];
       minBaseSeg = new LineSegment(seg);
 //      System.out.println(minBaseSeg);
 //      System.out.println(minWidth);
@@ -303,16 +301,16 @@ public class MinimumDiameter
     double maxPerp = -Double.MAX_VALUE;
     
     // compute maxima and minima of lines parallel and perpendicular to base segment
-    for (int i = 0; i < convexHullPts.length; i++) {
-      
-      double paraC = computeC(dx, dy, convexHullPts[i]);
-      if (paraC > maxPara) maxPara = paraC;
-      if (paraC < minPara) minPara = paraC;
-      
-      double perpC = computeC(-dy, dx, convexHullPts[i]);
-      if (perpC > maxPerp) maxPerp = perpC;
-      if (perpC < minPerp) minPerp = perpC;
-    }
+      for (Coordinate convexHullPt : convexHullPts) {
+
+          double paraC = computeC(dx, dy, convexHullPt);
+          if (paraC > maxPara) maxPara = paraC;
+          if (paraC < minPara) minPara = paraC;
+
+          double perpC = computeC(-dy, dx, convexHullPt);
+          if (perpC > maxPerp) maxPerp = perpC;
+          if (perpC < minPerp) minPerp = perpC;
+      }
     
     // compute lines along edges of minimum rectangle
     LineSegment maxPerpLine = computeSegmentForLine(-dx, -dy, maxPerp);

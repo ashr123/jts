@@ -12,7 +12,6 @@
 package org.locationtech.jts.operation.union;
 
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.index.ItemVisitor;
 import org.locationtech.jts.index.strtree.STRtree;
 import org.locationtech.jts.operation.union.DisjointSets.Subsets;
 
@@ -43,8 +42,8 @@ public class SpatialPartition {
     boolean isEquivalent(int i, int j);
   }
   
-  private Subsets sets;
-  private Geometry[] geoms;
+  private final Subsets sets;
+  private final Geometry[] geoms;
 
   public SpatialPartition(Geometry[] geoms, EquivalenceRelation rel) {
     this.geoms = geoms;
@@ -89,8 +88,8 @@ public class SpatialPartition {
     return geoms[ getItem(s, i) ];
   }
   
-  private Subsets build(Geometry[] geoms, EquivalenceRelation rel) {
-    STRtree index = createIndex(geoms);
+  private static Subsets build(Geometry[] geoms, EquivalenceRelation rel) {
+    STRtree<Integer> index = createIndex(geoms);
     
     DisjointSets dset = new DisjointSets(geoms.length);
     //--- partition the geometries
@@ -99,33 +98,28 @@ public class SpatialPartition {
       final int queryIndex = i;
       Geometry queryGeom = geoms[i];
       // TODO: allow expanding query env to account for distance-based relations
-      index.query(queryGeom.getEnvelopeInternal(), new ItemVisitor() {
+      index.query(queryGeom.getEnvelopeInternal(), item -> {
+        int itemIndex = item;
 
-        @Override
-        public void visitItem(Object item) {
-          int itemIndex = (Integer) item;
-          
-          // avoid reflexive and symmetric comparisons by comparing only lower to higher
-          if (itemIndex <= queryIndex) return;
-          
-          // already in same partition
-          if (dset.isInSameSubset(queryIndex,  itemIndex)) return;
-          
-          if (rel.isEquivalent(queryIndex, itemIndex)) {
-            // geometries are in same partition
-            dset.merge(queryIndex, itemIndex);            
-          }
+        // avoid reflexive and symmetric comparisons by comparing only lower to higher
+        if (itemIndex <= queryIndex) return;
+
+        // already in same partition
+        if (dset.isInSameSubset(queryIndex,  itemIndex)) return;
+
+        if (rel.isEquivalent(queryIndex, itemIndex)) {
+          // geometries are in same partition
+          dset.merge(queryIndex, itemIndex);
         }
-        
       });
     }
     return dset.subsets();
   }
   
-  private STRtree createIndex(Geometry[] geoms) {
-    STRtree index = new STRtree();
+  private static STRtree<Integer> createIndex(Geometry[] geoms) {
+    STRtree<Integer> index = new STRtree<>();
     for (int i = 0; i < geoms.length; i++) {
-      index.insert(geoms[i].getEnvelopeInternal(), new Integer(i));
+      index.insert(geoms[i].getEnvelopeInternal(), i);
     }
     return index;
   }

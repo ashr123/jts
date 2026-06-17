@@ -30,7 +30,7 @@ import junit.textui.TestRunner;
 public class PreparedPolygonPredicateStressTest extends TestCase
 {
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(PreparedPolygonPredicateStressTest.class);
   }
 
@@ -46,44 +46,35 @@ public class PreparedPolygonPredicateStressTest extends TestCase
   	tester.run(1000);
   }
   
-  class PredicateStressTester 
+  static class PredicateStressTester
   extends StressTestHarness
   {
   	public boolean checkResult(Geometry target, Geometry test) {
   		if (! checkIntersects(target, test)) return false;
-  		if (! checkContains(target, test)) return false;
-  		return true;
-  	}
+        return checkContains(target, test);
+    }
   }
   
-  public boolean checkContains(Geometry target, Geometry test) 
+  public static boolean checkContains(Geometry target, Geometry test)
   {
 	boolean expectedResult = target.contains(test);
 
-    PreparedGeometryFactory pgFact = new PreparedGeometryFactory();
-    PreparedGeometry prepGeom = pgFact.create(target);
+      PreparedGeometry prepGeom = PreparedGeometryFactory.create(target);
     
 	boolean prepResult = prepGeom.contains(test);
 
-	if (prepResult != expectedResult) {
-		return false;
-	}
-	return true;
+      return prepResult == expectedResult;
   } 
 
-  public boolean checkIntersects(Geometry target, Geometry test) 
+  public static boolean checkIntersects(Geometry target, Geometry test)
   {
 	boolean expectedResult = target.intersects(test);
-	
-	PreparedGeometryFactory pgFact = new PreparedGeometryFactory();
-	PreparedGeometry prepGeom = pgFact.create(target);
+
+      PreparedGeometry prepGeom = PreparedGeometryFactory.create(target);
 	
 	boolean prepResult = prepGeom.intersects(test);
-	
-	if (prepResult != expectedResult) {
-		return false;
-	}
-	return true;
+
+      return prepResult == expectedResult;
   } 
 
 }

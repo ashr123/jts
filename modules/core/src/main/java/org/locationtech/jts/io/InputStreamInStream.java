@@ -20,7 +20,7 @@ import java.io.InputStream;
 public class InputStreamInStream
 	implements InStream
 {
-  private InputStream is;
+  private final InputStream is;
 
   public InputStreamInStream(InputStream is)
   {

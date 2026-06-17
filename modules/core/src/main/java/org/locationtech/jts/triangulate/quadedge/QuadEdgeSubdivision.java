@@ -15,7 +15,6 @@ package org.locationtech.jts.triangulate.quadedge;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
@@ -88,11 +87,11 @@ public class QuadEdgeSubdivision {
 	// used for edge extraction to ensure edge uniqueness
 	private int visitedKey = 0;
 //	private Set quadEdges = new HashSet();
-	private List quadEdges = new ArrayList();
-	private QuadEdge startingEdge;
-	private double tolerance;
-	private double edgeCoincidenceTolerance;
-	private Vertex[] frameVertex = new Vertex[3];
+	private final List<QuadEdge> quadEdges = new ArrayList<>();
+	private final QuadEdge startingEdge;
+	private final double tolerance;
+	private final double edgeCoincidenceTolerance;
+	private final Vertex[] frameVertex = new Vertex[3];
 	private Envelope frameEnv;
 	private QuadEdgeLocator locator = null;
 
@@ -183,7 +182,7 @@ public class QuadEdgeSubdivision {
 	 * 
 	 * @return a collection of QuadEdges
 	 */
-	public Collection getEdges() {
+	public Collection<QuadEdge> getEdges() {
 		return quadEdges;
 	}
 
@@ -408,10 +407,8 @@ public class QuadEdgeSubdivision {
 	 * @return true if the edge is connected to the frame triangle
 	 */
 	public boolean isFrameEdge(QuadEdge e) {
-		if (isFrameVertex(e.orig()) || isFrameVertex(e.dest()))
-			return true;
-		return false;
-	}
+        return isFrameVertex(e.orig()) || isFrameVertex(e.dest());
+    }
 
 	/**
 	 * Tests whether a QuadEdge is an edge on the border of the frame facets and
@@ -437,11 +434,8 @@ public class QuadEdgeSubdivision {
 			return true;
 		// check other vertex of triangle to right of edge
 		Vertex vRightTriOther = e.sym().lNext().dest();
-		if (isFrameVertex(vRightTriOther))
-			return true;
-
-		return false;
-	}
+        return isFrameVertex(vRightTriOther);
+    }
 
 	/**
 	 * Tests whether a vertex is a vertex of the outer triangle.
@@ -455,12 +449,10 @@ public class QuadEdgeSubdivision {
 			return true;
 		if (v.equals(frameVertex[1]))
 			return true;
-		if (v.equals(frameVertex[2]))
-			return true;
-		return false;
-	}
+        return v.equals(frameVertex[2]);
+    }
 
-	private LineSegment seg = new LineSegment();
+	private final LineSegment seg = new LineSegment();
 
 	/**
 	 * Tests whether a {@link Coordinate} lies on a {@link QuadEdge}, up to a
@@ -488,11 +480,8 @@ public class QuadEdgeSubdivision {
 	 * @return true if the vertex is a endpoint of the edge
 	 */
 	public boolean isVertexOfEdge(QuadEdge e, Vertex v) {
-		if ((v.equals(e.orig(), tolerance)) || (v.equals(e.dest(), tolerance))) {
-			return true;
-		}
-		return false;
-	}
+        return (v.equals(e.orig(), tolerance)) || (v.equals(e.dest(), tolerance));
+    }
 
   /**
    * Gets the unique {@link Vertex}es in the subdivision,
@@ -504,26 +493,30 @@ public class QuadEdgeSubdivision {
    * 
    * @see #getVertexUniqueEdges
    */
-  public Collection getVertices(boolean includeFrame) 
+  public Collection<Vertex> getVertices(boolean includeFrame)
   {
-    Set vertices = new HashSet();
-    for (Iterator i = quadEdges.iterator(); i.hasNext();) {
-      QuadEdge qe = (QuadEdge) i.next();
-      Vertex v = qe.orig();
-      //System.out.println(v);
-      if (includeFrame || ! isFrameVertex(v))
-        vertices.add(v);
-      
+    Set<Vertex> vertices = new HashSet<>();
       /**
        * Inspect the sym edge as well, since it is
-       * possible that a vertex is only at the 
+       * possible that a vertex is only at the
        * dest of all tracked quadedges.
        */
-      Vertex vd = qe.dest();
-      //System.out.println(vd);
-      if (includeFrame || ! isFrameVertex(vd))
-        vertices.add(vd);
-    }
+      for (QuadEdge qe : quadEdges) {
+          Vertex v = qe.orig();
+          //System.out.println(v);
+          if (includeFrame || !isFrameVertex(v))
+              vertices.add(v);
+
+          /**
+           * Inspect the sym edge as well, since it is
+           * possible that a vertex is only at the
+           * dest of all tracked quadedges.
+           */
+          Vertex vd = qe.dest();
+          //System.out.println(vd);
+          if (includeFrame || !isFrameVertex(vd))
+              vertices.add(vd);
+      }
     return vertices;
   }
 
@@ -544,36 +537,40 @@ public class QuadEdgeSubdivision {
    * @param includeFrame true if the frame vertices should be included
    * @return a collection of QuadEdge with the vertices of the subdivision as their origins
    */
-  public List getVertexUniqueEdges(boolean includeFrame) 
+  public List<QuadEdge> getVertexUniqueEdges(boolean includeFrame)
   {
-  	List edges = new ArrayList();
-    Set visitedVertices = new HashSet();
-    for (Iterator i = quadEdges.iterator(); i.hasNext();) {
-      QuadEdge qe = (QuadEdge) i.next();
-      Vertex v = qe.orig();
-      //System.out.println(v);
-      if (! visitedVertices.contains(v)) {
-      	visitedVertices.add(v);
-        if (includeFrame || ! isFrameVertex(v)) {
-        	edges.add(qe);
-        }
-      }
-      
+  	List<QuadEdge> edges = new ArrayList<>();
+    Set<Vertex> visitedVertices = new HashSet<>();
       /**
        * Inspect the sym edge as well, since it is
-       * possible that a vertex is only at the 
+       * possible that a vertex is only at the
        * dest of all tracked quadedges.
        */
-      QuadEdge qd = qe.sym();
-      Vertex vd = qd.orig();
-      //System.out.println(vd);
-      if (! visitedVertices.contains(vd)) {
-      	visitedVertices.add(vd);
-        if (includeFrame || ! isFrameVertex(vd)) {
-        	edges.add(qd);
-        }
+      for (QuadEdge qe : quadEdges) {
+          Vertex v = qe.orig();
+          //System.out.println(v);
+          if (!visitedVertices.contains(v)) {
+              visitedVertices.add(v);
+              if (includeFrame || !isFrameVertex(v)) {
+                  edges.add(qe);
+              }
+          }
+
+          /**
+           * Inspect the sym edge as well, since it is
+           * possible that a vertex is only at the
+           * dest of all tracked quadedges.
+           */
+          QuadEdge qd = qe.sym();
+          Vertex vd = qd.orig();
+          //System.out.println(vd);
+          if (!visitedVertices.contains(vd)) {
+              visitedVertices.add(vd);
+              if (includeFrame || !isFrameVertex(vd)) {
+                  edges.add(qd);
+              }
+          }
       }
-    }
     return edges;
   }
 
@@ -586,17 +583,17 @@ public class QuadEdgeSubdivision {
 	 * @param includeFrame true if the frame edges are to be included
 	 * @return a List of QuadEdges
 	 */
-	public List getPrimaryEdges(boolean includeFrame) {
+	public List<QuadEdge> getPrimaryEdges(boolean includeFrame) {
 		visitedKey++;
 
-		List edges = new ArrayList();
-		Stack edgeStack = new Stack();
+		List<QuadEdge> edges = new ArrayList<>();
+		Stack<QuadEdge> edgeStack = new Stack<>();
 		edgeStack.push(startingEdge);
-		
-		Set visitedEdges = new HashSet();
+
+		Set<QuadEdge> visitedEdges = new HashSet<>();
 
 		while (!edgeStack.empty()) {
-			QuadEdge edge = (QuadEdge) edgeStack.pop();
+			QuadEdge edge = edgeStack.pop();
 			if (! visitedEdges.contains(edge)) {
 				QuadEdge priQE = edge.getPrimary();
 
@@ -621,7 +618,7 @@ public class QuadEdgeSubdivision {
    */
   public List<QuadEdge> getFrameEdges() {
     List<QuadEdge> edges = getPrimaryEdges(true);
-    List<QuadEdge> frameEdges = new ArrayList<QuadEdge>();
+    List<QuadEdge> frameEdges = new ArrayList<>();
     for (QuadEdge e : edges) {
       if (isFrameEdge(e)) {
         QuadEdge fe = isFrameVertex(e.orig()) ? e : e.sym();
@@ -670,13 +667,13 @@ public class QuadEdgeSubdivision {
 
 		// visited flag is used to record visited edges of triangles
 		// setVisitedAll(false);
-		Stack edgeStack = new Stack();
+		Stack<QuadEdge> edgeStack = new Stack<>();
 		edgeStack.push(startingEdge);
 
-		Set visitedEdges = new HashSet();
-		
+		Set<QuadEdge> visitedEdges = new HashSet<>();
+
 		while (!edgeStack.empty()) {
-			QuadEdge edge = (QuadEdge) edgeStack.pop();
+			QuadEdge edge = edgeStack.pop();
 			if (! visitedEdges.contains(edge)) {
 				QuadEdge[] triEdges = fetchTriangleToVisit(edge, edgeStack,
 						includeFrame, visitedEdges);
@@ -691,7 +688,7 @@ public class QuadEdgeSubdivision {
    * Only one visitor is allowed to be active at a
 	 * time, so this is safe.
 	 */
-	private QuadEdge[] triEdges = new QuadEdge[3];
+	private final QuadEdge[] triEdges = new QuadEdge[3];
 
 	/**
 	 * Stores the edges for a visited triangle. Also pushes sym (neighbour) edges
@@ -704,8 +701,8 @@ public class QuadEdgeSubdivision {
 	 * or null if the triangle should not be visited (for instance, if it is
 	 *         outer)
 	 */
-	private QuadEdge[] fetchTriangleToVisit(QuadEdge edge, Stack edgeStack,
-			boolean includeFrame, Set visitedEdges) {
+	private QuadEdge[] fetchTriangleToVisit(QuadEdge edge, Stack<QuadEdge> edgeStack,
+			boolean includeFrame, Set<QuadEdge> visitedEdges) {
 		QuadEdge curr = edge;
 		int edgeCount = 0;
 		boolean isFrame = false;
@@ -741,20 +738,20 @@ public class QuadEdgeSubdivision {
 	 *          true if the frame triangles should be included
 	 * @return a List of QuadEdge[3] arrays
 	 */
-	public List getTriangleEdges(boolean includeFrame) {
+	public List<QuadEdge[]> getTriangleEdges(boolean includeFrame) {
 		TriangleEdgesListVisitor visitor = new TriangleEdgesListVisitor();
 		visitTriangles(visitor, includeFrame);
 		return visitor.getTriangleEdges();
 	}
 
 	private static class TriangleEdgesListVisitor implements TriangleVisitor {
-		private List triList = new ArrayList();
+		private final List<QuadEdge[]> triList = new ArrayList<>();
 
 		public void visit(QuadEdge[] triEdges) {
 			triList.add(new QuadEdge[]{triEdges[0], triEdges[1], triEdges[2]});
 		}
 
-		public List getTriangleEdges() {
+		public List<QuadEdge[]> getTriangleEdges() {
 			return triList;
 		}
 	}
@@ -767,21 +764,21 @@ public class QuadEdgeSubdivision {
 	 *          true if the frame triangles should be included
 	 * @return a List of Vertex[3] arrays
 	 */
-	public List getTriangleVertices(boolean includeFrame) {
+	public List<Vertex[]> getTriangleVertices(boolean includeFrame) {
 		TriangleVertexListVisitor visitor = new TriangleVertexListVisitor();
 		visitTriangles(visitor, includeFrame);
 		return visitor.getTriangleVertices();
 	}
 
 	private static class TriangleVertexListVisitor implements TriangleVisitor {
-		private List triList = new ArrayList();
+		private final List<Vertex[]> triList = new ArrayList<>();
 
 		public void visit(QuadEdge[] triEdges) {
 			triList.add(new Vertex[] { triEdges[0].orig(), triEdges[1].orig(),
 					triEdges[2].orig() });
 		}
 
-		public List getTriangleVertices() {
+		public List<Vertex[]> getTriangleVertices() {
 			return triList;
 		}
 	}
@@ -793,16 +790,16 @@ public class QuadEdgeSubdivision {
 	 *          true if the frame triangles should be included
 	 * @return a list of Coordinate[4] representing each triangle
 	 */
-	public List getTriangleCoordinates(boolean includeFrame) {
+	public List<Coordinate[]> getTriangleCoordinates(boolean includeFrame) {
 		TriangleCoordinatesVisitor visitor = new TriangleCoordinatesVisitor();
 		visitTriangles(visitor, includeFrame);
 		return visitor.getTriangles();
 	}
 
 	private static class TriangleCoordinatesVisitor implements TriangleVisitor {
-		private CoordinateList coordList = new CoordinateList();
+		private final CoordinateList coordList = new CoordinateList();
 
-		private List triCoords = new ArrayList();
+		private final List<Coordinate[]> triCoords = new ArrayList<>();
 
 		public TriangleCoordinatesVisitor() {
 		}
@@ -813,7 +810,7 @@ public class QuadEdgeSubdivision {
 				Vertex v = triEdges[i].orig();
 				coordList.add(v.getCoordinate());
 			}
-			if (coordList.size() > 0) {
+			if (!coordList.isEmpty()) {
 				coordList.closeRing();
 				Coordinate[] pts = coordList.toCoordinateArray();
 				if (pts.length != 4) {
@@ -825,20 +822,20 @@ public class QuadEdgeSubdivision {
 			}
 		}
 
-		private void checkTriangleSize(Coordinate[] pts)
+		private static void checkTriangleSize(Coordinate[] pts)
 		{
 			String loc = "";
 			if (pts.length >= 2)
 				loc = WKTWriter.toLineString(pts[0], pts[1]);
 			else {
-				if (pts.length >= 1)
+				if (pts.length == 1)
 					loc = WKTWriter.toPoint(pts[0]);
 			}
 			// Assert.isTrue(pts.length == 4, "Too few points for visited triangle at " + loc);
 			//com.vividsolutions.jts.util.Debug.println("too few points for triangle at " + loc);
 		}
 		
-		public List getTriangles() {
+		public List<Coordinate[]> getTriangles() {
 			return triCoords;
 		}
 	}
@@ -851,14 +848,13 @@ public class QuadEdgeSubdivision {
 	 * @return a MultiLineString
 	 */
 	public Geometry getEdges(GeometryFactory geomFact) {
-		List quadEdges = getPrimaryEdges(false);
+		List<QuadEdge> quadEdges = getPrimaryEdges(false);
 		LineString[] edges = new LineString[quadEdges.size()];
 		int i = 0;
-		for (Iterator it = quadEdges.iterator(); it.hasNext();) {
-			QuadEdge qe = (QuadEdge) it.next();
-			edges[i++] = geomFact.createLineString(new Coordinate[] {
-					qe.orig().getCoordinate(), qe.dest().getCoordinate() });
-		}
+        for (QuadEdge qe : quadEdges) {
+            edges[i++] = geomFact.createLineString(new Coordinate[]{
+                    qe.orig().getCoordinate(), qe.dest().getCoordinate()});
+        }
 		return geomFact.createMultiLineString(edges);
 	}
 
@@ -870,14 +866,13 @@ public class QuadEdgeSubdivision {
 	 * @return a GeometryCollection of triangular Polygons
 	 */
 	public Geometry getTriangles(GeometryFactory geomFact) {
-		List triPtsList = getTriangleCoordinates(false);
+		List<Coordinate[]> triPtsList = getTriangleCoordinates(false);
 		Polygon[] tris = new Polygon[triPtsList.size()];
 		int i = 0;
-		for (Iterator it = triPtsList.iterator(); it.hasNext();) {
-			Coordinate[] triPt = (Coordinate[]) it.next();
-			tris[i++] = geomFact
-					.createPolygon(geomFact.createLinearRing(triPt));
-		}
+        for (Coordinate[] triPt : triPtsList) {
+            tris[i++] = geomFact
+                    .createPolygon(geomFact.createLinearRing(triPt));
+        }
 		return geomFact.createGeometryCollection(tris);
 	}
 
@@ -890,13 +885,12 @@ public class QuadEdgeSubdivision {
    * @return a GeometryCollection of triangular Polygons
 	 */
   public Geometry getTriangles(boolean includeFrame, GeometryFactory geomFact) {
-    List triPtsList = getTriangleCoordinates(includeFrame);
+    List<Coordinate[]> triPtsList = getTriangleCoordinates(includeFrame);
     Polygon[] tris = new Polygon[triPtsList.size()];
     int i = 0;
-    for (Iterator it = triPtsList.iterator(); it.hasNext();) {
-      Coordinate[] triPt = (Coordinate[]) it.next();
-      tris[i++] = geomFact.createPolygon(geomFact.createLinearRing(triPt));
-    }
+      for (Coordinate[] triPt : triPtsList) {
+          tris[i++] = geomFact.createPolygon(geomFact.createLinearRing(triPt));
+      }
     return geomFact.createGeometryCollection(tris);
   }
 	 
@@ -913,8 +907,8 @@ public class QuadEdgeSubdivision {
 	 */
   public Geometry getVoronoiDiagram(GeometryFactory geomFact)
   {
-    List vorCells = getVoronoiCellPolygons(geomFact);
-    return geomFact.createGeometryCollection(GeometryFactory.toGeometryArray(vorCells));   
+    List<Polygon> vorCells = getVoronoiCellPolygons(geomFact);
+    return geomFact.createGeometryCollection(GeometryFactory.toGeometryArray(vorCells));
   }
   
 	/**
@@ -928,7 +922,7 @@ public class QuadEdgeSubdivision {
 	 * @param geomFact a geometry factory
 	 * @return a List of Polygons
 	 */
-  public List getVoronoiCellPolygons(GeometryFactory geomFact)
+  public List<Polygon> getVoronoiCellPolygons(GeometryFactory geomFact)
   {
   	/*
   	 * Compute circumcentres of triangles as vertices for dual edges.
@@ -938,12 +932,11 @@ public class QuadEdgeSubdivision {
   	 */ 
   	visitTriangles(new TriangleCircumcentreVisitor(), true);
   	
-    List cells = new ArrayList();
-    Collection edges = getVertexUniqueEdges(false);
-    for (Iterator i = edges.iterator(); i.hasNext(); ) {
-    	QuadEdge qe = (QuadEdge) i.next();
-      cells.add(getVoronoiCellPolygon(qe, geomFact));
-    }
+    List<Polygon> cells = new ArrayList<>();
+    Collection<QuadEdge> edges = getVertexUniqueEdges(false);
+      for (QuadEdge qe : edges) {
+          cells.add(getVoronoiCellPolygon(qe, geomFact));
+      }
     return cells;
   }
   
@@ -959,9 +952,9 @@ public class QuadEdgeSubdivision {
    * @param geomFact a factory for building the polygon
    * @return a polygon indicating the cell extent
    */
-  public Polygon getVoronoiCellPolygon(QuadEdge qe, GeometryFactory geomFact)
+  public static Polygon getVoronoiCellPolygon(QuadEdge qe, GeometryFactory geomFact)
   {
-    List cellPts = new ArrayList();
+    List<Coordinate> cellPts = new ArrayList<>();
     QuadEdge startQE = qe;
     do {
 //    	Coordinate cc = circumcentre(qe);

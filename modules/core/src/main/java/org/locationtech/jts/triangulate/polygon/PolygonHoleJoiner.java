@@ -12,7 +12,6 @@
 package org.locationtech.jts.triangulate.polygon;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;
@@ -74,7 +73,7 @@ public class PolygonHoleJoiner {
     return joiner.compute();
   }
   
-  private Polygon inputPolygon;
+  private final Polygon inputPolygon;
   //-- normalized, sorted and noded polygon rings
   private Coordinate[] shellRing;
   private Coordinate[][] holeRings;
@@ -146,7 +145,7 @@ public class PolygonHoleJoiner {
   }
   
   private static List<Coordinate> copyToList(Coordinate[] coords) {
-    List<Coordinate> coordList = new ArrayList<Coordinate>();
+    List<Coordinate> coordList = new ArrayList<>();
     for (Coordinate p : coords) {
       coordList.add(p.copy());
     }
@@ -156,7 +155,7 @@ public class PolygonHoleJoiner {
   private void joinHoles() {
     boundaryIntersector = createBoundaryIntersector(shellRing, holeRings);
     
-    joinedPts = new TreeSet<Coordinate>();
+    joinedPts = new TreeSet<>();
     joinedPts.addAll(joinedRing);
     
     for (int i = 0; i < holeRings.length; i++) {
@@ -292,8 +291,8 @@ public class PolygonHoleJoiner {
    * @param linePt the point to be joined to the ring
    * @return true if the line to the point is interior to the ring corner
    */
-  private boolean isLineInterior(List<Coordinate> ring, int ringIndex, 
-      Coordinate linePt) {
+  private static boolean isLineInterior(List<Coordinate> ring, int ringIndex,
+                                        Coordinate linePt) {
     Coordinate nodePt = ring.get(ringIndex);
     Coordinate shell0 = ring.get( prev(ringIndex, ring.size()) );
     Coordinate shell1 = ring.get( next(ringIndex, ring.size()) );
@@ -353,9 +352,9 @@ public class PolygonHoleJoiner {
    * @param joinPt the shell join vertex
    * @return a list of new vertices to be added
    */
-  private List<Coordinate> createHoleSection(Coordinate[] holeCoords, int holeJoinIndex, 
-      Coordinate joinPt) {
-    List<Coordinate> section = new ArrayList<Coordinate>();
+  private static List<Coordinate> createHoleSection(Coordinate[] holeCoords, int holeJoinIndex,
+                                                    Coordinate joinPt) {
+    List<Coordinate> section = new ArrayList<>();
     
     boolean isNonTouchingHole = joinPt != null;
     /**
@@ -389,11 +388,11 @@ public class PolygonHoleJoiner {
    * @return a list of sorted hole rings
    */
   private static List<LinearRing> sortHoles(final Polygon poly) {
-    List<LinearRing> holes = new ArrayList<LinearRing>();
+    List<LinearRing> holes = new ArrayList<>();
     for (int i = 0; i < poly.getNumInteriorRing(); i++) {
       holes.add(poly.getInteriorRingN(i));
     }
-    Collections.sort(holes, new EnvelopeComparator());
+    holes.sort(new EnvelopeComparator());
     return holes;
   }
   
@@ -428,7 +427,7 @@ public class PolygonHoleJoiner {
   private boolean intersectsBoundary(Coordinate p0, Coordinate p1) {
     SegmentString segString = new BasicSegmentString(
         new Coordinate[] { p0, p1 }, null);
-    List<SegmentString> segStrings = new ArrayList<SegmentString>();
+    List<SegmentString> segStrings = new ArrayList<>();
     segStrings.add(segString);
     
     InteriorIntersectionDetector segInt = new InteriorIntersectionDetector();
@@ -441,7 +440,7 @@ public class PolygonHoleJoiner {
    */
   private static class InteriorIntersectionDetector implements SegmentIntersector {
 
-    private LineIntersector li = new RobustLineIntersector();
+    private final LineIntersector li = new RobustLineIntersector();
     private boolean hasIntersection = false;
 
     public boolean hasIntersection() {
@@ -457,7 +456,6 @@ public class PolygonHoleJoiner {
       
       li.computeIntersection(p00, p01, p10, p11);
       if (li.getIntersectionNum() == 0) {
-        return;
       }
       else if (li.getIntersectionNum() == 1) {
         if (li.isInteriorIntersection())
@@ -475,7 +473,7 @@ public class PolygonHoleJoiner {
   }
   
   private static SegmentSetMutualIntersector createBoundaryIntersector(Coordinate[] shellRing, Coordinate[][] holeRings) {
-    List<SegmentString> polySegStrings = new ArrayList<SegmentString>();
+    List<SegmentString> polySegStrings = new ArrayList<>();
     polySegStrings.add(new BasicSegmentString(shellRing, null));
     for (Coordinate[] hole : holeRings) {
       polySegStrings.add(new BasicSegmentString(hole, null));

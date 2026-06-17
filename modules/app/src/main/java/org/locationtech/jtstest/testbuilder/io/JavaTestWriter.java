@@ -28,46 +28,46 @@ public class JavaTestWriter {
   public static String getRunJava(String className, TestBuilderModel tbModel) {
     return
         "package com.vividsolutions.jtstest.testsuite;" + StringUtil.newLine
-         + "" + StringUtil.newLine
+         + StringUtil.newLine
          + "import com.vividsolutions.jtstest.test.*;" + StringUtil.newLine
-         + "" + StringUtil.newLine
+         + StringUtil.newLine
          + "public class " + className + " extends TestCaseList {" + StringUtil.newLine
          + "  public static void main(String[] args) {" + StringUtil.newLine
          + "    " + className + " test = new " + className + "();" + StringUtil.newLine
          + "    test.run();" + StringUtil.newLine
          + "  }" + StringUtil.newLine
-         + "" + StringUtil.newLine
+         + StringUtil.newLine
          + "  public " + className + "() {" + StringUtil.newLine
          + getTestJava(tbModel.getCases())
          + "  }" + StringUtil.newLine
          + "}";
   }
 
-    public static String getTestJava(List testCases) {
-      StringBuffer java = new StringBuffer();
-      for (int i = 0; i < testCases.size(); i++) {
-        java.append((new JavaTestWriter()).write((Testable) testCases.get(i)));
-      }
+    public static String getTestJava(List<?> testCases) {
+      StringBuilder java = new StringBuilder();
+        for (Object testCase : testCases) {
+            java.append((new JavaTestWriter()).write((Testable) testCase));
+        }
       return java.toString();
     }
 
 
-    private WKTWriter writer = new WKTWriter();
+    private final WKTWriter writer = new WKTWriter();
 
     public JavaTestWriter() {}
 
     public String write(Testable testable) {
-        StringBuffer text = new StringBuffer();
+        StringBuilder text = new StringBuilder();
         text.append("    add(new TestCase(\n");
         String name = testable.getName() == null ? "" : testable.getName();
         String description = testable.getDescription() == null ? "" : testable.getDescription();
         String a = testable.getGeometry(0) == null ? null : writer.write(testable.getGeometry(0));
         String b = testable.getGeometry(1) == null ? null : writer.write(testable.getGeometry(1));
 
-        text.append("          \"" + name + "\",\n");
-        text.append("          \"" + description + "\",\n");
-        text.append("          " + (a == null ? "null" : "\"" + a + "\"") + ",\n");
-        text.append("          " + (b == null ? "null" : "\"" + b + "\"") + ",\n");
+        text.append("          \"").append(name).append("\",\n");
+        text.append("          \"").append(description).append("\",\n");
+        text.append("          ").append(a == null ? "null" : "\"" + a + "\"").append(",\n");
+        text.append("          ").append(b == null ? "null" : "\"" + b + "\"").append(",\n");
 
         return text.toString();
     }

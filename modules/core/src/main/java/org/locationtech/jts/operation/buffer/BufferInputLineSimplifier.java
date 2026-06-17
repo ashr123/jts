@@ -72,9 +72,9 @@ public class BufferInputLineSimplifier
   
   private static final int DELETE = 1;
   
-  private Coordinate[] inputLine;
+  private final Coordinate[] inputLine;
   private double distanceTol;
-  private boolean isRing;
+  private final boolean isRing;
   private boolean[] isDeleted;
   private int angleOrientation = Orientation.COUNTERCLOCKWISE;
 
@@ -223,7 +223,6 @@ public class BufferInputLineSimplifier
   private boolean isConcave(Coordinate p0, Coordinate p1, Coordinate p2)
   {
     int orientation = Orientation.index(p0, p1, p2);
-    boolean isConcave = (orientation == angleOrientation);
-    return isConcave;
+      return (orientation == angleOrientation);
   }
 }

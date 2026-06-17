@@ -49,7 +49,7 @@ public class RectangleContains {
     return rc.contains(b);
   }
 
-  private Envelope rectEnv;
+  private final Envelope rectEnv;
 
   /**
    * Create a new contains computer for two geometries.
@@ -71,9 +71,7 @@ public class RectangleContains {
      * According to the somewhat odd spec of the SFS, if this
      * is the case the geometry is NOT contained.
      */
-    if (isContainedInBoundary(geom))
-      return false;
-    return true;
+      return !isContainedInBoundary(geom);
   }
 
   private boolean isContainedInBoundary(Geometry geom)
@@ -148,14 +146,12 @@ public class RectangleContains {
 
     // we already know that the segment is contained in the rectangle envelope
     if (p0.x == p1.x) {
-      if (p0.x == rectEnv.getMinX() ||
-          p0.x == rectEnv.getMaxX() )
-        return true;
+        return p0.x == rectEnv.getMinX() ||
+                p0.x == rectEnv.getMaxX();
     }
     else if (p0.y == p1.y) {
-      if (p0.y == rectEnv.getMinY() ||
-          p0.y == rectEnv.getMaxY() )
-        return true;
+        return p0.y == rectEnv.getMinY() ||
+                p0.y == rectEnv.getMaxY();
     }
     /**
      * Either

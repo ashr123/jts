@@ -16,7 +16,10 @@ import org.locationtech.jts.geom.Geometry;
 
 public class GeometryDataUtil 
 {
-	public static void setComponentDataToIndex(Geometry geom)
+    private GeometryDataUtil() {
+    }
+
+    public static void setComponentDataToIndex(Geometry geom)
 	{
 		for (int i = 0; i < geom.getNumGeometries(); i++) {
 			Geometry comp = geom.getGeometryN(i);

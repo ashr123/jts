@@ -14,7 +14,6 @@ package org.locationtech.jts.operation.relateng;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.locationtech.jts.algorithm.BoundaryNodeRule;
 import org.locationtech.jts.geom.Coordinate;
@@ -29,9 +28,9 @@ import org.locationtech.jts.geom.LineString;
  */
 class LinearBoundary {
   
-  private Map<Coordinate, Integer> vertexDegree = new HashMap<Coordinate, Integer>();
-  private boolean hasBoundary;
-  private BoundaryNodeRule boundaryNodeRule;
+  private Map<Coordinate, Integer> vertexDegree = new HashMap<>();
+  private final boolean hasBoundary;
+  private final BoundaryNodeRule boundaryNodeRule;
   
   public LinearBoundary(List<LineString> lines, BoundaryNodeRule bnRule) {
     //assert: dim(geom) == 1
@@ -61,7 +60,7 @@ class LinearBoundary {
   }
   
   private static Map<Coordinate, Integer> computeBoundaryPoints(List<LineString> lines) {
-    Map<Coordinate, Integer> vertexDegree = new HashMap<Coordinate, Integer>();
+    Map<Coordinate, Integer> vertexDegree = new HashMap<>();
     for (LineString line : lines) {
       if (line.isEmpty())
         continue;

@@ -34,9 +34,7 @@ extends GeometricShapeBuilder
 	
 	public static int recursionLevelForSize(int numPts)
 	{
-		double pow4 = numPts / 3;
-		double exp = Math.log(pow4)/Math.log(4);
-		return (int) exp;
+        return KochSnowflakeBuilder.recursionLevelForSize(numPts);
 	}
 	
 	public Geometry getGeometry()
@@ -52,14 +50,14 @@ extends GeometricShapeBuilder
 	
 	private LinearRing[] getHoles(int n, double originX, double originY, double width) 
 	{
-		List holeList = new ArrayList();
-		
+		List<LinearRing> holeList = new ArrayList<>();
+
 		addHoles(n, originX, originY, width, holeList );
 		
 		return GeometryFactory.toLinearRingArray(holeList);
 	}
 
-	private void addHoles(int n, double originX, double originY, double width, List holeList) 
+	private void addHoles(int n, double originX, double originY, double width, List<LinearRing> holeList)
 	{
 		if (n < 0) return;
 		int n2 = n - 1;

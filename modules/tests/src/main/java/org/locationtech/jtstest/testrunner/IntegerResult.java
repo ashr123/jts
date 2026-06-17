@@ -17,10 +17,10 @@ package org.locationtech.jtstest.testrunner;
  * @version 1.7
  */
 public class IntegerResult implements Result {
-  private int value;
+  private final int value;
 
   public IntegerResult(Integer value) {
-    this.value = value.intValue();
+    this.value = value;
   }
 
   public boolean equals(Result other, double tolerance) {
@@ -45,4 +45,3 @@ public class IntegerResult implements Result {
     return Integer.toString(value);
   }
 }
-

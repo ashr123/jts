@@ -27,11 +27,11 @@ import junit.textui.TestRunner;
 
 public class SimpleRayCrossingStressTest extends TestCase {
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(SimpleRayCrossingStressTest.class);
   }
 
-	PrecisionModel pmFixed_1 = new PrecisionModel(1.0);
+	final PrecisionModel pmFixed_1 = new PrecisionModel(1.0);
 	
 	public SimpleRayCrossingStressTest(String name) {
 		super(name);
@@ -61,7 +61,7 @@ public class SimpleRayCrossingStressTest extends TestCase {
 	static class SimpleRayCrossingPointInAreaLocator
 	implements PointOnGeometryLocator
 	{
-		private Geometry geom;
+		private final Geometry geom;
 		
 		public SimpleRayCrossingPointInAreaLocator(Geometry geom)
 		{
@@ -78,9 +78,9 @@ public class SimpleRayCrossingStressTest extends TestCase {
 		
 		static class RayCrossingSegmentFilter implements CoordinateSequenceFilter
 		{
-			private RayCrossingCounter rcc;
-			private Coordinate p0 = new Coordinate();
-			private Coordinate p1 = new Coordinate();
+			private final RayCrossingCounter rcc;
+			private final Coordinate p0 = new Coordinate();
+			private final Coordinate p1 = new Coordinate();
 			
 			public RayCrossingSegmentFilter(RayCrossingCounter rcc)
 			{
@@ -101,6 +101,3 @@ public class SimpleRayCrossingStressTest extends TestCase {
 		}
 	}
 }
-
-
-

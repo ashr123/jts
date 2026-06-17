@@ -11,7 +11,7 @@ import junit.textui.TestRunner;
 import test.jts.GeometryTestCase;
 
 public class RectangleIntersectsTest extends GeometryTestCase {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(RectangleIntersectsTest.class);
   }
 
@@ -23,6 +23,6 @@ public class RectangleIntersectsTest extends GeometryTestCase {
     Polygon rect = (Polygon) rdr.read("POLYGON ZM ((1 9 2 3, 9 9 2 3, 9 1 2 3, 1 1 2 3, 1 9 2 3))");
     Geometry line = rdr.read("LINESTRING ZM (5 15 5 5, 15 5 5 5)");
     boolean rectIntersects = RectangleIntersects.intersects(rect, line);
-    assertEquals(false, rectIntersects);
+      assertFalse(rectIntersects);
   }
 }

@@ -79,7 +79,9 @@ public class HCoordinate
   }
   */
 
-  public double x,y,w;
+  public final double x;
+    public final double y;
+    public final double w;
 
   public HCoordinate() {
     x = 0.0;

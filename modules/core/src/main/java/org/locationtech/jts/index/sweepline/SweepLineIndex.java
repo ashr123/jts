@@ -12,7 +12,6 @@
 package org.locationtech.jts.index.sweepline;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,7 +22,7 @@ import java.util.List;
  */
 public class SweepLineIndex {
 
-  List events = new ArrayList();
+  final List<SweepLineEvent> events = new ArrayList<>();
   private boolean indexBuilt;
   // statistics information
   private int nOverlaps;
@@ -46,10 +45,10 @@ public class SweepLineIndex {
   private void buildIndex()
   {
     if (indexBuilt) return;
-    Collections.sort(events);
+    events.sort(null);
     for (int i = 0; i < events.size(); i++ )
     {
-      SweepLineEvent ev = (SweepLineEvent) events.get(i);
+      SweepLineEvent ev = events.get(i);
       if (ev.isDelete()) {
         ev.getInsertEvent().setDeleteEventIndex(i);
       }
@@ -64,7 +63,7 @@ public class SweepLineIndex {
 
     for (int i = 0; i < events.size(); i++ )
     {
-      SweepLineEvent ev = (SweepLineEvent) events.get(i);
+      SweepLineEvent ev = events.get(i);
       if (ev.isInsert()) {
         processOverlaps(i, ev.getDeleteEventIndex(), ev.getInterval(), action);
       }
@@ -79,7 +78,7 @@ public class SweepLineIndex {
      * Last index can be skipped, because it must be a Delete event.
      */
     for (int i = start; i < end; i++ ) {
-      SweepLineEvent ev = (SweepLineEvent) events.get(i);
+      SweepLineEvent ev = events.get(i);
       if (ev.isInsert()) {
         SweepLineInterval s1 = ev.getInterval();
         action.overlap(s0, s1);

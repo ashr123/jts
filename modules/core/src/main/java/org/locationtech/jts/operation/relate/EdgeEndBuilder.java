@@ -36,41 +36,41 @@ import org.locationtech.jts.geomgraph.Label;
  */
 public class EdgeEndBuilder {
 
-  public EdgeEndBuilder() {
+  private EdgeEndBuilder() {
   }
 
-  public List computeEdgeEnds(Iterator edges)
+  public static List<EdgeEnd> computeEdgeEnds(Iterator<Edge> edges)
   {
-    List l = new ArrayList();
-    for (Iterator i = edges; i.hasNext(); ) {
-      Edge e = (Edge) i.next();
-      computeEdgeEnds(e, l);
-    }
-    return l;
+    List<EdgeEnd> l = new ArrayList<>();
+      while (edges.hasNext()) {
+        Edge e = edges.next();
+        computeEdgeEnds(e, l);
+      }
+      return l;
   }
 
   /**
    * Creates stub edges for all the intersections in this
    * Edge (if any) and inserts them into the graph.
    */
-  public void computeEdgeEnds(Edge edge, List l)
+  public static void computeEdgeEnds(Edge edge, List<EdgeEnd> l)
   {
     EdgeIntersectionList eiList = edge.getEdgeIntersectionList();
 //Debug.print(eiList);
     // ensure that the list has entries for the first and last point of the edge
     eiList.addEndpoints();
 
-    Iterator it = eiList.iterator();
+    Iterator<EdgeIntersection> it = eiList.iterator();
     EdgeIntersection eiPrev = null;
     EdgeIntersection eiCurr = null;
     // no intersections, so there is nothing to do
     if (! it.hasNext()) return;
-    EdgeIntersection eiNext = (EdgeIntersection) it.next();
+    EdgeIntersection eiNext = it.next();
     do {
       eiPrev = eiCurr;
       eiCurr = eiNext;
       eiNext = null;
-      if (it.hasNext()) eiNext = (EdgeIntersection) it.next();
+      if (it.hasNext()) eiNext = it.next();
 
       if (eiCurr != null) {
         createEdgeEndForPrev(edge, l, eiCurr, eiPrev);
@@ -89,11 +89,11 @@ public class EdgeEndBuilder {
    * <br>
    * eiCurr will always be an EdgeIntersection, but eiPrev may be null.
    */
-  void createEdgeEndForPrev(
-                      Edge edge,
-                      List l,
-                      EdgeIntersection eiCurr,
-                      EdgeIntersection eiPrev)
+  static void createEdgeEndForPrev(
+          Edge edge,
+          List<EdgeEnd> l,
+          EdgeIntersection eiCurr,
+          EdgeIntersection eiPrev)
   {
 
     int iPrev = eiCurr.segmentIndex;
@@ -122,11 +122,11 @@ public class EdgeEndBuilder {
      * <br>
      * eiCurr will always be an EdgeIntersection, but eiNext may be null.
      */
-  void createEdgeEndForNext(
-                      Edge edge,
-                      List l,
-                      EdgeIntersection eiCurr,
-                      EdgeIntersection eiNext)
+    static void createEdgeEndForNext(
+            Edge edge,
+            List<EdgeEnd> l,
+            EdgeIntersection eiCurr,
+            EdgeIntersection eiNext)
   {
 
     int iNext = eiCurr.segmentIndex + 1;

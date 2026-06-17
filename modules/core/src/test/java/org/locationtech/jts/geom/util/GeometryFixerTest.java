@@ -22,7 +22,7 @@ import test.jts.GeometryTestCase;
 
 public class GeometryFixerTest extends GeometryTestCase {
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(GeometryFixerTest.class);
   }
 
@@ -52,8 +52,7 @@ public class GeometryFixerTest extends GeometryTestCase {
 
   private Point createPoint(double x, double y) {
     Coordinate p = new Coordinate(x, y);
-    Point pt = getGeometryFactory().createPoint(p);
-    return pt;
+      return getGeometryFactory().createPoint(p);
   }
 
   //----------------------------------------
@@ -409,14 +408,14 @@ public class GeometryFixerTest extends GeometryTestCase {
     }
 
     assertTrue("Result is invalid", actual.isValid());
-    assertTrue("Input geometry was not copied", input != actual);
+      assertNotSame("Input geometry was not copied", input, actual);
     assertTrue("Result has aliased coordinates", checkDeepCopy(input, actual));
 
     Geometry expected = read(wktExpected);
     checkEqual(expected, actual);
   }
 
-  private boolean checkDeepCopy(Geometry geom1, Geometry geom2) {
+  private static boolean checkDeepCopy(Geometry geom1, Geometry geom2) {
     Coordinate[] pts1 = geom1.getCoordinates();
     Coordinate[] pts2 = geom2.getCoordinates();
     for (Coordinate p2 : pts2) {
@@ -427,10 +426,10 @@ public class GeometryFixerTest extends GeometryTestCase {
     return true;
   }
 
-  private boolean isIn(Coordinate p, Coordinate[] pts) {
-    for (int i = 0; i < pts.length; i++) {
-      if (p == pts[i]) return true;
-    }
+  private static boolean isIn(Coordinate p, Coordinate[] pts) {
+      for (Coordinate pt : pts) {
+          if (p == pt) return true;
+      }
     return false;
   }
 

@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import junit.textui.TestRunner;
 
 public class CoordinateListTest extends TestCase {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(CoordinateListTest.class);
   }
 
@@ -31,7 +31,7 @@ public class CoordinateListTest extends TestCase {
   
   //======================================
   
-  private void checkValue(Coordinate[] coordArray, double ... ords) {
+  private static void checkValue(Coordinate[] coordArray, double... ords) {
     
     assertEquals( "list has wrong length", coordArray.length, ords.length / 2);
     
@@ -42,7 +42,7 @@ public class CoordinateListTest extends TestCase {
     }
   }
 
-  private CoordinateList coordList(double ... ords) {
+  private static CoordinateList coordList(double... ords) {
     CoordinateList cl = new CoordinateList();
     for (int i = 0 ; i < ords.length; i += 2) {
       cl.add(new Coordinate(ords[i], ords[i+1]), false);

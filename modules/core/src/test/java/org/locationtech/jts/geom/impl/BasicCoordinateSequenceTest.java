@@ -34,9 +34,9 @@ public class BasicCoordinateSequenceTest extends TestCase {
     public void testClone() {
         CoordinateSequence s1 = CoordinateArraySequenceFactory.instance().create(
             new Coordinate[] { new Coordinate(1, 2), new Coordinate(3, 4)});
-        CoordinateSequence s2 = (CoordinateSequence) s1.copy();
-        assertTrue(s1.getCoordinate(0).equals(s2.getCoordinate(0)));
-        assertTrue(s1.getCoordinate(0) != s2.getCoordinate(0));
+        CoordinateSequence s2 = s1.copy();
+        assertEquals(s1.getCoordinate(0), s2.getCoordinate(0));
+        assertNotSame(s1.getCoordinate(0), s2.getCoordinate(0));
     }
 
   public void testCloneDimension2() {
@@ -47,10 +47,10 @@ public class BasicCoordinateSequenceTest extends TestCase {
     s1.setOrdinate(1, 0, 3);
     s1.setOrdinate(1, 1, 4);
 
-    CoordinateSequence s2 = (CoordinateSequence) s1.copy();
-    assertTrue(s1.getDimension() == s2.getDimension());
-    assertTrue(s1.getCoordinate(0).equals(s2.getCoordinate(0)));
-    assertTrue(s1.getCoordinate(0) != s2.getCoordinate(0));
+    CoordinateSequence s2 = s1.copy();
+      assertEquals(s1.getDimension(), s2.getDimension());
+      assertEquals(s1.getCoordinate(0), s2.getCoordinate(0));
+      assertNotSame(s1.getCoordinate(0), s2.getCoordinate(0));
   }
   
   /**

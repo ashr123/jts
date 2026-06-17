@@ -22,14 +22,17 @@ import org.locationtech.jtstest.geomop.GeometryOperation;
  */
 public class GeometryOperationLoader
 {
-  /**
+    private GeometryOperationLoader() {
+    }
+
+    /**
    * If anything bad happens while creating the geometry operation, just print a message and fail
    * @param classLoader
    * @param geomOpClassname
    */
   public static GeometryOperation createGeometryOperation(ClassLoader classLoader, String geomOpClassname)
   {
-    Class geomOpClass = null;
+    Class<?> geomOpClass = null;
     try {
       geomOpClass = classLoader.loadClass(geomOpClassname);
     }
@@ -38,8 +41,7 @@ public class GeometryOperationLoader
       return null;
     }
     try {
-      GeometryOperation geometryOp = (GeometryOperation) geomOpClass.newInstance();
-      return geometryOp;
+        return (GeometryOperation) geomOpClass.newInstance();
     }
     catch (Exception ex) {
       System.out.println(ex.getMessage());

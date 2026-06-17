@@ -20,7 +20,7 @@ public class ElevationModelTest extends GeometryTestCase {
   
   private static final double TOLERANCE = 0.00001;
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(ElevationModelTest.class);
   }
 
@@ -136,7 +136,7 @@ public class ElevationModelTest extends GeometryTestCase {
   }
   
   
-  private void checkElevation(Geometry geom1, Geometry geom2, double[] ords) {
+  private static void checkElevation(Geometry geom1, Geometry geom2, double[] ords) {
     ElevationModel model = ElevationModel.create(geom1, geom2);
     int numPts = ords.length / 3;
     if (3 * numPts != ords.length) {

@@ -18,7 +18,7 @@ import test.jts.GeometryTestCase;
 
 public class ConcaveHullTest extends GeometryTestCase {
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(ConcaveHullTest.class);
   }
 
@@ -105,8 +105,8 @@ public class ConcaveHullTest extends GeometryTestCase {
   
   //------------------------------------------------
   
-  private static String WKT_SIMPLE = "MULTIPOINT ((14 18), (18 14), (15 6), (15 2), (5 5), (3 13), (8 14), (8 10), (16 8))";
-  private static String WKT_CIRCLE = "MULTIPOINT ((90 20), (80 10), (45 5), (10 20), (20 10), (21 30), (40 20), (11 60), (20 70), (20 90), (40 80), (70 80), (80 60), (90 70), (80 90), (56 95), (95 45), (80 40), (70 20), (15 45), (5 40), (40 96), (60 15))";
+  private static final String WKT_SIMPLE = "MULTIPOINT ((14 18), (18 14), (15 6), (15 2), (5 5), (3 13), (8 14), (8 10), (16 8))";
+  private static final String WKT_CIRCLE = "MULTIPOINT ((90 20), (80 10), (45 5), (10 20), (20 10), (21 30), (40 20), (11 60), (20 70), (20 90), (40 80), (70 80), (80 60), (90 70), (80 90), (56 95), (95 45), (80 40), (70 20), (15 45), (5 40), (40 96), (60 15))";
   
   public void testLengthSimple() {
     checkHullByLength(WKT_SIMPLE, 8,

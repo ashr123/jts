@@ -106,7 +106,7 @@ public class LengthIndexedLineTest
     LengthIndexedLine indexedLine = new LengthIndexedLine(linearGeom);
     double index = indexedLine.project(new Coordinate(1, 0));
     Coordinate pt = indexedLine.extractPoint(index);
-    assertTrue(pt.equals(new Coordinate(0, 0)));
+      assertEquals(pt, new Coordinate(0, 0));
   }
 
   public void testExtractPointBeyondRange()
@@ -114,10 +114,10 @@ public class LengthIndexedLineTest
     Geometry linearGeom = read("LINESTRING (0 0, 10 10)");
     LengthIndexedLine indexedLine = new LengthIndexedLine(linearGeom);
     Coordinate pt = indexedLine.extractPoint(100);
-    assertTrue(pt.equals(new Coordinate(10, 10)));
+      assertEquals(pt, new Coordinate(10, 10));
 
     Coordinate pt2 = indexedLine.extractPoint(0);
-    assertTrue(pt2.equals(new Coordinate(0, 0)));
+      assertEquals(pt2, new Coordinate(0, 0));
   }
 
   public void testProjectPointWithDuplicateCoords()
@@ -125,7 +125,7 @@ public class LengthIndexedLineTest
     Geometry linearGeom = read("LINESTRING (0 0, 10 0, 10 0, 20 0)");
     LengthIndexedLine indexedLine = new LengthIndexedLine(linearGeom);
     double projIndex = indexedLine.project(new Coordinate(10, 1));
-    assertTrue(projIndex == 10.0);
+      assertEquals(10.0, projIndex);
   }
 
   /**
@@ -185,8 +185,7 @@ public class LengthIndexedLineTest
   {
     LengthIndexedLine indexedLine = new LengthIndexedLine(linearGeom);
     double[] loc = indexedLine.indicesOf(subLine);
-    Geometry result = indexedLine.extractLine(loc[0], loc[1]);
-    return result;
+      return indexedLine.extractLine(loc[0], loc[1]);
   }
 
   protected boolean indexOfAfterCheck(Geometry linearGeom, Coordinate testPt)
@@ -202,9 +201,7 @@ public class LengthIndexedLineTest
     Coordinate pt1 = indexedLine.extractPoint(loc1);
     Coordinate pt2 = indexedLine.extractPoint(loc2);
     if (! pt1.equals2D(testPt)) return false;
-    if (! pt2.equals2D(testPt)) return false;
-
-    return true;
+      return pt2.equals2D(testPt);
   }
 
   protected boolean indexOfAfterCheck(Geometry linearGeom, Coordinate testPt, Coordinate checkPt)
@@ -214,9 +211,7 @@ public class LengthIndexedLineTest
     // check that computed location is after check location
     double checkLoc = indexedLine.indexOf(checkPt);
     double testLoc = indexedLine.indexOfAfter(testPt, checkLoc);
-    if (testLoc < checkLoc) return false;
-
-    return true;
+      return !(testLoc < checkLoc);
   }
 
   protected Coordinate extractOffsetAt(Geometry linearGeom, Coordinate testPt, double offsetDistance)

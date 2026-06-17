@@ -19,6 +19,7 @@ import org.locationtech.jts.algorithm.locate.SimplePointInAreaLocator;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.Polygonal;
@@ -33,25 +34,20 @@ import org.locationtech.jtstest.geomfunction.Metadata;
 public class PolygonOverlayFunctions 
 {
 
-  public static Geometry overlaySR(Geometry g1, Geometry g2, 
-      @Metadata(title="Scale factor")
+    private PolygonOverlayFunctions() {
+    }
+
+    public static Geometry overlaySR(Geometry g1, Geometry g2,
+                                     @Metadata(title="Scale factor")
       double scale)
   {
     PrecisionModel pm = new PrecisionModel(scale);
-    return computeOverlay(g1, g2, new Noder() {
-      public Geometry node(Geometry inputLines) {
-       return OverlayNG.overlay(inputLines, null, OverlayNG.UNION, pm);
-      }
-    });
+    return computeOverlay(g1, g2, inputLines -> OverlayNG.overlay(inputLines, null, OverlayNG.UNION, pm));
   }
   
   public static Geometry overlay(Geometry g1, Geometry g2)
   {
-    return computeOverlay(g1, g2, new Noder( ) {
-      public Geometry node(Geometry inputLines) {
-        return OverlayNGRobust.overlay(inputLines, null, OverlayNG.UNION);
-      }
-    });
+    return computeOverlay(g1, g2, inputLines -> OverlayNGRobust.overlay(inputLines, null, OverlayNG.UNION));
   }
   
   interface Noder {
@@ -80,7 +76,7 @@ public class PolygonOverlayFunctions
   {
     GeometryFactory geomFact = g1.getFactory();
 
-    List lines = LinearComponentExtracter.getLines(g1);
+    List<LineString> lines = LinearComponentExtracter.getLines(g1);
     // add second input's linework, if any
     if (g2 != null)
       LinearComponentExtracter.getLines(g2, lines);
@@ -119,7 +115,7 @@ public class PolygonOverlayFunctions
   
   static class IteratedSnappingNoder implements Noder {
 
-    private double snapTol;
+    private final double snapTol;
 
     public IteratedSnappingNoder(double snapTol) {
       this.snapTol = snapTol;
@@ -141,7 +137,7 @@ public class PolygonOverlayFunctions
       return null;
     }
     
-    private Geometry nodeSnapDedup(Geometry geom, double snapDist) {
+    private static Geometry nodeSnapDedup(Geometry geom, double snapDist) {
       Geometry noded = NodingFunctions.snappingNoder(geom, null, snapDist);
       Geometry dedup = DissolveFunctions.dissolve(noded);
       Geometry intNodes = NodingFunctions.findInteriorNodes(dedup);
@@ -175,7 +171,7 @@ public class PolygonOverlayFunctions
     /**
      * Spatial index containing source polygons
      */
-    private STRtree sourceIndex = new STRtree();
+    private final STRtree<Geometry> sourceIndex = new STRtree<>();
     
     public ParentFinder() {
       
@@ -192,7 +188,7 @@ public class PolygonOverlayFunctions
     }
     
     public List<Polygon> findParents(List<Polygon> resultants) {
-      List<Polygon> polys = new ArrayList<Polygon>();
+      List<Polygon> polys = new ArrayList<>();
       for (Polygon res : resultants) {
         Point intPt = res.getInteriorPoint();
         Coordinate intCoord = intPt.getCoordinate();

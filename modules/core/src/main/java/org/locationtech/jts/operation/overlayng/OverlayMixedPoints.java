@@ -77,7 +77,7 @@ class OverlayMixedPoints {
   private Geometry geomNonPoint;
   private int geomNonPointDim;
   private PointOnGeometryLocator locator;
-  private int resultDim;
+  private final int resultDim;
 
   public OverlayMixedPoints(int opCode, Geometry geom0, Geometry geom1, PrecisionModel pm) {
     this.opCode = opCode;
@@ -136,8 +136,7 @@ class OverlayMixedPoints {
     }
     
     // Node and round the non-point geometry for output
-    Geometry geomPrep = OverlayNG.union(geomNonPointInput, pm);
-    return geomPrep;
+      return OverlayNG.union(geomNonPointInput, pm);
   }
 
   private Geometry computeIntersection(Coordinate[] coords) {
@@ -166,7 +165,7 @@ class OverlayMixedPoints {
   }
   
   private Geometry createPointResult(List<Point> points) {
-    if (points.size() == 0) {
+    if (points.isEmpty()) {
       return geometryFactory.createEmpty(0);
     }
     else if (points.size() == 1) {
@@ -177,7 +176,7 @@ class OverlayMixedPoints {
   }
 
   private List<Point> findPoints(boolean isCovered, Coordinate[] coords) {
-    Set<Coordinate> resultCoords = new HashSet<Coordinate>();
+    Set<Coordinate> resultCoords = new HashSet<>();
     // keep only points contained
     for (Coordinate coord : coords) {
       if (hasLocation(isCovered, coord)) {
@@ -189,7 +188,7 @@ class OverlayMixedPoints {
   }
   
   private List<Point> createPoints(Set<Coordinate> coords) {
-    List<Point> points = new ArrayList<Point>();
+    List<Point> points = new ArrayList<>();
     for (Coordinate coord : coords) {
       Point point = geometryFactory.createPoint(coord); 
       points.add(point);
@@ -219,20 +218,15 @@ class OverlayMixedPoints {
   
   private static Coordinate[] extractCoordinates(Geometry points, PrecisionModel pm) {
     CoordinateList coords = new CoordinateList();
-    points.apply(new CoordinateFilter() {
-
-      @Override
-      public void filter(Coordinate coord) {
-        Coordinate p = OverlayUtil.round(coord, pm);
-        coords.add(p, false);
-      }
-      
+    points.apply((CoordinateFilter) coord -> {
+      Coordinate p = OverlayUtil.round(coord, pm);
+      coords.add(p, false);
     });
     return coords.toCoordinateArray();
   }
   
   private static List<Polygon> extractPolygons(Geometry geom) {
-    List<Polygon> list = new ArrayList<Polygon>();
+    List<Polygon> list = new ArrayList<>();
     for (int i = 0; i < geom.getNumGeometries(); i++) {
       Polygon poly = (Polygon) geom.getGeometryN(i);
       if(! poly.isEmpty()) {
@@ -243,7 +237,7 @@ class OverlayMixedPoints {
   }
 
   private static List<LineString> extractLines(Geometry geom) {
-    List<LineString> list = new ArrayList<LineString>();
+    List<LineString> list = new ArrayList<>();
     for (int i = 0; i < geom.getNumGeometries(); i++) {
       LineString line = (LineString) geom.getGeometryN(i);
       if (! line.isEmpty()) {
@@ -253,4 +247,3 @@ class OverlayMixedPoints {
     return list;
   }
 }
-

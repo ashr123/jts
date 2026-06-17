@@ -43,7 +43,7 @@ public class LayerList
   public static final int LYR_B = 1;
   public static final int LYR_RESULT = 2;
   
-  private List<Layer> layers = new ArrayList<Layer>();
+  private final List<Layer> layers = new ArrayList<>();
   
   public LayerList() 
   {
@@ -76,9 +76,9 @@ public class LayerList
       Geometry geom = lyr.getGeometry();
       if (geom == null) continue;
       GeometryElementLocater locater = new GeometryElementLocater(geom);
-      List locs = locater.getElements(pt, tolerance);
-      if (locs.size() > 0) {
-        GeometryLocation loc = (GeometryLocation) locs.get(0);
+      List<GeometryLocation> locs = locater.getElements(pt, tolerance);
+      if (!locs.isEmpty()) {
+        GeometryLocation loc = locs.get(0);
         return loc.getElement();
       }
     }
@@ -87,7 +87,7 @@ public class LayerList
   
   public Geometry[] getElements(Geometry aoi, boolean isSegments)
   {
-    Geometry comp[] = new Geometry[2];
+    Geometry[] comp = new Geometry[2];
     for (int i = 0; i < 2; i++) {
       Layer lyr = getLayer(i);
       Geometry geom = lyr.getGeometry();

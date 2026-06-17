@@ -11,6 +11,8 @@
  */
 package org.locationtech.jtstest.testrunner;
 
+import java.util.List;
+
 import org.locationtech.jts.geom.Geometry;
 
 /**
@@ -29,7 +31,7 @@ public class EqualityResultMatcher
 	 * 
 	 * @return true if the actual and expected results are considered equal
 	 */
-	public boolean isMatch(Geometry geom, String opName, Object[] args, 
+	public boolean isMatch(Geometry geom, String opName, List<Object> args,
 			Result actualResult, Result expectedResult,
 			double tolerance)
 	{

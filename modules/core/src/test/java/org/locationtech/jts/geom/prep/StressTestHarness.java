@@ -27,8 +27,8 @@ public abstract class StressTestHarness
 {
   static final int MAX_ITER = 10000;
 
-  static PrecisionModel pm = new PrecisionModel();
-  static GeometryFactory fact = new GeometryFactory(pm, 0);
+  static final PrecisionModel pm = new PrecisionModel();
+  static final GeometryFactory fact = new GeometryFactory(pm, 0);
   static WKTReader wktRdr = new WKTReader(fact);
   static WKTWriter wktWriter = new WKTWriter();
 
@@ -54,29 +54,27 @@ public abstract class StressTestHarness
     run(nIter, poly);
   }
 
-  Geometry createCircle(Coordinate origin, double size, int nPts) {
+  static Geometry createCircle(Coordinate origin, double size, int nPts) {
 		GeometricShapeFactory gsf = new GeometricShapeFactory();
 		gsf.setCentre(origin);
 		gsf.setSize(size);
 		gsf.setNumPoints(nPts);
-		Geometry circle = gsf.createCircle();
-		// Polygon gRect = gsf.createRectangle();
+      // Polygon gRect = gsf.createRectangle();
 		// Geometry g = gRect.getExteriorRing();
-		return circle;
+		return gsf.createCircle();
 	}
   
-  Geometry createSineStar(Coordinate origin, double size, int nPts) {
+  static Geometry createSineStar(Coordinate origin, double size, int nPts) {
 		SineStarFactory gsf = new SineStarFactory();
 		gsf.setCentre(origin);
 		gsf.setSize(size);
 		gsf.setNumPoints(nPts);
 		gsf.setArmLengthRatio(0.1);
 		gsf.setNumArms(20);
-		Geometry poly = gsf.createSineStar();
-		return poly;
+      return gsf.createSineStar();
 	}
   
-  Geometry createRandomTestGeometry(Envelope env, double size, int nPts)
+  static Geometry createRandomTestGeometry(Envelope env, double size, int nPts)
   {
   	double width = env.getWidth();
   	double xOffset = width * Math.random();
@@ -91,15 +89,14 @@ public abstract class StressTestHarness
     return test;
   }
   
-  Geometry createTestCircle(Coordinate base, double size, int nPts)
+  static Geometry createTestCircle(Coordinate base, double size, int nPts)
   {
     GeometricShapeFactory gsf = new GeometricShapeFactory();
     gsf.setCentre(base);
     gsf.setSize(size);
     gsf.setNumPoints(nPts);
-    Geometry circle = gsf.createCircle();
-//    System.out.println(circle);
-    return circle;
+      //    System.out.println(circle);
+    return gsf.createCircle();
   }
   
   public void run(int nIter, Geometry target) {

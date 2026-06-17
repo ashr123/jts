@@ -29,7 +29,7 @@ import junit.textui.TestRunner;
 import test.jts.util.IOUtil;
 
 public class KdTreeTest extends TestCase {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(KdTreeTest.class);
   }
 
@@ -43,16 +43,15 @@ public class KdTreeTest extends TestCase {
     KdNode node1 = index.insert(new Coordinate(1, 1));
     KdNode node2 = index.insert(new Coordinate(1, 1));
 
-    assertTrue("Inserting 2 identical points should create one node",
-        node1 == node2);
+      assertSame("Inserting 2 identical points should create one node", node1, node2);
 
     Envelope queryEnv = new Envelope(0, 10, 0, 10);
 
     List<KdNode> result = index.query(queryEnv);
-    assertTrue(result.size() == 1);
+      assertEquals(1, result.size());
 
-    KdNode node = (KdNode) result.get(0);
-    assertTrue(node.getCount() == 2);
+    KdNode node = result.get(0);
+      assertEquals(2, node.getCount());
     assertTrue(node.isRepeated());
   }
 
@@ -203,8 +202,8 @@ public class KdTreeTest extends TestCase {
       assertEquals(n, tree.getNodes().size());
   }
   
-  private void testQuery(String wktInput, double tolerance,
-      Envelope queryEnv, String wktExpected) {
+  private static void testQuery(String wktInput, double tolerance,
+                                Envelope queryEnv, String wktExpected) {
     KdTree index = build(wktInput, tolerance);
     testQuery(
         index,
@@ -212,8 +211,8 @@ public class KdTreeTest extends TestCase {
         IOUtil.read(wktExpected).getCoordinates());
   }
 
-  private void testQueryRepeated(String wktInput, double tolerance,
-      Envelope queryEnv, String wktExpected) {
+  private static void testQueryRepeated(String wktInput, double tolerance,
+                                        Envelope queryEnv, String wktExpected) {
     KdTree index = build(wktInput, tolerance);
     testQuery(
         index,
@@ -221,43 +220,40 @@ public class KdTreeTest extends TestCase {
         IOUtil.read(wktExpected).getCoordinates());
   }
 
-  private void testQuery(KdTree index,
-      Envelope queryEnv, Coordinate[] expectedCoord) {
+  private static void testQuery(KdTree index,
+                                Envelope queryEnv, Coordinate[] expectedCoord) {
     Coordinate[] result = KdTree.toCoordinates(index.query(queryEnv));
 
     Arrays.sort(result);
     Arrays.sort(expectedCoord);
-    
-    assertTrue("Result count = " + result.length + ", expected count = " + expectedCoord.length,
-        result.length == expectedCoord.length);
+
+      assertEquals("Result count = " + result.length + ", expected count = " + expectedCoord.length, result.length, expectedCoord.length);
     
     boolean isMatch = CoordinateArrays.equals(result, expectedCoord);
     assertTrue("Expected result coordinates not found", isMatch);
   }
 
-  private void testQuery(KdTree index,
-      Envelope queryEnv, boolean includeRepeated, Coordinate[] expectedCoord) {
+  private static void testQuery(KdTree index,
+                                Envelope queryEnv, boolean includeRepeated, Coordinate[] expectedCoord) {
     Coordinate[] result = KdTree.toCoordinates(index.query(queryEnv), includeRepeated);
 
     Arrays.sort(result);
     Arrays.sort(expectedCoord);
-    
-    assertTrue("Result count = " + result.length + ", expected count = " + expectedCoord.length,
-        result.length == expectedCoord.length);
+
+      assertEquals("Result count = " + result.length + ", expected count = " + expectedCoord.length, result.length, expectedCoord.length);
     
     boolean isMatch = CoordinateArrays.equals(result, expectedCoord);
     assertTrue("Expected result coordinates not found", isMatch);
     
     // test queries for points
-    for (int i = 0; i < expectedCoord.length; i++) {
-      Coordinate p = expectedCoord[i];
-      KdNode node = index.query(p);
-      assertEquals("Point query not found", node.getCoordinate(), p);
-    }
+      for (Coordinate p : expectedCoord) {
+          KdNode node = index.query(p);
+          assertEquals("Point query not found", node.getCoordinate(), p);
+      }
   }
   
   // Helper method to find the nearest neighbor using brute-force
-  private Coordinate bruteForceNearestNeighbor(KdTree tree, Coordinate query) {
+  private static Coordinate bruteForceNearestNeighbor(KdTree tree, Coordinate query) {
       List<Coordinate> allPoints = getAllPoints(tree);
       Coordinate nearest = null;
       double minDistance = Double.POSITIVE_INFINITY;
@@ -273,17 +269,17 @@ public class KdTreeTest extends TestCase {
       return nearest;
   }
   
-  private List<Coordinate> bruteForceNearestNeighbors(KdTree tree, Coordinate query, int k) {
+  private static List<Coordinate> bruteForceNearestNeighbors(KdTree tree, Coordinate query, int k) {
       List<Coordinate> allPoints = getAllPoints(tree);
 
       // Sort all points by distance to the query point
-      allPoints.sort(Comparator.comparingDouble(point -> query.distance(point)));
+      allPoints.sort(Comparator.comparingDouble(query::distance));
 
       // Return the first k points (ordered closest first)
       return allPoints.subList(0, Math.min(k, allPoints.size()));
   }
   
-  private List<Coordinate> bruteForceInEnvelope(KdTree tree, Envelope queryEnv) {
+  private static List<Coordinate> bruteForceInEnvelope(KdTree tree, Envelope queryEnv) {
       List<Coordinate> allPoints = getAllPoints(tree);
 
       List<Coordinate> inEnvelope = new ArrayList<>();
@@ -295,16 +291,16 @@ public class KdTreeTest extends TestCase {
       return inEnvelope;
   }
   
-  private List<Coordinate> getAllPoints(KdTree tree) {
+  private static List<Coordinate> getAllPoints(KdTree tree) {
 	  return Arrays.stream(KdTree.toCoordinates(tree.getNodes())).collect(Collectors.toList());
   }
 
-  private KdTree build(String wktInput, double tolerance) {
+  private static KdTree build(String wktInput, double tolerance) {
     final KdTree index = new KdTree(tolerance);
     Coordinate[] coords = IOUtil.read(wktInput).getCoordinates();
-    for (int i = 0; i < coords.length; i++) {
-      index.insert(coords[i]);
-    }
+      for (Coordinate coord : coords) {
+          index.insert(coord);
+      }
     return index;
   }
 

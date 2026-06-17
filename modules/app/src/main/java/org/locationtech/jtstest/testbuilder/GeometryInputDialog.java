@@ -42,25 +42,25 @@ import org.locationtech.jts.io.WKTReader;
  * @version 1.7
  */
 public class GeometryInputDialog extends JDialog {
-    Geometry[] geom = new Geometry[2];
+    final Geometry[] geom = new Geometry[2];
     boolean parseError;
     //=================================================
-    JPanel panel1 = new JPanel();
-    JLabel jLabel1 = new JLabel();
-    JPanel jPanel1 = new JPanel();
-    GridBagLayout gridBagLayout2 = new GridBagLayout();
-    BorderLayout borderLayout1 = new BorderLayout();
-    JPanel jPanel2 = new JPanel();
-    JButton btnLoad = new JButton();
-    JButton btnCancel = new JButton();
-    JLabel jLabel2 = new JLabel();
-    JLabel lblError = new JLabel();
-    JTextArea txtError = new JTextArea();
+    final JPanel panel1 = new JPanel();
+    final JLabel jLabel1 = new JLabel();
+    final JPanel jPanel1 = new JPanel();
+    final GridBagLayout gridBagLayout2 = new GridBagLayout();
+    final BorderLayout borderLayout1 = new BorderLayout();
+    final JPanel jPanel2 = new JPanel();
+    final JButton btnLoad = new JButton();
+    final JButton btnCancel = new JButton();
+    final JLabel jLabel2 = new JLabel();
+    final JLabel lblError = new JLabel();
+    final JTextArea txtError = new JTextArea();
     Border border1;
-    JScrollPane jScrollPane1 = new JScrollPane();
-    JTextArea txtA = new JTextArea();
-    JScrollPane jScrollPane2 = new JScrollPane();
-    JTextArea txtB = new JTextArea();
+    final JScrollPane jScrollPane1 = new JScrollPane();
+    final JTextArea txtA = new JTextArea();
+    final JScrollPane jScrollPane2 = new JScrollPane();
+    final JTextArea txtB = new JTextArea();
 
     public GeometryInputDialog(Frame frame, String title, boolean modal) {
         super(frame, title, modal);
@@ -76,7 +76,7 @@ public class GeometryInputDialog extends JDialog {
         this(null, "", false);
     }
 
-    void jbInit() throws Exception {
+    void jbInit() {
         border1 = BorderFactory.createLineBorder(Color.gray, 2);
         panel1.setLayout(borderLayout1);
         jLabel1.setFont(new java.awt.Font("Dialog", 1, 12));
@@ -86,19 +86,9 @@ public class GeometryInputDialog extends JDialog {
         jPanel1.setLayout(gridBagLayout2);
         btnLoad.setToolTipText("");
         btnLoad.setText("Load");
-        btnLoad.addActionListener(new java.awt.event.ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                btnLoad_actionPerformed(e);
-            }
-        });
+        btnLoad.addActionListener(this::btnLoad_actionPerformed);
         btnCancel.setText("Cancel");
-        btnCancel.addActionListener(new java.awt.event.ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                btnCancel_actionPerformed(e);
-            }
-        });
+        btnCancel.addActionListener(this::btnCancel_actionPerformed);
         jLabel2.setFont(new java.awt.Font("Dialog", 1, 12));
         jLabel2.setForeground(AppColors.GEOM_B);
         jLabel2.setText(AppStrings.GEOM_LABEL_B);

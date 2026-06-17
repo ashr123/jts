@@ -24,7 +24,10 @@ import java.util.List;
  */
 public class QuadEdgeUtil 
 {
-	/**
+    private QuadEdgeUtil() {
+    }
+
+    /**
 	 * Gets all edges which are incident on the origin of the given edge.
 	 * 
 	 * @param start
@@ -32,8 +35,8 @@ public class QuadEdgeUtil
 	 * @return a List of edges which have their origin at the origin of the given
 	 *         edge
 	 */
-	public static List findEdgesIncidentOnOrigin(QuadEdge start) {
-		List incEdge = new ArrayList();
+	public static List<QuadEdge> findEdgesIncidentOnOrigin(QuadEdge start) {
+		List<QuadEdge> incEdge = new ArrayList<>();
 
 		QuadEdge qe = start;
 		do {

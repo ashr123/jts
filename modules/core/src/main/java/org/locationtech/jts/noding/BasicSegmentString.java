@@ -38,7 +38,7 @@ public class BasicSegmentString
     return new BasicSegmentString(pts, segString.getData());
   }
   
-  private Coordinate[] pts;
+  private final Coordinate[] pts;
   private Object data;
 
   /**

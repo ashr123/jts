@@ -12,7 +12,6 @@
 package org.locationtech.jts.noding.snapround;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.algorithm.LineIntersector;
@@ -23,7 +22,6 @@ import org.locationtech.jts.noding.InteriorIntersectionFinderAdder;
 import org.locationtech.jts.noding.MCIndexNoder;
 import org.locationtech.jts.noding.NodedSegmentString;
 import org.locationtech.jts.noding.Noder;
-import org.locationtech.jts.noding.NodingValidator;
 import org.locationtech.jts.noding.SegmentString;
 
 /**
@@ -49,26 +47,24 @@ import org.locationtech.jts.noding.SegmentString;
 public class MCIndexSnapRounder
     implements Noder
 {
-  private final PrecisionModel pm;
-  private LineIntersector li;
+    private final LineIntersector li;
   private final double scaleFactor;
   private MCIndexNoder noder;
   private MCIndexPointSnapper pointSnapper;
-  private Collection nodedSegStrings;
+  private Collection<? extends SegmentString> nodedSegStrings;
 
   public MCIndexSnapRounder(PrecisionModel pm) {
-    this.pm = pm;
-    li = new RobustLineIntersector();
+      li = new RobustLineIntersector();
     li.setPrecisionModel(pm);
     scaleFactor = pm.getScale();
   }
 
-  public Collection getNodedSubstrings()
+  public Collection<SegmentString> getNodedSubstrings()
   {
     return  NodedSegmentString.getNodedSubstrings(nodedSegStrings);
   }
 
-  public void computeNodes(Collection inputSegmentStrings)
+  public void computeNodes(Collection<? extends SegmentString> inputSegmentStrings)
   {
     this.nodedSegStrings = inputSegmentStrings;
     noder = new MCIndexNoder();
@@ -80,9 +76,9 @@ public class MCIndexSnapRounder
   }
 
   /*
-  private void checkCorrectness(Collection inputSegmentStrings)
+  private void checkCorrectness(Collection<? extends SegmentString> inputSegmentStrings)
   {
-    Collection resultSegStrings = NodedSegmentString.getNodedSubstrings(inputSegmentStrings);
+    Collection<SegmentString> resultSegStrings = NodedSegmentString.getNodedSubstrings(inputSegmentStrings);
     NodingValidator nv = new NodingValidator(resultSegStrings);
     try {
       nv.checkValid();
@@ -92,9 +88,9 @@ public class MCIndexSnapRounder
   }
 */
   
-  private void snapRound(Collection segStrings, LineIntersector li)
+  private void snapRound(Collection<? extends SegmentString> segStrings, LineIntersector li)
   {
-    List intersections = findInteriorIntersections(segStrings, li);
+    List<Coordinate> intersections = findInteriorIntersections(segStrings, li);
     computeIntersectionSnaps(intersections);
     computeVertexSnaps(segStrings);
   }
@@ -107,7 +103,7 @@ public class MCIndexSnapRounder
    *
    * @return a list of Coordinates for the intersections
    */
-  private List findInteriorIntersections(Collection segStrings, LineIntersector li)
+  private List<Coordinate> findInteriorIntersections(Collection<? extends SegmentString> segStrings, LineIntersector li)
   {
     InteriorIntersectionFinderAdder intFinderAdder = new InteriorIntersectionFinderAdder(li);
     noder.setSegmentIntersector(intFinderAdder);
@@ -118,13 +114,12 @@ public class MCIndexSnapRounder
   /**
    * Snaps segments to nodes created by segment intersections.
    */
-  private void computeIntersectionSnaps(Collection snapPts)
+  private void computeIntersectionSnaps(Collection<? extends Coordinate> snapPts)
   {
-    for (Iterator it = snapPts.iterator(); it.hasNext(); ) {
-      Coordinate snapPt = (Coordinate) it.next();
-      HotPixel hotPixel = new HotPixel(snapPt, scaleFactor);
-      pointSnapper.snap(hotPixel);
-    }
+      for (Coordinate snapPt : snapPts) {
+          HotPixel hotPixel = new HotPixel(snapPt, scaleFactor);
+          pointSnapper.snap(hotPixel);
+      }
   }
 
   /**
@@ -132,12 +127,12 @@ public class MCIndexSnapRounder
    *
    * @param edges the list of segment strings to snap together
    */
-  public void computeVertexSnaps(Collection edges)
+  public void computeVertexSnaps(Collection<? extends SegmentString> edges)
   {
-    for (Iterator i0 = edges.iterator(); i0.hasNext(); ) {
-      NodedSegmentString edge0 = (NodedSegmentString) i0.next();
-      computeVertexSnaps(edge0);
-    }
+      for (SegmentString edge : edges) {
+          NodedSegmentString edge0 = (NodedSegmentString) edge;
+          computeVertexSnaps(edge0);
+      }
   }
 
   /**

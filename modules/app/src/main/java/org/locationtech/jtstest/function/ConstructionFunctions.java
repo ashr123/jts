@@ -27,7 +27,10 @@ import org.locationtech.jts.geom.OctagonalEnvelope;
 import org.locationtech.jtstest.geomfunction.Metadata;
 
 public class ConstructionFunctions {
-  public static Geometry octagonalEnvelope(Geometry g) { return OctagonalEnvelope.octagonalEnvelope(g); }
+    private ConstructionFunctions() {
+    }
+
+    public static Geometry octagonalEnvelope(Geometry g) { return OctagonalEnvelope.octagonalEnvelope(g); }
   
   public static Geometry minimumDiameter(Geometry g) {      return (new MinimumDiameter(g)).getDiameter();  }
   public static double minimumDiameterLength(Geometry g) {      return (new MinimumDiameter(g)).getDiameter().getLength();  }
@@ -180,8 +183,7 @@ public class ConstructionFunctions {
    * @return the concaveness measure of the geometry
    */
   public static double concaveness(Geometry geom) {
-    double convexLen = geom.convexHull().getLength();
-    return (geom.getLength() - convexLen) / convexLen;
+      return HullFunctions.concaveness(geom);
   }
   
 }

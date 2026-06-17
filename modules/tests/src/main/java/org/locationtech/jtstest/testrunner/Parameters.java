@@ -13,7 +13,6 @@ package org.locationtech.jtstest.testrunner;
 
 import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -28,9 +27,9 @@ import org.locationtech.jtstest.util.StringUtil;
  * @version 1.7
  */
 public class Parameters {
-    private static List arguments = null;
-    private static List requiredKeys = new Vector();
-    private static List allowedKeys = new Vector();
+    private static List<String> arguments = null;
+    private static List<String> requiredKeys = new Vector<>();
+    private static final List<String> allowedKeys = new Vector<>();
     private static Parameters instance = null;
 
     /**
@@ -57,18 +56,17 @@ public class Parameters {
         return instance;
     }
     ////////////////////////////////////////////////////////////////////////////////
-    private Hashtable hashtable = new Hashtable();
+    private final Hashtable<String, String> hashtable = new Hashtable<>();
 
     /**
      * Creates a Parameters object for the given main-method arguments.
      */
     private Parameters() {
-        for (Iterator i = arguments.iterator(); i.hasNext();) {
-            String arg = (String) i.next();
+        for (String arg : arguments) {
             arg = arg.toLowerCase();
             if (!arg.startsWith("-"))
                 throw new IllegalArgumentException(
-                    "Command-line argument does not start with '-': " + arg);
+                        "Command-line argument does not start with '-': " + arg);
             int colonIndex = arg.indexOf(":");
             String key;
             String value;
@@ -81,17 +79,16 @@ public class Parameters {
             }
             if (!allowedKeys.contains(key))
                 throw new IllegalArgumentException(
-                    "Unrecognized command-line argument: "
-                        + arg.substring(1)
-                        + ". Valid arguments are: "
-                        + StringUtil.toCommaDelimitedString(allowedKeys));
+                        "Unrecognized command-line argument: "
+                                + arg.substring(1)
+                                + ". Valid arguments are: "
+                                + StringUtil.toCommaDelimitedString(allowedKeys));
             hashtable.put(key, value);
         }
-        for (Iterator i = requiredKeys.iterator(); i.hasNext();) {
-            String requiredKey = (String) i.next();
+        for (String requiredKey : requiredKeys) {
             if (!hashtable.containsKey(requiredKey))
                 throw new IllegalArgumentException(
-                    "Required command-line argument is missing: " + requiredKey);
+                        "Required command-line argument is missing: " + requiredKey);
         }
     }
 
@@ -108,6 +105,6 @@ public class Parameters {
      */
     public String get(String key) {
         Assert.isTrue(allowedKeys.contains(key.toLowerCase()));
-        return (String) hashtable.get(key.toLowerCase());
+        return hashtable.get(key.toLowerCase());
     }
 }

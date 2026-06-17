@@ -56,7 +56,10 @@ import org.locationtech.jts.operation.union.UnionStrategy;
  */
 public class OverlayNGRobust
 {
-  /**
+    private OverlayNGRobust() {
+    }
+
+    /**
    * Computes the unary union of a geometry using robust computation.
    * 
    * @param geom the geometry to union
@@ -97,7 +100,7 @@ public class OverlayNGRobust
     return op.union();
   }
   
-  private static UnionStrategy OVERLAY_UNION = new UnionStrategy() {
+  private static final UnionStrategy OVERLAY_UNION = new UnionStrategy() {
 
     public Geometry union(Geometry g0, Geometry g1) {
        return overlay(g0, g1, OverlayNG.UNION );
@@ -293,8 +296,7 @@ public class OverlayNGRobust
   private static double snapTolerance(Geometry geom0, Geometry geom1) {
     double tol0 = snapTolerance(geom0);
     double tol1 = snapTolerance(geom1);
-    double snapTol = Math.max(tol0,  tol1);
-    return snapTol;
+      return Math.max(tol0,  tol1);
   }
   
   private static double snapTolerance(Geometry geom) {

@@ -15,8 +15,11 @@ import org.locationtech.jts.algorithm.BoundaryNodeRule;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.operation.BoundaryOp;
 
-public class BoundaryFunctions {  
-  public static Geometry boundary(Geometry g) {      return g.getBoundary();  }
+public class BoundaryFunctions {
+    private BoundaryFunctions() {
+    }
+
+    public static Geometry boundary(Geometry g) {      return g.getBoundary();  }
 
   public static Geometry boundaryMod2(Geometry g) {
     return BoundaryOp.getBoundary(g, BoundaryNodeRule.MOD2_BOUNDARY_RULE);

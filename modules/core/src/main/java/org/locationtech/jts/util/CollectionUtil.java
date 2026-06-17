@@ -14,7 +14,6 @@ package org.locationtech.jts.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -25,7 +24,10 @@ import java.util.List;
 public class CollectionUtil 
 {
 
-  public interface Function {
+    private CollectionUtil() {
+    }
+
+    public interface Function {
     Object execute(Object obj);
   }
 
@@ -37,12 +39,12 @@ public class CollectionUtil
    * @param func the Function to execute
    * @return a list of the transformed objects
    */
-  public static List transform(Collection coll, Function func)
+  public static List<Object> transform(Collection<?> coll, Function func)
   {
-    List result = new ArrayList();
-    for (Iterator i = coll.iterator(); i.hasNext(); ) {
-      result.add(func.execute(i.next()));
-    }
+    List<Object> result = new ArrayList<>();
+      for (Object o : coll) {
+          result.add(func.execute(o));
+      }
     return result;
   }
 
@@ -53,11 +55,11 @@ public class CollectionUtil
    * @param coll the collection to process
    * @param func the Function to execute
    */
-  public static void apply(Collection coll, Function func)
+  public static void apply(Collection<?> coll, Function func)
   {
-    for (Iterator i = coll.iterator(); i.hasNext(); ) {
-      func.execute(i.next());
-    }
+      for (Object o : coll) {
+          func.execute(o);
+      }
   }
 
   /**
@@ -69,14 +71,13 @@ public class CollectionUtil
    * @param func the Function to execute
    * @return a list of objects for which the function was true
    */
-  public static List select(Collection collection, Function func) {
-    List result = new ArrayList();
-    for (Iterator i = collection.iterator(); i.hasNext();) {
-      Object item = i.next();
-      if (Boolean.TRUE.equals(func.execute(item))) {
-        result.add(item);
+  public static List<Object> select(Collection<?> collection, Function func) {
+    List<Object> result = new ArrayList<>();
+      for (Object item : collection) {
+          if (Boolean.TRUE.equals(func.execute(item))) {
+              result.add(item);
+          }
       }
-    }
     return result;
   }
 }

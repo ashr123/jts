@@ -57,7 +57,7 @@ public class CoverageUnionPerfTest  extends PerformanceTestCase
     double cellSizeX = size / nCellsOnSideX;
     double cellSizeY = size / nCellsOnSideY;
     
-    List<Geometry> geoms = new ArrayList<Geometry>(); 
+    List<Geometry> geoms = new ArrayList<>();
   
     for (int i = 0; i < nCellsOnSideX; i++) {
       for (int j = 0; j < nCellsOnSideY; j++) {

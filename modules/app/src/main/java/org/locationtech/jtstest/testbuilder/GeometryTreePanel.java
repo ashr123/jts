@@ -22,17 +22,15 @@ import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.border.Border;
 import javax.swing.event.TreeExpansionEvent;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.event.TreeWillExpandListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jtstest.testbuilder.controller.JTSTestBuilderController;
 
 
 /**
@@ -40,12 +38,12 @@ import org.locationtech.jts.geom.Geometry;
  */
 public class GeometryTreePanel extends JPanel implements TreeWillExpandListener 
 {
-  JScrollPane jScrollPane = new JScrollPane();
-	JTree tree = new JTree();
-	BorderLayout borderLayout = new BorderLayout();
+  final JScrollPane jScrollPane = new JScrollPane();
+	final JTree tree = new JTree();
+	final BorderLayout borderLayout = new BorderLayout();
 	Border border1;
 
-	private class GeometryTreeCellRenderer extends DefaultTreeCellRenderer {
+	private static class GeometryTreeCellRenderer extends DefaultTreeCellRenderer {
 		public GeometryTreeCellRenderer() {
 		}
 
@@ -76,7 +74,7 @@ public class GeometryTreePanel extends JPanel implements TreeWillExpandListener
 		}
 	}
 
-	private void initUI() throws Exception {
+	private void initUI() {
 		setSize(200, 250);
 		border1 = BorderFactory.createEmptyBorder(4, 4, 4, 4);
 		setLayout(borderLayout);
@@ -103,17 +101,15 @@ public class GeometryTreePanel extends JPanel implements TreeWillExpandListener
         }
         // would be nice to flash as well as zoom, but zooming drawing is too slow
         if (e.getClickCount() == 1) {
-          JTSTestBuilder.controller().flash(geom);
+          JTSTestBuilderController.flash(geom);
         }
 			}
 		});
-		tree.addTreeSelectionListener(new TreeSelectionListener() {
-			public void valueChanged(TreeSelectionEvent e) {
-				//GeometryFunction fun = getFunction();
-				//if (fun != null)
-					//fireFunctionSelected(new GeometryFunctionEvent(fun));
-			}
-		});
+		tree.addTreeSelectionListener(e -> {
+            //GeometryFunction fun = getFunction();
+            //if (fun != null)
+                //fireFunctionSelected(new GeometryFunctionEvent(fun));
+        });
 	}
 	/**
 	 * Gets currently selected geometry, if any.
@@ -136,7 +132,7 @@ public class GeometryTreePanel extends JPanel implements TreeWillExpandListener
     tree.setSelectionPath(nextPath);
   }
 
-  private TreePath nextPath(TreePath path, int offset) {
+  private static TreePath nextPath(TreePath path, int offset) {
     GeometricObjectNode node = (GeometricObjectNode) path.getLastPathComponent();
     TreePath parentPath = path.getParentPath();
     GeometricObjectNode parent = (GeometricObjectNode) parentPath.getLastPathComponent();
@@ -149,8 +145,7 @@ public class GeometryTreePanel extends JPanel implements TreeWillExpandListener
       nextIndex = parent.getChildCount() - 1;
     }
     GeometricObjectNode nextNode = parent.getChildAt(nextIndex);
-    TreePath nextPath = parentPath.pathByAddingChild(nextNode);
-    return nextPath;
+      return parentPath.pathByAddingChild(nextNode);
   }
 
   private static Geometry getGeometryFromNode(Object value) {
@@ -163,13 +158,12 @@ public class GeometryTreePanel extends JPanel implements TreeWillExpandListener
     tree.setModel(new GeometryTreeModel(geom, source, null));
   }
 
-  public void populate(Geometry geom, int source, Comparator comp) {
+  public void populate(Geometry geom, int source, Comparator<GeometricObjectNode> comp) {
     tree.setModel(new GeometryTreeModel(geom, source, comp));
   }
 
   //Required by TreeWillExpandListener interface.
-  public void treeWillExpand(TreeExpansionEvent e) 
-              throws ExpandVetoException {
+  public void treeWillExpand(TreeExpansionEvent e) {
   	TreePath path = e.getPath();
   	Object lastComp = path.getLastPathComponent(); 
   }

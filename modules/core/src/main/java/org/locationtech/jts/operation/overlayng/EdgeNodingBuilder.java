@@ -70,8 +70,7 @@ class EdgeNodingBuilder {
   private static Noder createFixedPrecisionNoder(PrecisionModel pm) {
     //Noder noder = new MCIndexSnapRounder(pm);
     //Noder noder = new SimpleSnapRounder(pm);
-    Noder noder = new SnapRoundingNoder(pm);
-    return noder;
+      return new SnapRoundingNoder(pm);
   }
   
   private static Noder createFloatingPrecisionNoder(boolean doValidation) {
@@ -86,15 +85,15 @@ class EdgeNodingBuilder {
     return noder;
   }
   
-  private PrecisionModel pm;
-  private List<NodedSegmentString> inputEdges = new ArrayList<NodedSegmentString>();
-  private Noder customNoder;
+  private final PrecisionModel pm;
+  private final List<NodedSegmentString> inputEdges = new ArrayList<>();
+  private final Noder customNoder;
   
   private Envelope clipEnv = null;
   private RingClipper clipper;
   private LineLimiter limiter;
 
-  private boolean[] hasEdges = new boolean[2];
+  private final boolean[] hasEdges = new boolean[2];
 
 
   /**
@@ -168,8 +167,7 @@ class EdgeNodingBuilder {
      * Merge the noded edges to eliminate duplicates.
      * Labels are combined.
      */
-    List<Edge> mergedEdges = EdgeMerger.merge(nodedEdges);
-    return mergedEdges;
+      return EdgeMerger.merge(nodedEdges);
   }
   
   /**
@@ -187,12 +185,11 @@ class EdgeNodingBuilder {
     
     @SuppressWarnings("unchecked")
     Collection<SegmentString> nodedSS = noder.getNodedSubstrings();
-    List<Edge> edges = createEdges(nodedSS);
-    return edges;
+      return createEdges(nodedSS);
   }
 
   private List<Edge> createEdges(Collection<SegmentString> segStrings) {
-    List<Edge> edges = new ArrayList<Edge>();
+    List<Edge> edges = new ArrayList<>();
     for (SegmentString ss : segStrings) {
       Coordinate[] pts = ss.getCoordinates();
       
@@ -366,8 +363,7 @@ class EdgeNodingBuilder {
      * Canonical depth delta is 1 (Exterior on L, Interior on R).
      * It is flipped to -1 if the ring is oppositely oriented.
      */
-    int depthDelta = isOriented ? 1 : -1;
-    return depthDelta;
+      return isOriented ? 1 : -1;
   }
 
   /**
@@ -432,10 +428,7 @@ class EdgeNodingBuilder {
     /**
      * If line is completely contained then no need to limit
      */
-    if (clipEnv.covers(env)) {
-      return false;
-    }
-    return true;
+      return !clipEnv.covers(env);
   }
 
   /**

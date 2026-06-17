@@ -32,12 +32,12 @@ public class BoundaryTest
 {
   private static final double TOLERANCE = 0.00005;
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(BoundaryTest.class);
   }
 
-  private GeometryFactory fact = new GeometryFactory();
-  private WKTReader rdr = new WKTReader(fact);
+  private final GeometryFactory fact = new GeometryFactory();
+  private final WKTReader rdr = new WKTReader(fact);
 
   public BoundaryTest(String name)
   {
@@ -121,45 +121,31 @@ public class BoundaryTest
                     "POINT (100 100)"  );
   }
 
-  public void testHasBoundaryPoint()
-      throws Exception
-  {
+  public void testHasBoundaryPoint() {
     checkHasBoundary( "POINT (0 0)", false);
   }
   
-  public void testHasBoundaryPointEmpty()
-      throws Exception
-  {
+  public void testHasBoundaryPointEmpty() {
     checkHasBoundary( "POINT EMPTY", false);
   }
   
-  public void testHasBoundaryRingClosed()
-      throws Exception
-  {
+  public void testHasBoundaryRingClosed() {
     checkHasBoundary( "LINESTRING (100 100, 20 20, 200 20, 100 100)", false);
   }
   
-  public void testHasBoundaryMultiLineStringClosed()
-      throws Exception
-  {
+  public void testHasBoundaryMultiLineStringClosed() {
     checkHasBoundary( "MULTILINESTRING ((0 0, 0 1), (0 1, 1 1, 1 0, 0 0))", false);
   }
   
-  public void testHasBoundaryMultiLineStringOpen()
-      throws Exception
-  {
+  public void testHasBoundaryMultiLineStringOpen() {
     checkHasBoundary( "MULTILINESTRING ((0 0, 0 2), (0 1, 1 1, 1 0, 0 0))");
   }
   
-  public void testHasBoundaryPolygon()
-      throws Exception
-  {
+  public void testHasBoundaryPolygon() {
     checkHasBoundary( "POLYGON ((1 9, 9 9, 9 1, 1 1, 1 9))");
   }
   
-  public void testHasBoundaryPolygonEmpty()
-      throws Exception
-  {
+  public void testHasBoundaryPolygonEmpty() {
     checkHasBoundary( "POLYGON EMPTY", false);
   }
   

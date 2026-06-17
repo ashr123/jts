@@ -82,7 +82,7 @@ public class ConstrainedDelaunayTriangulator {
     if (triList != null) return;
     
     List<Polygon> polys = PolygonExtracter.getPolygons(inputGeom);
-    triList = new ArrayList<Tri>();
+    triList = new ArrayList<>();
     for (Polygon poly : polys) {
       List<Tri> polyTriList = triangulatePolygon(poly);
       triList.addAll(polyTriList);
@@ -96,7 +96,7 @@ public class ConstrainedDelaunayTriangulator {
    * @param poly the input polygon
    * @return list of Tris forming the triangulation
    */
-  List<Tri> triangulatePolygon(Polygon poly) {
+  static List<Tri> triangulatePolygon(Polygon poly) {
     Coordinate[] polyShell = PolygonHoleJoiner.join(poly);
     List<Tri> triList = PolygonEarClipper.triangulate(polyShell);
     

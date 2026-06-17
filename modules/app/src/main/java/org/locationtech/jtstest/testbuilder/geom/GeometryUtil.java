@@ -22,7 +22,10 @@ import org.locationtech.jts.geom.Polygon;
 
 public class GeometryUtil {
 
-  public static String structureSummary(Geometry g)
+    private GeometryUtil() {
+    }
+
+    public static String structureSummary(Geometry g)
   {
     String structure = "";
     if (g == null) return "";
@@ -50,13 +53,11 @@ public class GeometryUtil {
 
   public static boolean hasArea(Geometry geom) {
     if (geom.getDimension() >= 2) return true;
-    if (geom instanceof LinearRing) return true;
-    return false;
+      return geom instanceof LinearRing;
   }
 
   public static boolean hasLength(Geometry geom) {
-    if (geom.getDimension() >= 1) return true;
-    return false;
+      return geom.getDimension() >= 1;
   }
 
   public static double area(Geometry geom) {
@@ -78,14 +79,7 @@ public class GeometryUtil {
    */
   public static Envelope totalEnvelope(Geometry geom) {
     Envelope env = geom.getEnvelopeInternal();
-    geom.apply(new GeometryComponentFilter() {
-  
-      @Override
-      public void filter(Geometry comp) {
-        env.expandToInclude(comp.getEnvelopeInternal());
-      }
-      
-    });
+    geom.apply((GeometryComponentFilter) comp -> env.expandToInclude(comp.getEnvelopeInternal()));
     return env;
   }
 

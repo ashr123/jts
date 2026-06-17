@@ -60,7 +60,7 @@ public class GMLHandler extends DefaultHandler {
 	static class Handler {
 		protected Attributes attrs = null;
 
-		protected ParseStrategy strategy;
+		protected final ParseStrategy strategy;
 
 		/**
 		 * @param strategy 
@@ -84,16 +84,16 @@ public class GMLHandler extends DefaultHandler {
 			text.append(str);
 		}
 
-		protected List children = null;
+		protected List<Object> children = null;
 
 		/**
 		 * Store param for the future
-		 * 
+		 *
 		 * @param obj
 		 */
 		public void keep(Object obj) {
 			if (children == null)
-				children = new LinkedList();
+				children = new LinkedList<>();
 			children.add(obj);
 
 		}
@@ -108,7 +108,7 @@ public class GMLHandler extends DefaultHandler {
 		}
 	}
 
-	private Stack stack = new Stack();
+	private final Stack<Handler> stack = new Stack<>();
 
 	private ErrorHandler delegate = null;
 
@@ -146,13 +146,11 @@ public class GMLHandler extends DefaultHandler {
 	{
 		if (stack.size() > 1)
 			return false;
-		// top level node on stack needs to have at least one child 
-		Handler h = (Handler) stack.peek();
-		if (h.children.size() < 1)
-			return false;
-		return true;
-		
-	}
+		// top level node on stack needs to have at least one child
+		Handler h = stack.peek();
+        return !h.children.isEmpty();
+
+    }
 	
 	/**
 	 * Gets the geometry parsed by this handler.
@@ -163,11 +161,11 @@ public class GMLHandler extends DefaultHandler {
 	 */
 	public Geometry getGeometry() {
 		if (stack.size() == 1) {
-			Handler h = (Handler) stack.peek();
+			Handler h = stack.peek();
 			if (h.children.size() == 1)
 				return (Geometry) h.children.get(0);
 			return gf.createGeometryCollection(
-					(Geometry[]) h.children.toArray(new Geometry[stack.size()]));
+                    h.children.toArray(new Geometry[stack.size()]));
 		}
 		throw new IllegalStateException(
 				"Parse did not complete as expected, there are " + stack.size()
@@ -180,18 +178,17 @@ public class GMLHandler extends DefaultHandler {
 	/**
 	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
 	 */
-	public void characters(char[] ch, int start, int length) throws SAXException {
+	public void characters(char[] ch, int start, int length) {
 		if (!stack.isEmpty())
-			((Handler) stack.peek()).addText(new String(ch, start, length));
+			stack.peek().addText(new String(ch, start, length));
 	}
 
 	/**
 	 * @see org.xml.sax.helpers.DefaultHandler#ignorableWhitespace(char[], int, int)
 	 */
-	public void ignorableWhitespace(char[] ch, int start, int length)
-			throws SAXException {
+	public void ignorableWhitespace(char[] ch, int start, int length) {
 		if (!stack.isEmpty())
-			((Handler) stack.peek()).addText(" ");
+			stack.peek().addText(" ");
 	}
 
 	/**
@@ -199,19 +196,19 @@ public class GMLHandler extends DefaultHandler {
 	 */
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
-		Handler thisAction = (Handler) stack.pop();
-		((Handler) stack.peek()).keep(thisAction.create(gf));
+		Handler thisAction = stack.pop();
+		stack.peek().keep(thisAction.create(gf));
 	}
 
 	/**
 	 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 	 */
 	public void startElement(String uri, String localName, String qName,
-			Attributes attributes) throws SAXException {
+			Attributes attributes) {
 		// create a handler
 		ParseStrategy ps = GeometryStrategies.findStrategy(uri, localName);
 		if (ps == null) {
-			String qn = qName.substring(qName.indexOf(':') + 1, qName.length());
+			String qn = qName.substring(qName.indexOf(':') + 1);
 			ps = GeometryStrategies.findStrategy(null, qn);
 		}
 		Handler h = new Handler(ps, attributes);

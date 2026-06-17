@@ -24,7 +24,10 @@ import org.locationtech.jts.geom.GeometryFactory;
 
 public class SegmentExtracter {
 
-  public static Geometry extract(Geometry geom, Geometry aoi) {
+    private SegmentExtracter() {
+    }
+
+    public static Geometry extract(Geometry geom, Geometry aoi) {
     SegmentExtracterFilter filter = new SegmentExtracterFilter(aoi.getEnvelopeInternal());
     geom.apply(filter);
     return filter.getGeometry(geom.getFactory());
@@ -32,8 +35,8 @@ public class SegmentExtracter {
 
   public static class SegmentExtracterFilter implements CoordinateSequenceFilter
   {
-    private Envelope aoi;
-    List<Coordinate[]> segSeq = new ArrayList<Coordinate[]>();
+    private final Envelope aoi;
+    final List<Coordinate[]> segSeq = new ArrayList<>();
     CoordinateList coords;
     int lastIndex;
 
@@ -42,7 +45,7 @@ public class SegmentExtracter {
     }
 
     public Geometry getGeometry(GeometryFactory factory) {
-      List<Geometry> lines = new ArrayList<Geometry>();
+      List<Geometry> lines = new ArrayList<>();
       for (Coordinate[] pts : segSeq) {
         Geometry line = factory.createLineString(pts);
         lines.add(line);

@@ -40,7 +40,6 @@ import javax.swing.event.ChangeEvent;
 
 import org.locationtech.jtstest.testbuilder.controller.JTSTestBuilderController;
 import org.locationtech.jtstest.testbuilder.event.ValidPanelEvent;
-import org.locationtech.jtstest.testbuilder.event.ValidPanelListener;
 import org.locationtech.jtstest.testbuilder.model.GeometryEvent;
 import org.locationtech.jtstest.testbuilder.model.TestBuilderModel;
 import org.locationtech.jtstest.testbuilder.model.TestCaseEdit;
@@ -54,45 +53,45 @@ import org.locationtech.jtstest.testbuilder.ui.SwingUtil;
 public class TestCasePanel extends JPanel {
   TestCaseEdit testCase;
   //---------------------------------------------
-  BorderLayout borderLayout1 = new BorderLayout();
-  BorderLayout editFrameLayout = new BorderLayout();
-  JPanel editFramePanel = new JPanel();
-  GeometryEditPanel editPanel = new GeometryEditPanel();
+  final BorderLayout borderLayout1 = new BorderLayout();
+  final BorderLayout editFrameLayout = new BorderLayout();
+  final JPanel editFramePanel = new JPanel();
+  final GeometryEditPanel editPanel = new GeometryEditPanel();
   ButtonGroup geometryType = new ButtonGroup();
   ButtonGroup editMode = new ButtonGroup();
   ButtonGroup partType = new ButtonGroup();
   Border border4;
-  JPanel editGroupPanel = new JPanel();
-  JTabbedPane jTabbedPane1 = new JTabbedPane();
-  JPanel btnPanel = new JPanel();
-  JPanel relateTabPanel = new JPanel();
-  JButton btnRunTests = new JButton();
-  RelatePanel relatePanel = new RelatePanel();
-  BorderLayout borderLayout2 = new BorderLayout();
+  final JPanel editGroupPanel = new JPanel();
+  final JTabbedPane jTabbedPane1 = new JTabbedPane();
+  final JPanel btnPanel = new JPanel();
+  final JPanel relateTabPanel = new JPanel();
+  final JButton btnRunTests = new JButton();
+  final RelatePanel relatePanel = new RelatePanel();
+  final BorderLayout borderLayout2 = new BorderLayout();
   //GeometryEditControlPanel editCtlPanel = new GeometryEditControlPanel();
-  BorderLayout borderLayout3 = new BorderLayout();
-  JPanel jPanel1 = new JPanel();
-  JTextField txtDesc = new JTextField();
-  GridBagLayout gridBagLayout1 = new GridBagLayout();
-  SpatialFunctionPanel spatialFunctionPanel = new SpatialFunctionPanel();
+  final BorderLayout borderLayout3 = new BorderLayout();
+  final JPanel jPanel1 = new JPanel();
+  final JTextField txtDesc = new JTextField();
+  final GridBagLayout gridBagLayout1 = new GridBagLayout();
+  final SpatialFunctionPanel spatialFunctionPanel = new SpatialFunctionPanel();
   private int currentTestCaseIndex = 0;
   private int maxTestCaseIndex = 0;
   private boolean initialized = false;
-  JPanel casePrecisionModelPanel = new JPanel();
-  JPanel namePanel = new JPanel();
-  JLabel testCaseIndexLabel = new JLabel();
-  GridBagLayout gridBagLayout2 = new GridBagLayout();
-  GridBagLayout gridBagLayout3 = new GridBagLayout();
-  JLabel precisionModelLabel = new JLabel();
-  ValidPanel validPanel = new ValidPanel();
-  JPanel statusBarPanel = new JPanel();
-  JLabel lblMousePos = new JLabel();
-  JLabel lblPrecisionModel = new JLabel();
-  ScalarFunctionPanel scalarFunctionPanel = new ScalarFunctionPanel();
+  final JPanel casePrecisionModelPanel = new JPanel();
+  final JPanel namePanel = new JPanel();
+  final JLabel testCaseIndexLabel = new JLabel();
+  final GridBagLayout gridBagLayout2 = new GridBagLayout();
+  final GridBagLayout gridBagLayout3 = new GridBagLayout();
+  final JLabel precisionModelLabel = new JLabel();
+  final ValidPanel validPanel = new ValidPanel();
+  final JPanel statusBarPanel = new JPanel();
+  final JLabel lblMousePos = new JLabel();
+  final JLabel lblPrecisionModel = new JLabel();
+  final ScalarFunctionPanel scalarFunctionPanel = new ScalarFunctionPanel();
   
-  JPanel jPanelReveal = new JPanel();
-  JSpinner spStretchDist = new JSpinner(new SpinnerNumberModel(5, 0, 99999, 1));
-  JCheckBox cbRevealTopo = new JCheckBox();
+  final JPanel jPanelReveal = new JPanel();
+  final JSpinner spStretchDist = new JSpinner(new SpinnerNumberModel(5, 0, 99999, 1));
+  final JCheckBox cbRevealTopo = new JCheckBox();
 
   private TestBuilderModel tbModel;
   
@@ -208,7 +207,7 @@ public class TestCasePanel extends JPanel {
   /**
    *  Component initialization
    */
-  private void jbInit() throws Exception {
+  private void jbInit() {
     //---------------------------------------------------
     border4 = BorderFactory.createBevelBorder(BevelBorder.LOWERED, Color.white,
         Color.white, new Color(93, 93, 93), new Color(134, 134, 134));
@@ -228,18 +227,9 @@ public class TestCasePanel extends JPanel {
     btnRunTests.setToolTipText("");
     btnRunTests.setText("Run");
     btnRunTests.addActionListener(
-      new java.awt.event.ActionListener() {
-
-        public void actionPerformed(ActionEvent e) {
-          btnRunTests_actionPerformed(e);
-        }
-      });    
+            this::btnRunTests_actionPerformed);
     validPanel.addValidPanelListener(
-        new ValidPanelListener() {
-          public void setHighlightPerformed(ValidPanelEvent e) {
-            validPanel_setHighlightPerformed(e);
-          }
-        });
+            this::validPanel_setHighlightPerformed);
     jPanel1.setLayout(gridBagLayout1);
     txtDesc.addFocusListener(
       new java.awt.event.FocusAdapter() {
@@ -249,12 +239,7 @@ public class TestCasePanel extends JPanel {
         }
       });
     jTabbedPane1.addChangeListener(
-      new javax.swing.event.ChangeListener() {
-
-        public void stateChanged(ChangeEvent e) {
-          jTabbedPane1_stateChanged(e);
-        }
-      });
+            this::jTabbedPane1_stateChanged);
     //testCaseIndexLabel.setBorder(BorderFactory.createLoweredBevelBorder());
     testCaseIndexLabel.setBorder(new EmptyBorder(0,4,0,0));
     testCaseIndexLabel.setToolTipText("");
@@ -286,22 +271,14 @@ public class TestCasePanel extends JPanel {
     JCheckBox cbDisplayAB = new JCheckBox();
     cbDisplayAB.setSelected(true);
     cbDisplayAB.setToolTipText("Display A and B");
-     cbDisplayAB.addActionListener(new java.awt.event.ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          JTSTestBuilderController.editPanel().setShowingInput(cbDisplayAB.isSelected());
-        }
-      });
+     cbDisplayAB.addActionListener(e -> JTSTestBuilderController.editPanel().setShowingInput(cbDisplayAB.isSelected()));
     JLabel lblDisplayAB = new JLabel();
     lblDisplayAB.setIcon(AppIcons.GEOFUNC_BINARY);
     
     JCheckBox cbDisplayGrid = new JCheckBox();
     cbDisplayGrid.setSelected(true);
     cbDisplayGrid.setToolTipText("Display Grid");
-    cbDisplayGrid.addActionListener(new java.awt.event.ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          JTSTestBuilderController.editPanel().setShowingGrid(cbDisplayGrid.isSelected());
-        }
-      });
+    cbDisplayGrid.addActionListener(e -> JTSTestBuilderController.editPanel().setShowingGrid(cbDisplayGrid.isSelected()));
     JLabel lblDisplayGrid = new JLabel();
     lblDisplayGrid.setIcon(AppIcons.EDIT_GRID);
     
@@ -322,15 +299,14 @@ public class TestCasePanel extends JPanel {
     jPanelReveal.setBorder(BorderFactory.createLoweredBevelBorder());
 
     JButton btnSaveImage = SwingUtil.createButton(
-        AppIcons.SAVE_IMAGE, AppStrings.TIP_SAVE_IMAGE,   
-        new java.awt.event.ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            if (SwingUtil.isCtlKeyPressed(e)) {
-              JTSTestBuilder.controller().saveImageAsPNG();
-            } else {
-              JTSTestBuilder.controller().saveImageToClipboard();
-            }
-        }});
+        AppIcons.SAVE_IMAGE, AppStrings.TIP_SAVE_IMAGE,
+            e -> {
+              if (SwingUtil.isCtlKeyPressed(e)) {
+                JTSTestBuilderController.saveImageAsPNG();
+              } else {
+                JTSTestBuilderController.saveImageToClipboard();
+              }
+          });
     
     JPanel panelCase = new JPanel();
     panelCase.setLayout(new BorderLayout());
@@ -371,7 +347,6 @@ public class TestCasePanel extends JPanel {
   }
 
   public double getStretchSize() {
-    return ((Integer) spStretchDist.getValue()).intValue();
+    return (Integer) spStretchDist.getValue();
   }
 }
-

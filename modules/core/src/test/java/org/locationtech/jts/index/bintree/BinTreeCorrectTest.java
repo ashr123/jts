@@ -14,8 +14,6 @@ package org.locationtech.jts.index.bintree;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.locationtech.jts.index.bintree.Bintree;
-import org.locationtech.jts.index.bintree.Interval;
 import org.locationtech.jts.util.Stopwatch;
 
 
@@ -25,8 +23,7 @@ import org.locationtech.jts.util.Stopwatch;
  */
 public class BinTreeCorrectTest {
 
-  public static void main(String[] args) throws Exception
-  {
+  public static void main(String[] args) {
     //testBinaryPower();
     BinTreeCorrectTest test = new BinTreeCorrectTest();
     test.run();
@@ -37,8 +34,8 @@ public class BinTreeCorrectTest {
   static final double MIN_EXTENT = -1000.0;
   static final double MAX_EXTENT = 1000.0;
 
-  IntervalList intervalList = new IntervalList();
-  Bintree btree = new Bintree();
+  final IntervalList intervalList = new IntervalList();
+  final Bintree<Interval> btree = new Bintree<>();
 
   public BinTreeCorrectTest() {
   }
@@ -58,7 +55,7 @@ public class BinTreeCorrectTest {
 
   void createGrid(int nGridCells)
   {
-    int gridSize = (int) Math.sqrt((double) nGridCells);
+    int gridSize = (int) Math.sqrt(nGridCells);
     gridSize += 1;
     double extent = MAX_EXTENT - MIN_EXTENT;
     double gridInc = extent / gridSize;
@@ -75,7 +72,7 @@ public class BinTreeCorrectTest {
   void runQueries()
   {
     int nGridCells = 100;
-    int cellSize = (int) Math.sqrt((double) NUM_ITEMS);
+    int cellSize = (int) Math.sqrt(NUM_ITEMS);
     double extent = MAX_EXTENT - MIN_EXTENT;
     double queryCellSize =  2.0 * extent / cellSize;
 
@@ -89,7 +86,7 @@ public class BinTreeCorrectTest {
     Stopwatch sw = new Stopwatch();
     sw.start();
 
-    int gridSize = (int) Math.sqrt((double) nGridCells);
+    int gridSize = (int) Math.sqrt(nGridCells);
     gridSize += 1;
     double extent = MAX_EXTENT - MIN_EXTENT;
     double gridInc = extent / gridSize;
@@ -107,28 +104,27 @@ public class BinTreeCorrectTest {
   {
     //List finalList = getOverlapping(q.query(env), env);
 
-    List eList = intervalList.query(interval);
+    List<Interval> eList = intervalList.query(interval);
   }
 
   void queryTest(Interval interval)
   {
-    List candidateList = btree.query(interval);
-    List finalList = getOverlapping(candidateList, interval);
+    List<Interval> candidateList = btree.query(interval);
+    List<Interval> finalList = getOverlapping(candidateList, interval);
 
-    List eList = intervalList.query(interval);
+    List<Interval> eList = intervalList.query(interval);
 System.out.println(finalList.size());
 
     if (finalList.size() != eList.size() )
       throw new RuntimeException("queries do not match");
   }
 
-  private List getOverlapping(List items, Interval searchInterval)
+  private static List<Interval> getOverlapping(List<? extends Interval> items, Interval searchInterval)
   {
-    List result = new ArrayList();
-    for (int i = 0; i < items.size(); i++) {
-      Interval interval = (Interval) items.get(i);
-      if (interval.overlaps(searchInterval)) result.add(interval);
-    }
+    List<Interval> result = new ArrayList<>();
+      for (Interval interval : items) {
+          if (interval.overlaps(searchInterval)) result.add(interval);
+      }
     return result;
   }
 

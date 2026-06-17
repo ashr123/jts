@@ -189,7 +189,7 @@ public class IsSimpleOp
   private boolean isSimpleMultiPoint(MultiPoint mp)
   {
     if (mp.isEmpty()) return true;
-    Set points = new TreeSet();
+    Set<Coordinate> points = new TreeSet<>();
     for (int i = 0; i < mp.getNumGeometries(); i++) {
       Point pt = (Point) mp.getGeometryN(i);
       Coordinate p = pt.getCoordinate();
@@ -212,12 +212,12 @@ public class IsSimpleOp
    */
   private boolean isSimplePolygonal(Geometry geom)
   {
-    List rings = LinearComponentExtracter.getLines(geom);
-    for (Iterator i = rings.iterator(); i.hasNext(); ) {
-      LinearRing ring = (LinearRing) i.next();
-      if (! isSimpleLinearGeometry(ring))
-        return false;
-    }
+    List<LineString> rings = LinearComponentExtracter.getLines(geom);
+      for (LineString lineString : rings) {
+          LinearRing ring = (LinearRing) lineString;
+          if (!isSimpleLinearGeometry(ring))
+              return false;
+      }
     return true;
   }
   
@@ -252,7 +252,7 @@ public class IsSimpleOp
     }
     if (hasNonEndpointIntersection(graph)) return false;
     if (isClosedEndpointsInInterior) {
-      if (hasClosedEndpointIntersection(graph)) return false;
+        return !hasClosedEndpointIntersection(graph);
     }
     return true;
   }
@@ -263,11 +263,11 @@ public class IsSimpleOp
    */
   private boolean hasNonEndpointIntersection(GeometryGraph graph)
   {
-    for (Iterator i = graph.getEdgeIterator(); i.hasNext(); ) {
-      Edge e = (Edge) i.next();
+    for (Iterator<Edge> i = graph.getEdgeIterator(); i.hasNext(); ) {
+      Edge e = i.next();
       int maxSegmentIndex = e.getMaximumSegmentIndex();
-      for (Iterator eiIt = e.getEdgeIntersectionList().iterator(); eiIt.hasNext(); ) {
-        EdgeIntersection ei = (EdgeIntersection) eiIt.next();
+      for (Iterator<EdgeIntersection> eiIt = e.getEdgeIntersectionList().iterator(); eiIt.hasNext(); ) {
+        EdgeIntersection ei = eiIt.next();
         if (! ei.isEndPoint(maxSegmentIndex)) {
           nonSimpleLocation = ei.getCoordinate();
           return true;
@@ -278,7 +278,7 @@ public class IsSimpleOp
   }
 
   private static class EndpointInfo {
-    Coordinate pt;
+    final Coordinate pt;
     boolean isClosed;
     int degree;
 
@@ -308,9 +308,9 @@ public class IsSimpleOp
    */
   private boolean hasClosedEndpointIntersection(GeometryGraph graph)
   {
-    Map endPoints = new TreeMap();
-    for (Iterator i = graph.getEdgeIterator(); i.hasNext(); ) {
-      Edge e = (Edge) i.next();
+    Map<Coordinate, EndpointInfo> endPoints = new TreeMap<>();
+    for (Iterator<Edge> i = graph.getEdgeIterator(); i.hasNext(); ) {
+      Edge e = i.next();
       boolean isClosed = e.isClosed();
       Coordinate p0 = e.getCoordinate(0);
       addEndpoint(endPoints, p0, isClosed);
@@ -318,27 +318,22 @@ public class IsSimpleOp
       addEndpoint(endPoints, p1, isClosed);
     }
 
-    for (Iterator i = endPoints.values().iterator(); i.hasNext(); ) {
-      EndpointInfo eiInfo = (EndpointInfo) i.next();
-      if (eiInfo.isClosed && eiInfo.degree != 2) {
-        nonSimpleLocation = eiInfo.getCoordinate();
-        return true;
+      for (EndpointInfo eiInfo : endPoints.values()) {
+          if (eiInfo.isClosed && eiInfo.degree != 2) {
+              nonSimpleLocation = eiInfo.getCoordinate();
+              return true;
+          }
       }
-    }
     return false;
   }
 
   /**
    * Add an endpoint to the map, creating an entry for it if none exists
    */
-  private void addEndpoint(Map endPoints, Coordinate p, boolean isClosed)
+  private static void addEndpoint(Map<Coordinate, EndpointInfo> endPoints, Coordinate p, boolean isClosed)
   {
-    EndpointInfo eiInfo = (EndpointInfo) endPoints.get(p);
-    if (eiInfo == null) {
-      eiInfo = new EndpointInfo(p);
-      endPoints.put(p, eiInfo);
-    }
-    eiInfo.addEndpoint(isClosed);
+      EndpointInfo eiInfo = endPoints.computeIfAbsent(p, EndpointInfo::new);
+      eiInfo.addEndpoint(isClosed);
   }
 
 }

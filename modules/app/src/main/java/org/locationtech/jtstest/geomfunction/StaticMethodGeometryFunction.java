@@ -11,14 +11,15 @@
  */
 package org.locationtech.jtstest.geomfunction;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.util.Assert;
 import org.locationtech.jtstest.util.ClassUtil;
 import org.locationtech.jtstest.util.StringUtil;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
 
 
 /**
@@ -58,8 +59,7 @@ public class StaticMethodGeometryFunction
 	
 	private static String extractCategory(String className)
 	{
-		String trim = StringUtil.removeFromEnd(className, FUNCTIONS_SUFFIX);
-		return trim;
+        return StringUtil.removeFromEnd(className, FUNCTIONS_SUFFIX);
 	}
 	
 	/**
@@ -117,16 +117,14 @@ public class StaticMethodGeometryFunction
   private static String extractDescription(Method method)
 	{
     Metadata doc = method.getAnnotation(Metadata.class);
-    String desc = (doc == null) ? "" : doc.description();
-    return desc;
+        return (doc == null) ? "" : doc.description();
 	}
 	
 	private static Class<?>[] extractParamTypes(Method method)
 	{
 		Class<?>[] methodParamTypes = method.getParameterTypes();
 		Class<?>[] types = new Class[methodParamTypes.length - 1];
-		for (int i = 1; i < methodParamTypes.length; i++)
-			types[i-1] = methodParamTypes[i];
+        System.arraycopy(methodParamTypes, 1, types, 0, methodParamTypes.length - 1);
 		return types;
 	}
 
@@ -142,7 +140,7 @@ public class StaticMethodGeometryFunction
     return isRequired;
   }
   
-  private Method method;
+  private final Method method;
 
 	public StaticMethodGeometryFunction(
 			String category,
@@ -158,36 +156,33 @@ public class StaticMethodGeometryFunction
     isRequiredB = extractRequiredB(method);
 	}
 
-  public Object invoke(Geometry g, Object[] arg) 
+  public Object invoke(Geometry g, List<Object> arg)
   {
     return invoke(method, null, createFullArgs(g, arg));
   }
 
   /**
-   * Creates an arg array which includes the target geometry as the first argument
-   * 
+   * Creates an arg list which includes the target geometry as the first argument
+   *
    * @param g
    * @param arg
    * @return
    */
-  private static Object[] createFullArgs(Geometry g, Object[] arg)
+  private static List<Object> createFullArgs(Geometry g, List<Object> arg)
   {
-  	int fullArgLen = 1;
-  	if (arg != null) 
-  		fullArgLen = arg.length + 1;
-  	Object[] fullArg = new Object[fullArgLen];
-  	fullArg[0] = g;
-  	for (int i = 1; i < fullArgLen; i++) {
-  		fullArg[i] = arg[i-1];
+  	List<Object> fullArg = new java.util.ArrayList<>();
+  	fullArg.add(g);
+  	if (arg != null) {
+  		fullArg.addAll(arg);
   	}
   	return fullArg;
   }
-  
-  public static Object invoke(Method method, Object target, Object[] args)
+
+  public static Object invoke(Method method, Object target, List<Object> args)
   {
     Object result;
     try {
-      result = method.invoke(target, args);
+      result = method.invoke(target, args.toArray(new Object[0]));
     }
     catch (InvocationTargetException ex) {
       Throwable t = ex.getCause();
@@ -205,16 +200,13 @@ public class StaticMethodGeometryFunction
   private static String invocationErrMsg(InvocationTargetException ex)
   {
     Throwable targetEx = ex.getTargetException();
-    String msg = getClassname(targetEx.getClass())
-    + ": " +
-    targetEx.getMessage();
-    return msg;
+      return getClassname(targetEx.getClass())
+      + ": " +
+      targetEx.getMessage();
   }
   
   public static String getClassname(Class<?> javaClass)
   {
-    String jClassName = javaClass.getName();
-    int lastDotPos = jClassName.lastIndexOf(".");
-    return jClassName.substring(lastDotPos + 1, jClassName.length());
+      return ClassUtil.getClassname(javaClass);
   }
 }

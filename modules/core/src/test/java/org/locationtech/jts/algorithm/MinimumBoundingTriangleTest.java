@@ -165,7 +165,7 @@ public class MinimumBoundingTriangleTest extends GeometryTestCase {
 		checkEqual(hull, tri);
 	}
 
-	private void assertCovers(Geometry tri, Geometry geom) {
+	private static void assertCovers(Geometry tri, Geometry geom) {
 		// Use area-based difference to be robust against small numeric deviations
 		Geometry diff = geom.difference(tri);
 		assertTrue("Triangle should cover the convex hull; uncovered area = " + diff.getArea(), diff.getArea() <= TOLERANCE);
@@ -190,7 +190,7 @@ public class MinimumBoundingTriangleTest extends GeometryTestCase {
 		assertTrue("Midpoint CA not on hull boundary (dist=" + dCA + ")", dCA <= TOLERANCE);
 	}
 
-	private Coordinate midpoint(Coordinate a, Coordinate b) {
+	private static Coordinate midpoint(Coordinate a, Coordinate b) {
 		return new Coordinate((a.x + b.x) / 2.0, (a.y + b.y) / 2.0);
 	}
 }

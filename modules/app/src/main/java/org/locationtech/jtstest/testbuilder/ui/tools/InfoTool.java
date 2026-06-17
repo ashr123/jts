@@ -13,7 +13,7 @@ package org.locationtech.jtstest.testbuilder.ui.tools;
 
 import java.awt.event.MouseEvent;
 
-import org.locationtech.jtstest.testbuilder.JTSTestBuilder;
+import org.locationtech.jtstest.testbuilder.controller.JTSTestBuilderController;
 
 
 /**
@@ -33,7 +33,7 @@ public class InfoTool extends BasicTool {
 
   public void mousePressed(MouseEvent e) 
   {
-    JTSTestBuilder.controller().displayInfo(toModelCoordinate(e.getPoint()));
+    JTSTestBuilderController.displayInfo(toModelCoordinate(e.getPoint()));
   }
 
 }

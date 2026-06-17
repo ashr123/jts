@@ -25,7 +25,10 @@ import org.locationtech.jts.operation.union.UnionStrategy;
 
 public class OverlayNGSnappingFunctions {
 
-  public static Geometry difference(Geometry a, Geometry b, double tolerance) {
+    private OverlayNGSnappingFunctions() {
+    }
+
+    public static Geometry difference(Geometry a, Geometry b, double tolerance) {
     return OverlayNG.overlay(a, b, DIFFERENCE, null, getNoder(tolerance) );
   }
 

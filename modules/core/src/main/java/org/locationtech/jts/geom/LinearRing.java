@@ -54,7 +54,7 @@ public class LinearRing extends LineString
    *
    * @deprecated Use GeometryFactory instead
    */
-  public LinearRing(Coordinate points[], PrecisionModel precisionModel,
+  public LinearRing(Coordinate[] points, PrecisionModel precisionModel,
                     int SRID) {
     this(points, new GeometryFactory(precisionModel, SRID));
     validateConstruction();
@@ -66,7 +66,7 @@ public class LinearRing extends LineString
    * @param factory
    * @throws IllegalArgumentException if the ring is not closed, or has too few points
    */
-  private LinearRing(Coordinate points[], GeometryFactory factory) {
+  private LinearRing(Coordinate[] points, GeometryFactory factory) {
     this(factory.getCoordinateSequenceFactory().create(points), factory);
   }
 

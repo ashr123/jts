@@ -41,7 +41,7 @@ public class MultiFormatBufferedReader
     return rdr.read(reader);
   }
   
-  private GeometryFactory geomFactory;
+  private final GeometryFactory geomFactory;
   private int limit = -1;
   private int offset = 0;
 

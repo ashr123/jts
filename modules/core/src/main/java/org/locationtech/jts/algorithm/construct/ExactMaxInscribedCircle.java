@@ -33,8 +33,11 @@ import org.locationtech.jts.geom.Triangle;
  *
  */
 class ExactMaxInscribedCircle {
-  
-  /**
+
+    private ExactMaxInscribedCircle() {
+    }
+
+    /**
    * Tests whether a given geometry is supported by this class.
    * Currently only triangles and convex quadrilaterals are supported.
    * 
@@ -47,9 +50,7 @@ class ExactMaxInscribedCircle {
     Polygon polygon = (Polygon) geom;
     if (isTriangle(polygon)) 
       return true;
-    if (isQuadrilateral(polygon) && isConvex(polygon))
-      return true;
-    return false;
+      return isQuadrilateral(polygon) && isConvex(polygon);
   }
 
   private static boolean isSimplePolygon(Geometry geom) {

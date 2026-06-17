@@ -12,69 +12,67 @@
 
 package org.locationtech.jtstest.util;
 
+import org.locationtech.jts.geom.Geometry;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
-import org.locationtech.jts.geom.Geometry;
+import java.util.List;
 
 public class ClassUtil 
 {
-  public static String getClassname(Class clz)
+    private ClassUtil() {
+    }
+
+    public static String getClassname(Class<?> clz)
   {
     String jClassName = clz.getName();
     int lastDotPos = jClassName.lastIndexOf(".");
-    return jClassName.substring(lastDotPos + 1, jClassName.length());
+    return jClassName.substring(lastDotPos + 1);
   }
 
-  public static String[] getStringArrayClassField(Class clz, String name) 
+  public static String[] getStringArrayClassField(Class<?> clz, String name)
   {
   	try {
   		Field field = clz.getField(name);
-  		String[] str = (String[]) field.get(null);
-  		return str;
-  	}
-  	catch (NoSuchFieldException ex) {  	}
-  	catch (IllegalAccessException ex) {  	}
-		return null;
+        return (String[]) field.get(null);
+  	} catch (NoSuchFieldException | IllegalAccessException ex) {
+    }
+      return null;
   }
   
-  public static String getStringClassField(Class clz, String name) 
+  public static String getStringClassField(Class<?> clz, String name)
   {
   	try {
   		Field[] f = clz.getDeclaredFields();
   		Field field = clz.getField(name);
-  		String str = (String) field.get(null);
-  		return str;
+        return (String) field.get(null);
   	}
-  	catch (NoSuchFieldException ex) {  	}
-  	catch (IllegalAccessException ex) {  	}
-		return null;
+  	catch (NoSuchFieldException | IllegalAccessException ex) {  	}
+      return null;
   }
   
-  public static Object dynamicCall(String clzName, String methodName, Class[] methodParamTypes, Object[] methodArgs)
+  public static Object dynamicCall(String clzName, String methodName, Class<?>[] methodParamTypes, List<Object> methodArgs)
       throws ClassNotFoundException, SecurityException, NoSuchMethodException,
       IllegalArgumentException, InstantiationException, IllegalAccessException,
       InvocationTargetException
   {
-    Class clz = Class.forName(clzName);
-    
-    Class[] constParTypes = new Class[] { String.class, String.class };
-    Constructor constr = clz.getConstructor(new Class[0]);
-    Object dummyto = constr.newInstance(new Object[0]);
-    
+    Class<?> clz = Class.forName(clzName);
+
+    Class<?>[] constParTypes = new Class<?>[] { String.class, String.class };
+    Constructor<?> constr = clz.getConstructor();
+    Object dummyto = constr.newInstance();
+
     Method meth = clz.getMethod(methodName, methodParamTypes);
-    Object result = meth.invoke(dummyto, methodArgs);
-    return result;
+      return meth.invoke(dummyto, methodArgs.toArray(new Object[0]));
   }
 
-  public static boolean isNumber(Class clz) {
+  public static boolean isNumber(Class<?> clz) {
     if (clz == Double.class) return true;
     if (clz == double.class) return true;
     if (clz == Integer.class) return true;
-    if (clz == int.class) return true;
-    return false;
+      return clz == int.class;
   }
   
   /**
@@ -96,10 +94,9 @@ public class ClassUtil
     return d;
   }
 
-  public static boolean isDouble(Class clz) {
+  public static boolean isDouble(Class<?> clz) {
     if (clz == Double.class) return true;
-    if (clz == double.class) return true;
-    return false;
+      return clz == double.class;
   }
 
   public static boolean isGeometry(Class<?> clz) {

@@ -45,7 +45,7 @@ public class Vertex
     public static final int ORIGIN      = 5;
     public static final int DESTINATION = 6;
 
-    private Coordinate      p;
+    private final Coordinate      p;
     // private int edgeNumber = -1;
 
     public Vertex(double _x, double _y) {
@@ -85,19 +85,11 @@ public class Vertex
     }
 
     public boolean equals(Vertex _x) {
-        if (p.x == _x.getX() && p.y == _x.getY()) {
-            return true;
-        } else {
-            return false;
-        }
+        return p.x == _x.getX() && p.y == _x.getY();
     }
 
     public boolean equals(Vertex _x, double tolerance) {
-        if (p.distance(_x.getCoordinate()) < tolerance) {
-            return true;
-        } else {
-            return false;
-        }
+        return p.distance(_x.getCoordinate()) < tolerance;
     }
 
     public int classify(Vertex p0, Vertex p1) {
@@ -230,7 +222,7 @@ public class Vertex
         return isCCW(e.orig(), e.dest());
     }
 
-    private HCoordinate bisector(Vertex a, Vertex b) {
+    private static HCoordinate bisector(Vertex a, Vertex b) {
         // returns the perpendicular bisector of the line segment ab
         double dx = b.getX() - a.getX();
         double dy = b.getY() - a.getY();
@@ -239,7 +231,7 @@ public class Vertex
         return new HCoordinate(l1, l2);
     }
 
-    private double distance(Vertex v1, Vertex v2) {
+    private static double distance(Vertex v1, Vertex v2) {
         return Math.sqrt(Math.pow(v2.getX() - v1.getX(), 2.0)
                 + Math.pow(v2.getY() - v1.getY(), 2.0));
     }
@@ -323,8 +315,7 @@ public class Vertex
         double dy = this.getY() - y0;
         double t = (d * dx - b * dy) / det;
         double u = (-c * dx + a * dy) / det;
-        double z = v0.getZ() + t * (v1.getZ() - v0.getZ()) + u * (v2.getZ() - v0.getZ());
-        return z;
+        return v0.getZ() + t * (v1.getZ() - v0.getZ()) + u * (v2.getZ() - v0.getZ());
     }
 
     /**
@@ -352,8 +343,7 @@ public class Vertex
         double dy = p.y - y0;
         double t = (d * dx - b * dy) / det;
         double u = (-c * dx + a * dy) / det;
-        double z = v0.getZ() + t * (v1.getZ() - v0.getZ()) + u * (v2.getZ() - v0.getZ());
-        return z;
+        return v0.getZ() + t * (v1.getZ() - v0.getZ()) + u * (v2.getZ() - v0.getZ());
     }
 
     /**
@@ -368,8 +358,7 @@ public class Vertex
         double segLen = p0.distance(p1);
         double ptLen = p.distance(p0);
         double dz = p1.getZ() - p0.getZ();
-        double pz = p0.getZ() + dz * (ptLen / segLen);
-        return pz;
+        return p0.getZ() + dz * (ptLen / segLen);
     }
 
 

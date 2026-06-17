@@ -29,6 +29,7 @@ import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.index.strtree.STRtree;
 import org.locationtech.jts.noding.NodedSegmentString;
 import org.locationtech.jts.noding.Noder;
+import org.locationtech.jts.noding.SegmentString;
 import org.locationtech.jts.noding.SegmentStringUtil;
 import org.locationtech.jts.noding.snap.SnappingNoder;
 import org.locationtech.jts.operation.polygonize.Polygonizer;
@@ -199,18 +200,18 @@ public class CoverageCleaner {
     return clean(coverage, -1, maxGapWidth);
   }
 
-  private Geometry[] coverage;
+  private final Geometry[] coverage;
   private double snappingDistance;  // set to compute default
   private double gapMaximumWidth = 0.0;
   private int overlapMergeStrategy = MERGE_LONGEST_BORDER;
 
-  private GeometryFactory geomFactory;
-  private STRtree covIndex;
+  private final GeometryFactory geomFactory;
+  private STRtree<Integer> covIndex;
   private Polygon[] resultants = null;  
   private CleanCoverage cleanCov;
-  private HashMap<Integer, IntArrayList> overlapParentMap = new HashMap<Integer, IntArrayList>();
-  private List<Polygon> overlaps = new ArrayList<Polygon>();
-  private List<Polygon> gaps = new ArrayList<Polygon>();
+  private final HashMap<Integer, IntArrayList> overlapParentMap = new HashMap<>();
+  private final List<Polygon> overlaps = new ArrayList<>();
+  private final List<Polygon> gaps = new ArrayList<>();
   private List<Polygon> mergableGaps;
   
   private static final double DEFAULT_SNAPPING_FACTOR = 1.0e8;
@@ -336,7 +337,7 @@ public class CoverageCleaner {
     }
   }
   
-  private CleanCoverage.MergeStrategy mergeStrategy(int mergeStrategyId) {
+  private static CleanCoverage.MergeStrategy mergeStrategy(int mergeStrategyId) {
     switch (mergeStrategyId) {
     case MERGE_LONGEST_BORDER: return new CleanCoverage.MergeStrategy.BorderMergeStrategy();
     case MERGE_MAX_AREA: return new CleanCoverage.MergeStrategy.AreaMergeStrategy(true);
@@ -374,7 +375,7 @@ public class CoverageCleaner {
    }
 
   private void createCoverageIndex() {
-    covIndex = new STRtree();
+    covIndex = new STRtree<>();
     for (int i = 0; i < coverage.length; i++) {
       covIndex.insert(coverage[i].getEnvelopeInternal(), i);
     }
@@ -392,7 +393,6 @@ public class CoverageCleaner {
     int parentIndex = -1;
     IntArrayList overlapIndexes = null;
     
-    @SuppressWarnings("unchecked")
     List<Integer> candidateParentIndex = covIndex.query(intPt.getEnvelopeInternal());
     for (int i : candidateParentIndex) {
       Geometry parent = coverage[i];
@@ -435,7 +435,7 @@ public class CoverageCleaner {
   }
 
   private List<Polygon> findMergableGaps(List<Polygon> gaps2) {
-    return gaps.stream().filter(gap -> isMergableGap(gap))
+    return gaps.stream().filter(this::isMergableGap)
         .collect(Collectors.toList());
   }
   
@@ -456,7 +456,7 @@ public class CoverageCleaner {
   public static Geometry node(Geometry[] coverage,  
       double snapDistance)
   {
-    List<NodedSegmentString> segs = new ArrayList<NodedSegmentString>();
+    List<NodedSegmentString> segs = new ArrayList<>();
     for (Geometry geom : coverage) {
       //-- skip non-polygonal and empty elements
       if (! isPolygonal(geom))
@@ -467,7 +467,7 @@ public class CoverageCleaner {
     }
     Noder noder = new SnappingNoder(snapDistance);
     noder.computeNodes(segs);
-    Collection nodedSegStrings = noder.getNodedSubstrings();
+    Collection<SegmentString> nodedSegStrings = noder.getNodedSubstrings();
     return SegmentStringUtil.toGeometry(nodedSegStrings, coverage[0].getFactory());
   }
   
@@ -477,7 +477,6 @@ public class CoverageCleaner {
 
   private static void extractNodedSegmentStrings(Geometry geom, List<NodedSegmentString> segs) {
     //TODO: do more efficiently by adding directly to list
-    @SuppressWarnings("unchecked")
     List<NodedSegmentString> segsGeom = SegmentStringUtil.extractNodedSegmentStrings(geom);
     segs.addAll(segsGeom);
   }

@@ -20,17 +20,16 @@ import junit.textui.TestRunner;
  */
 public class DoubleBitsTest extends TestCase {
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(DoubleBitsTest.class);
   }
 
   public DoubleBitsTest(String name) { super(name); }
 
-  public void testExponent() throws Exception
-  {
-    assertTrue(DoubleBits.exponent(-1) == 0);
-    assertTrue(DoubleBits.exponent(8.0) == 3);
-    assertTrue(DoubleBits.exponent(128.0) == 7);
+  public void testExponent() {
+      assertEquals(0, DoubleBits.exponent(-1));
+      assertEquals(3, DoubleBits.exponent(8.0));
+      assertEquals(7, DoubleBits.exponent(128.0));
   }
 
 }

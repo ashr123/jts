@@ -42,7 +42,7 @@ package test.jts.perf;
  */
 public abstract class PerformanceTestCase
 {
-  private String name;
+  private final String name;
   private int[] runSize = new int[] { 1 };
   private int runIter = 1;
   private long[] runTime;
@@ -142,23 +142,17 @@ public abstract class PerformanceTestCase
   
   /**
    * Ends a test run.
-   * 
-   * @throws Exception
+   *
    */
-  public void endRun()
-  throws Exception
-  {
+  public void endRun() {
     
   }
   
   /**
    * Tear down any fixtures made for the testing.
-   * 
-   * @throws Exception
+   *
    */
-  public void tearDown()
-  throws Exception
-  {
+  public void tearDown() {
     
   }
 

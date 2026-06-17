@@ -41,7 +41,7 @@ public class GeometryExtracter
    * @param list the list to add the extracted elements to
    * @deprecated Use {@link GeometryExtracter#extract(Geometry, String, List)}
    */
-  public static List extract(Geometry geom, Class clz, List list)
+  public static List<Geometry> extract(Geometry geom, Class<?> clz, List<Geometry> list)
   {
   	return extract(geom, toGeometryType(clz), list);
   }
@@ -49,7 +49,7 @@ public class GeometryExtracter
   /**
    * @deprecated
    */
-  private static String toGeometryType(Class clz) {
+  private static String toGeometryType(Class<?> clz) {
 	if (clz == null)
 	  return null;
 	else if (clz.isAssignableFrom(Point.class))
@@ -79,9 +79,9 @@ public class GeometryExtracter
    * @param geometryType Geometry type to extract (null means all types)
    * @param list the list to add the extracted elements to
    */
-  public static List extract(Geometry geom, String geometryType, List list)
+  public static List<Geometry> extract(Geometry geom, String geometryType, List<Geometry> list)
   {
-  	if (geom.getGeometryType() == geometryType) {
+  	if (geom.getGeometryType().equals(geometryType)) {
   		list.add(geom);
   	}
   	else if (geom instanceof GeometryCollection) {
@@ -99,18 +99,18 @@ public class GeometryExtracter
    * @param geom the geometry from which to extract
    * @deprecated Use {@link GeometryExtracter#extract(Geometry, String)}
    */
-  public static List extract(Geometry geom, Class clz)
+  public static List<Geometry> extract(Geometry geom, Class<?> clz)
   {
-    return extract(geom, clz, new ArrayList());
-  }
-  
-  public static List extract(Geometry geom, String geometryType)
-  {
-    return extract(geom, geometryType, new ArrayList());
+    return extract(geom, clz, new ArrayList<>());
   }
 
-  private String geometryType;
-  private List comps;
+  public static List<Geometry> extract(Geometry geom, String geometryType)
+  {
+    return extract(geom, geometryType, new ArrayList<>());
+  }
+
+  private final String geometryType;
+  private final List<Geometry> comps;
   
   /**
    * Constructs a filter with a list in which to store the elements found.
@@ -119,7 +119,7 @@ public class GeometryExtracter
    * @param comps the list to extract into
    * @deprecated
    */
-  public GeometryExtracter(Class clz, List comps)
+  public GeometryExtracter(Class<?> clz, List<Geometry> comps)
   {
   	this.geometryType = toGeometryType(clz);
     this.comps = comps;
@@ -131,17 +131,16 @@ public class GeometryExtracter
    * @param geometryType Geometry type to extract (null means all types)
    * @param comps the list to extract into
    */
-  public GeometryExtracter(String geometryType, List comps)
+  public GeometryExtracter(String geometryType, List<Geometry> comps)
   {
   	this.geometryType = geometryType;
     this.comps = comps;
   }
   
   protected static boolean isOfType(Geometry geom, String geometryType) {
-    if (geom.getGeometryType() == geometryType) return true;
-    if (geometryType == Geometry.TYPENAME_LINESTRING
-      && geom.getGeometryType() == Geometry.TYPENAME_LINEARRING) return true;
-    return false;
+    if (geom.getGeometryType().equals(geometryType)) return true;
+      return geometryType.equals(Geometry.TYPENAME_LINESTRING)
+              && geom.getGeometryType().equals(Geometry.TYPENAME_LINEARRING);
   }
 
   public void filter(Geometry geom) {

@@ -12,7 +12,6 @@
 package org.locationtech.jts.geomgraph;
 
 import java.io.PrintStream;
-import java.util.Iterator;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.IntersectionMatrix;
@@ -25,8 +24,8 @@ import org.locationtech.jts.geom.Location;
 public class Node
   extends GraphComponent
 {
-  protected Coordinate coord; // only non-null if this node is precise
-  protected EdgeEndStar edges;
+  protected final Coordinate coord; // only non-null if this node is precise
+  protected final EdgeEndStar edges;
 
   public Node(Coordinate coord, EdgeEndStar edges)
   {
@@ -48,11 +47,11 @@ public class Node
    */
   public boolean isIncidentEdgeInResult()
   {
-    for (Iterator it = getEdges().getEdges().iterator(); it.hasNext(); ) {
-      DirectedEdge de = (DirectedEdge) it.next();
-      if (de.getEdge().isInResult())
-        return true;
-    }
+      for (EdgeEnd edgeEnd : getEdges().getEdges()) {
+          DirectedEdge de = (DirectedEdge) edgeEnd;
+          if (de.getEdge().isInResult())
+              return true;
+      }
     return false;
   }
 
@@ -124,8 +123,7 @@ public class Node
     int newLoc;
     switch (loc) {
     case Location.BOUNDARY: newLoc = Location.INTERIOR; break;
-    case Location.INTERIOR: newLoc = Location.BOUNDARY; break;
-    default: newLoc = Location.BOUNDARY;  break;
+        default: newLoc = Location.BOUNDARY;  break;
     }
     label.setLocation(argIndex, newLoc);
   }

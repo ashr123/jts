@@ -51,9 +51,11 @@ public class AppConstants
 
 	public static final Color GRID_MAJOR_CLR = ColorUtil.gray(240);
 	public static final Color GRID_MINOR_CLR = ColorUtil.gray(190);
-  public static int TOLERANCE_PIXELS = 5;
+  public static final int TOLERANCE_PIXELS = 5;
 
   public final static Font FONT_LABEL = new Font(FontGlyphReader.FONT_SANSSERIF, Font.BOLD, 12);
 
 
+    private AppConstants() {
+    }
 }

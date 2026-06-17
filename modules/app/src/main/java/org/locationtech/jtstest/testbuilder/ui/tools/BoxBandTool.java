@@ -91,9 +91,7 @@ public abstract class BoxBandTool extends IndicatorTool
 
     if (Math.abs(zoomBoxStart.x - zoomBoxEnd.x) < MIN_MOVEMENT)
       return false;
-    if (Math.abs(zoomBoxStart.y - zoomBoxEnd.y) < MIN_MOVEMENT)
-      return false;
-    return true;
+      return Math.abs(zoomBoxStart.y - zoomBoxEnd.y) >= MIN_MOVEMENT;
   }  
   
   protected boolean isRightButton() {
@@ -128,11 +126,11 @@ public abstract class BoxBandTool extends IndicatorTool
    * 
    * @return the coordinates for the rectangle
    */
-  protected List getCoordinatesOfEnvelope()
+  protected List<Coordinate> getCoordinatesOfEnvelope()
   {
     Envelope env = getEnvelope();
-    
-    List coords = new ArrayList();
+
+    List<Coordinate> coords = new ArrayList<>();
     coords.add(new Coordinate(env.getMinX(), env.getMinY()));
     coords.add(new Coordinate(env.getMinX(), env.getMaxY()));
     coords.add(new Coordinate(env.getMaxX(), env.getMaxY()));
@@ -148,22 +146,22 @@ public abstract class BoxBandTool extends IndicatorTool
    * 
    * @return the coordinates for the rectangle
    */
-  protected List getCoordinates()
+  protected List<Coordinate> getCoordinates()
   {
     Coordinate start = toModelSnapped(zoomBoxStart);
     Coordinate end = toModelSnapped(zoomBoxEnd);
-    
+
     boolean isCW = (start.x < end.x && start.y < end.y)
     || (start.x > end.x && start.y > end.y);
-    
+
     Coordinate mid1 = new Coordinate(start.x, end.y);
     Coordinate mid2 = new Coordinate(end.x, start.y);
-    
+
     /**
-     * Form rectangle starting at start point, 
+     * Form rectangle starting at start point,
      * and oriented CW.
      */
-    List coords = new ArrayList();
+    List<Coordinate> coords = new ArrayList<>();
     coords.add(new Coordinate(start));
     if (isCW) 
       coords.add(mid1);
@@ -189,4 +187,3 @@ public abstract class BoxBandTool extends IndicatorTool
   }
 
 }
-

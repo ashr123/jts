@@ -80,8 +80,11 @@ public class Dimension {
    * Symbol for the A (dimension 2) pattern matrix entry
    */
   public final static char SYM_A = '2';
-  
-  /**
+
+    private Dimension() {
+    }
+
+    /**
    *  Converts the dimension value to a dimension symbol, for example, <code>TRUE =&gt; 'T'</code>
    *  .
    *
@@ -137,5 +140,3 @@ public class Dimension {
     throw new IllegalArgumentException("Unknown dimension symbol: " + dimensionSymbol);
   }
 }
-
-

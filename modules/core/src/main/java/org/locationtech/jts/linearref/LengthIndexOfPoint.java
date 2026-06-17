@@ -38,7 +38,7 @@ class LengthIndexOfPoint
     return locater.indexOfAfter(inputPt, minIndex);
   }
 
-  private Geometry linearGeom;
+  private final Geometry linearGeom;
 
   public LengthIndexOfPoint(Geometry linearGeom) {
     this.linearGeom = linearGeom;
@@ -114,8 +114,8 @@ class LengthIndexOfPoint
     return ptMeasure;
   }
 
-  private double segmentNearestMeasure(LineSegment seg, Coordinate inputPt,
-                            double segmentStartMeasure)
+  private static double segmentNearestMeasure(LineSegment seg, Coordinate inputPt,
+                                              double segmentStartMeasure)
   {
     // found new minimum, so compute location distance of point
     double projFactor = seg.projectionFactor(inputPt);

@@ -34,4 +34,6 @@ public class WKTConstants {
   public static final String Z = "Z";
   public static final String ZM = "ZM";
 
+    private WKTConstants() {
+    }
 }

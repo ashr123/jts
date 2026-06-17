@@ -43,7 +43,10 @@ import org.locationtech.jts.simplify.TopologyPreservingSimplifier;
  */
 public class TestCaseGeometryFunctions 
 {
-	public static Geometry bufferMitredJoin(Geometry g, double distance)	
+    private TestCaseGeometryFunctions() {
+    }
+
+    public static Geometry bufferMitredJoin(Geometry g, double distance)
 	{
     BufferParameters bufParams = new BufferParameters();
     bufParams.setJoinStyle(BufferParameters.JOIN_MITRE);
@@ -67,7 +70,7 @@ public class TestCaseGeometryFunctions
   }
 
   private static Geometry polygonize(Geometry g, boolean extractOnlyPolygonal) {
-    Collection lines = LinearComponentExtracter.getLines(g);
+    Collection<org.locationtech.jts.geom.LineString> lines = LinearComponentExtracter.getLines(g);
     Polygonizer polygonizer = new Polygonizer(extractOnlyPolygonal);
     polygonizer.add(lines);
     return polygonizer.getGeometry();
@@ -205,4 +208,3 @@ public class TestCaseGeometryFunctions
   }
   
 }
-;

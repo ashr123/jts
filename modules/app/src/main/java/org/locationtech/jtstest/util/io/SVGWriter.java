@@ -24,7 +24,6 @@ import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
@@ -70,7 +69,7 @@ public class SVGWriter
    *@return        a <code>String</code> of characters
    */
   public static String stringOfChar(char ch, int count) {
-    StringBuffer buf = new StringBuffer();
+    StringBuilder buf = new StringBuilder();
     for (int i = 0; i < count; i++) {
       buf.append(ch);
     }
@@ -78,12 +77,10 @@ public class SVGWriter
   }
 
   private DecimalFormat formatter;
-  private boolean isFormatted = false;
-  private boolean useFormatting = false;
-  private int coordsPerLine = -1;
-  private String indentTabStr = "  ";
+    private boolean useFormatting = false;
+  private static final int coordsPerLine = -1;
 
-  /**
+    /**
    * Creates a new SVGWriter with default settings
    */
   public SVGWriter()
@@ -101,7 +98,8 @@ public class SVGWriter
   {
     Writer sw = new StringWriter();
     try {
-      writeFormatted(geometry, isFormatted, sw);
+        boolean isFormatted = false;
+        writeFormatted(geometry, isFormatted, sw);
     }
     catch (IOException ex) {
       Assert.shouldNeverReachHere();
@@ -182,8 +180,7 @@ public class SVGWriter
       Point point = (Point) geometry;
       appendPoint(point.getCoordinate(), level, writer, point.getPrecisionModel());
     }
-    else if ((geometry instanceof LinearRing) 
-      || (geometry instanceof LineString)) {
+    else if ((geometry instanceof LineString)) {
       appendLineString((LineString) geometry, level, false, writer);
     }
     else if (geometry instanceof Polygon) {
@@ -234,8 +231,8 @@ public class SVGWriter
    *@param  precisionModel  the <code>PrecisionModel</code> to use to convert
    *      from a precise coordinate to an external coordinate
    */
-  private void appendPoint(Coordinate coordinate, int level, Writer writer,
-      PrecisionModel precisionModel)
+  private static void appendPoint(Coordinate coordinate, int level, Writer writer,
+                                  PrecisionModel precisionModel)
     throws IOException
   {
     writer.write("<circle cx='" + coordinate.x + "' cy='" + coordinate.y + "' r='1' />\n");
@@ -367,7 +364,7 @@ public class SVGWriter
    *@param  multiPoint  the <code>MultiPoint</code> to process
    *@param  writer      the output writer to append to
    */
-  private void appendMultiPoint(MultiPoint multiPoint, int level, Writer writer)
+  private static void appendMultiPoint(MultiPoint multiPoint, int level, Writer writer)
     throws IOException
   {
     if (multiPoint.isEmpty()) {
@@ -452,10 +449,10 @@ public class SVGWriter
       return;
     writer.write("\n");
     for (int i = 0; i < level; i++) {
-      writer.write(indentTabStr);
+        String indentTabStr = "  ";
+        writer.write(indentTabStr);
     }
   }
 
 
 }
-

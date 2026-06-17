@@ -12,7 +12,6 @@
 package org.locationtech.jtstest.testrunner;
 import java.io.StringWriter;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.util.Assert;
@@ -27,7 +26,7 @@ public class SimpleReportWriter implements ReportWriter
 {
 
   private static final String LABEL_TEST_CASE = "Case";
-private boolean verbose;
+private final boolean verbose;
   private StringWriter reportBuf;
 
   public SimpleReportWriter(boolean verbose) { this.verbose = verbose; }
@@ -65,15 +64,15 @@ private boolean verbose;
 
   public void reportOnTest(Test test) 
   {
-    String id = test.getGeometryIndex() + " " + test.getOperation();
+    StringBuilder id = new StringBuilder(test.getGeometryIndex() + " " + test.getOperation());
     for (int i = 0; i < test.getArgumentCount(); i++) {
-      id += " " + test.getArgument(i);
+      id.append(" ").append(test.getArgument(i));
     }
     if (test.getExpectedResult() instanceof BooleanResult) {
-      id += " -> " + test.getExpectedResult().toShortString();
+      id.append(" -> ").append(test.getExpectedResult().toShortString());
     }
-    if (test.getDescription().length() > 0) {
-      id += ", " + test.getDescription();
+    if (!test.getDescription().isEmpty()) {
+      id.append(", ").append(test.getDescription());
     }
     String report = "";
     if (test.getException() != null) {
@@ -100,44 +99,40 @@ private boolean verbose;
     }
   }
 
-  private void reportOnParsingProblems(List parsingProblems) {
+  private void reportOnParsingProblems(List<String> parsingProblems) {
     if (parsingProblems.isEmpty()) {
       return;
     }
     reportBuf.write("\n");
-    for (Iterator i = parsingProblems.iterator(); i.hasNext(); ) {
-      String parsingProblem = (String) i.next();
-      reportBuf.write(parsingProblem);
-      reportBuf.write("\n");
-    }
+      for (String parsingProblem : parsingProblems) {
+          reportBuf.write(parsingProblem);
+          reportBuf.write("\n");
+      }
   }
 
-  private void reportOnTestRuns(List testRuns) {
-    for (Iterator i = testRuns.iterator(); i.hasNext(); ) {
-      TestRun testRun = (TestRun) i.next();
-      reportOnTestRun(testRun);
-    }
+  private void reportOnTestRuns(List<TestRun> testRuns) {
+      for (TestRun testRun : testRuns) {
+          reportOnTestRun(testRun);
+      }
   }
 
   private void reportOnTestRun(TestRun testRun) {
     reportOnTestCases(testRun.getTestCases());
   }
 
-  private void reportOnTestCases(List testCases) {
-    for (Iterator i = testCases.iterator(); i.hasNext(); ) {
-      TestCase testCase = (TestCase) i.next();
-      if (testCase.isRun())
-      	reportOnTestCase(testCase);
-    }
+  private void reportOnTestCases(List<TestCase> testCases) {
+      for (TestCase testCase : testCases) {
+          if (testCase.isRun())
+              reportOnTestCase(testCase);
+      }
   }
 
-  private boolean areAllTestsPassed(TestCase testCase) {
-    for (Iterator i = testCase.getTests().iterator(); i.hasNext(); ) {
-      Test test = (Test) i.next();
-      if (! test.isPassed()) {
-        return false;
+  private static boolean areAllTestsPassed(TestCase testCase) {
+      for (Test test : testCase.getTests()) {
+          if (!test.isPassed()) {
+              return false;
+          }
       }
-    }
     return true;
   }
 
@@ -149,16 +144,15 @@ private boolean verbose;
     reportBuf.write(LABEL_TEST_CASE + " " + testCase.getTestRun().getTestFileName()
                     + " - #" + testCase.getCaseIndex()
                     + " (" + testCase.getLineNumber() + ")"
-        + (testCase.getDescription().length() > 0 ? ": " + testCase.getDescription() :
+        + (!testCase.getDescription().isEmpty() ? ": " + testCase.getDescription() :
         "") + "\n");
     reportOnTests(testCase.getTests());
   }
 
-  private void reportOnTests(List tests) {
-    for (Iterator i = tests.iterator(); i.hasNext(); ) {
-      Test test = (Test) i.next();
-      reportOnTest(test);
-    }
+  private void reportOnTests(List<Test> tests) {
+      for (Test test : tests) {
+          reportOnTest(test);
+      }
   }
 
   public void reportSummary(TestEngine engine) {
@@ -175,5 +169,3 @@ private boolean verbose;
     }
   }
 }
-
-

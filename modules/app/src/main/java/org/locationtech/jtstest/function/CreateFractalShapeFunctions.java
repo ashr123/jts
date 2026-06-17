@@ -22,7 +22,10 @@ import org.locationtech.jtstest.geomfunction.Metadata;
 public class CreateFractalShapeFunctions 
 {
 
-	public static Geometry kochSnowflake(Geometry g, int n)
+    private CreateFractalShapeFunctions() {
+    }
+
+    public static Geometry kochSnowflake(Geometry g, int n)
 	{
 		KochSnowflakeBuilder builder = new KochSnowflakeBuilder(FunctionsUtil.getFactoryOrDefault(g));
 		builder.setExtent(FunctionsUtil.getEnvelopeOrDefault(g));

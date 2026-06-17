@@ -13,7 +13,6 @@ package org.locationtech.jtsexample.technique;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.geom.Coordinate;
@@ -43,16 +42,17 @@ import org.locationtech.jts.util.Stopwatch;
  */
 public class SearchUsingPreparedGeometryIndex
 {
-	static GeometryFactory geomFact = new GeometryFactory();
+	static final GeometryFactory geomFact = new GeometryFactory();
 	
 	static final int MAX_ITER = 200000; 
 	static final int GRID_SIZE = 10; 
 	static final int POLYGON_SIZE = 100;
 
-  public static void main(String[] args)
-      throws Exception
-  {
-  	List circleGrid = createCircleGrid(GRID_SIZE);
+    private SearchUsingPreparedGeometryIndex() {
+    }
+
+    public static void main(String[] args) {
+  	List<Geometry> circleGrid = createCircleGrid(GRID_SIZE);
   	
   	PreparedGeometryIndex pgIndex = new PreparedGeometryIndex();
   	pgIndex.insert(circleGrid);
@@ -89,42 +89,41 @@ public class SearchUsingPreparedGeometryIndex
   	for (int i = 0; i < MAX_ITER; i++) 
   	{
   		Point randPt = createRandomPoint();
-  		if (pgIndex.intersects(randPt).size() > 0) {
+  		if (!pgIndex.intersects(randPt).isEmpty()) {
 				inCount++;
   		}
   	}
   	return inCount;
   }
   
-  static int runBruteForceQuery(Collection geoms)
+  static int runBruteForceQuery(Collection<? extends Geometry> geoms)
   {
   	int inCount = 0;
   	for (int i = 0; i < MAX_ITER; i++) 
   	{
   		Point randPt = createRandomPoint();
-  		if (findIntersecting(geoms, randPt).size() > 0) {
+  		if (!findIntersecting(geoms, randPt).isEmpty()) {
 				inCount++;
   		}
   	}
   	return inCount;
   }
   
-  static double area(Collection geoms)
+  static double area(Collection<? extends Geometry> geoms)
   {
   	double area = 0.0;
-		for (Iterator i = geoms.iterator(); i.hasNext(); ) {
-			Geometry geom = (Geometry) i.next();
-			area += geom.getArea();
-		}
+      for (Geometry geom : geoms) {
+          area += geom.getArea();
+      }
 		return area;
   }
   
-  static List createCircleGrid(int gridSize)
+  static List<Geometry> createCircleGrid(int gridSize)
   {
   	double diameter = 1.0 / gridSize;
   	double radius = diameter / 2;
-  	
-  	List circles = new ArrayList();
+
+  	List<Geometry> circles = new ArrayList<>();
   	for (int i = 0; i < gridSize; i++) {
     	for (int j = 0; j < gridSize; j++) {
     		Coordinate centre = new Coordinate(radius + i * diameter, radius + j * diameter);
@@ -146,15 +145,14 @@ public class SearchUsingPreparedGeometryIndex
   	return geomFact.createPoint(new Coordinate(Math.random(), Math.random()));
   }
    
-  static List findIntersecting(Collection targetGeoms, Geometry queryGeom)
+  static List<Geometry> findIntersecting(Collection<? extends Geometry> targetGeoms, Geometry queryGeom)
   {
-		List result = new ArrayList();
-		for (Iterator it = targetGeoms.iterator(); it.hasNext(); ) {
-			Geometry test = (Geometry) it.next();
-			if (test.intersects(queryGeom)) {
-				result.add(test);
-			}
-		}
+		List<Geometry> result = new ArrayList<>();
+      for (Geometry test : targetGeoms) {
+          if (test.intersects(queryGeom)) {
+              result.add(test);
+          }
+      }
   	return result;
   }
 }
@@ -170,7 +168,7 @@ public class SearchUsingPreparedGeometryIndex
  */
 class PreparedGeometryIndex
 {
-	private SpatialIndex index = new STRtree();
+	private final SpatialIndex<PreparedGeometry> index = new STRtree<>();
 	
 	/**
 	 * Creates a new index
@@ -186,12 +184,11 @@ class PreparedGeometryIndex
 	 * 
 	 * @param geoms a collection of Geometrys to insert
 	 */
-	public void insert(Collection geoms)
+	public void insert(Collection<? extends Geometry> geoms)
 	{
-		for (Iterator i = geoms.iterator(); i.hasNext(); ) {
-			Geometry geom = (Geometry) i.next();
-			index.insert(geom.getEnvelopeInternal(), PreparedGeometryFactory.prepare(geom));
-		}
+        for (Geometry geom : geoms) {
+            index.insert(geom.getEnvelopeInternal(), PreparedGeometryFactory.prepare(geom));
+        }
 	}
 	
 	/**
@@ -201,7 +198,7 @@ class PreparedGeometryIndex
 	 * @param g the geometry to query by
 	 * @return a list of candidate PreparedGeometrys
 	 */
-	public List query(Geometry g)
+	public List<PreparedGeometry> query(Geometry g)
 	{
 		return index.query(g.getEnvelopeInternal());
 	}
@@ -212,16 +209,15 @@ class PreparedGeometryIndex
 	 * @param g the geometry to query by
 	 * @return a list of intersecting PreparedGeometrys 
 	 */
-	public List intersects(Geometry g)
+	public List<PreparedGeometry> intersects(Geometry g)
 	{
-		List result = new ArrayList();
-		List candidates = query(g);
-		for (Iterator it = candidates.iterator(); it.hasNext(); ) {
-			PreparedGeometry prepGeom = (PreparedGeometry) it.next();
-			if (prepGeom.intersects(g)) {
-				result.add(prepGeom);
-			}
-		}
+		List<PreparedGeometry> result = new ArrayList<>();
+		List<PreparedGeometry> candidates = query(g);
+        for (PreparedGeometry prepGeom : candidates) {
+            if (prepGeom.intersects(g)) {
+                result.add(prepGeom);
+            }
+        }
 		return result;
 	}
 }

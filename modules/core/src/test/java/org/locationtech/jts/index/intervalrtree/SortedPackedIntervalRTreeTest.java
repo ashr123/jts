@@ -18,7 +18,7 @@ import junit.textui.TestRunner;
 
 public class SortedPackedIntervalRTreeTest extends TestCase {
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(SortedPackedIntervalRTreeTest.class);
   }
 
@@ -30,8 +30,8 @@ public class SortedPackedIntervalRTreeTest extends TestCase {
    * 
    */
   public void testEmpty() {
-    SortedPackedIntervalRTree spitree = new SortedPackedIntervalRTree();
-    ArrayListVisitor visitor = new ArrayListVisitor();
+    SortedPackedIntervalRTree<Object> spitree = new SortedPackedIntervalRTree<>();
+    ArrayListVisitor<Object> visitor = new ArrayListVisitor<>();
     spitree.query(0, 1, visitor);
   }
 }

@@ -27,9 +27,9 @@ import junit.textui.TestRunner;
  */
 public class RayCrossingCounterTest extends AbstractPointInRingTest {
 
-  private WKTReader reader = new WKTReader();
+  private final WKTReader reader = new WKTReader();
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(RayCrossingCounterTest.class);
     //new RayCrossingCounterTest("RayCrossingCounterTest").testRunPtInRing4d();
   }

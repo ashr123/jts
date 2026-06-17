@@ -2,8 +2,6 @@ package test.jts.perf.operation.overlayng;
 
 import static org.locationtech.jts.operation.overlayng.OverlayNG.INTERSECTION;
 import static org.locationtech.jts.operation.overlayng.OverlayNG.UNION;
-import static org.locationtech.jts.operation.overlayng.OverlayNG.DIFFERENCE;
-import static org.locationtech.jts.operation.overlayng.OverlayNG.SYMDIFFERENCE;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -12,7 +10,6 @@ import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.geom.prep.PreparedGeometry;
 import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
 import org.locationtech.jts.geom.util.SineStarFactory;
-import org.locationtech.jts.operation.overlay.OverlayOp;
 import org.locationtech.jts.operation.overlayng.OverlayNG;
 
 import test.jts.perf.PerformanceTestCase;
@@ -25,23 +22,23 @@ extends PerformanceTestCase
 
   private static final int N_ITER = 1;
   
-  static double ORG_X = 100;
-  static double ORG_Y = ORG_X;
-  static double SIZE = 2 * ORG_X;
-  static int N_ARMS = 6;
-  static double ARM_RATIO = 0.3;
+  static final double ORG_X = 100;
+  static final double ORG_Y = ORG_X;
+  static final double SIZE = 2 * ORG_X;
+  static final int N_ARMS = 6;
+  static final double ARM_RATIO = 0.3;
   
-  static int GRID_SIZE = 20;
-  static double GRID_CELL_SIZE = SIZE / GRID_SIZE;
+  static final int GRID_SIZE = 20;
+  static final double GRID_CELL_SIZE = SIZE / GRID_SIZE;
   
-  static int NUM_CASES = GRID_SIZE * GRID_SIZE;
+  static final int NUM_CASES = GRID_SIZE * GRID_SIZE;
   
   private Geometry geomA;
   private Geometry[] geomB;
 
   private PrecisionModel precisionModel;
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     PerformanceTestRunner.run(OverlayNGPerfTest.class);
   }
   
@@ -65,7 +62,7 @@ extends PerformanceTestCase
   
   public void startRun(int npts)
   {
-    iter = 0;
+      int iter = 0;
     precisionModel = new PrecisionModel(PREC_SCALE_FACTOR);
 
     geomA = SineStarFactory.create(new Coordinate(ORG_X, ORG_Y), SIZE, npts, N_ARMS, ARM_RATIO);
@@ -87,7 +84,7 @@ extends PerformanceTestCase
 
   }
   
-  private Geometry[] createTestGeoms(int nGeoms, int npts) {
+  private static Geometry[] createTestGeoms(int nGeoms, int npts) {
     Geometry[] geoms = new Geometry[ NUM_CASES ];
     int index = 0;
     for (int i = 0; i < GRID_SIZE; i++) {
@@ -101,9 +98,7 @@ extends PerformanceTestCase
     return geoms;
   }
 
-  private int iter = 0;
-  
-  public void runIntersectionOLD()
+    public void runIntersectionOLD()
   {
     for (Geometry b : geomB) {
       geomA.intersection(b);
@@ -190,7 +185,7 @@ extends PerformanceTestCase
     return overlay.getResult();
   }
 
-  public Geometry intersectionNGFloating(Geometry a, Geometry b) {
+  public static Geometry intersectionNGFloating(Geometry a, Geometry b) {
     OverlayNG overlay = new OverlayNG(a, b, OverlayNG.INTERSECTION);
     overlay.setOptimized(false);
     return overlay.getResult();
@@ -210,8 +205,8 @@ extends PerformanceTestCase
     return OverlayNG.overlay(a, b, OverlayNG.INTERSECTION, precisionModel);
   }
 
-  private Geometry fastintersectsPrepNoCache(Geometry a, Geometry b) {
-    PreparedGeometry aPG = (new PreparedGeometryFactory()).create(a);
+  private static Geometry fastintersectsPrepNoCache(Geometry a, Geometry b) {
+    PreparedGeometry aPG = PreparedGeometryFactory.create(a);
     
     if (! aPG.intersects(b)) {
       return a.getFactory().createEmpty(a.getDimension());
@@ -252,7 +247,7 @@ extends PerformanceTestCase
     return a.intersection(b);
   }
   
-  public Geometry intersectionOptPrepNoCache(Geometry a, Geometry b) {
+  public static Geometry intersectionOptPrepNoCache(Geometry a, Geometry b) {
     Geometry intFast = fastintersectsPrepNoCache(a, b);
     if (intFast != null) return intFast;
     return a.intersection(b);
@@ -281,7 +276,7 @@ extends PerformanceTestCase
   private static PreparedGeometry cacheFetch(Geometry g) {
     if (g != cacheKey) {
       cacheKey = g;
-      cache = (new PreparedGeometryFactory()).create(g);
+      cache = PreparedGeometryFactory.create(g);
     }
     return cache;
   }

@@ -30,7 +30,7 @@ public class WKTReadWriteTest extends TestCase {
     writer.setOutputOrdinates(Ordinate.createXY());
   }
 
-  public void testReadNaN() throws Exception {
+  public void testReadNaN() {
 
     checkReadWrite("POINT (NaN NaN)");
     

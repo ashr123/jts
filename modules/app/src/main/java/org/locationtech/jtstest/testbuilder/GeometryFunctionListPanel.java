@@ -15,7 +15,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Iterator;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -39,15 +38,15 @@ import org.locationtech.jtstest.util.StringUtil;
 public class GeometryFunctionListPanel extends JPanel {
   BorderLayout borderLayout1 = new BorderLayout();
 
-  private DefaultListModel listModel = new DefaultListModel();
+  private final DefaultListModel<GeometryFunction> listModel = new DefaultListModel<>();
 
-  JScrollPane jScrollPane1 = new JScrollPane();
+  final JScrollPane jScrollPane1 = new JScrollPane();
 
-  JList list = new JList(listModel){
+  final JList<GeometryFunction> list = new JList<GeometryFunction>(listModel){
     public String getToolTipText(MouseEvent e) {
       int index = locationToIndex(e.getPoint());
       if (-1 < index) {
-      	GeometryFunction func = (GeometryFunction) getModel().getElementAt(index);
+      	GeometryFunction func = getModel().getElementAt(index);
         return func.getSignature();
       } else {
         return null;
@@ -55,13 +54,13 @@ public class GeometryFunctionListPanel extends JPanel {
     }
   };
 
-  BorderLayout borderLayout2 = new BorderLayout();
+  final BorderLayout borderLayout2 = new BorderLayout();
   Border border1;
 
-  private class GeometryFunctionCellRenderer extends JLabel implements
-      ListCellRenderer 
+  private static class GeometryFunctionCellRenderer extends JLabel implements
+      ListCellRenderer<GeometryFunction>
   {
-    Border spaceBorder = BorderFactory.createEmptyBorder(0, 4, 1, 0);
+    final Border spaceBorder = BorderFactory.createEmptyBorder(0, 4, 1, 0);
     
     private final ImageIcon binaryIcon = new ImageIcon(this.getClass()
         .getResource("BinaryGeomFunction.png"));
@@ -69,14 +68,13 @@ public class GeometryFunctionListPanel extends JPanel {
     private final ImageIcon unaryIcon = new ImageIcon(this.getClass()
         .getResource("UnaryGeomFunction.png"));
 
-    public Component getListCellRendererComponent(JList list, Object value,
+    public Component getListCellRendererComponent(JList<? extends GeometryFunction> list, GeometryFunction value,
         int index, boolean isSelected, boolean cellHasFocus) {
-      GeometryFunction func = (GeometryFunction) value;
-      String name = StringUtil.capitalize(func.getName());
+        String name = StringUtil.capitalize(value.getName());
       setBorder(spaceBorder);
       setText(name);
       setOpaque(true);
-      setIcon(func.isBinary() ? binaryIcon : unaryIcon);
+      setIcon(value.isBinary() ? binaryIcon : unaryIcon);
       if (isSelected) {
         setBackground(list.getSelectionBackground());
         setForeground(list.getSelectionForeground());
@@ -106,7 +104,7 @@ public class GeometryFunctionListPanel extends JPanel {
     list.setCellRenderer(new GeometryFunctionCellRenderer());
   }
 
-  private void jbInit() throws Exception {
+  private void jbInit() {
     setSize(200, 250);
     border1 = BorderFactory.createEmptyBorder(4, 4, 4, 4);
     setLayout(borderLayout2);
@@ -140,14 +138,13 @@ public class GeometryFunctionListPanel extends JPanel {
   public GeometryFunction getFunction() {
     if (list.getSelectedValue() == null)
       return null;
-    return (GeometryFunction) list.getSelectedValue();
+    return list.getSelectedValue();
   }
    
-  public void populate(List funcs) {
+  public void populate(List<GeometryFunction> funcs) {
 //  listModel.clear();
-         for (Iterator i = funcs.iterator(); i.hasNext(); ) {
-             GeometryFunction func = (GeometryFunction) i.next();
-             listModel.addElement(func);
-         }
+      for (GeometryFunction func : funcs) {
+          listModel.addElement(func);
+      }
      }
 }

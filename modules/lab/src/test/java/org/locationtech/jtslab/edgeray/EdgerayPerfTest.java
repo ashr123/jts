@@ -9,7 +9,7 @@ import test.jts.perf.PerformanceTestRunner;
 
 public class EdgerayPerfTest extends PerformanceTestCase
 {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     PerformanceTestRunner.run(EdgerayPerfTest.class);
   }
   boolean verbose = true;
@@ -25,15 +25,13 @@ public class EdgerayPerfTest extends PerformanceTestCase
   public void startRun(int size)
   {
     System.out.println("\n---  Running with size " + size + "  -----------");
-    iter = 0;
+      int iter = 0;
     geom1 = createSineStar(size, 0);
     geom2 = createSineStar(size, 10);
 
   }
-  
-  private int iter = 0;
-  
-  public void runEdgeRayArea()
+
+    public void runEdgeRayArea()
   {
     //System.out.println("Test 1 : Iter # " + iter++);
     double area = EdgeRayIntersectionArea.area(geom1, geom2);
@@ -46,16 +44,14 @@ public class EdgerayPerfTest extends PerformanceTestCase
     System.out.println("Overlay area = " + area);
   }
   
-  Geometry createSineStar(int nPts, double offset)
+  static Geometry createSineStar(int nPts, double offset)
   {
     SineStarFactory gsf = new SineStarFactory();
     gsf.setCentre(new Coordinate(0, offset));
     gsf.setSize(100);
     gsf.setNumPoints(nPts);
-    
-    Geometry g = gsf.createSineStar();
-    
-    return g;
+
+      return gsf.createSineStar();
     
   }
 }

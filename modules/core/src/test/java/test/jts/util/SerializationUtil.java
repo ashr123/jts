@@ -20,14 +20,16 @@ import java.io.ObjectOutputStream;
 
 public class SerializationUtil
 {
-  public static byte[] serialize(Object obj) throws IOException
+    private SerializationUtil() {
+    }
+
+    public static byte[] serialize(Object obj) throws IOException
   {
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
     ObjectOutputStream out = new ObjectOutputStream(bos);
     out.writeObject(obj);
     out.close();
-    byte[] treeBytes = bos.toByteArray();
-    return treeBytes;
+      return bos.toByteArray();
   }
 
   public static Object deserialize(byte[] data) 

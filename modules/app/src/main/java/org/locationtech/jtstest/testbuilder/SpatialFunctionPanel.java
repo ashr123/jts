@@ -11,32 +11,6 @@
  */
 package org.locationtech.jtstest.testbuilder;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Vector;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
-
 import org.locationtech.jts.operation.buffer.BufferParameters;
 import org.locationtech.jts.util.Stopwatch;
 import org.locationtech.jtstest.geomfunction.BaseGeometryFunction;
@@ -52,6 +26,34 @@ import org.locationtech.jtstest.testbuilder.event.SpatialFunctionPanelListener;
 import org.locationtech.jtstest.testbuilder.ui.SwingUtil;
 import org.locationtech.jtstest.util.ClassUtil;
 
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
 
 /**
  * @version 1.7
@@ -63,36 +65,36 @@ extends JPanel implements FunctionPanel
 
   private static final String[] PARAM_DEFAULT = { "10", "0", "0", "0", "0" };
   
-  private static String[] capStyleItems = new String[] { "Round", "Flat", "Square" };
-  private static Object[] capStyleValues = new Object[] { 
-  		BufferParameters.CAP_ROUND,
+  private static final String[] capStyleItems = new String[] { "Round", "Flat", "Square" };
+  private static final List<Object> capStyleValues = Arrays.asList(
+          BufferParameters.CAP_ROUND,
   		BufferParameters.CAP_FLAT,
   		BufferParameters.CAP_SQUARE
-  		};
-  private static String[] joinStyleItems = new String[] { "Round", "Mitre", "Bevel" };
-  private static Object[] joinStyleValues = new Object[] { 
-  		BufferParameters.JOIN_ROUND,
+  		);
+  private static final String[] joinStyleItems = new String[] { "Round", "Mitre", "Bevel" };
+  private static final List<Object> joinStyleValues = Arrays.asList(
+          BufferParameters.JOIN_ROUND,
   		BufferParameters.JOIN_MITRE,
   		BufferParameters.JOIN_BEVEL
-  };
+  );
 
 	
 	
   
 //  GeometryFunctionListPanel geomFuncPanel = new GeometryFunctionListPanel();
-  GeometryFunctionTreePanel geomFuncPanel = new GeometryFunctionTreePanel();
+final GeometryFunctionTreePanel geomFuncPanel = new GeometryFunctionTreePanel();
   GridLayout gridLayout1 = new GridLayout();
-  GridLayout gridLayout2 = new GridLayout();
+  final GridLayout gridLayout2 = new GridLayout();
 
 
-  BorderLayout borderLayout1 = new BorderLayout();
-  BorderLayout borderLayout2 = new BorderLayout();
+  final BorderLayout borderLayout1 = new BorderLayout();
+  final BorderLayout borderLayout2 = new BorderLayout();
 
-  JPanel panelFunction = new JPanel();
-  JPanel panelParam = new JPanel();
-  JPanel panelExec = new JPanel();
-  JPanel panelExecMeta = new JPanel();
-  JPanel panelExecParam = new JPanel();
+  final JPanel panelFunction = new JPanel();
+  final JPanel panelParam = new JPanel();
+  final JPanel panelExec = new JPanel();
+  final JPanel panelExecMeta = new JPanel();
+  final JPanel panelExecParam = new JPanel();
   
   private JButton execButton = new JButton();
   private JButton execToNewButton = new JButton();
@@ -100,34 +102,34 @@ extends JPanel implements FunctionPanel
   private final ImageIcon clearIcon = new ImageIcon(this.getClass().getResource("clear.gif"));
   private final ImageIcon expandDownIcon = new ImageIcon(this.getClass().getResource("Expand-Down.png"));
   
-  private transient Vector spatialFunctionPanelListeners;
-  private JCheckBox cbExecEachA = new JCheckBox();
-  private JCheckBox cbExecEachB = new JCheckBox();
-  private JCheckBox cbExecRepeat = new JCheckBox();
+  private transient Vector<SpatialFunctionPanelListener> spatialFunctionPanelListeners;
+  private final JCheckBox cbExecEachA = new JCheckBox();
+  private final JCheckBox cbExecEachB = new JCheckBox();
+  private final JCheckBox cbExecRepeat = new JCheckBox();
   private final JTextField txtRepeatCount = new JTextField();
-  private JButton btnClearResult = new JButton();
+  private final JButton btnClearResult = new JButton();
   private JButton btnExecEach;
-  private JCheckBox cbExecAuto = new JCheckBox();
+  private final JCheckBox cbExecAuto = new JCheckBox();
   
-  private JLabel lblFunctionName = new JLabel();
-  private JLabel lblFunction = new JLabel();
-  private JLabel lblDistance = new JLabel();
-  private JTextField txtDistance = new JTextField();
-  private JLabel lblQuadSegs = new JLabel();
-  private JTextField txtQuadrantSegs = new JTextField();
-  private JLabel lblCapStyle = new JLabel();
-  private JComboBox cbCapStyle = new JComboBox();
-  private JLabel lblJoinStyle = new JLabel();
-  private JComboBox cbJoinStyle = new JComboBox();
-  private JLabel lblMitreLimit = new JLabel();
-  private JTextField txtMitreLimit = new JTextField();
+  private final JLabel lblFunctionName = new JLabel();
+  private final JLabel lblFunction = new JLabel();
+  private final JLabel lblDistance = new JLabel();
+  private final JTextField txtDistance = new JTextField();
+  private final JLabel lblQuadSegs = new JLabel();
+  private final JTextField txtQuadrantSegs = new JTextField();
+  private final JLabel lblCapStyle = new JLabel();
+  private final JComboBox<String> cbCapStyle = new JComboBox<>();
+  private final JLabel lblJoinStyle = new JLabel();
+  private final JComboBox<String> cbJoinStyle = new JComboBox<>();
+  private final JLabel lblMitreLimit = new JLabel();
+  private final JTextField txtMitreLimit = new JTextField();
 
-  private JComponent[] paramComp = { txtDistance, txtQuadrantSegs, cbCapStyle, cbJoinStyle, txtMitreLimit };
-  private JLabel[] paramLabel = { lblDistance, lblQuadSegs, lblCapStyle, lblJoinStyle, lblMitreLimit };
+  private final JComponent[] paramComp = { txtDistance, txtQuadrantSegs, cbCapStyle, cbJoinStyle, txtMitreLimit };
+  private final JLabel[] paramLabel = { lblDistance, lblQuadSegs, lblCapStyle, lblJoinStyle, lblMitreLimit };
   
   private GeometryFunction currentFunc = null;
   private Stopwatch timer;
-  private Map<GeometryFunction, String> funcParamMap = new HashMap<GeometryFunction, String>();
+  private final Map<GeometryFunction, String> funcParamMap = new HashMap<>();
   
   public SpatialFunctionPanel() {
     try {
@@ -171,11 +173,11 @@ extends JPanel implements FunctionPanel
     txtQuadrantSegs.setHorizontalAlignment(SwingConstants.RIGHT);
     
     lblCapStyle.setText("Cap Style");
-    ComboBoxModel modelCapStyle = new DefaultComboBoxModel(capStyleItems);
+    ComboBoxModel<String> modelCapStyle = new DefaultComboBoxModel<>(capStyleItems);
     cbCapStyle.setModel(modelCapStyle);
-    
+
     lblJoinStyle.setText("Join Style");
-    ComboBoxModel modelJoinStyle = new DefaultComboBoxModel(joinStyleItems);
+    ComboBoxModel<String> modelJoinStyle = new DefaultComboBoxModel<>(joinStyleItems);
     cbJoinStyle.setModel(modelJoinStyle);
 
     lblMitreLimit.setText("Mitre Limit");
@@ -220,28 +222,18 @@ extends JPanel implements FunctionPanel
     txtRepeatCount.setHorizontalAlignment(SwingConstants.RIGHT); 
     
     execButton = SwingUtil.createButton(AppIcons.EXECUTE, AppStrings.TIP_EXECUTE,
-        new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        execFunction(false);
-      }
-    });
+            e -> execFunction(false));
     execButton.setEnabled(false);
     
     execToNewButton = SwingUtil.createButton("New", AppIcons.EXECUTE, "Compute function result to a new case",
-        new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        execFunction(true);
-      }
-    });
+            e -> execFunction(true));
     execToNewButton.setEnabled(false); 
     
     JButton btnShowExecExt = SwingUtil.createButton(expandDownIcon, "Show extended/meta Compute tools",
-        new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        clearExtended();
-        panelExecMeta.setVisible(! panelExecMeta.isVisible());
-      }
-    });
+            e -> {
+              clearExtended();
+              panelExecMeta.setVisible(! panelExecMeta.isVisible());
+            });
     btnShowExecExt.setPreferredSize(new Dimension(20, 20));
     btnShowExecExt.setBorder(BorderFactory.createEmptyBorder());
     btnShowExecExt.setContentAreaFilled(false);
@@ -299,11 +291,10 @@ extends JPanel implements FunctionPanel
 
   static void initLabels(JLabel[] paramLabel)
   {
-    for (int i = 0; i < paramLabel.length; i++) {
-      JLabel lbl = paramLabel[i];
-      lbl.setHorizontalAlignment(SwingConstants.RIGHT);
-      lbl.setBorder(LABEL_BORDER);
-    }
+      for (JLabel lbl : paramLabel) {
+          lbl.setHorizontalAlignment(SwingConstants.RIGHT);
+          lbl.setBorder(LABEL_BORDER);
+      }
   }
 
   public void enableExecuteControl(boolean isEnabled)
@@ -428,11 +419,11 @@ extends JPanel implements FunctionPanel
   private static int numNonGeomParams(GeometryFunction func)
   {
     int count = 0;
-    Class[] paramTypes = func.getParameterTypes();
-    for (int i = 0; i < paramTypes.length; i++) {
-      if (! ClassUtil.isGeometry(paramTypes[i]))
-        count++;
-    }
+    Class<?>[] paramTypes = func.getParameterTypes();
+      for (Class<?> paramType : paramTypes) {
+          if (!ClassUtil.isGeometry(paramType))
+              count++;
+      }
     return count;
   }
   
@@ -444,22 +435,22 @@ extends JPanel implements FunctionPanel
     setCurrentFunction(null);
   }
 
-  public Object[] getFunctionParams()
+  public List<Object> getFunctionParams()
   {
     if (currentFunc == null) return null;
-    Class[] paramTypes = currentFunc.getParameterTypes();
-    Object[] paramVal = new Object[paramTypes.length];
-    
-    for (int i = 0; i < paramVal.length; i++) {
+    Class<?>[] paramTypes = currentFunc.getParameterTypes();
+    List<Object> paramVal = new ArrayList<>();
+
+    for (int i = 0; i < paramTypes.length; i++) {
       Object valRaw = getParamValue(i);
-      paramVal[i] = SwingUtil.coerce(valRaw, paramTypes[i]);
+      paramVal.add(SwingUtil.coerce(valRaw, paramTypes[i]));
     }
     return paramVal;
   }
 
   private Object getParamValue(int index) {
     if (currentFunc.isBinary() && index == 0)
-      return JTSTestBuilder.controller().getGeometryB();
+      return JTSTestBuilderController.getGeometryB();
     
     int attrIndex = index - attributeParamOffset(currentFunc);
     
@@ -474,7 +465,7 @@ extends JPanel implements FunctionPanel
   }
 
   public static String valOrDefault(String s, String defaultVal) {
-    if (s.length() > 0) return s;
+    if (!s.isEmpty()) return s;
     return defaultVal;
   }
     
@@ -498,14 +489,14 @@ extends JPanel implements FunctionPanel
   
   public synchronized void removeSpatialFunctionPanelListener(SpatialFunctionPanelListener l) {
     if (spatialFunctionPanelListeners != null && spatialFunctionPanelListeners.contains(l)) {
-      Vector v = (Vector) spatialFunctionPanelListeners.clone();
+      Vector<SpatialFunctionPanelListener> v = (Vector<SpatialFunctionPanelListener>) spatialFunctionPanelListeners.clone();
       v.removeElement(l);
       spatialFunctionPanelListeners = v;
     }
   }
 
   public synchronized void addSpatialFunctionPanelListener(SpatialFunctionPanelListener l) {
-    Vector v = spatialFunctionPanelListeners == null ? new Vector(2) : (Vector) spatialFunctionPanelListeners.clone();
+    Vector<SpatialFunctionPanelListener> v = spatialFunctionPanelListeners == null ? new Vector<>(2) : (Vector<SpatialFunctionPanelListener>) spatialFunctionPanelListeners.clone();
     if (!v.contains(l)) {
       v.addElement(l);
       spatialFunctionPanelListeners = v;
@@ -514,14 +505,13 @@ extends JPanel implements FunctionPanel
 
   protected void fireFunctionExecuted(SpatialFunctionPanelEvent e) {
     if (spatialFunctionPanelListeners != null) {
-      Vector listeners = spatialFunctionPanelListeners;
+      Vector<SpatialFunctionPanelListener> listeners = spatialFunctionPanelListeners;
       int count = listeners.size();
       for (int i = 0; i < count; i++) {
-        ((SpatialFunctionPanelListener) listeners.elementAt(i)).functionExecuted(e);
+        listeners.elementAt(i).functionExecuted(e);
       }
     }
   }
 
 
 }
-

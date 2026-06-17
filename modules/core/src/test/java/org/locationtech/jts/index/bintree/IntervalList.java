@@ -12,7 +12,6 @@
 package org.locationtech.jts.index.bintree;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.index.bintree.Interval;
@@ -24,7 +23,7 @@ import org.locationtech.jts.index.bintree.Interval;
  */
 public class IntervalList
 {
-  List list = new ArrayList();
+  final List<Interval> list = new ArrayList<>();
 
   public IntervalList() {
   }
@@ -34,14 +33,13 @@ public class IntervalList
     list.add(interval);
   }
 
-  public List query(Interval searchInterval)
+  public List<Interval> query(Interval searchInterval)
   {
-    List result = new ArrayList();
-    for (Iterator i = list.iterator(); i.hasNext(); ) {
-      Interval interval = (Interval) i.next();
-      if (interval.overlaps(searchInterval))
-        result.add(interval);
-    }
+    List<Interval> result = new ArrayList<>();
+      for (Interval interval : list) {
+          if (interval.overlaps(searchInterval))
+              result.add(interval);
+      }
     return result;
   }
 

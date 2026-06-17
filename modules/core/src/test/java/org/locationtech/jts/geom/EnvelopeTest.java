@@ -22,12 +22,12 @@ import junit.textui.TestRunner;
  * @version 1.7
  */
 public class EnvelopeTest extends TestCase {
-	private PrecisionModel precisionModel = new PrecisionModel(1);
+	private final PrecisionModel precisionModel = new PrecisionModel(1);
 
-	private GeometryFactory geometryFactory = new GeometryFactory(precisionModel,
+	private final GeometryFactory geometryFactory = new GeometryFactory(precisionModel,
 			0);
 
-	WKTReader reader = new WKTReader(geometryFactory);
+	final WKTReader reader = new WKTReader(geometryFactory);
 
 	public EnvelopeTest(String name) {
 		super(name);
@@ -37,7 +37,7 @@ public class EnvelopeTest extends TestCase {
 		TestRunner.run(EnvelopeTest.class);
 	}
 
-	public void testEverything() throws Exception {
+	public void testEverything() {
 		Envelope e1 = new Envelope();
 		assertTrue(e1.isNull());
 		assertEquals(0, e1.getWidth(), 1E-3);
@@ -51,14 +51,14 @@ public class EnvelopeTest extends TestCase {
 		assertEquals(101, e1.getMinY(), 1E-3);
 		assertTrue(e1.contains(120, 120));
 		assertTrue(e1.contains(120, 101));
-		assertTrue(!e1.contains(120, 100));
+        assertFalse(e1.contains(120, 100));
 		assertEquals(101, e1.getHeight(), 1E-3);
 		assertEquals(100, e1.getWidth(), 1E-3);
-		assertTrue(!e1.isNull());
+        assertFalse(e1.isNull());
 
 		Envelope e2 = new Envelope(499, 500, 500, 501);
-		assertTrue(!e1.contains(e2));
-		assertTrue(!e1.intersects(e2));
+        assertFalse(e1.contains(e2));
+        assertFalse(e1.intersects(e2));
 		e1.expandToInclude(e2);
 		assertTrue(e1.contains(e2));
 		assertTrue(e1.intersects(e2));
@@ -68,7 +68,7 @@ public class EnvelopeTest extends TestCase {
 		assertEquals(101, e1.getMinY(), 1E-3);
 
 		Envelope e3 = new Envelope(300, 700, 300, 700);
-		assertTrue(!e1.contains(e3));
+        assertFalse(e1.contains(e3));
 		assertTrue(e1.intersects(e3));
 
 		Envelope e4 = new Envelope(300, 301, 300, 301);
@@ -82,10 +82,10 @@ public class EnvelopeTest extends TestCase {
   }
 
   public void testIntersectsEmpty() {
-    assertTrue(!new Envelope(-5, 5, -5, 5).intersects(new Envelope()));
-    assertTrue(!new Envelope().intersects(new Envelope(-5, 5, -5, 5)));
-    assertTrue(!new Envelope().intersects(new Envelope(100, 101, 100, 101)));
-    assertTrue(!new Envelope(100, 101, 100, 101).intersects(new Envelope()));
+      assertFalse(new Envelope(-5, 5, -5, 5).intersects(new Envelope()));
+      assertFalse(new Envelope().intersects(new Envelope(-5, 5, -5, 5)));
+      assertFalse(new Envelope().intersects(new Envelope(100, 101, 100, 101)));
+      assertFalse(new Envelope(100, 101, 100, 101).intersects(new Envelope()));
   }
 
   public void testDisjointEmpty() {
@@ -96,10 +96,10 @@ public class EnvelopeTest extends TestCase {
   }
 
 	public void testContainsEmpty() {
-		assertTrue(!new Envelope(-5, 5, -5, 5).contains(new Envelope()));
-		assertTrue(!new Envelope().contains(new Envelope(-5, 5, -5, 5)));
-		assertTrue(!new Envelope().contains(new Envelope(100, 101, 100, 101)));
-		assertTrue(!new Envelope(100, 101, 100, 101).contains(new Envelope()));
+        assertFalse(new Envelope(-5, 5, -5, 5).contains(new Envelope()));
+        assertFalse(new Envelope().contains(new Envelope(-5, 5, -5, 5)));
+        assertFalse(new Envelope().contains(new Envelope(100, 101, 100, 101)));
+        assertFalse(new Envelope(100, 101, 100, 101).contains(new Envelope()));
 	}
 
 	public void testExpandToIncludeEmpty() {
@@ -113,7 +113,7 @@ public class EnvelopeTest extends TestCase {
 				new Envelope(100, 101, 100, 101), new Envelope()));
 	}
 
-	private Envelope expandToInclude(Envelope a, Envelope b) {
+	private static Envelope expandToInclude(Envelope a, Envelope b) {
 		a.expandToInclude(b);
 		return a;
 	}
@@ -133,7 +133,7 @@ public class EnvelopeTest extends TestCase {
 
 		Geometry g = geometryFactory.createPoint(new Coordinate(5, 6))
 				.getEnvelope();
-		assertTrue(!g.isEmpty());
+        assertFalse(g.isEmpty());
 		assertTrue(g instanceof Point);
 
 		Point p = (Point) g;
@@ -142,7 +142,7 @@ public class EnvelopeTest extends TestCase {
 
 		LineString l = (LineString) reader.read("LINESTRING(10 10, 20 20, 30 40)");
 		Geometry g2 = l.getEnvelope();
-		assertTrue(!g2.isEmpty());
+        assertFalse(g2.isEmpty());
 		assertTrue(g2 instanceof Polygon);
 
 		Polygon poly = (Polygon) g2;
@@ -160,26 +160,26 @@ public class EnvelopeTest extends TestCase {
 				4));
 	}
 
-	public void testSetToNull() throws Exception {
+	public void testSetToNull() {
 		Envelope e1 = new Envelope();
 		assertTrue(e1.isNull());
 		e1.expandToInclude(5, 5);
-		assertTrue(!e1.isNull());
+        assertFalse(e1.isNull());
 		e1.setToNull();
 		assertTrue(e1.isNull());
 	}
 
-	public void testEquals() throws Exception {
+	public void testEquals() {
 		Envelope e1 = new Envelope(1, 2, 3, 4);
 		Envelope e2 = new Envelope(1, 2, 3, 4);
 		assertEquals(e1, e2);
 		assertEquals(e1.hashCode(), e2.hashCode());
 
 		Envelope e3 = new Envelope(1, 2, 3, 5);
-		assertTrue(!e1.equals(e3));
+        assertFalse(e1.equals(e3));
 		assertTrue(e1.hashCode() != e3.hashCode());
 		e1.setToNull();
-		assertTrue(!e1.equals(e2));
+        assertFalse(e1.equals(e2));
 		assertTrue(e1.hashCode() != e2.hashCode());
 		e2.setToNull();
 		assertEquals(e1, e2);
@@ -187,12 +187,12 @@ public class EnvelopeTest extends TestCase {
 	}
 
 	public void testEquals2() {
-		assertTrue(new Envelope().equals(new Envelope()));
-		assertTrue(new Envelope(1, 2, 1, 2).equals(new Envelope(1, 2, 1, 2)));
-		assertTrue(!new Envelope(1, 2, 1.5, 2).equals(new Envelope(1, 2, 1, 2)));
+        assertEquals(new Envelope(), new Envelope());
+        assertEquals(new Envelope(1, 2, 1, 2), new Envelope(1, 2, 1, 2));
+        assertFalse(new Envelope(1, 2, 1.5, 2).equals(new Envelope(1, 2, 1, 2)));
 	}
 
-  public void testCopyConstructor() throws Exception {
+  public void testCopyConstructor() {
     Envelope e1 = new Envelope(1, 2, 3, 4);
     Envelope e2 = new Envelope(e1);
     assertEquals(1, e2.getMinX(), 1E-5);
@@ -201,7 +201,7 @@ public class EnvelopeTest extends TestCase {
     assertEquals(4, e2.getMaxY(), 1E-5);
   }
 
-  public void testCopy() throws Exception {
+  public void testCopy() {
     Envelope e1 = new Envelope(1, 2, 3, 4);
     Envelope e2 = e1.copy();
     assertEquals(1, e2.getMinX(), 1E-5);
@@ -233,25 +233,25 @@ public class EnvelopeTest extends TestCase {
 	
   public void testMetrics() {
     Envelope env = new Envelope(0, 4, 0, 3);
-    assertEquals(env.getWidth(), 4.0);
-    assertEquals(env.getHeight(), 3.0);
-    assertEquals(env.getDiameter(), 5.0);
+    assertEquals(4.0, env.getWidth());
+    assertEquals(3.0, env.getHeight());
+    assertEquals(5.0, env.getDiameter());
   }
 
   public void testEmptyMetrics() {
     Envelope env = new Envelope();
-    assertEquals(env.getWidth(), 0.0);
-    assertEquals(env.getHeight(), 0.0);
-    assertEquals(env.getDiameter(), 0.0);
+    assertEquals(0.0, env.getWidth());
+    assertEquals(0.0, env.getHeight());
+    assertEquals(0.0, env.getDiameter());
   }
 
-	private void checkIntersectsPermuted(double a1x, double a1y, double a2x, double a2y, double b1x, double b1y, double b2x, double b2y, boolean expected) {
+	private static void checkIntersectsPermuted(double a1x, double a1y, double a2x, double a2y, double b1x, double b1y, double b2x, double b2y, boolean expected) {
 		checkIntersects(a1x, a1y, a2x, a2y, b1x, b1y, b2x, b2y, expected);
 		checkIntersects(a1x, a2y, a2x, a1y, b1x, b1y, b2x, b2y, expected);
 		checkIntersects(a1x, a1y, a2x, a2y, b1x, b2y, b2x, b1y, expected);
 		checkIntersects(a1x, a2y, a2x, a1y, b1x, b2y, b2x, b1y, expected);
 	}
-	private void checkIntersects(double a1x, double a1y, double a2x, double a2y, double b1x, double b1y, double b2x, double b2y, boolean expected) {
+	private static void checkIntersects(double a1x, double a1y, double a2x, double a2y, double b1x, double b1y, double b2x, double b2y, boolean expected) {
 		Envelope a = new Envelope(a1x, a2x, a1y, a2y); 
 		Envelope b = new Envelope(b1x, b2x, b1y, b2y); 
     assertEquals(expected, a.intersects(b));
@@ -294,9 +294,9 @@ public class EnvelopeTest extends TestCase {
 	  checkCompareTo(1, new Envelope(2,3, 1,3), new Envelope(1,3, 1,2));
 	}
 	
-	public void checkCompareTo(int expected, Envelope env1, Envelope env2)
+	public static void checkCompareTo(int expected, Envelope env1, Envelope env2)
 	{
-          assertTrue(expected == env1.compareTo(env2));
-          assertTrue(-expected == env2.compareTo(env1));
+        assertEquals(expected, env1.compareTo(env2));
+        assertEquals(-expected, env2.compareTo(env1));
 	}
 }

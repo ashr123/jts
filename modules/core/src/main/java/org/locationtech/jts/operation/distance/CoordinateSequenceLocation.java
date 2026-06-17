@@ -29,9 +29,9 @@ import org.locationtech.jts.geom.CoordinateSequences;
  *
  */
 public class CoordinateSequenceLocation {
-  private CoordinateSequence seq;
+  private final CoordinateSequence seq;
   private int index;
-  private Coordinate pt;
+  private final Coordinate pt;
   
   public CoordinateSequenceLocation(CoordinateSequence seq, int index, Coordinate pt) {
     this.seq = seq;
@@ -65,11 +65,8 @@ public class CoordinateSequenceLocation {
   private boolean isNext(int index, int index1) {
     if (index1 == index + 1)
       return true;
-    if (index1 == 0 && CoordinateSequences.isRing(seq)
-        && index1 == seq.size() - 1) {
-      return true;
-    }
-    return false;
+      return index1 == 0 && CoordinateSequences.isRing(seq)
+              && index1 == seq.size() - 1;
   }
 
   public int getIndex() {

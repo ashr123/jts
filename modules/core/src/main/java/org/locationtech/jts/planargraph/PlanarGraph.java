@@ -36,9 +36,9 @@ import org.locationtech.jts.geom.Coordinate;
  */
 public abstract class PlanarGraph
 {
-  protected Set edges = new HashSet();
-  protected Set dirEdges = new HashSet();
-  protected NodeMap nodeMap = new NodeMap();
+  protected final Set<Edge> edges = new HashSet<>();
+  protected final Set<DirectedEdge> dirEdges = new HashSet<>();
+  protected final NodeMap nodeMap = new NodeMap();
 
   /**
    * Constructs a empty graph.
@@ -57,7 +57,7 @@ public abstract class PlanarGraph
    */
   public Node findNode(Coordinate pt)
   {
-    return (Node) nodeMap.find(pt);
+    return nodeMap.find(pt);
   }
 
   /**
@@ -94,7 +94,7 @@ public abstract class PlanarGraph
   /**
    * Returns an Iterator over the Nodes in this PlanarGraph.
    */
-  public Iterator nodeIterator()  {    return nodeMap.iterator();  }
+  public Iterator<Node> nodeIterator()  {    return nodeMap.iterator();  }
   /**
    * Returns the Nodes in this PlanarGraph.
    */
@@ -121,7 +121,7 @@ public abstract class PlanarGraph
     return dirEdges.contains(de);
   }
 
-  public Collection getNodes()  {    return nodeMap.values();  }
+  public Collection<Node> getNodes()  {    return nodeMap.values();  }
 
   /**
    * Returns an Iterator over the DirectedEdges in this PlanarGraph, in the order in which they
@@ -130,20 +130,20 @@ public abstract class PlanarGraph
    * @see #add(Edge)
    * @see #add(DirectedEdge)
    */
-  public Iterator dirEdgeIterator()  {    return dirEdges.iterator();  }
+  public Iterator<DirectedEdge> dirEdgeIterator()  {    return dirEdges.iterator();  }
   /**
    * Returns an Iterator over the Edges in this PlanarGraph, in the order in which they
    * were added.
    *
    * @see #add(Edge)
    */
-  public Iterator edgeIterator()  {    return edges.iterator();  }
+  public Iterator<Edge> edgeIterator()  {    return edges.iterator();  }
 
   /**
    * Returns the Edges that have been added to this PlanarGraph
    * @see #add(Edge)
    */
-  public Collection getEdges()  {    return edges;  }
+  public Collection<Edge> getEdges()  {    return edges;  }
 
   /**
    * Removes an {@link Edge} and its associated {@link DirectedEdge}s
@@ -182,21 +182,20 @@ public abstract class PlanarGraph
   public void remove(Node node)
   {
     // unhook all directed edges
-    List outEdges = node.getOutEdges().getEdges();
-    for (Iterator i = outEdges.iterator(); i.hasNext(); ) {
-      DirectedEdge de = (DirectedEdge) i.next();
-      DirectedEdge sym = de.getSym();
-      // remove the diredge that points to this node
-      if (sym != null) remove(sym);
-      // remove this diredge from the graph collection
-      dirEdges.remove(de);
+    List<DirectedEdge> outEdges = node.getOutEdges().getEdges();
+      for (DirectedEdge de : outEdges) {
+          DirectedEdge sym = de.getSym();
+          // remove the diredge that points to this node
+          if (sym != null) remove(sym);
+          // remove this diredge from the graph collection
+          dirEdges.remove(de);
 
-      Edge edge = de.getEdge();
-      if (edge != null) {
-        edges.remove(edge);
+          Edge edge = de.getEdge();
+          if (edge != null) {
+              edges.remove(edge);
+          }
+
       }
-
-    }
     // remove the node from the graph
     nodeMap.remove(node.getCoordinate());
     node.remove();
@@ -205,11 +204,11 @@ public abstract class PlanarGraph
   /**
    * Returns all Nodes with the given number of Edges around it.
    */
-  public List findNodesOfDegree(int degree)
+  public List<Node> findNodesOfDegree(int degree)
   {
-    List nodesFound = new ArrayList();
-    for (Iterator i = nodeIterator(); i.hasNext(); ) {
-      Node node = (Node) i.next();
+    List<Node> nodesFound = new ArrayList<>();
+    for (Iterator<Node> i = nodeIterator(); i.hasNext(); ) {
+      Node node = i.next();
       if (node.getDegree() == degree)
         nodesFound.add(node);
     }

@@ -15,7 +15,6 @@ package org.locationtech.jtstest.testbuilder.ui;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
 
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jtstest.testbuilder.io.IOUtil;
@@ -25,7 +24,7 @@ public class GeometryTransferable implements Transferable
   public static final DataFlavor GEOMETRY_FLAVOR =
     new DataFlavor(Geometry.class, "Geometry");
   
-  private Geometry geom;
+  private final Geometry geom;
   private boolean isFormatted;
   
   private static final DataFlavor[] flavors = { 
@@ -46,8 +45,8 @@ public class GeometryTransferable implements Transferable
   }
 
   public boolean isDataFlavorSupported(DataFlavor flavor) {
-      for (int i = 0; i < flavors.length; i++) {
-          if (flavor.equals(flavors[i])) {
+      for (DataFlavor dataFlavor : flavors) {
+          if (flavor.equals(dataFlavor)) {
               return true;
           }
       }
@@ -55,8 +54,7 @@ public class GeometryTransferable implements Transferable
   }
 
   public Object getTransferData(DataFlavor flavor)
-      throws UnsupportedFlavorException, IOException
-  {
+      throws UnsupportedFlavorException {
     if (flavor.equals(GEOMETRY_FLAVOR)) {
       return geom;
   }

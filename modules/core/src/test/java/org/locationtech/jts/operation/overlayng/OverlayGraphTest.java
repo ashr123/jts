@@ -21,7 +21,7 @@ import test.jts.GeometryTestCase;
 
 public class OverlayGraphTest extends GeometryTestCase {
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(OverlayGraphTest.class);
   }
 
@@ -104,15 +104,15 @@ public class OverlayGraphTest extends GeometryTestCase {
     checkNodeValid(node);
   }
   
-  private void checkNext(OverlayEdge e, OverlayEdge eNext) {
+  private static void checkNext(OverlayEdge e, OverlayEdge eNext) {
     assertEquals(eNext, e.next());
   }
   
-  private void checkPrev(OverlayEdge e, OverlayEdge ePrev) {
+  private static void checkPrev(OverlayEdge e, OverlayEdge ePrev) {
     assertEquals(ePrev, e.prev());
   }
   
-  private void checkNodeValid(OverlayEdge e) {
+  private static void checkNodeValid(OverlayEdge e) {
     boolean isNodeValid = e.isEdgesSorted();
     assertTrue("Found non-sorted edges around node " + e.toStringNode(), isNodeValid); 
   }
@@ -132,15 +132,14 @@ public class OverlayGraphTest extends GeometryTestCase {
   
   private static boolean isEdgeOrgDest(OverlayEdge e, double orgx, double orgy, double destx, double desty) {
     if (! isEqual(e.orig(), orgx, orgy)) return false;
-    if (! isEqual(e.dest(), destx, desty)) return false;
-    return true;
+      return isEqual(e.dest(), destx, desty);
   }
 
   private static boolean isEqual(Coordinate p, double x, double y) {
     return p.getX() == x && p.getY() == y;
   }
 
-  private OverlayGraph createGraph(Coordinate[]... edges) {
+  private static OverlayGraph createGraph(Coordinate[]... edges) {
     OverlayGraph graph = new OverlayGraph();
     for (Coordinate[] e : edges) {
       graph.addEdge(e, new OverlayLabel());
@@ -148,19 +147,18 @@ public class OverlayGraphTest extends GeometryTestCase {
     return graph;
   }
   
-  private OverlayEdge addEdge(OverlayGraph graph, double x1, double y1, double x2, double y2) {
+  private static OverlayEdge addEdge(OverlayGraph graph, double x1, double y1, double x2, double y2) {
     Coordinate[] pts = new Coordinate[] {
         new Coordinate(x1, y1), new Coordinate(x2, y2)
     };
     return graph.addEdge(pts, new OverlayLabel());
   }
   
-  private Coordinate[] createLine(double... ord) {
-    Coordinate[] pts = toCoordinates(ord);
-    return pts;
+  private static Coordinate[] createLine(double... ord) {
+      return toCoordinates(ord);
   }
 
-  private Coordinate[] toCoordinates(double[] ord) {
+  private static Coordinate[] toCoordinates(double[] ord) {
     Coordinate[] pts = new Coordinate[ord.length / 2];
     for (int i = 0; i < pts.length; i++) {
       pts[i] = new Coordinate(ord[2*i], ord[2*i+1]);
@@ -168,4 +166,3 @@ public class OverlayGraphTest extends GeometryTestCase {
     return pts;
   }
 }
-;

@@ -12,11 +12,13 @@
 
 package org.locationtech.jtstest.geomop;
 
+import java.util.List;
+
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.prep.PreparedGeometry;
 import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
 
-public class PreparedGeometryTeeOperation 
+public class PreparedGeometryTeeOperation
 	extends TeeGeometryOperation
 {
 	private static boolean containsProperly(Geometry g1, Geometry g2)
@@ -40,11 +42,11 @@ public class PreparedGeometryTeeOperation
   	super(chainOp);
   }
 
-	protected void runTeeOp(String opName, Geometry geometry, Object[] args)
+	protected void runTeeOp(String opName, Geometry geometry, List<Object> args)
 	{
-		if (args.length < 1) return;
-		if (! (args[0] instanceof Geometry)) return;
-		Geometry g2 = (Geometry) args[0];
+		if (args.isEmpty()) return;
+		if (! (args.get(0) instanceof Geometry)) return;
+		Geometry g2 = (Geometry) args.get(0);
 		
 		if (! geometry.isValid())
 			throw new IllegalStateException("Input geometry A is not valid");
@@ -55,7 +57,7 @@ public class PreparedGeometryTeeOperation
 		checkAllPrepOps(g2, geometry);
 	}
 	
-	private void checkAllPrepOps(Geometry g1, Geometry g2)
+	private static void checkAllPrepOps(Geometry g1, Geometry g2)
 	{
     PreparedGeometry prepGeom = PreparedGeometryFactory.prepare(g1);
 
@@ -65,7 +67,7 @@ public class PreparedGeometryTeeOperation
 		checkCovers(prepGeom, g2);	
 	}
 	
-	private void checkIntersects(PreparedGeometry pg, Geometry g2)
+	private static void checkIntersects(PreparedGeometry pg, Geometry g2)
 	{
 		boolean pgResult = pg.intersects(g2);
 		boolean expected = pg.getGeometry().intersects(g2);
@@ -78,7 +80,7 @@ public class PreparedGeometryTeeOperation
 //		System.out.println("Results match!");
 	}
 	
-	private void checkContains(PreparedGeometry pg, Geometry g2)
+	private static void checkContains(PreparedGeometry pg, Geometry g2)
 	{
 		boolean pgResult = pg.contains(g2);
 		boolean expected = pg.getGeometry().contains(g2);
@@ -89,7 +91,7 @@ public class PreparedGeometryTeeOperation
 //		System.out.println("Results match!");
 	}
 	
-	private void checkContainsProperly(PreparedGeometry pg, Geometry g2)
+	private static void checkContainsProperly(PreparedGeometry pg, Geometry g2)
 	{
 		boolean pgResult = pg.containsProperly(g2);
 		boolean expected = containsProperly(pg.getGeometry(), g2);
@@ -100,7 +102,7 @@ public class PreparedGeometryTeeOperation
 //		System.out.println("Results match!");
 	}
 	
-	private void checkCovers(PreparedGeometry pg, Geometry g2)
+	private static void checkCovers(PreparedGeometry pg, Geometry g2)
 	{
 		boolean pgResult = pg.covers(g2);
 		boolean expected = pg.getGeometry().covers(g2);
@@ -113,23 +115,20 @@ public class PreparedGeometryTeeOperation
 	
 	static class PreparedGeometryOp
 	{
-		public static boolean intersects(Geometry g1, Geometry g2)
+        private PreparedGeometryOp() {
+        }
+
+        public static boolean intersects(Geometry g1, Geometry g2)
 		{
-	    PreparedGeometryFactory pgFact = new PreparedGeometryFactory();
-	    PreparedGeometry prepGeom = pgFact.create(g1);
-	    return prepGeom.intersects(g2);
+            return PreparedGeometryFactory.create(g1).intersects(g2);
 		}
 		public static boolean contains(Geometry g1, Geometry g2)
 		{
-	    PreparedGeometryFactory pgFact = new PreparedGeometryFactory();
-	    PreparedGeometry prepGeom = pgFact.create(g1);
-	    return prepGeom.contains(g2);
+            return covers(g1, g2);
 		}
 		public static boolean covers(Geometry g1, Geometry g2)
 		{
-	    PreparedGeometryFactory pgFact = new PreparedGeometryFactory();
-	    PreparedGeometry prepGeom = pgFact.create(g1);
-	    return prepGeom.contains(g2);
+            return PreparedGeometryFactory.create(g1).contains(g2);
 		}
 	}
 

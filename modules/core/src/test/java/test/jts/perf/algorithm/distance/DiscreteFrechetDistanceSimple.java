@@ -36,13 +36,11 @@ public class DiscreteFrechetDistanceSimple {
   }
   private final Geometry g0;
   private final Geometry g1;
-  private final boolean getCoordinates;
 
-  private DiscreteFrechetDistanceSimple(Geometry g0, Geometry g1, boolean getCoordinates) {
+    private DiscreteFrechetDistanceSimple(Geometry g0, Geometry g1, boolean getCoordinates) {
     this.g0 = g0;
     this.g1 = g1;
-    this.getCoordinates = getCoordinates;
-  }
+    }
 
   public double distance() {
 

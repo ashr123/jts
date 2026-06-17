@@ -24,8 +24,8 @@ import org.locationtech.jtstest.test.Testable;
  * @version 1.7
  */
 public class TestCaseEdit implements Testable {
-  private Geometry[] geom = new Geometry[2];
-  private Testable testable;
+  private final Geometry[] geom = new Geometry[2];
+  private final Testable testable;
   
   private String opName = "";
   private Geometry resultGeom = null;
@@ -144,5 +144,3 @@ public class TestCaseEdit implements Testable {
     testable.setIntersectionMatrix(geom[0].relate(geom[1]));
   }
 }
-
-

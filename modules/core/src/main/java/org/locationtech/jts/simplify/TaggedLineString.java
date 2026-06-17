@@ -30,10 +30,10 @@ import org.locationtech.jts.geom.LinearRing;
 class TaggedLineString
 {
 
-  private LineString parentLine;
+  private final LineString parentLine;
   private TaggedLineSegment[] segs;
-  private List<LineSegment> resultSegs = new ArrayList<LineSegment>();
-  private int minimumSize;
+  private final List<LineSegment> resultSegs = new ArrayList<>();
+  private final int minimumSize;
   private boolean isRing = true;
 
   public TaggedLineString(LineString parentLine, int minimumSize, boolean isRing) {
@@ -72,7 +72,7 @@ class TaggedLineString
    */
   public Coordinate getComponentPoint() {
     //-- simplified vertex
-    if (resultSegs.size() > 0) 
+    if (!resultSegs.isEmpty())
       return resultSegs.get(0).p0;
     //-- original vertex
     return getParentCoordinates()[1];
@@ -97,7 +97,7 @@ class TaggedLineString
     if (i < 0) {
       index = resultSegs.size() + i;
     }
-    return (LineSegment) resultSegs.get(index);
+    return resultSegs.get(index);
   }
 
   private void init()
@@ -139,7 +139,7 @@ class TaggedLineString
     Coordinate[] pts = new Coordinate[segs.size() + 1];
     LineSegment seg = null;
     for (int i = 0; i < segs.size(); i++) {
-      seg = (LineSegment) segs.get(i);
+      seg = segs.get(i);
       pts[i] = seg.p0;
     }
     // add last point
@@ -149,8 +149,8 @@ class TaggedLineString
 
   LineSegment removeRingEndpoint()
   {
-    LineSegment firstSeg = (LineSegment) resultSegs.get(0);
-    LineSegment lastSeg = (LineSegment) resultSegs.get(resultSegs.size() - 1);
+    LineSegment firstSeg = resultSegs.get(0);
+    LineSegment lastSeg = resultSegs.get(resultSegs.size() - 1);
 
     firstSeg.p0 = lastSeg.p0;
     resultSegs.remove(resultSegs.size() - 1);

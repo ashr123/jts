@@ -16,7 +16,10 @@ import org.locationtech.jts.math.MathUtil;
 
 class EdgeRay {
 
-  /**
+    private EdgeRay() {
+    }
+
+    /**
    * Computes the area term for the edge rays in both directions along an edge.
    * 
    * @param x0
@@ -34,17 +37,15 @@ class EdgeRay {
     double u0x = dx / len;
     double u0y = dy / len;
     // normal vector pointing to R of unit
-    double n0x = u0y;
-    double n0y = -u0x;
+      double n0y = -u0x;
     
     double u1x = -u0x;
     double u1y = -u0y;
     // normal vector pointing to L of back unit vector
     double n1x = -u1y;
-    double n1y = u1x;
-    
-    double areaTerm0 = 0.5 * (x0*u0x + y0*u0y) * (x0*n0x + y0*n0y); 
-    double areaTerm1 = 0.5 * (x1*u1x + y1*u1y) * (x1*n1x + y1*n1y); 
+
+      double areaTerm0 = 0.5 * (x0*u0x + y0*u0y) * (x0* u0y + y0*n0y);
+    double areaTerm1 = 0.5 * (x1*u1x + y1*u1y) * (x1*n1x + y1* u1x);
     
     return areaTerm0 + areaTerm1;
   }
@@ -77,10 +78,9 @@ class EdgeRay {
       nx = -uy;
       ny = ux;
     }
-    
-    double areaTerm = 0.5 * (vx*ux + vy*uy) * (vx*nx + vy*ny); 
-    //System.out.println(areaTerm);
-    return areaTerm;
+
+      //System.out.println(areaTerm);
+    return 0.5 * (vx*ux + vy*uy) * (vx*nx + vy*ny);
   }
 
   public static double areaTerm(Coordinate p0, Coordinate p1, boolean isNormalToRight) {

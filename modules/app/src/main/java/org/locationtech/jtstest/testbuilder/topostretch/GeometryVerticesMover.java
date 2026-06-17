@@ -22,17 +22,17 @@ import org.locationtech.jts.geom.util.GeometryEditor;
 
 public class GeometryVerticesMover 
 {
-  public static Geometry move(Geometry geom, Map moves)
+  public static Geometry move(Geometry geom, Map<Coordinate, Coordinate> moves)
   {
   	GeometryVerticesMover mover = new GeometryVerticesMover(geom, moves);
     return mover.move();
   }
-  
-  private Geometry geom; 
-  private Map moves;
-  private List modifiedCoords = new ArrayList();
-  
-  public GeometryVerticesMover(Geometry geom, Map moves)
+
+  private final Geometry geom;
+  private final Map<Coordinate, Coordinate> moves;
+  private final List<Coordinate> modifiedCoords = new ArrayList<>();
+
+  public GeometryVerticesMover(Geometry geom, Map<Coordinate, Coordinate> moves)
   {
   	this.geom = geom;
   	this.moves = moves;
@@ -42,11 +42,10 @@ public class GeometryVerticesMover
   {
     GeometryEditor editor = new GeometryEditor();
     MoveVerticesOperation op = new MoveVerticesOperation(moves);
-    Geometry movedGeom = editor.edit(geom, new MoveVerticesOperation(moves));
-  	return movedGeom;
+      return editor.edit(geom, new MoveVerticesOperation(moves));
   }
   
-  public List getModifiedCoordinates()
+  public List<Coordinate> getModifiedCoordinates()
   {
   	return modifiedCoords;
   }
@@ -54,9 +53,9 @@ public class GeometryVerticesMover
   private class MoveVerticesOperation
     extends GeometryEditor.CoordinateOperation
   {
-    private Map moves;
-    
-    public MoveVerticesOperation(Map moves)
+    private final Map<Coordinate, Coordinate> moves;
+
+    public MoveVerticesOperation(Map<Coordinate, Coordinate> moves)
     {
       this.moves = moves;
     }
@@ -74,8 +73,8 @@ public class GeometryVerticesMover
     
     private Coordinate movedPt(Coordinate orig)
     {
-    	Coordinate newLoc = (Coordinate) moves.get(orig);
-    	if (newLoc == null) 
+    	Coordinate newLoc = moves.get(orig);
+    	if (newLoc == null)
     		return orig;
     	Coordinate mod = (Coordinate) newLoc.clone();
     	modifiedCoords.add(mod);

@@ -12,7 +12,6 @@
 package test.jts.perf.index;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -30,7 +29,7 @@ public class IndexTester {
   static final double EXTENT_MIN = -1000.0;
   static final double EXTENT_MAX = 1000.0;
 
-  Index index;
+  final Index index;
 
   public IndexTester(Index index)
   {
@@ -39,15 +38,15 @@ public class IndexTester {
 
   public static class IndexResult {
     public IndexResult(String indexName) { this.indexName = indexName; }
-    public String indexName;
+    public final String indexName;
     public long loadMilliseconds;
     public long queryMilliseconds;
   }
 
-  public IndexResult testAll(List items, List queries)
+  public IndexResult testAll(List<Envelope> items, List<Envelope> queries)
   {
     IndexResult result = new IndexResult(index.toString());
-    System.out.print(index.toString() + "           ");
+    System.out.print(index + "           ");
     System.gc();
     Stopwatch sw = new Stopwatch();
     
@@ -71,20 +70,19 @@ public class IndexTester {
     return result;
   }
 
-  public static List createGridItems(int nGridCells)
+  public static List<Envelope> createGridItems(int nGridCells)
   {
-    ArrayList items = new ArrayList();
-    int gridSize = (int) Math.sqrt((double) nGridCells);
+    ArrayList<Envelope> items = new ArrayList<>();
+    int gridSize = (int) Math.sqrt(nGridCells);
     gridSize += 1;
     double extent = EXTENT_MAX - EXTENT_MIN;
     double gridInc = extent / gridSize;
-    double cellSize = gridInc;
-    for (int i = 0; i < gridSize; i++) {
+      for (int i = 0; i < gridSize; i++) {
       for (int j = 0; j < gridSize; j++) {
         double x = EXTENT_MIN + gridInc * i;
         double y = EXTENT_MIN + gridInc * j;
-        Envelope env = new Envelope(x, x + cellSize,
-                                    y, y + cellSize);
+        Envelope env = new Envelope(x, x + gridInc,
+                                    y, y + gridInc);
         items.add(env);
       }
     }
@@ -92,13 +90,13 @@ public class IndexTester {
   }
   private static final int SEED = 613;
   
-  public static List createRandomBoxes(int n) {
+  public static List<Envelope> createRandomBoxes(int n) {
     return createRandomBoxes(SEED, n);
   }
-  
-  public static List createRandomBoxes(int seed, int n) {
+
+  public static List<Envelope> createRandomBoxes(int seed, int n) {
     Random random = new Random(seed);
-    ArrayList items = new ArrayList();
+    ArrayList<Envelope> items = new ArrayList<>();
     for (int i = 0; i < n; i++) {
       items.add(createBox(random));
     }
@@ -117,30 +115,28 @@ public class IndexTester {
     return min + random.nextDouble() * (max - min);
   }
   
-  void loadTree(List items)
+  void loadTree(List<Envelope> items)
   {
-    for (Iterator i = items.iterator(); i.hasNext(); ) {
-      Envelope item = (Envelope) i.next();
-      index.insert(item, item);
-    }
+      for (Envelope item : items) {
+          index.insert(item, item);
+      }
     index.finishInserting();
   }
-  
-  void runQuery(List queries)
+
+  void runQuery(List<Envelope> queries)
   {
     double querySize = 0.0;
-    for (int i = 0; i < queries.size(); i++) {
-      Envelope env = (Envelope) queries.get(i);
-      List list = index.query(env);
-      Assert.isTrue(!list.isEmpty());
-      querySize += list.size();
-    }
+      for (Envelope env : queries) {
+          List<?> list = index.query(env);
+          Assert.isTrue(!list.isEmpty());
+          querySize += list.size();
+      }
     System.out.println("Avg query size = " + querySize / queries.size());
   }
   
   void runGridQuery(int nGridCells)
   {
-    int cellSize = (int) Math.sqrt((double) NUM_ITEMS);
+    int cellSize = (int) Math.sqrt(NUM_ITEMS);
     double extent = EXTENT_MAX - EXTENT_MIN;
     double queryCellSize =  2.0 * extent / cellSize;
 
@@ -150,7 +146,7 @@ public class IndexTester {
   void queryGrid(int nGridCells, double cellSize)
   {
 
-    int gridSize = (int) Math.sqrt((double) nGridCells);
+    int gridSize = (int) Math.sqrt(nGridCells);
     gridSize += 1;
     double extent = EXTENT_MAX - EXTENT_MIN;
     double gridInc = extent / gridSize;

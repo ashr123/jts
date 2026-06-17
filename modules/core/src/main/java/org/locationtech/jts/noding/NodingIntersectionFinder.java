@@ -118,10 +118,10 @@ public class NodingIntersectionFinder
   private boolean keepIntersections = true;
   private boolean isInteriorIntersectionsOnly = false;
   
-  private LineIntersector li;
+  private final LineIntersector li;
   private Coordinate interiorIntersection = null;
   private Coordinate[] intSegments = null;
-  private List intersections = new ArrayList();
+  private final List<Coordinate> intersections = new ArrayList<>();
   private int intersectionCount = 0;
 
   /**
@@ -191,7 +191,7 @@ public class NodingIntersectionFinder
    * 
    * @return a List of {@link Coordinate}
    */
-  public List getIntersections()
+  public List<Coordinate> getIntersections()
   {
     return intersections;
   }
@@ -333,8 +333,7 @@ public class NodingIntersectionFinder
     if (isInteriorVertexIntersection(p00, p10, isEnd00, isEnd10)) return true;
     if (isInteriorVertexIntersection(p00, p11, isEnd00, isEnd11)) return true;
     if (isInteriorVertexIntersection(p01, p10, isEnd01, isEnd10)) return true;
-    if (isInteriorVertexIntersection(p01, p11, isEnd01, isEnd11)) return true;
-    return false;
+      return isInteriorVertexIntersection(p01, p11, isEnd01, isEnd11);
   }
   
   /**
@@ -353,11 +352,8 @@ public class NodingIntersectionFinder
     
     // Intersections between endpoints are valid nodes, so not reported
     if (isEnd0 && isEnd1) return false;
-    
-    if (p0.equals2D(p1)) {
-      return true;
-    }
-    return false;
+
+      return p0.equals2D(p1);
   }
 
   /**
@@ -371,8 +367,7 @@ public class NodingIntersectionFinder
   private static boolean isEndSegment(SegmentString segStr, int index)
   {
   	if (index == 0) return true;
-  	if (index >= segStr.size() - 2) return true;
-  	return false;
+      return index >= segStr.size() - 2;
   }
   
   /**

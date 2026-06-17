@@ -15,7 +15,6 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -39,15 +38,15 @@ public class PNGWriter {
   private final static int IMAGE_HEIGHT = 200;
   private final static int STACK_TRACE_DEPTH = 1;
 
-  private GeometryEditPanel geometryEditPanel = new GeometryEditPanel();
-  private JFrame frame = new JFrame();
-  private File outputDirectory;
+  private final GeometryEditPanel geometryEditPanel = new GeometryEditPanel();
+    private File outputDirectory;
 
   public PNGWriter() {
     geometryEditPanel.setSize(IMAGE_WIDTH, IMAGE_HEIGHT);
     //geometryEditPanel.setGridEnabled(false);
     geometryEditPanel.setBorder(BorderFactory.createEmptyBorder());
-    frame.getContentPane().add(geometryEditPanel);
+      JFrame frame = new JFrame();
+      frame.getContentPane().add(geometryEditPanel);
   }
 
   public void write(File outputDirectory, TestCaseEdit testCase, PrecisionModel precisionModel) throws IOException {
@@ -61,8 +60,8 @@ public class PNGWriter {
   private void createPNGFile(String filenameNoPath, Geometry a,
       Geometry b,
       Geometry result,
-      int imageWidth, int imageHeight) throws FileNotFoundException,
-      IOException {
+      int imageWidth, int imageHeight) throws
+          IOException {
     TestBuilderModel tbModel = new TestBuilderModel();
     TestCaseEdit tc = new TestCaseEdit(new Geometry[]{ a, b });
     tc.setResult(result);
@@ -82,4 +81,3 @@ public class PNGWriter {
 
 
 }
-

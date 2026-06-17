@@ -24,7 +24,7 @@ import org.locationtech.jts.geom.MultiLineString;
  */
 public class LocationIndexedLine
 {
-  private Geometry linearGeom;
+  private final Geometry linearGeom;
 
   /**
    * Constructs an object which allows linear referencing along
@@ -174,7 +174,7 @@ public class LocationIndexedLine
    * Returns the index of the start of the line
    * @return the location index
    */
-  public LinearLocation getStartIndex()
+  public static LinearLocation getStartIndex()
   {
     return new LinearLocation();
   }

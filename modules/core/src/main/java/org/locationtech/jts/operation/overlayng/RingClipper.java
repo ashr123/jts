@@ -49,12 +49,11 @@ public class RingClipper {
   private static final int BOX_TOP = 2;
   private static final int BOX_RIGHT = 1;
   private static final int BOX_BOTTOM = 0;
-  
-  private Envelope clipEnv;
-  private double clipEnvMinY;
-  private double clipEnvMaxY;
-  private double clipEnvMinX;
-  private double clipEnvMaxX;
+
+    private final double clipEnvMinY;
+  private final double clipEnvMaxY;
+  private final double clipEnvMinX;
+  private final double clipEnvMaxX;
 
   /**
    * Creates a new clipper for the given envelope.
@@ -62,8 +61,7 @@ public class RingClipper {
    * @param clipEnv the clipping envelope
    */
   public RingClipper(Envelope clipEnv) {
-    this.clipEnv = clipEnv;
-    clipEnvMinY = clipEnv.getMinY();
+      clipEnvMinY = clipEnv.getMinY();
     clipEnvMaxY = clipEnv.getMaxY();
     clipEnvMinX = clipEnv.getMinX();
     clipEnvMaxX = clipEnv.getMaxX();
@@ -97,27 +95,26 @@ public class RingClipper {
     CoordinateList ptsClip = new CoordinateList();
 
     Coordinate p0 = pts[pts.length - 1];
-    for (int i = 0; i < pts.length; i++) {
-      Coordinate p1 = pts[i];
-      if ( isInsideEdge(p1, edgeIndex) ) {
-        if ( ! isInsideEdge(p0, edgeIndex) ) {
-          Coordinate intPt = intersection(p0, p1, edgeIndex);
-          ptsClip.add( intPt, false);
-        }
-        // TODO: avoid copying so much?
-        ptsClip.add( p1.copy(), false);
-        
-      } else if ( isInsideEdge(p0, edgeIndex) ) {
-        Coordinate intPt = intersection(p0, p1, edgeIndex);
-        ptsClip.add( intPt, false);
+      for (Coordinate p1 : pts) {
+          if (isInsideEdge(p1, edgeIndex)) {
+              if (!isInsideEdge(p0, edgeIndex)) {
+                  Coordinate intPt = intersection(p0, p1, edgeIndex);
+                  ptsClip.add(intPt, false);
+              }
+              // TODO: avoid copying so much?
+              ptsClip.add(p1.copy(), false);
+
+          } else if (isInsideEdge(p0, edgeIndex)) {
+              Coordinate intPt = intersection(p0, p1, edgeIndex);
+              ptsClip.add(intPt, false);
+          }
+          // else p0-p1 is outside box, so it is dropped
+
+          p0 = p1;
       }
-      // else p0-p1 is outside box, so it is dropped
-      
-      p0 = p1;
-    }
     
     // add closing point if required
-    if (closeRing && ptsClip.size() > 0) {
+    if (closeRing && !ptsClip.isEmpty()) {
       Coordinate start = ptsClip.get(0);
       if (! start.equals2D(ptsClip.get(ptsClip.size() - 1))) {
         ptsClip.add( start.copy() );
@@ -155,13 +152,13 @@ public class RingClipper {
     return intPt;
   }
 
-  private double intersectionLineY(Coordinate a, Coordinate b, double y) {
+  private static double intersectionLineY(Coordinate a, Coordinate b, double y) {
     double m = (b.x - a.x) / (b.y - a.y);
     double intercept = (y - a.y) * m;
     return a.x + intercept;
   }
 
-  private double intersectionLineX(Coordinate a, Coordinate b, double x) {
+  private static double intersectionLineX(Coordinate a, Coordinate b, double x) {
     double m = (b.y - a.y) / (b.x - a.x);
     double intercept = (x - a.x) * m;
     return a.y + intercept;

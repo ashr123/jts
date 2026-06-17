@@ -32,7 +32,7 @@ import test.jts.util.IOUtil;
  */
 public class CascadedPolygonUnionTest extends TestCase 
 {
-	GeometryFactory geomFact = new GeometryFactory();
+	final GeometryFactory geomFact = new GeometryFactory();
 	
   public CascadedPolygonUnionTest(String name) {
     super(name);
@@ -42,7 +42,7 @@ public class CascadedPolygonUnionTest extends TestCase
     junit.textui.TestRunner.run(CascadedPolygonUnionTest.class);
   }
   
-  public void testBoxes()
+  public static void testBoxes()
   throws Exception
   {
   	runTest(IOUtil.readWKT(
@@ -54,10 +54,8 @@ public class CascadedPolygonUnionTest extends TestCase
   			CascadedPolygonUnionTester.MIN_SIMILARITY_MEAURE);
   }
 
-  public void testDiscs1()
-  throws Exception
-  {
-  	Collection geoms = createDiscs(5, 0.7);
+  public void testDiscs1() {
+  	Collection<Geometry> geoms = createDiscs(5, 0.7);
   	
   	//System.out.println(geomFact.buildGeometry(geoms));
   	
@@ -66,10 +64,8 @@ public class CascadedPolygonUnionTest extends TestCase
   }
 
   
-  public void testDiscs2()
-  throws Exception
-  {
-  	Collection geoms = createDiscs(5, 0.55);
+  public void testDiscs2() {
+  	Collection<Geometry> geoms = createDiscs(5, 0.55);
   	
   	//System.out.println(geomFact.buildGeometry(geoms));
   	
@@ -80,16 +76,16 @@ public class CascadedPolygonUnionTest extends TestCase
   
   // TODO: add some synthetic tests
   
-  private static CascadedPolygonUnionTester tester = new CascadedPolygonUnionTester();
+  private static final CascadedPolygonUnionTester tester = new CascadedPolygonUnionTester();
   
-  private void runTest(Collection geoms, double minimumMeasure) 
+  private static void runTest(Collection<? extends Geometry> geoms, double minimumMeasure)
   {
-  	assertTrue(tester.test(geoms, minimumMeasure));
+  	assertTrue(CascadedPolygonUnionTester.test(geoms, minimumMeasure));
   }
   
-  private Collection createDiscs(int num, double radius)
+  private Collection<Geometry> createDiscs(int num, double radius)
   {
-  	List geoms = new ArrayList();
+  	List<Geometry> geoms = new ArrayList<>();
   	for (int i = 0; i < num; i++) {
     	for (int j = 0; j < num; j++) {
     		Coordinate pt = new Coordinate(i, j);

@@ -51,11 +51,11 @@ import org.locationtech.jts.geom.Location;
  */
 class LineBuilder {
   
-  private GeometryFactory geometryFactory;
-  private OverlayGraph graph;
-  private int opCode;
-  private int inputAreaIndex;
-  private boolean hasResultArea;
+  private final GeometryFactory geometryFactory;
+  private final OverlayGraph graph;
+  private final int opCode;
+  private final int inputAreaIndex;
+  private final boolean hasResultArea;
   
   /**
    * Indicates whether intersections are allowed to produce
@@ -73,7 +73,7 @@ class LineBuilder {
   private boolean isAllowCollapseLines = ! OverlayNG.STRICT_MODE_DEFAULT;
 
   
-  private List<LineString> lines = new ArrayList<LineString>();
+  private final List<LineString> lines = new ArrayList<>();
   
   /**
    * Creates a builder for linear elements which may be present 
@@ -196,8 +196,7 @@ class LineBuilder {
      */
     int aLoc = effectiveLocation(lbl, 0);
     int bLoc = effectiveLocation(lbl, 1);
-    boolean isInResult = OverlayNG.isResultOfOp(opCode, aLoc, bLoc);
-    return isInResult;
+      return OverlayNG.isResultOfOp(opCode, aLoc, bLoc);
   }
   
   /**
@@ -240,8 +239,7 @@ class LineBuilder {
     edge.addCoordinates(pts);
     
     Coordinate[] ptsOut = pts.toCoordinateArray(isForward);
-    LineString line = geometryFactory.createLineString(ptsOut);
-    return line;
+      return geometryFactory.createLineString(ptsOut);
   }
   
   //-----------------------------------------------
@@ -337,9 +335,8 @@ class LineBuilder {
     while (e != null);
     
     Coordinate[] ptsOut = pts.toCoordinateArray(isForward);
-    
-    LineString line = geometryFactory.createLineString(ptsOut);
-    return line;
+
+      return geometryFactory.createLineString(ptsOut);
   }
 
   /**

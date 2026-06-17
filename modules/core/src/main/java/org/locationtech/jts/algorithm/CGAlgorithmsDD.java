@@ -104,8 +104,7 @@ public class CGAlgorithmsDD
     DD x2 = DD.valueOf(dx2);
     DD y2 = DD.valueOf(dy2);
 
-    DD det = x1.multiply(y2).selfSubtract(y1.multiply(x2));
-    return det.signum();
+      return signOfDet2x2(x1, y1, x2, y2);
   }
 
   /**

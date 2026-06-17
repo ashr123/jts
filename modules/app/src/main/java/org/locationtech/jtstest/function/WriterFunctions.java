@@ -17,17 +17,23 @@ import java.lang.reflect.InvocationTargetException;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.WKBWriter;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
-import org.locationtech.jts.io.gml2.GMLWriter;
 import org.locationtech.jts.io.kml.KMLWriter;
 import org.locationtech.jtstest.geomfunction.Metadata;
+import org.locationtech.jtstest.testbuilder.io.IOUtil;
 import org.locationtech.jtstest.testbuilder.io.SVGTestWriter;
+
+import java.util.Collections;
+
 import org.locationtech.jtstest.util.ClassUtil;
 import org.locationtech.jtstest.util.io.WKBDumper;
 
 
 public class WriterFunctions 
 {
-  public static String writeKML(Geometry geom)
+    private WriterFunctions() {
+    }
+
+    public static String writeKML(Geometry geom)
   {
     if (geom == null) return "";
     KMLWriter writer = new KMLWriter();
@@ -36,26 +42,23 @@ public class WriterFunctions
   
   public static String writeGML(Geometry geom)
   {
-    if (geom == null) return "";
-    return (new GMLWriter()).write(geom);
+      return IOUtil.toGML(geom);
   }
 
   public static String writeOra(Geometry g) throws SecurityException, IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException
   {
     if (g == null) return "";
     // call dynamically to avoid dependency on OraWriter
-    String sql = (String) ClassUtil.dynamicCall("com.vividsolutions.jts.io.oracle.OraWriter", 
-        "writeSQL", 
-        new Class[] { Geometry.class }, 
-        new Object[] { g });
-    return sql;
+      return (String) ClassUtil.dynamicCall("com.vividsolutions.jts.io.oracle.OraWriter",
+          "writeSQL",
+          new Class[] { Geometry.class },
+              Collections.singletonList((Object) g));
     //return (new OraWriter(null)).writeSQL(g);
   }
   
   public static String writeWKB(Geometry g)
   {
-    if (g == null) return "";
-    return WKBWriter.toHex((new WKBWriter().write(g)));
+      return IOUtil.toWKBHex(g);
   }
   
   public static String dumpWKB(Geometry g)

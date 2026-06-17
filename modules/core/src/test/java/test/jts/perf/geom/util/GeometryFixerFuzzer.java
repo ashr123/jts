@@ -34,7 +34,7 @@ public class GeometryFixerFuzzer {
     fuzzer.run(NUM_ITER);
   }
 
-  public GeometryFactory factory = new GeometryFactory();
+  public final GeometryFactory factory = new GeometryFactory();
   
   public GeometryFixerFuzzer() {
     
@@ -52,7 +52,7 @@ public class GeometryFixerFuzzer {
     }
   }
 
-  private void report(int i, Geometry invalidPoly, Geometry result, boolean isValid) {
+  private static void report(int i, Geometry invalidPoly, Geometry result, boolean isValid) {
     String status =  isValid ? "valid" : "INVALID";
     String msg = String.format("%d: Pts - input %d, output %d - %s",
         i, invalidPoly.getNumPoints(), result.getNumPoints(), status);
@@ -76,7 +76,7 @@ public class GeometryFixerFuzzer {
     return factory.createLinearRing(createRandomPoints(numPoints));
   }
 
-  private Coordinate[] createRandomPoints(int numPoints) {
+  private static Coordinate[] createRandomPoints(int numPoints) {
     Coordinate[] pts = new Coordinate[numPoints + 1];
     for (int i = 0; i < numPoints; i++) {
       Coordinate p = new Coordinate(randOrd(), randOrd());
@@ -86,9 +86,8 @@ public class GeometryFixerFuzzer {
     return pts;
   }
 
-  private double randOrd() {
-    double ord = GEOM_EXTENT_SIZE * Math.random();
-    return ord;
+  private static double randOrd() {
+      return GEOM_EXTENT_SIZE * Math.random();
   }
   
   private Geometry createRandomCirclePoly(int numPoints, int numHoles) {

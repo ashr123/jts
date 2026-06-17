@@ -41,7 +41,7 @@ class PrecisionReducerTransformer extends GeometryTransformer {
     return trans.transform(geom);
   }
   
-  private PrecisionModel targetPM;
+  private final PrecisionModel targetPM;
   private boolean isRemoveCollapsed = false;
   
   PrecisionReducerTransformer(PrecisionModel targetPM, boolean isRemoveCollapsed) {
@@ -84,7 +84,7 @@ class PrecisionReducerTransformer extends GeometryTransformer {
     return factory.getCoordinateSequenceFactory().create(coordsReduce);
   }
 
-  private Coordinate[] extend(Coordinate[] coords, int minLength) {
+  private static Coordinate[] extend(Coordinate[] coords, int minLength) {
     if (coords.length >= minLength)
       return coords;
     Coordinate[] exCoords = new Coordinate[minLength];
@@ -104,8 +104,7 @@ class PrecisionReducerTransformer extends GeometryTransformer {
       noRepeatCoordList.add(coord, false);
     }
     // remove repeated points, to simplify geometry as much as possible
-    Coordinate[] noRepeatCoords = noRepeatCoordList.toCoordinateArray();
-    return noRepeatCoords;
+      return noRepeatCoordList.toCoordinateArray();
   }
 
   protected Geometry transformPolygon(Polygon geom, Geometry parent) {
@@ -117,7 +116,6 @@ class PrecisionReducerTransformer extends GeometryTransformer {
   }
 
   private Geometry reduceArea(Geometry geom) {
-    Geometry reduced = PrecisionReducer.reducePrecision(geom, targetPM);
-    return reduced;
+      return PrecisionReducer.reducePrecision(geom, targetPM);
   }
 }

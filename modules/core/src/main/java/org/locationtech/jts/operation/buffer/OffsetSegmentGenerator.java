@@ -62,16 +62,11 @@ class OffsetSegmentGenerator
    */
   private static final int MAX_CLOSING_SEG_LEN_FACTOR = 80;
 
-  /**
-   * the max error of approximation (distance) between a quad segment and the true fillet curve
-   */
-  private double maxCurveSegmentError = 0.0;
-
-  /**
+    /**
    * The angle quantum with which to approximate a fillet curve
    * (based on the input # of quadrant segments)
    */
-  private double filletAngleQuantum;
+  private final double filletAngleQuantum;
 
   /**
    * The Closing Segment Length Factor controls how long
@@ -92,15 +87,15 @@ class OffsetSegmentGenerator
 
   private OffsetSegmentString segList;
   private double distance = 0.0;
-  private PrecisionModel precisionModel;
-  private BufferParameters bufParams;
-  private LineIntersector li;
+  private final PrecisionModel precisionModel;
+  private final BufferParameters bufParams;
+  private final LineIntersector li;
 
   private Coordinate s0, s1, s2;
-  private LineSegment seg0 = new LineSegment();
-  private LineSegment seg1 = new LineSegment();
-  private LineSegment offset0 = new LineSegment();
-  private LineSegment offset1 = new LineSegment();
+  private final LineSegment seg0 = new LineSegment();
+  private final LineSegment seg1 = new LineSegment();
+  private final LineSegment offset0 = new LineSegment();
+  private final LineSegment offset1 = new LineSegment();
   private int side = 0;
   private boolean hasNarrowConcaveAngle = false;
 
@@ -148,7 +143,10 @@ class OffsetSegmentGenerator
   private void init(double distance)
   {
     this.distance = Math.abs(distance);
-    maxCurveSegmentError = this.distance * (1 - Math.cos(filletAngleQuantum / 2.0));
+      /**
+       * the max error of approximation (distance) between a quad segment and the true fillet curve
+       */
+      double maxCurveSegmentError = this.distance * (1 - Math.cos(filletAngleQuantum / 2.0));
     segList = new OffsetSegmentString();
     segList.setPrecisionModel(precisionModel);
     /**
@@ -169,8 +167,7 @@ class OffsetSegmentGenerator
 
   public Coordinate[] getCoordinates()
   {
-    Coordinate[] pts = segList.getCoordinates();
-    return pts;
+      return segList.getCoordinates();
   }
   
   public void closeRing()

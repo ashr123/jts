@@ -22,10 +22,10 @@ import org.locationtech.jts.geom.CoordinateArrays;
  * @version 1.7
  */
 public class OrientedCoordinateArray
-    implements Comparable
+    implements Comparable<OrientedCoordinateArray>
 {
-  private Coordinate[] pts;
-  private boolean orientation;
+  private final Coordinate[] pts;
+  private final boolean orientation;
 
   /**
    * Creates a new {@link OrientedCoordinateArray}
@@ -59,11 +59,8 @@ public class OrientedCoordinateArray
    * 1 this one is greater
    */
 
-  public int compareTo(Object o1) {
-    OrientedCoordinateArray oca = (OrientedCoordinateArray) o1;
-    int comp = compareOriented(pts, orientation,
-                               oca.pts, oca.orientation);
-/*
+  public int compareTo(OrientedCoordinateArray oca) {
+    /*
     // MD - testing only
     int oldComp = SegmentStringDissolver.ptsComp.compare(pts, oca.pts);
     if ((oldComp == 0 || comp == 0) && oldComp != comp) {
@@ -76,7 +73,8 @@ public class OrientedCoordinateArray
       int oldComp2 = SegmentStringDissolver.ptsComp.compare(pts, oca.pts);
     }
     */
-    return comp;
+    return compareOriented(pts, orientation,
+                               oca.pts, oca.orientation);
   }
 
   private static int compareOriented(Coordinate[] pts1,

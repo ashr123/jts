@@ -19,7 +19,7 @@ import junit.textui.TestRunner;
  */
 public class Issue820 extends TestCase {
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(Issue820.class);
   }
   

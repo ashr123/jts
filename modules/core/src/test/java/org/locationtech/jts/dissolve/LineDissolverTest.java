@@ -23,7 +23,7 @@ import test.jts.util.IOUtil;
 
 
 public class LineDissolverTest  extends TestCase {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(LineDissolverTest.class);
   }
 
@@ -128,18 +128,18 @@ public class LineDissolverTest  extends TestCase {
   }
 
 
-  private void checkDissolve(String wkt, String expectedWKT) throws ParseException {
+  private static void checkDissolve(String wkt, String expectedWKT) throws ParseException {
     checkDissolve(new String[] { wkt }, expectedWKT);
   }
 
-  private void checkDissolve(String[] wkt, String expectedWKT) throws ParseException {
-    List geoms = IOUtil.readWKT(wkt);
+  private static void checkDissolve(String[] wkt, String expectedWKT) throws ParseException {
+    List<Geometry> geoms = IOUtil.readWKT(wkt);
     Geometry expected = IOUtil.readWKT(expectedWKT);
     checkDissolve(geoms, expected);
   }
 
 
-  private void checkDissolve(List geoms, Geometry expected) {
+  private static void checkDissolve(List<? extends Geometry> geoms, Geometry expected) {
     LineDissolver d = new LineDissolver();
     d.add(geoms);
     Geometry result = d.getResult();

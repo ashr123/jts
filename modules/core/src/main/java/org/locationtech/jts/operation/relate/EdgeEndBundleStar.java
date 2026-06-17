@@ -57,7 +57,7 @@ public class EdgeEndBundleStar
    */
   void updateIM(IntersectionMatrix im)
   {
-    for (Iterator it = iterator(); it.hasNext(); ) {
+    for (Iterator<EdgeEnd> it = iterator(); it.hasNext(); ) {
       EdgeEndBundle esb = (EdgeEndBundle) it.next();
       esb.updateIM(im);
     }

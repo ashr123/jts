@@ -45,5 +45,5 @@ public interface SegmentSetMutualIntersector
    * @param segInt the intersection detector to either record intersection occurrences
    * 			 or add intersection nodes to the input segment strings.
    */
-  void process(Collection segStrings, SegmentIntersector segInt);
+  void process(Collection<? extends SegmentString> segStrings, SegmentIntersector segInt);
 }

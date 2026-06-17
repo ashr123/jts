@@ -45,22 +45,20 @@ public class RectangleClipPolygon {
 
   public static Geometry clip(Geometry geom, Geometry rectangle) {
     RectangleClipPolygon ctt = new RectangleClipPolygon(rectangle);
-    Geometry result = ctt.clip(geom);
-    return result;
+      return ctt.clip(geom);
   }
 
   public static Geometry clip(Geometry geom, Geometry rectangle, PrecisionModel pm) {
     RectangleClipPolygon ctt = new RectangleClipPolygon(rectangle, pm);
-    Geometry result = ctt.clip(geom);
-    return result;
+      return ctt.clip(geom);
   }
 
-  private Envelope clipEnv;
-  private double clipEnvMinY;
-  private double clipEnvMaxY;
-  private double clipEnvMinX;
-  private double clipEnvMaxX;
-  private PrecisionModel precModel;
+  private final Envelope clipEnv;
+  private final double clipEnvMinY;
+  private final double clipEnvMaxY;
+  private final double clipEnvMinX;
+  private final double clipEnvMaxX;
+  private final PrecisionModel precModel;
   
   public RectangleClipPolygon(Envelope clipEnv) {
     this(clipEnv, new PrecisionModel(PrecisionModel.FLOATING));
@@ -110,7 +108,7 @@ public class RectangleClipPolygon {
    * 
    * @see GeometryPrecisionReducer
    */
-  private Geometry fixTopology(Geometry geom) {
+  private static Geometry fixTopology(Geometry geom) {
     // TODO: do this in a better way (could use GeometryPrecisionReducer?)
     // TODO: ensure this meets required precision model (see GeometryPrecisionReducer)
     return geom.buffer(0);
@@ -121,7 +119,7 @@ public class RectangleClipPolygon {
     // TODO: need to precision reduce
     if (isInsideRectangle(geom)) return geom.copy();
 
-    List<Geometry> geomsClip = new ArrayList<Geometry>(); 
+    List<Geometry> geomsClip = new ArrayList<>();
     for (int i = 0; i < geom.getNumGeometries(); i++) {
       Geometry poly = geom.getGeometryN(i);
       if (! (poly instanceof Polygon)) continue;
@@ -130,11 +128,10 @@ public class RectangleClipPolygon {
       geomsClip.add(polyClip);
     }
     
-    if (geomsClip.size() == 0) {
+    if (geomsClip.isEmpty()) {
       return null;
     }
-    Geometry geomClip = geom.getFactory().buildGeometry(geomsClip);
-    return geomClip;
+      return geom.getFactory().buildGeometry(geomsClip);
   }
 
   private Polygon clipPolygon(Polygon poly) {
@@ -148,13 +145,12 @@ public class RectangleClipPolygon {
       return null;
     }
     LinearRing[] holesClip = clipHoles(poly);
-    
-    Polygon polyClip = poly.getFactory().createPolygon(shellClip, holesClip);
-    return polyClip;
+
+      return poly.getFactory().createPolygon(shellClip, holesClip);
   }
   
   private LinearRing[] clipHoles(Polygon poly) {
-    List<LinearRing> holesClip = new ArrayList<LinearRing>();
+    List<LinearRing> holesClip = new ArrayList<>();
     for (int i = 0; i < poly.getNumInteriorRing(); i++) {
       LinearRing holeClip = clipRing(poly.getInteriorRingN(i));
       if (holeClip != null) {
@@ -256,29 +252,28 @@ public class RectangleClipPolygon {
     CoordinateList clipCoords = new CoordinateList();
 
     Coordinate p0 = coords[coords.length - 1];
-    for (int i = 0; i < coords.length; i++) {
-      Coordinate p1 = coords[i];
-      if ( isInsideEdge(p1, edgeIndex) ) {
-        if ( !isInsideEdge(p0, edgeIndex) ) {
-          Coordinate intPt = intersectionPrecise(p0, p1, edgeIndex);
-          clipCoords.add( intPt, false);
-          //currentCoordsEnv.expandToInclude(intPt);
-        }
-        // TODO: avoid copying so much?
-        Coordinate p1Precise = makePrecise(p1.copy());
-        clipCoords.add( p1Precise, false);
-        //currentCoordsEnv.expandToInclude(p1Precise);
-        
-      } else if ( isInsideEdge(p0, edgeIndex) ) {
-        Coordinate intPt = intersectionPrecise(p0, p1, edgeIndex);
-        clipCoords.add( intPt, false);
-        //currentCoordsEnv.expandToInclude(intPt);
+      for (Coordinate p1 : coords) {
+          if (isInsideEdge(p1, edgeIndex)) {
+              if (!isInsideEdge(p0, edgeIndex)) {
+                  Coordinate intPt = intersectionPrecise(p0, p1, edgeIndex);
+                  clipCoords.add(intPt, false);
+                  //currentCoordsEnv.expandToInclude(intPt);
+              }
+              // TODO: avoid copying so much?
+              Coordinate p1Precise = makePrecise(p1.copy());
+              clipCoords.add(p1Precise, false);
+              //currentCoordsEnv.expandToInclude(p1Precise);
+
+          } else if (isInsideEdge(p0, edgeIndex)) {
+              Coordinate intPt = intersectionPrecise(p0, p1, edgeIndex);
+              clipCoords.add(intPt, false);
+              //currentCoordsEnv.expandToInclude(intPt);
+          }
+          // move to next segment
+          p0 = p1;
       }
-      // move to next segment
-      p0 = p1;
-    }
     // check if all points clipped off
-    if (clipCoords.size() <= 0) return null;
+    if (clipCoords.isEmpty()) return null;
     clipCoords.closeRing();
     return clipCoords.toCoordinateArray();
   }
@@ -323,7 +318,7 @@ public class RectangleClipPolygon {
     }
   }
 
-  private double intersectionLineY(Coordinate a, Coordinate b, double y) {
+  private static double intersectionLineY(Coordinate a, Coordinate b, double y) {
     // short-circuit segment parallel to Y axis
     if (b.x == a.x) return a.x;
     double m = (b.x - a.x) / (b.y - a.y);
@@ -331,7 +326,7 @@ public class RectangleClipPolygon {
     return a.x + intercept;
   }
 
-  private double intersectionLineX(Coordinate a, Coordinate b, double x) {
+  private static double intersectionLineX(Coordinate a, Coordinate b, double x) {
     // short-circuit segment parallel to X axis
     if (b.y == a.y) return a.y;
     double m = (b.y - a.y) / (b.x - a.x);
@@ -354,4 +349,3 @@ public class RectangleClipPolygon {
   }
 
 }
-;;;

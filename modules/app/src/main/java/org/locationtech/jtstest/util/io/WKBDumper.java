@@ -39,7 +39,7 @@ public class WKBDumper
     return dumper.readString(bytes);
   }
 
-  private ByteOrderDataInStream dis = new ByteOrderDataInStream();
+  private final ByteOrderDataInStream dis = new ByteOrderDataInStream();
   private Writer writer;
   private int inputDimension;
 
@@ -234,12 +234,12 @@ public class WKBDumper
   private void readCoordinate(int index) throws IOException, ParseException
   {
     writer.write(dis.getCount() + ": ");
-    String hex = "";
-    String nums = "";
+    StringBuilder hex = new StringBuilder();
+    StringBuilder nums = new StringBuilder();
     for (int i = 0; i < inputDimension; i++) {
         double d = dis.readDouble();
-        hex += WKBWriter.toHex(dis.getData()) + " ";
-        nums += (i > 0 ? ", " : "") + d;
+        hex.append(WKBWriter.toHex(dis.getData())).append(" ");
+        nums.append(i > 0 ? ", " : "").append(d);
     }
     writer.write(hex + " [" + index + "] " + nums + "\n");
   }

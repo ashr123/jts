@@ -39,8 +39,8 @@ public class HoleAssigner
     assigner.assignHolesToShells(holes);
   }
   
-  private List<EdgeRing> shells;
-  private SpatialIndex shellIndex;
+  private final List<EdgeRing> shells;
+  private SpatialIndex<EdgeRing> shellIndex;
   
   /**
    * Creates a new hole assigner.
@@ -53,7 +53,7 @@ public class HoleAssigner
   }
   
   private void buildIndex() {
-    shellIndex = new STRtree();
+    shellIndex = new STRtree<>();
     for (EdgeRing shell : shells) {
       shellIndex.insert(shell.getRing().getEnvelopeInternal(), shell);
     }
@@ -79,9 +79,8 @@ public class HoleAssigner
     }
   }
   
-  @SuppressWarnings("unchecked")
   private List<EdgeRing> queryOverlappingShells(Envelope ringEnv) {
-    return (List<EdgeRing>) shellIndex.query(ringEnv);
+    return shellIndex.query(ringEnv);
   }
   
   /**

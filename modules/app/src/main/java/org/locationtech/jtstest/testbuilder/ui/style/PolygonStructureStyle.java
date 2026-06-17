@@ -41,9 +41,7 @@ extends LineStringStyle
 
   protected void paintLineString(LineString lineString,
       int lineType,
-      Viewport viewport, Graphics2D gr)
-  throws Exception
-  {
+      Viewport viewport, Graphics2D gr) {
     if (lineType == POLY_HOLE) 
       paintHole(lineString, viewport, gr);
     else 
@@ -51,9 +49,7 @@ extends LineStringStyle
   }
   
   private void paintShell(LineString lineString,
-      Viewport viewport, Graphics2D gr)
-  throws Exception
-  {
+      Viewport viewport, Graphics2D gr) {
     Color dashClr = color.darker().darker(); //new Color(0, 0, 0);
     Graphics2D gr2 = (Graphics2D) gr.create();
     gr2.setColor(dashClr);
@@ -69,9 +65,7 @@ extends LineStringStyle
       //paintRing(polygon.getExteriorRing(), true, viewport, gr2);
   }
   private void paintHole(LineString lineString,
-      Viewport viewport, Graphics2D gr)
-  throws Exception
-  {
+      Viewport viewport, Graphics2D gr) {
     Color dashClr = color.darker().darker(); //new Color(0, 0, 0);
     Graphics2D gr2 = (Graphics2D) gr.create();
     gr2.setColor(dashClr);

@@ -19,11 +19,11 @@ import org.locationtech.jts.geom.Geometry;
 
 class NodeSections {
 
-  private Coordinate nodePt;
+  private final Coordinate nodePt;
   
-  private List<NodeSection> sections = new ArrayList<NodeSection>();;
+  private final List<NodeSection> sections = new ArrayList<>();
 
-  public NodeSections(Coordinate pt) {
+    public NodeSections(Coordinate pt) {
     this.nodePt = pt;
   }
 
@@ -108,7 +108,7 @@ class NodeSections {
   }
   
   private static List<NodeSection> collectPolygonSections(List<NodeSection> sections, int i) {
-    List<NodeSection> polySections = new ArrayList<NodeSection>();
+    List<NodeSection> polySections = new ArrayList<>();
     //-- note ids are only unique to a geometry
     NodeSection polySection = sections.get(i);
     while (i < sections.size() &&

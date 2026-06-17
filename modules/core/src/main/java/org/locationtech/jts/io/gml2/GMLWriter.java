@@ -65,8 +65,7 @@ public class GMLWriter {
 	private boolean isRootTag = false;
 
 	private String prefix = GMLConstants.GML_PREFIX;
-	private String namespace = GMLConstants.GML_NAMESPACE;
-	private String srsName = null;
+    private String srsName = null;
 	
 	private String[] customElements = null;
 	
@@ -416,7 +415,7 @@ public class GMLWriter {
 		endGeomTag(GMLConstants.GML_COORDINATES, writer);
 	}
 
-	private void startLine(int level, Writer writer) throws IOException {
+	private static void startLine(int level, Writer writer) throws IOException {
 		for (int i = 0; i < level; i++)
 			writer.write(INDENT);
 	}
@@ -424,7 +423,7 @@ public class GMLWriter {
 	private void startGeomTag(String geometryName, Geometry g, Writer writer)
 			throws IOException {
 		writer.write("<"
-				+ ((prefix == null || "".equals(prefix)) ? "" : prefix + ":"));
+				+ ((prefix == null || prefix.isEmpty()) ? "" : prefix + ":"));
 		writer.write(geometryName);
 		writeAttributes(g, writer);
 		writer.write(">\n");
@@ -439,11 +438,12 @@ public class GMLWriter {
 			return;
 		
 		if (emitNamespace) {
-			writer.write(" xmlns"
-					+ ((prefix == null || "".equals(prefix)) ? "" : ":"+prefix )
+            String namespace = GMLConstants.GML_NAMESPACE;
+            writer.write(" xmlns"
+					+ ((prefix == null || prefix.isEmpty()) ? "" : ":"+prefix )
 					+ "='" + namespace + "'");
 		}
-		if (srsName != null && srsName.length() > 0) {
+		if (srsName != null && !srsName.isEmpty()) {
 			writer.write(" " + GMLConstants.GML_ATTR_SRSNAME + "='" + srsName + "'");
 			// MD - obsoleted
 //			writer.write(geom.getSRID() + "");
@@ -454,11 +454,11 @@ public class GMLWriter {
 		if (geom == null)			return;
 		if (! isRootTag)			return;
 		if (customElements == null) return;
-		
-		for (int i = 0; i < customElements.length; i++) {
-			writer.write(customElements[i]);
-			writer.write("\n");
-		}
+
+        for (String customElement : customElements) {
+            writer.write(customElement);
+            writer.write("\n");
+        }
 	}
 	
 	private void endGeomTag(String geometryName, Writer writer)
@@ -470,7 +470,7 @@ public class GMLWriter {
 	
 	private String prefix()
 	{
-		if (prefix == null || prefix.length() == 0)
+		if (prefix == null || prefix.isEmpty())
 			return "";
 		return prefix + ":";
 	}

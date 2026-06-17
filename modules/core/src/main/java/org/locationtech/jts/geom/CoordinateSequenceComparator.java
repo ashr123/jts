@@ -26,7 +26,7 @@ import java.util.Comparator;
  *
  */
 public class CoordinateSequenceComparator
-	implements Comparator
+	implements Comparator<CoordinateSequence>
 {
   /**
    * Compare two <code>double</code>s, allowing for NaN values.
@@ -38,22 +38,13 @@ public class CoordinateSequenceComparator
    */
   public static int compare(double a, double b)
   {
-    if (a < b) return -1;
-    if (a > b) return 1;
-
-    if (Double.isNaN(a)) {
-      if (Double.isNaN(b)) return 0;
-      return -1;
-    }
-
-    if (Double.isNaN(b)) return 1;
-    return 0;
+      return Coordinate.DimensionalComparator.compare(a, b);
   }
 
   /**
    * The number of dimensions to test
    */
-  protected int dimensionLimit;
+  protected final int dimensionLimit;
 
   /**
    * Creates a comparator which will test all dimensions.
@@ -80,11 +71,8 @@ public class CoordinateSequenceComparator
    * @param o2 a {@link CoordinateSequence}
    * @return -1, 0, or 1 depending on whether o1 is less than, equal to, or greater than o2
    */
-  public int compare(Object o1, Object o2)
+  public int compare(CoordinateSequence s1, CoordinateSequence s2)
   {
-    CoordinateSequence s1 = (CoordinateSequence) o1;
-    CoordinateSequence s2 = (CoordinateSequence) o2;
-
     int size1 = s1.size();
     int size2 = s2.size();
 
@@ -129,7 +117,7 @@ public class CoordinateSequenceComparator
    * @param dimension the number of dimensions to test
    * @return -1, 0, or 1 depending on whether s1[i] is less than, equal to, or greater than s2[i]
    */
-  protected int compareCoordinate(CoordinateSequence s1, CoordinateSequence s2, int i, int dimension)
+  protected static int compareCoordinate(CoordinateSequence s1, CoordinateSequence s2, int i, int dimension)
   {
     for (int d = 0; d < dimension; d++) {
       double ord1 = s1.getOrdinate(i, d);

@@ -48,7 +48,7 @@ public class InvalidHoleRemover {
     return pihr.getResult();
   }
   
-  private Geometry geom;
+  private final Geometry geom;
 
   /**
    * Creates a new invalid hole remover instance.
@@ -86,7 +86,7 @@ public class InvalidHoleRemover {
       return pihr.getResult();
     }
     
-    private Polygon poly;
+    private final Polygon poly;
 
     public PolygonInvalidHoleRemover(Polygon poly) {
       this.poly = poly;
@@ -98,7 +98,7 @@ public class InvalidHoleRemover {
       Polygon shell = gf.createPolygon(poly.getExteriorRing());
       PreparedGeometry shellPrep = PreparedGeometryFactory.prepare(shell);
       
-      List holes = new ArrayList();
+      List<LinearRing> holes = new ArrayList<>();
       for (int i = 0; i < poly.getNumInteriorRing(); i++) {
         LinearRing hole = poly.getInteriorRingN(i);
         if (shellPrep.covers(hole)) {
@@ -110,9 +110,8 @@ public class InvalidHoleRemover {
         return poly;
       
       // return new polygon with covered holes only
-      Polygon result = gf.createPolygon(poly.getExteriorRing(),
-          GeometryFactory.toLinearRingArray(holes));
-      return result;
+        return gf.createPolygon(poly.getExteriorRing(),
+            GeometryFactory.toLinearRingArray(holes));
     }
 
   }

@@ -19,16 +19,15 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Dimension;
 import org.locationtech.jts.geom.Location;
 import org.locationtech.jts.geom.Position;
-import org.locationtech.jts.util.Assert;
 
 class TopologyComputer {
 
   private static final String MSG_GEOMETRY_DIMENSION_UNEXPECTED = "Unexpected combination of geometry dimensions";
 
-  private TopologyPredicate predicate;
-  private RelateGeometry geomA;
-  private RelateGeometry geomB;
-  private Map<Coordinate, NodeSections> nodeMap = new HashMap<Coordinate, NodeSections>();
+  private final TopologyPredicate predicate;
+  private final RelateGeometry geomA;
+  private final RelateGeometry geomB;
+  private final Map<Coordinate, NodeSections> nodeMap = new HashMap<>();
 
   public TopologyComputer(TopologyPredicate predicate, RelateGeometry geomA, RelateGeometry geomB) {
     this.predicate = predicate;
@@ -147,10 +146,7 @@ class TopologyComputer {
       return true;
     
     //-- if B is a mixed GC with A and L require full noding
-    if (geomB.hasAreaAndLine())
-      return true;
-
-    return false;
+      return geomB.hasAreaAndLine();
   }
   
   public boolean isExteriorCheckRequired(boolean isA) {

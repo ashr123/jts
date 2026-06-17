@@ -27,9 +27,9 @@ import junit.textui.TestRunner;
 public class Distance3DOpTest extends TestCase 
 {
 	static GeometryFactory geomFact = new GeometryFactory();
-	static WKTReader rdr = new WKTReader();
+	static final WKTReader rdr = new WKTReader();
 	
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		TestRunner.run(Distance3DOpTest.class);
 	}
 
@@ -278,7 +278,7 @@ public class Distance3DOpTest extends TestCase
 				0);
 	}
 
-	String polyHoleFlat = "POLYGON ((100 200 0, 200 200 0, 200 100 0, 100 100 0, 100 200 0), (120 180 0, 180 180 0, 180 120 0, 120 120 0, 120 180 0))";
+	static final String polyHoleFlat = "POLYGON ((100 200 0, 200 200 0, 200 100 0, 100 100 0, 100 200 0), (120 180 0, 180 180 0, 180 120 0, 120 120 0, 120 180 0))";
 
 	public void testLinePolygonHoleFlat()
 	{
@@ -309,7 +309,7 @@ public class Distance3DOpTest extends TestCase
 				coord(110, 110, 100), coord(110, 110, 100));
 	}
 
-	String poly2HoleFlat = "POLYGON ((100 200 0, 200 200 0, 200 100 0, 100 100 0, 100 200 0), (110 110 0, 110 130 0, 130 130 0, 130 110 0, 110 110 0), (190 110 0, 170 110 0, 170 130 0, 190 130 0, 190 110 0))";	
+	static final String poly2HoleFlat = "POLYGON ((100 200 0, 200 200 0, 200 100 0, 100 100 0, 100 200 0), (110 110 0, 110 130 0, 130 130 0, 130 110 0, 110 110 0), (190 110 0, 170 110 0, 170 130 0, 190 130 0, 190 110 0))";
 
 	/**
 	 * A case proving that polygon/polygon distance requires
@@ -381,21 +381,21 @@ public class Distance3DOpTest extends TestCase
 
 	private static final double DIST_TOLERANCE = 0.00001;
 
-	private void checkDistance(String wkt1, String wkt2, double expectedDistance)
+	private static void checkDistance(String wkt1, String wkt2, double expectedDistance)
 	{
 		checkDistance(wkt1, wkt2, expectedDistance, DIST_TOLERANCE);
 	}
 
-	private void checkDistance(String wkt1, String wkt2, double expectedDistance, Coordinate... expectedCoordinates)
+	private static void checkDistance(String wkt1, String wkt2, double expectedDistance, Coordinate... expectedCoordinates)
 	{
 		checkDistance(wkt1, wkt2, expectedDistance, expectedCoordinates, DIST_TOLERANCE);
 	}
 
-	private void checkDistance(String wkt1, String wkt2, double expectedDistance, double tolerance) {
+	private static void checkDistance(String wkt1, String wkt2, double expectedDistance, double tolerance) {
 		checkDistance(wkt1, wkt2, expectedDistance, new Coordinate[0], tolerance);
 	}
 
-	private void checkDistance(String wkt1, String wkt2, double expectedDistance, Coordinate[] expectedCoords, double tolerance)
+	private static void checkDistance(String wkt1, String wkt2, double expectedDistance, Coordinate[] expectedCoords, double tolerance)
 	{
 		Geometry g1;
 		Geometry g2;
@@ -414,7 +414,7 @@ public class Distance3DOpTest extends TestCase
 		checkDistance(g2, g1, expectedDistance, reversed(expectedCoords), tolerance);
 	}
 
-	private void checkDistance(Geometry g1, Geometry g2, double expectedDistance, Coordinate[] expectedCoords, double tolerance)
+	private static void checkDistance(Geometry g1, Geometry g2, double expectedDistance, Coordinate[] expectedCoords, double tolerance)
 	{
 		Distance3DOp distOp = new Distance3DOp(g1, g2);
 		double dist = distOp.distance();
@@ -433,11 +433,11 @@ public class Distance3DOpTest extends TestCase
 		}
 	}
 
-	private Coordinate coord(double x, double y, double z) {
+	private static Coordinate coord(double x, double y, double z) {
 		return new Coordinate(x, y, z);
 	}
 
-	private Coordinate[] reversed(Coordinate[] coordinates) {
+	private static Coordinate[] reversed(Coordinate[] coordinates) {
 		Coordinate[] reversed = new Coordinate[coordinates.length];
 		int maxIndex = coordinates.length - 1;
 		for (int i = 0; i < coordinates.length; i++) {

@@ -19,7 +19,10 @@ import org.locationtech.jts.algorithm.PointLocator;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Location;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.Position;
 import org.locationtech.jts.geom.TopologyException;
 import org.locationtech.jts.geomgraph.Depth;
@@ -81,8 +84,7 @@ public class OverlayOp
   public static Geometry overlayOp(Geometry geom0, Geometry geom1, int opCode)
   {
     OverlayOp gov = new OverlayOp(geom0, geom1);
-    Geometry geomOv = gov.getResultGeometry(opCode);
-    return geomOv;
+      return gov.getResultGeometry(opCode);
   }
 
   /**
@@ -139,17 +141,16 @@ public class OverlayOp
   }
 
   private final PointLocator ptLocator = new PointLocator();
-  private GeometryFactory geomFact;
+  private final GeometryFactory geomFact;
   private Geometry resultGeom;
 
-  private PlanarGraph graph;
-  private EdgeList edgeList     = new EdgeList();
+  private final PlanarGraph graph;
+  private final EdgeList edgeList     = new EdgeList();
 
-  private List resultPolyList   = new ArrayList();
-  private List resultLineList   = new ArrayList();
-  private List resultPointList  = new ArrayList();
+  private List<Polygon> resultPolyList   = new ArrayList<>();
+  private List<LineString> resultLineList   = new ArrayList<>();
 
-  /**
+    /**
    * Constructs an instance to compute a single overlay operation
    * for the given geometries.
    * 
@@ -204,10 +205,10 @@ public class OverlayOp
     // compute intersections between edges of the two input geometries
     arg[0].computeEdgeIntersections(arg[1], li, true);
 
-    List baseSplitEdges = new ArrayList();
+    List<Edge> baseSplitEdges = new ArrayList<>();
     arg[0].computeSplitEdges(baseSplitEdges);
     arg[1].computeSplitEdges(baseSplitEdges);
-    List splitEdges = baseSplitEdges;
+    List<Edge> splitEdges = baseSplitEdges;
     // add the noded edges to this result graph
     insertUniqueEdges(baseSplitEdges);
 
@@ -252,18 +253,17 @@ public class OverlayOp
     resultLineList = lineBuilder.build(opCode);
 
     PointBuilder pointBuilder = new PointBuilder(this, geomFact, ptLocator);
-    resultPointList = pointBuilder.build(opCode);
+      List<Point> resultPointList = pointBuilder.build(opCode);
 
     // gather the results from all calculations into a single Geometry for the result set
     resultGeom = computeGeometry(resultPointList, resultLineList, resultPolyList, opCode);
   }
 
-  private void insertUniqueEdges(List edges)
+  private void insertUniqueEdges(List<? extends Edge> edges)
   {
-    for (Iterator i = edges.iterator(); i.hasNext(); ) {
-      Edge e = (Edge) i.next();
-      insertUniqueEdge(e);
-    }
+      for (Edge e : edges) {
+          insertUniqueEdge(e);
+      }
   }
   /**
    * Insert an edge from one of the noded input graphs.
@@ -343,8 +343,8 @@ public class OverlayOp
    */
   private void computeLabelsFromDepths()
   {
-    for (Iterator it = edgeList.iterator(); it.hasNext(); ) {
-      Edge e = (Edge) it.next();
+    for (Iterator<Edge> it = edgeList.iterator(); it.hasNext(); ) {
+      Edge e = it.next();
       Label lbl = e.getLabel();
       Depth depth = e.getDepth();
       /**
@@ -388,9 +388,9 @@ public class OverlayOp
    */
   private void replaceCollapsedEdges()
   {
-    List newEdges = new ArrayList();
-    for (Iterator it = edgeList.iterator(); it.hasNext(); ) {
-      Edge e = (Edge) it.next();
+    List<Edge> newEdges = new ArrayList<>();
+    for (Iterator<Edge> it = edgeList.iterator(); it.hasNext(); ) {
+      Edge e = it.next();
       if (e.isCollapsed()) {
 //Debug.print(e);
         it.remove();
@@ -410,8 +410,8 @@ public class OverlayOp
    */
   private void copyPoints(int argIndex)
   {
-    for (Iterator i = arg[argIndex].getNodeIterator(); i.hasNext(); ) {
-      Node graphNode = (Node) i.next();
+    for (Iterator<Node> i = arg[argIndex].getNodeIterator(); i.hasNext(); ) {
+      Node graphNode = i.next();
       Node newNode = graph.addNode(graphNode.getCoordinate());
       newNode.setLabel(argIndex, graphNode.getLabel().getLocation(argIndex));
     }
@@ -426,11 +426,10 @@ public class OverlayOp
    */
   private void computeLabelling()
   {
-    for (Iterator nodeit = graph.getNodes().iterator(); nodeit.hasNext(); ) {
-      Node node = (Node) nodeit.next();
-//if (node.getCoordinate().equals(new Coordinate(222, 100)) ) Debug.addWatch(node.getEdges());
-      node.getEdges().computeLabelling(arg);
-    }
+      for (Node node : graph.getNodes()) {
+          //if (node.getCoordinate().equals(new Coordinate(222, 100)) ) Debug.addWatch(node.getEdges());
+          node.getEdges().computeLabelling(arg);
+      }
     mergeSymLabels();
     updateNodeLabelling();
   }
@@ -442,11 +441,10 @@ public class OverlayOp
    */
   private void mergeSymLabels()
   {
-    for (Iterator nodeit = graph.getNodes().iterator(); nodeit.hasNext(); ) {
-      Node node = (Node) nodeit.next();
-      ((DirectedEdgeStar) node.getEdges()).mergeSymLabels();
+      for (Node node : graph.getNodes()) {
+          ((DirectedEdgeStar) node.getEdges()).mergeSymLabels();
 //node.print(System.out);
-    }
+      }
   }
   private void updateNodeLabelling()
   {
@@ -454,11 +452,10 @@ public class OverlayOp
     // The label for a node is updated from the edges incident on it
     // (Note that a node may have already been labelled
     // because it is a point in one of the input geometries)
-    for (Iterator nodeit = graph.getNodes().iterator(); nodeit.hasNext(); ) {
-      Node node = (Node) nodeit.next();
-      Label lbl = ((DirectedEdgeStar) node.getEdges()).getLabel();
-      node.getLabel().merge(lbl);
-    }
+      for (Node node : graph.getNodes()) {
+          Label lbl = ((DirectedEdgeStar) node.getEdges()).getLabel();
+          node.getLabel().merge(lbl);
+      }
   }
 
   /**
@@ -479,20 +476,19 @@ public class OverlayOp
   private void labelIncompleteNodes()
   {
   	// int nodeCount = 0;
-    for (Iterator ni = graph.getNodes().iterator(); ni.hasNext(); ) {
-      Node n = (Node) ni.next();
-      Label label = n.getLabel();
-      if (n.isIsolated()) {
-      	// nodeCount++;
-        if (label.isNull(0))
-          labelIncompleteNode(n, 0);
-        else
-          labelIncompleteNode(n, 1);
-      }
-      // now update the labelling for the DirectedEdges incident on this node
-      ((DirectedEdgeStar) n.getEdges()).updateLabelling(label);
+      for (Node n : graph.getNodes()) {
+          Label label = n.getLabel();
+          if (n.isIsolated()) {
+              // nodeCount++;
+              if (label.isNull(0))
+                  labelIncompleteNode(n, 0);
+              else
+                  labelIncompleteNode(n, 1);
+          }
+          // now update the labelling for the DirectedEdges incident on this node
+          ((DirectedEdgeStar) n.getEdges()).updateLabelling(label);
 //n.print(System.out);
-    }
+      }
     /*
     int nPoly0 = arg[0].getGeometry().getNumGeometries();
     int nPoly1 = arg[1].getGeometry().getNumGeometries();
@@ -524,20 +520,20 @@ public class OverlayOp
    */
   private void findResultAreaEdges(int opCode)
   {
-    for (Iterator it = graph.getEdgeEnds().iterator(); it.hasNext(); ) {
-      DirectedEdge de = (DirectedEdge) it.next();
-    // mark all dirEdges with the appropriate label
-      Label label = de.getLabel();
-      if (label.isArea()
-          && ! de.isInteriorAreaEdge()
-          && isResultOfOp(
-                label.getLocation(0, Position.RIGHT),
-                label.getLocation(1, Position.RIGHT),
-                opCode)) {
-        de.setInResult(true);
+      for (org.locationtech.jts.geomgraph.EdgeEnd edgeEnd : graph.getEdgeEnds()) {
+          DirectedEdge de = (DirectedEdge) edgeEnd;
+          // mark all dirEdges with the appropriate label
+          Label label = de.getLabel();
+          if (label.isArea()
+                  && !de.isInteriorAreaEdge()
+                  && isResultOfOp(
+                  label.getLocation(0, Position.RIGHT),
+                  label.getLocation(1, Position.RIGHT),
+                  opCode)) {
+              de.setInResult(true);
 //Debug.print("in result "); Debug.println(de);
+          }
       }
-    }
   }
   /**
    * If both a dirEdge and its sym are marked as being in the result, cancel
@@ -547,15 +543,15 @@ public class OverlayOp
   {
     // remove any dirEdges whose sym is also included
     // (they "cancel each other out")
-    for (Iterator it = graph.getEdgeEnds().iterator(); it.hasNext(); ) {
-      DirectedEdge de = (DirectedEdge) it.next();
-      DirectedEdge sym = de.getSym();
-      if (de.isInResult() && sym.isInResult()) {
-        de.setInResult(false);
-        sym.setInResult(false);
+      for (org.locationtech.jts.geomgraph.EdgeEnd edgeEnd : graph.getEdgeEnds()) {
+          DirectedEdge de = (DirectedEdge) edgeEnd;
+          DirectedEdge sym = de.getSym();
+          if (de.isInResult() && sym.isInResult()) {
+              de.setInResult(false);
+              sym.setInResult(false);
 //Debug.print("cancelled "); Debug.println(de); Debug.println(sym);
+          }
       }
-    }
   }
   /**
    * Tests if a point node should be included in the result or not.
@@ -566,8 +562,7 @@ public class OverlayOp
   public boolean isCoveredByLA(Coordinate coord)
   {
     if (isCovered(coord, resultLineList)) return true;
-    if (isCovered(coord, resultPolyList)) return true;
-    return false;
+      return isCovered(coord, resultPolyList);
   }
   /**
    * Tests if an L edge should be included in the result or not.
@@ -577,29 +572,27 @@ public class OverlayOp
    */
   public boolean isCoveredByA(Coordinate coord)
   {
-    if (isCovered(coord, resultPolyList)) return true;
-    return false;
+      return isCovered(coord, resultPolyList);
   }
   /**
    * @return true if the coord is located in the interior or boundary of
    * a geometry in the list.
    */
-  private boolean isCovered(Coordinate coord, List geomList)
+  private boolean isCovered(Coordinate coord, List<? extends Geometry> geomList)
   {
-    for (Iterator it = geomList.iterator(); it.hasNext(); ) {
-      Geometry geom = (Geometry) it.next();
-      int loc = ptLocator.locate(coord, geom);
-      if (loc != Location.EXTERIOR) return true;
-    }
+      for (Geometry geom : geomList) {
+          int loc = ptLocator.locate(coord, geom);
+          if (loc != Location.EXTERIOR) return true;
+      }
     return false;
   }
 
-  private Geometry computeGeometry( List resultPointList,
-                                        List resultLineList,
-                                        List resultPolyList,
+  private Geometry computeGeometry( List<? extends Geometry> resultPointList,
+                                        List<? extends Geometry> resultLineList,
+                                        List<? extends Geometry> resultPolyList,
                                         int opcode)
   {
-    List geomList = new ArrayList();
+    List<Geometry> geomList = new ArrayList<>();
     // element geometries of the result are always in the order P,L,A
     geomList.addAll(resultPointList);
     geomList.addAll(resultLineList);

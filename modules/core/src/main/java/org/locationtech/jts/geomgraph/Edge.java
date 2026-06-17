@@ -43,13 +43,13 @@ public class Edge
     }
   }
 
-  Coordinate[] pts;
+  final Coordinate[] pts;
   private Envelope env;
-  EdgeIntersectionList eiList = new EdgeIntersectionList(this);
+  final EdgeIntersectionList eiList = new EdgeIntersectionList(this);
   private String name;
   private MonotoneChainEdge mce;
   private boolean isIsolated = true;
-  private Depth depth = new Depth();
+  private final Depth depth = new Depth();
   private int depthDelta = 0;   // the change in area depth from the R to L side of this edge
 
   public Edge(Coordinate[] pts, Label label)
@@ -79,9 +79,9 @@ public class Edge
     // compute envelope lazily
     if (env == null) {
       env = new Envelope();
-      for (int i = 0; i < pts.length; i++) {
-        env.expandToInclude(pts[i]);
-      }
+        for (Coordinate pt : pts) {
+            env.expandToInclude(pt);
+        }
     }
     return env;
   }
@@ -121,16 +121,14 @@ public class Edge
   {
     if (! label.isArea()) return false;
     if (pts.length != 3) return false;
-    if (pts[0].equals(pts[2]) ) return true;
-    return false;
+      return pts[0].equals(pts[2]);
   }
   public Edge getCollapsedEdge()
   {
-    Coordinate newPts[] = new Coordinate[2];
+    Coordinate[] newPts = new Coordinate[2];
     newPts[0] = pts[0];
     newPts[1] = pts[1];
-    Edge newe = new Edge(newPts, Label.toLineLabel(label));
-    return newe;
+      return new Edge(newPts, Label.toLineLabel(label));
   }
 
   public void setIsolated(boolean isIsolated)
@@ -273,13 +271,13 @@ public class Edge
   public String toString()
   {
     StringBuilder builder = new StringBuilder();
-    builder.append("edge " + name + ": ");
+    builder.append("edge ").append(name).append(": ");
     builder.append("LINESTRING (");
     for (int i = 0; i < pts.length; i++) {
       if (i > 0) builder.append(",");
-      builder.append(pts[i].x + " " + pts[i].y);
+      builder.append(pts[i].x).append(" ").append(pts[i].y);
     }
-    builder.append(")  " + label + " " + depthDelta);
+    builder.append(")  ").append(label).append(" ").append(depthDelta);
     return builder.toString();
   }
   public void print(PrintStream out)
@@ -298,7 +296,7 @@ public class Edge
     for (int i = pts.length - 1; i >= 0; i--) {
       out.print(pts[i] + " ");
     }
-    out.println("");
+    out.println();
   }
 
 }

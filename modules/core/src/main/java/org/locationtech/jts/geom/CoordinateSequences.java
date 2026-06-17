@@ -21,7 +21,10 @@ import org.locationtech.jts.io.OrdinateFormat;
  */
 public class CoordinateSequences {
 
-  /**
+    private CoordinateSequences() {
+    }
+
+    /**
    * Reverses the coordinates in a sequence in-place.
    * 
    * @param seq the coordinate sequence to reverse
@@ -186,11 +189,9 @@ public class CoordinateSequences {
         double v1 = cs1.getOrdinate(i, d);
         double v2 = cs2.getOrdinate(i, d);
         if (cs1.getOrdinate(i, d) == cs2.getOrdinate(i, d)) {
-          continue;
         }
         else if (Double.isNaN(v1) && Double.isNaN(v2)) {
           // special check for NaNs
-          continue;
         }
         else {
           return false;
@@ -320,8 +321,7 @@ public class CoordinateSequences {
    *                 makes sure that {@code} will be a closed ring upon exit
    */
     public static void scroll(CoordinateSequence seq, int indexOfFirstCoordinate, boolean ensureRing) {
-    int i = indexOfFirstCoordinate;
-    if (i <= 0) return;
+        if (indexOfFirstCoordinate <= 0) return;
 
     // make a copy of the sequence
     CoordinateSequence copy = seq.copy();

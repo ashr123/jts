@@ -31,26 +31,25 @@ import org.locationtech.jts.io.WKTReader;
 public class PrecisionModelExample
 {
   public static void main(String[] args) {
-    PrecisionModelExample example = new PrecisionModelExample();
-    try {
-      example.run();
+      try {
+      PrecisionModelExample.run();
     }
     catch (Exception ex) {
       ex.printStackTrace();
     }
   }
 
-  public PrecisionModelExample() {
+  private PrecisionModelExample() {
   }
 
-  public void run()
+  public static void run()
     throws ParseException
   {
     example1();
     example2();
   }
 
-  public void example1()
+  public static void example1()
     throws ParseException
   {
     System.out.println("-------------------------------------------");
@@ -65,7 +64,7 @@ public class PrecisionModelExample
     intersection(wktA, wktB, new PrecisionModel(1));
   }
 
-  public void example2()
+  public static void example2()
     throws ParseException
   {
     System.out.println("-------------------------------------------");
@@ -80,7 +79,7 @@ public class PrecisionModelExample
   }
 
 
-  public void intersection(String wktA, String wktB, PrecisionModel pm)
+  public static void intersection(String wktA, String wktB, PrecisionModel pm)
       throws ParseException
   {
     System.out.println("Running example using Precision Model = " + pm);
@@ -94,7 +93,7 @@ public class PrecisionModelExample
     System.out.println("A intersection B = " + C);
   }
 
-  public void difference(String wktA, String wktB, PrecisionModel pm)
+  public static void difference(String wktA, String wktB, PrecisionModel pm)
       throws ParseException
   {
     System.out.println("-------------------------------------------");

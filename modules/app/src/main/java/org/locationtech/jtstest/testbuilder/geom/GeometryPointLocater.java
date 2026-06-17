@@ -49,13 +49,11 @@ public class GeometryPointLocater
   public static GeometryLocation locate(Geometry geom, Coordinate testPt, double tolerance)
   {
     GeometryPointLocater finder = new GeometryPointLocater(geom);
-    GeometryLocation geomLoc = finder.getLocation(testPt, true, tolerance);
-    return geomLoc;
+      return finder.getLocation(testPt, true, tolerance);
   }
 
-  private Geometry geom;
-  private Coordinate locationPt;
-  private int segIndex = -1;
+  private final Geometry geom;
+    private int segIndex = -1;
   private boolean isVertex = false;
   
   public GeometryPointLocater(Geometry geom) {
@@ -66,8 +64,8 @@ public class GeometryPointLocater
   {
     NearestSegmentLocationFilter filter = new NearestSegmentLocationFilter(testPt, vertexOnly, tolerance);
     geom.apply(filter);
-    
-    locationPt = filter.getCoordinate();
+
+      Coordinate locationPt = filter.getCoordinate();
     segIndex = filter.getIndex();
     isVertex = filter.isVertex();
     
@@ -88,7 +86,7 @@ public class GeometryPointLocater
   static class NearestSegmentLocationFilter implements GeometryComponentFilter
   {
     private double tolerance = 0.0;
-    private Coordinate testPt;
+    private final Coordinate testPt;
     private boolean vertexOnly = false;
     
     private Geometry component = null;
@@ -96,7 +94,7 @@ public class GeometryPointLocater
     private Coordinate nearestPt = null;
     private boolean isVertex = false;
     
-    private LineSegment seg = new LineSegment();
+    private final LineSegment seg = new LineSegment();
     
     public NearestSegmentLocationFilter(Coordinate testPt, boolean vertexOnly,  double tolerance)
     {
@@ -189,7 +187,7 @@ public class GeometryPointLocater
     
     public boolean isDone() { return nearestPt != null; }
 
-    public boolean isGeometryChanged() { return false; }
+    public static boolean isGeometryChanged() { return false; }
   }
 
 }

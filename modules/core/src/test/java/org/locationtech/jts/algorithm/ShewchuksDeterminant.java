@@ -183,7 +183,10 @@ import org.locationtech.jts.geom.Coordinate;
 public class ShewchuksDeterminant
 {
 
-  /**
+    private ShewchuksDeterminant() {
+    }
+
+    /**
    * Implements a filter for computing the orientation index of three coordinates.
    * <p>
    * If the orientation can be computed safely using standard DP
@@ -261,9 +264,7 @@ public class ShewchuksDeterminant
   public static int orientationIndex(Coordinate p1, Coordinate p2, Coordinate q)
   {
     double orientation = orient2d(p1, p2, q);
-    if (orientation > 0.0) return 1;
-    if (orientation < 0.0) return -1;
-    return 0;
+      return Double.compare(orientation, 0.0);
   }
 
   private static double orient2d(Coordinate pa, Coordinate pb, Coordinate pc)
@@ -337,7 +338,7 @@ public class ShewchuksDeterminant
     double detright = Two_Product_Head(acy, bcx);
     double detrighttail = Two_Product_Tail(acy, bcx, detright);
 
-    double B[] = new double[4];
+    double[] B = new double[4];
     B[2] = Two_Two_Diff__x2(detleft, detlefttail, detright, detrighttail);
     B[1] = Two_Two_Diff__x1(detleft, detlefttail, detright, detrighttail);
     B[0] = Two_Two_Diff__x0(detleft, detlefttail, detright, detrighttail);
@@ -373,13 +374,13 @@ public class ShewchuksDeterminant
     double t0 = Two_Product_Tail(acytail, bcx, t1);
 
     double u3 = Two_Two_Diff__x3(s1, s0, t1, t0);
-    double u[] = new double[4];
+    double[] u = new double[4];
     u[2] = Two_Two_Diff__x2(s1, s0, t1, t0);
     u[1] = Two_Two_Diff__x1(s1, s0, t1, t0);
     u[0] = Two_Two_Diff__x0(s1, s0, t1, t0);
 
     u[3] = u3;
-    double C1[] = new double[8];
+    double[] C1 = new double[8];
     int C1length = fast_expansion_sum_zeroelim(4, B, 4, u, C1);
 
     s1 = Two_Product_Head(acx, bcytail);
@@ -394,7 +395,7 @@ public class ShewchuksDeterminant
     u[0] = Two_Two_Diff__x0(s1, s0, t1, t0);
 
     u[3] = u3;
-    double C2[] = new double[12];
+    double[] C2 = new double[12];
     int C2length = fast_expansion_sum_zeroelim(C1length, C1, 4, u, C2);
 
     s1 = Two_Product_Head(acxtail, bcytail);
@@ -409,7 +410,7 @@ public class ShewchuksDeterminant
     u[0] = Two_Two_Diff__x0(s1, s0, t1, t0);
 
     u[3] = u3;
-    double D[] = new double[16];
+    double[] D = new double[16];
     int Dlength = fast_expansion_sum_zeroelim(C2length, C2, 4, u, D);
 
     return (D[Dlength - 1]);
@@ -518,72 +519,63 @@ public class ShewchuksDeterminant
   private static double Fast_Two_Sum_Tail(double a, double b, double x)
   {
     double bvirt = x - a;
-    double y = b - bvirt;
 
-    return y;
+      return b - bvirt;
   }
 
   private static double Fast_Two_Sum_Head(double a, double b)
   {
-    double x = (double) (a + b);
 
-    return x;
+      return a + b;
   }
 
   private static double Two_Sum_Tail(double a, double b, double x)
   {
-    double bvirt = (double) (x - a);
+    double bvirt = x - a;
     double avirt = x - bvirt;
     double bround = b - bvirt;
     double around = a - avirt;
 
-    double y = around + bround;
-
-    return y;
+      return around + bround;
   }
 
   private static double Two_Sum_Head(double a, double b)
   {
-    double x = (double) (a + b);
 
-    return x;
+      return a + b;
   }
 
   private static double Two_Diff_Tail(double a, double b, double x)
   {
-    double bvirt = (double) (a - x); // porting issue: why this cast?
+    double bvirt = a - x; // porting issue: why this cast?
     double avirt = x + bvirt;
     double bround = bvirt - b;
     double around = a - avirt;
-    double y = around + bround;
 
-    return y;
+      return around + bround;
   }
 
   private static double Two_Diff_Head(double a, double b)
   {
-    double x = (double) (a - b);
 
-    return x;
+      return a - b;
   }
 
   private static double SplitLo(double a)
   {
-    double c = (double) (splitter * a); // porting issue: why this cast?
-    double abig = (double) (c - a); // porting issue: why this cast?
+    double c = splitter * a; // porting issue: why this cast?
+    double abig = c - a; // porting issue: why this cast?
     double ahi = c - abig;
-    double alo = a - ahi;
 
-    return alo;
+      return a - ahi;
   }
 
   private static double SplitHi(double a)
   {
-    double c = (double) (splitter * a); // porting issue: why this cast?
-    double abig = (double) (c - a); // porting issue: why this cast?
-    double ahi = c - abig;
+    double c = splitter * a; // porting issue: why this cast?
+    double abig = c - a; // porting issue: why this cast?
 
-    return ahi;
+      return c - abig;
   }
 
   private static double Two_Product_Tail(double a, double b, double x)
@@ -596,25 +588,22 @@ public class ShewchuksDeterminant
     double err1 = x - (ahi * bhi);
     double err2 = err1 - (alo * bhi);
     double err3 = err2 - (ahi * blo);
-    double y = (alo * blo) - err3;
 
-    return y;
+      return (alo * blo) - err3;
   }
 
   private static double Two_Product_Head(double a, double b)
   {
-    double x = (double) (a * b);
 
-    return x;
+      return a * b;
   }
 
   // #define Two_One_Diff(a1, a0, b, x2, x1, x0)
   private static double Two_One_Diff__x0(double a1, double a0, double b)
   {
     double _i = Two_Diff_Head(a0, b);
-    double x0 = Two_Diff_Tail(a0, b, _i);
 
-    return x0;
+      return Two_Diff_Tail(a0, b, _i);
   }
 
   // #define Two_One_Diff(a1, a0, b, x2, x1, x0)
@@ -622,27 +611,24 @@ public class ShewchuksDeterminant
   {
     double _i = Two_Diff_Head(a0, b);
     double x2 = Two_Sum_Head(a1, _i);
-    double x1 = Two_Sum_Tail(a1, _i, x2);
 
-    return x1;
+      return Two_Sum_Tail(a1, _i, x2);
   }
 
   // #define Two_One_Diff(a1, a0, b, x2, x1, x0)
   private static double Two_One_Diff__x2(double a1, double a0, double b)
   {
     double _i = Two_Diff_Head(a0, b);
-    double x2 = Two_Sum_Head(a1, _i);
 
-    return x2;
+      return Two_Sum_Head(a1, _i);
   }
 
   // #define Two_Two_Diff(a1, a0, b1, b0, x3, x2, x1, x0)
   private static double Two_Two_Diff__x0(double a1, double a0, double b1,
       double b0)
   {
-    double x0 = Two_One_Diff__x0(a1, a0, b0);
 
-    return x0;
+      return Two_One_Diff__x0(a1, a0, b0);
   }
 
   // #define Two_Two_Diff(a1, a0, b1, b0, x3, x2, x1, x0)
@@ -652,9 +638,7 @@ public class ShewchuksDeterminant
     double _j = Two_One_Diff__x2(a1, a0, b0);
     double _0 = Two_One_Diff__x1(a1, a0, b0);
 
-    double x1 = Two_One_Diff__x0(_j, _0, b1);
-
-    return x1;
+      return Two_One_Diff__x0(_j, _0, b1);
   }
 
   // #define Two_Two_Diff(a1, a0, b1, b0, x3, x2, x1, x0)
@@ -664,9 +648,7 @@ public class ShewchuksDeterminant
     double _j = Two_One_Diff__x2(a1, a0, b0);
     double _0 = Two_One_Diff__x1(a1, a0, b0);
 
-    double x2 = Two_One_Diff__x1(_j, _0, b1);
-
-    return x2;
+      return Two_One_Diff__x1(_j, _0, b1);
   }
 
   // #define Two_Two_Diff(a1, a0, b1, b0, x3, x2, x1, x0)
@@ -676,9 +658,7 @@ public class ShewchuksDeterminant
     double _j = Two_One_Diff__x2(a1, a0, b0);
     double _0 = Two_One_Diff__x1(a1, a0, b0);
 
-    double x3 = Two_One_Diff__x2(_j, _0, b1);
-
-    return x3;
+      return Two_One_Diff__x2(_j, _0, b1);
   }
 
   /*****************************************************************************/

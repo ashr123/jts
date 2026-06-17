@@ -22,7 +22,7 @@ import junit.textui.TestRunner;
  * 
  */
 public class DDIOTest extends TestCase {
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		TestRunner.run(DDIOTest.class);
 	}
 
@@ -58,11 +58,11 @@ public class DDIOTest extends TestCase {
 		checkStandardNotation(14, "14.0");
 	}
 
-	private void checkStandardNotation(double x, String expectedStr) {
+	private static void checkStandardNotation(double x, String expectedStr) {
 		checkStandardNotation(DD.valueOf(x), expectedStr);
 	}
 
-	private void checkStandardNotation(DD x, String expectedStr) {
+	private static void checkStandardNotation(DD x, String expectedStr) {
 		String xStr = x.toStandardNotation();
 		//System.out.println("Standard Notation: " + xStr);
 		assertEquals(expectedStr, xStr);
@@ -77,11 +77,11 @@ public class DDIOTest extends TestCase {
 		checkSciNotation(14, "1.4E1");
 	}
 
-	private void checkSciNotation(double x, String expectedStr) {
+	private static void checkSciNotation(double x, String expectedStr) {
 		checkSciNotation(DD.valueOf(x), expectedStr);
 	}
 
-	private void checkSciNotation(DD x, String expectedStr) {
+	private static void checkSciNotation(DD x, String expectedStr) {
 		String xStr = x.toSciNotation();
 		//System.out.println("Sci Notation: " + xStr);
 		assertEquals(xStr, expectedStr);
@@ -142,12 +142,12 @@ public class DDIOTest extends TestCase {
 				.negate(), 1e-32);
 	}
 
-	private void checkParse(String str, double expectedVal, double errBound) {
+	private static void checkParse(String str, double expectedVal, double errBound) {
 		checkParse(str, new DD(expectedVal), errBound);
 	}
 
-	private void checkParse(String str, DD expectedVal,
-			double relErrBound) {
+	private static void checkParse(String str, DD expectedVal,
+	                               double relErrBound) {
 		DD xdd = DD.parse(str);
 		double err = xdd.subtract(expectedVal).doubleValue();
 		double xddd = xdd.doubleValue();
@@ -155,7 +155,7 @@ public class DDIOTest extends TestCase {
 
 		//System.out.println("Parsed= " + xdd + " rel err= " + relErr);
 
-		assertTrue("parsing '" + str + "' results in " + xdd.toString() + " ( "
+		assertTrue("parsing '" + str + "' results in " + xdd + " ( "
 				+ xdd.dump() + ") != " + expectedVal + "\n  err =" + err + ", relerr =" + relErr, relErr <= relErrBound);
 	}
 
@@ -165,7 +165,7 @@ public class DDIOTest extends TestCase {
 		checkParseError("-1.0512345678t");
 	}
 
-	private void checkParseError(String str) {
+	private static void checkParseError(String str) {
 		boolean foundParseError = false;
 		try {
 			DD.parse(str);
@@ -187,7 +187,7 @@ public class DDIOTest extends TestCase {
 	 * 
 	 * @param xdd the value to test (write and parse)
 	 */
-	private void writeRepeatedSqrt(DD xdd)
+	private static void writeRepeatedSqrt(DD xdd)
 	{
 		int count = 0;
 		while (xdd.doubleValue() > 1e-300) {
@@ -224,18 +224,13 @@ public class DDIOTest extends TestCase {
 	 * 
 	 * @param xdd the value to test (write and parse)
 	 */
-	private void writeRepeatedSqr(DD xdd)
+	private static void writeRepeatedSqr(DD xdd)
 	{
 		if (xdd.ge(DD.valueOf(1)))
 			throw new IllegalArgumentException("Argument must be < 1");
-		
-		int count = 0;
-		while (xdd.doubleValue() > 1e-300) {
-			count++;
-			if (count == 100)
-				count = count;
-			double x = xdd.doubleValue();
-			DD xSqr = xdd.sqr();
+
+        while (xdd.doubleValue() > 1e-300) {
+            DD xSqr = xdd.sqr();
 			String s = xSqr.toString();
 			//System.out.println(count + ": " + s);
 
@@ -257,7 +252,7 @@ public class DDIOTest extends TestCase {
 	 * 
 	 * @param x the value to test
 	 */
-	private void writeAndReadSqrt(double x) {
+	private static void writeAndReadSqrt(double x) {
 		DD xdd = DD.valueOf(x);
 		DD xSqrt = xdd.sqrt();
 		String s = xSqrt.toString();

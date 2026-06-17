@@ -361,8 +361,8 @@ public class OraWriter
     }
     else {
       int dim = dimension(geom);
-      List elemTriplets = new ArrayList();
-      List ordGeoms = new ArrayList();
+      List<int[]> elemTriplets = new ArrayList<int[]>();
+      List<Geometry> ordGeoms = new ArrayList<Geometry>();
       int lastOrdOffset = writeElement(geom, dim, 1, elemTriplets, ordGeoms);
       elemInfo = flattenTriplets(elemTriplets);
       ordinates = writeGeometryOrdinates(elemTriplets, ordGeoms, lastOrdOffset - 1, dim);
@@ -409,7 +409,7 @@ public class OraWriter
    * @param ordGeoms
    * @return the final startingOffset
    */
-  private int writeElement(Geometry geom, int dim, int offset, List elemTriplets, List ordGeoms)
+  private int writeElement(Geometry geom, int dim, int offset, List<int[]> elemTriplets, List<Geometry> ordGeoms)
   {
     int interp;
     int geomType = OraGeom.geomType(geom);
@@ -496,12 +496,12 @@ public class OraWriter
     return new int[] { sOffset, etype, interp };
   }
   
-  private int[] flattenTriplets(List elemTriplets)
+  private int[] flattenTriplets(List<int[]> elemTriplets)
   {
     int[] elemInfo = new int[3 * elemTriplets.size()];
     int eiIndex = 0;
     for (int i = 0; i < elemTriplets.size(); i++) {
-      int[] triplet = (int[]) elemTriplets.get(i);
+      int[] triplet = elemTriplets.get(i);
       for (int ii = 0; ii < 3; ii++) {
         elemInfo[eiIndex++] = triplet[ii];
       }
@@ -521,12 +521,12 @@ public class OraWriter
    * @param dim
    * @return the final ordinate array
    */
-  private double[] writeGeometryOrdinates(List elemTriplets, List ordGeoms, int ordSize, int dim)
+  private double[] writeGeometryOrdinates(List<int[]> elemTriplets, List<Geometry> ordGeoms, int ordSize, int dim)
   {
     double[] ords = new double[ordSize];
     int ordIndex = 0;
     for (int ielem = 0; ielem < elemTriplets.size(); ielem++) {
-      int[] triplet = (int[]) elemTriplets.get(ielem);
+      int[] triplet = elemTriplets.get(ielem);
       
       int startOffset = triplet[0]; 
       //verify startOffset is same as ordIndex
@@ -535,7 +535,7 @@ public class OraWriter
       
       int elemType = triplet[1];
       int interp = triplet[2];
-      Geometry geom = (Geometry) ordGeoms.get(ielem);
+      Geometry geom = ordGeoms.get(ielem);
       switch (elemType) {
       case OraGeom.ETYPE.POINT:
         if (interp == 1) {

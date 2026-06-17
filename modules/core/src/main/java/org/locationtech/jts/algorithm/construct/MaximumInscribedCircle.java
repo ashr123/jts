@@ -142,20 +142,19 @@ public class MaximumInscribedCircle {
     return mic.isRadiusWithin(maxRadius);
   }
   
-  private Geometry inputGeom;
+  private final Geometry inputGeom;
   private double tolerance;
 
-  private GeometryFactory factory;
+  private final GeometryFactory factory;
   private IndexedPointInAreaLocator ptLocater;
   private IndexedFacetDistance indexedDistance;
-  private Cell centerCell = null;
-  private Coordinate centerPt = null;
+    private Coordinate centerPt = null;
   private Coordinate radiusPt;
   private Point centerPoint;
   private Point radiusPoint;
-  private double maximumRadius = -1;;
+  private double maximumRadius = -1;
 
-  /**
+    /**
    * Creates a new instance of a Maximum Inscribed Circle computation.
    * 
    * @param polygonal an areal geometry
@@ -260,9 +259,8 @@ public class MaximumInscribedCircle {
    */
   public LineString getRadiusLine() {
     compute();
-    LineString radiusLine = factory.createLineString(
-        new Coordinate[] { centerPt.copy(), radiusPt.copy() });
-    return radiusLine;
+      return factory.createLineString(
+          new Coordinate[] { centerPt.copy(), radiusPt.copy() });
   }
   
   /**
@@ -400,7 +398,7 @@ public class MaximumInscribedCircle {
     //System.out.println("Iter: " + iter);
     
     //-- the farthest cell is the best approximation to the MIC center
-    centerCell = farthestCell;
+      Cell centerCell = farthestCell;
     centerPt = new Coordinate(centerCell.getX(), centerCell.getY());
     centerPoint = factory.createPoint(centerPt);
     // compute radius point
@@ -475,11 +473,11 @@ public class MaximumInscribedCircle {
 
     private static final double SQRT2 = 1.4142135623730951;
 
-    private double x;
-    private double y;
-    private double hSide;
-    private double distance;
-    private double maxDist;
+    private final double x;
+    private final double y;
+    private final double hSide;
+    private final double distance;
+    private final double maxDist;
 
     Cell(double x, double y, double hSide, double distanceToBoundary) {
       this.x = x; // cell center x

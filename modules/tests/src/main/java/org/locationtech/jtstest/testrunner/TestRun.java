@@ -28,13 +28,13 @@ public class TestRun implements Runnable
 {
 	// default is to run all cases
 	private int testCaseIndexToRun = -1;
-  private String description;
-  private List<TestCase> testCases = new ArrayList<TestCase>();
-  private PrecisionModel precisionModel;
+  private final String description;
+  private final List<TestCase> testCases = new ArrayList<>();
+  private final PrecisionModel precisionModel;
   private GeometryOperation geomOp = null;
   private ResultMatcher resultMatcher = null;
-  private int runIndex;
-  private File testFile;
+  private final int runIndex;
+  private final File testFile;
   private File workspace;
 
   /**
@@ -140,4 +140,3 @@ public class TestRun implements Runnable
   }
 
 }
-

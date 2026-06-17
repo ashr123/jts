@@ -70,12 +70,12 @@ public class Vector2D {
 	/**
 	 * The X component of this vector.
 	 */
-	private double x;
+	private final double x;
 
 	/**
 	 * The Y component of this vector.
 	 */
-	private double y;
+	private final double y;
 
 	public Vector2D() {
 		this(0.0, 0.0);

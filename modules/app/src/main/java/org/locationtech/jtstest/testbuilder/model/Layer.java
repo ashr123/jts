@@ -98,13 +98,13 @@ public class Layer
   }
   public BasicStyle getGeometryStyle()
   {
-    return (BasicStyle) layerStyle.getGeomStyle();
+    return layerStyle.getGeomStyle();
   }
   
   public void setGeometryStyle(BasicStyle style)
   {
     layerStyle = new LayerStyle(style);
-    if (initStyle == null) initStyle = style.copy();;
+    if (initStyle == null) initStyle = style.copy();
   }
   
   public Geometry getGeometry()

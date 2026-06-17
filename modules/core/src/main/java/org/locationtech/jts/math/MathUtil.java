@@ -21,7 +21,10 @@ import java.util.Random;
  */
 public class MathUtil 
 {
-  /**
+    private MathUtil() {
+    }
+
+    /**
    * Clamps a <tt>double</tt> value to a given range.
    * @param x the value to clamp
    * @param min the minimum value of the range
@@ -31,8 +34,7 @@ public class MathUtil
   public static double clamp(double x, double min, double max)
   {
     if (x < min) return min;
-    if (x > max) return max;
-    return x;
+      return Math.min(x, max);
   }
   
   /**
@@ -45,8 +47,7 @@ public class MathUtil
   public static int clamp(int x, int min, int max)
   {
     if (x < min) return min;
-    if (x > max) return max;
-    return x;
+      return Math.min(x, max);
   }
   
   /**
@@ -58,8 +59,7 @@ public class MathUtil
    */
   public static int clampMax(int x, int max)
   {
-    if (x > max) return max;
-    return x;
+      return Math.min(x, max);
   }
   
   /**

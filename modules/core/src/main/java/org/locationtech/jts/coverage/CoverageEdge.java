@@ -33,14 +33,12 @@ class CoverageEdge {
 
   public static CoverageEdge createEdge(Coordinate[] ring, boolean isPrimary) {
     Coordinate[] pts = extractEdgePoints(ring, 0, ring.length - 1);
-    CoverageEdge edge = new CoverageEdge(pts, isPrimary, true);
-    return edge;
+      return new CoverageEdge(pts, isPrimary, true);
   }
 
   public static CoverageEdge createEdge(Coordinate[] ring, int start, int end, boolean isPrimary) {
     Coordinate[] pts = extractEdgePoints(ring, start, end);
-    CoverageEdge edge = new CoverageEdge(pts, isPrimary, false);
-    return edge;
+      return new CoverageEdge(pts, isPrimary, false);
   }
 
   private static Coordinate[] extractEdgePoints(Coordinate[] ring, int start, int end) {

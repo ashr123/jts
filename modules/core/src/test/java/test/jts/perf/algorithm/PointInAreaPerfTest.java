@@ -21,9 +21,9 @@ import org.locationtech.jts.util.Stopwatch;
 
 public class PointInAreaPerfTest  {
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
   	PointInAreaPerfTest test = new PointInAreaPerfTest();
-  	test.run();
+  	PointInAreaPerfTest.run();
   }
 
 	PrecisionModel pmFixed_1 = new PrecisionModel(1.0);
@@ -31,7 +31,7 @@ public class PointInAreaPerfTest  {
 	public PointInAreaPerfTest() {
 	}
 
-	public void run()
+	public static void run()
 	{
 		GeometryFactory geomFactory = new GeometryFactory();
 		
@@ -58,6 +58,3 @@ public class PointInAreaPerfTest  {
     System.out.println("Overall time: " + sw.getTimeString());
 	}
 }
-
-
-

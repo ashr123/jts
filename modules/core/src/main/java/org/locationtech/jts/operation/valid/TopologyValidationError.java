@@ -108,7 +108,7 @@ public class TopologyValidationError {
     "Ring is not closed"
   };
 
-  private int errorType;
+  private final int errorType;
   private Coordinate pt;
 
   /**

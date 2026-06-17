@@ -14,7 +14,6 @@ package org.locationtech.jts.noding.snapround;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.index.ItemVisitor;
 import org.locationtech.jts.index.SpatialIndex;
 import org.locationtech.jts.index.chain.MonotoneChain;
 import org.locationtech.jts.index.chain.MonotoneChainSelectAction;
@@ -31,9 +30,9 @@ public class MCIndexPointSnapper
 {
   //public static final int nSnaps = 0;
 
-  private SpatialIndex index;
+  private final SpatialIndex<MonotoneChain> index;
 
-  public MCIndexPointSnapper(SpatialIndex index) {
+  public MCIndexPointSnapper(SpatialIndex<MonotoneChain> index) {
     this.index = index;
   }
 
@@ -53,12 +52,7 @@ public class MCIndexPointSnapper
     final Envelope pixelEnv = getSafeEnvelope(hotPixel);
     final HotPixelSnapAction hotPixelSnapAction = new HotPixelSnapAction(hotPixel, parentEdge, hotPixelVertexIndex);
 
-    index.query(pixelEnv, new ItemVisitor() {
-      public void visitItem(Object item) {
-        MonotoneChain testChain = (MonotoneChain) item;
-        testChain.select(pixelEnv, hotPixelSnapAction);
-      }
-    }
+    index.query(pixelEnv, testChain -> testChain.select(pixelEnv, hotPixelSnapAction)
     );
     return hotPixelSnapAction.isNodeAdded();
   }
@@ -77,7 +71,7 @@ public class MCIndexPointSnapper
    * 
    * @return an envelope which contains the hot pixel
    */
-  public Envelope getSafeEnvelope(HotPixel hp)
+  public static Envelope getSafeEnvelope(HotPixel hp)
   {
     double safeTolerance = SAFE_ENV_EXPANSION_FACTOR / hp.getScaleFactor();
     Envelope safeEnv = new Envelope(hp.getCoordinate());
@@ -88,10 +82,10 @@ public class MCIndexPointSnapper
   public static class HotPixelSnapAction
       extends MonotoneChainSelectAction
   {
-    private HotPixel hotPixel;
-    private SegmentString parentEdge;
+    private final HotPixel hotPixel;
+    private final SegmentString parentEdge;
     // is -1 if hotPixel is not a vertex
-    private int hotPixelVertexIndex;
+    private final int hotPixelVertexIndex;
     private boolean isNodeAdded = false;
 
     public HotPixelSnapAction(HotPixel hotPixel, SegmentString parentEdge, int hotPixelVertexIndex)
@@ -144,10 +138,10 @@ public class MCIndexPointSnapper
      * @param segIndex
      * @return true if a node was added to the segment
      */
-    public boolean addSnappedNode(HotPixel hotPixel, 
-        NodedSegmentString segStr,
-        int segIndex
-        )
+    public static boolean addSnappedNode(HotPixel hotPixel,
+                                         NodedSegmentString segStr,
+                                         int segIndex
+    )
     {
       Coordinate p0 = segStr.getCoordinate(segIndex);
       Coordinate p1 = segStr.getCoordinate(segIndex + 1);

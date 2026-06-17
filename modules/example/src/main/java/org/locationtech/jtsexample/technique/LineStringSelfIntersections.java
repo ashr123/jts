@@ -32,7 +32,10 @@ import org.locationtech.jts.io.WKTReader;
 
 public class LineStringSelfIntersections {
 
-  public static void main(String[] args)
+    private LineStringSelfIntersections() {
+    }
+
+    public static void main(String[] args)
       throws Exception
   {
     WKTReader rdr = new WKTReader();
@@ -55,13 +58,12 @@ public class LineStringSelfIntersections {
     Geometry lineEndPts = getEndPoints(line);
     Geometry nodedLine = line.union(lineEndPts);
     Geometry nodedEndPts = getEndPoints(nodedLine);
-    Geometry selfIntersections = nodedEndPts.difference(lineEndPts);
-    return selfIntersections;
+      return nodedEndPts.difference(lineEndPts);
   }
 
   public static Geometry getEndPoints(Geometry g)
   {
-    List endPtList = new ArrayList();
+    List<Coordinate> endPtList = new ArrayList<>();
     if (g instanceof LineString) {
       LineString line = (LineString) g;
 

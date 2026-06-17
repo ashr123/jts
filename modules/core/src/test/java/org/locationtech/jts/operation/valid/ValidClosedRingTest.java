@@ -32,7 +32,7 @@ import junit.framework.TestCase;
 public class ValidClosedRingTest
     extends TestCase
 {
-  private static WKTReader rdr = new WKTReader();
+  private static final WKTReader rdr = new WKTReader();
 
   public ValidClosedRingTest(String name) {
     super(name);
@@ -84,14 +84,14 @@ public class ValidClosedRingTest
   }
 
 
-  private void checkIsValid(Geometry geom, boolean expected)
+  private static void checkIsValid(Geometry geom, boolean expected)
   {
     IsValidOp validator = new IsValidOp(geom);
     boolean isValid = validator.isValid();
-    assertTrue(isValid == expected);
+      assertEquals(isValid, expected);
   }
 
-  Geometry fromWKT(String wkt)
+  static Geometry fromWKT(String wkt)
   {
     Geometry geom = null;
     try {
@@ -103,7 +103,7 @@ public class ValidClosedRingTest
     return geom;
   }
 
-  private void updateNonClosedRing(LinearRing ring)
+  private static void updateNonClosedRing(LinearRing ring)
   {
     Coordinate[] pts = ring.getCoordinates();
     pts[0].x += 0.0001;

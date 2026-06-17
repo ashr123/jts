@@ -30,7 +30,7 @@ import junit.textui.TestRunner;
 public class PackedCoordinateSequenceTest
     extends CoordinateSequenceTestBase
 {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(PackedCoordinateSequenceTest.class);
   }
 
@@ -52,7 +52,7 @@ public class PackedCoordinateSequenceTest
     checkAll( PackedCoordinateSequenceFactory.FLOAT_FACTORY) ;
   }
   
-  public void checkAll(CoordinateSequenceFactory factory)
+  public static void checkAll(CoordinateSequenceFactory factory)
   {
     checkDim2(1, factory);
     checkDim2(5, factory);
@@ -63,26 +63,25 @@ public class PackedCoordinateSequenceTest
     checkDimInvalid(factory);
   }
   
-  public void checkDim2(int size, CoordinateSequenceFactory factory)
+  public static void checkDim2(int size, CoordinateSequenceFactory factory)
   {
     CoordinateSequence seq = factory.create(size, 2);
     initProgression(seq);
     
     assertEquals("Dimension should be 2", 2, seq.getDimension());
-    assertTrue("Z should not be present", !seq.hasZ());
-    assertTrue("M should not be present", !seq.hasM());
+      assertFalse("Z should not be present", seq.hasZ());
+      assertFalse("M should not be present", seq.hasM());
     
     int indexLast = size - 1;
-    double valLast = indexLast;
-    
-    Coordinate coord = seq.getCoordinate(indexLast);
+
+      Coordinate coord = seq.getCoordinate(indexLast);
     assertTrue( coord instanceof CoordinateXY);
-    assertEquals( valLast, coord.getX());
-    assertEquals( valLast, coord.getY());
+    assertEquals((double) indexLast, coord.getX());
+    assertEquals((double) indexLast, coord.getY());
     
     Coordinate[] array = seq.toCoordinateArray();
     assertEquals(coord, array[indexLast]);
-    assertTrue(coord != array[indexLast]);
+      assertNotSame(coord, array[indexLast]);
     assertTrue(isEqual(seq,array));
     
     CoordinateSequence copy = factory.create(array);
@@ -92,24 +91,24 @@ public class PackedCoordinateSequenceTest
     assertTrue(isEqual(copy2,array));
   }
   
-  public void checkDim3(CoordinateSequenceFactory factory)
+  public static void checkDim3(CoordinateSequenceFactory factory)
   {
     CoordinateSequence seq = factory.create(5, 3);
     initProgression(seq);
     
     assertEquals("Dimension should be 3", 3, seq.getDimension());
     assertTrue("Z should be present", seq.hasZ());
-    assertTrue("M should not be present", !seq.hasM());
+      assertFalse("M should not be present", seq.hasM());
     
     Coordinate coord = seq.getCoordinate(4);
-    assertTrue( coord.getClass() == Coordinate.class);
+      assertSame(coord.getClass(), Coordinate.class);
     assertEquals( 4.0, coord.getX());
     assertEquals( 4.0, coord.getY());
     assertEquals( 4.0, coord.getZ());
     
     Coordinate[] array = seq.toCoordinateArray();
     assertEquals(coord, array[4]);
-    assertTrue(coord != array[4]);
+      assertNotSame(coord, array[4]);
     assertTrue(isEqual(seq, array));
     
     CoordinateSequence copy = factory.create(array);
@@ -119,13 +118,13 @@ public class PackedCoordinateSequenceTest
     assertTrue(isEqual(copy2, array));
   }
     
-  public void checkDim3_M1(CoordinateSequenceFactory factory)
+  public static void checkDim3_M1(CoordinateSequenceFactory factory)
   { 
     CoordinateSequence seq = factory.create(5, 3, 1);
     initProgression(seq);   
     
     assertEquals("Dimension should be 3", 3, seq.getDimension());
-    assertTrue("Z should not be present", !seq.hasZ());
+      assertFalse("Z should not be present", seq.hasZ());
     assertTrue("M should be present", seq.hasM());
     
     Coordinate coord = seq.getCoordinate(4);
@@ -136,7 +135,7 @@ public class PackedCoordinateSequenceTest
     
     Coordinate[] array = seq.toCoordinateArray();
     assertEquals(coord, array[4]);
-    assertTrue(coord != array[4]);
+      assertNotSame(coord, array[4]);
     assertTrue(isEqual(seq,array));
     
     CoordinateSequence copy = factory.create(array);
@@ -146,7 +145,7 @@ public class PackedCoordinateSequenceTest
     assertTrue(isEqual(copy2,array));
   }
   
-  public void checkDim4_M1(CoordinateSequenceFactory factory)
+  public static void checkDim4_M1(CoordinateSequenceFactory factory)
   {
     CoordinateSequence seq = factory.create(5, 4, 1);
     initProgression(seq);
@@ -164,7 +163,7 @@ public class PackedCoordinateSequenceTest
     
     Coordinate[] array = seq.toCoordinateArray();
     assertEquals(coord, array[4]);
-    assertTrue(coord != array[4]);
+      assertNotSame(coord, array[4]);
     assertTrue(isEqual(seq,array));
     
     CoordinateSequence copy = factory.create(array);
@@ -174,7 +173,7 @@ public class PackedCoordinateSequenceTest
     assertTrue(isEqual(copy2, array));    
   }
 
-  public void checkDim4(CoordinateSequenceFactory factory)
+  public static void checkDim4(CoordinateSequenceFactory factory)
   {
     CoordinateSequence seq = factory.create(5, 4);
     initProgression(seq);
@@ -192,7 +191,7 @@ public class PackedCoordinateSequenceTest
 
     Coordinate[] array = seq.toCoordinateArray();
     assertEquals(coord, array[4]);
-    assertTrue(coord != array[4]);
+      assertNotSame(coord, array[4]);
     assertTrue(isEqual(seq,array));
 
     CoordinateSequence copy = factory.create(array);
@@ -206,7 +205,7 @@ public class PackedCoordinateSequenceTest
    * Disable for now until solution can be found.
    * See Issue 434.
    */
-  public void XtestMixedFactoryWithXY() {
+  public static void XtestMixedFactoryWithXY() {
     GeometryFactory factoryPacked = new GeometryFactory(new PackedCoordinateSequenceFactory());
     Polygon polygonPacked = factoryPacked
         .createPolygon(
@@ -224,7 +223,7 @@ public class PackedCoordinateSequenceTest
     polygonPacked.intersection(polygonArray);
   }
   
-  public void checkDimInvalid(CoordinateSequenceFactory factory)
+  public static void checkDimInvalid(CoordinateSequenceFactory factory)
   {
     try {
       CoordinateSequence seq = factory.create(5, 2, 1);
@@ -233,10 +232,10 @@ public class PackedCoordinateSequenceTest
     }    
   }
   
-  private void initProgression(CoordinateSequence seq) {
+  private static void initProgression(CoordinateSequence seq) {
     for (int index = 0; index < seq.size(); index++) {
        for( int ordinateIndex = 0; ordinateIndex < seq.getDimension(); ordinateIndex++) {
-         seq.setOrdinate(index, ordinateIndex, (double) index);
+         seq.setOrdinate(index, ordinateIndex, index);
        }
     }
   }

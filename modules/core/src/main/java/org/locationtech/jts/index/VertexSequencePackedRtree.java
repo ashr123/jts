@@ -43,11 +43,11 @@ public class VertexSequencePackedRtree {
    */
   private static final int NODE_CAPACITY = 16;
   
-  private Coordinate[] items;
+  private final Coordinate[] items;
   private int[] levelOffset;
-  private int nodeCapacity  = NODE_CAPACITY;
+  private static final int nodeCapacity  = NODE_CAPACITY;
   private Envelope[] bounds;
-  private boolean[] isRemoved;
+  private final boolean[] isRemoved;
 
   /**
    * Creates a new tree over the given sequence of coordinates.
@@ -93,7 +93,7 @@ public class VertexSequencePackedRtree {
     return offsets.toArray();
   }
 
-  private int levelNodeCount(int numNodes) {
+  private static int levelNodeCount(int numNodes) {
     return MathUtil.ceil(numNodes, nodeCapacity);
   }
   
@@ -162,8 +162,7 @@ public class VertexSequencePackedRtree {
     IntArrayList resultList = new IntArrayList();
     int level = levelOffset.length - 1;
     queryNode(queryEnv, level, 0, resultList);
-    int[] result = resultList.toArray();
-    return result;
+      return resultList.toArray();
   }
   
   private void queryNode(Envelope queryEnv, int level, int nodeIndex, IntArrayList resultList) {

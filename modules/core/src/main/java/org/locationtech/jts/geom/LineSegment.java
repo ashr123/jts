@@ -36,7 +36,7 @@ import org.locationtech.jts.math.MathUtil;
  *@version 1.7
  */
 public class LineSegment
-  implements Comparable, Serializable
+  implements Comparable<LineSegment>, Serializable
 {
   private static final long serialVersionUID = 3252005833466256227L;
 
@@ -397,10 +397,9 @@ public class LineSegment
     
     // handle zero-length segments
     if (lenSq <= 0.0) return Double.NaN;
-    
-    double r = ( (p.x - p0.x) * dx + (p.y - p0.y) * dy )
-              / lenSq;
-    return r;
+
+      return ( (p.x - p0.x) * dx + (p.y - p0.y) * dy )
+                / lenSq;
   }
 
   /**
@@ -655,8 +654,7 @@ public class LineSegment
    */
   public Coordinate lineIntersection(LineSegment line)
   {
-    Coordinate intPt = Intersection.intersection(p0, p1, line.p0, line.p1);
-    return intPt;
+      return Intersection.intersection(p0, p1, line.p0, line.p1);
   }
 
   /**
@@ -722,11 +720,10 @@ public class LineSegment
    *@return    a negative integer, zero, or a positive integer as this <code>LineSegment</code>
    *      is less than, equal to, or greater than the specified <code>LineSegment</code>
    */
-  public int compareTo(Object o) {
-    LineSegment other = (LineSegment) o;
-    int comp0 = p0.compareTo(other.p0);
+  public int compareTo(LineSegment o) {
+      int comp0 = p0.compareTo(o.p0);
     if (comp0 != 0) return comp0;
-    return p1.compareTo(other.p1);
+    return p1.compareTo(o.p1);
   }
 
   /**

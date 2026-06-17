@@ -28,6 +28,7 @@ import org.locationtech.jts.geom.Position;
 import org.locationtech.jts.geom.TopologyException;
 import org.locationtech.jts.geomgraph.DirectedEdge;
 import org.locationtech.jts.geomgraph.DirectedEdgeStar;
+import org.locationtech.jts.geomgraph.EdgeEnd;
 import org.locationtech.jts.geomgraph.Label;
 import org.locationtech.jts.geomgraph.Node;
 
@@ -44,11 +45,11 @@ import org.locationtech.jts.geomgraph.Node;
  * @version 1.7
  */
 class BufferSubgraph
-  implements Comparable
+  implements Comparable<BufferSubgraph>
 {
-  private RightmostEdgeFinder finder;
-  private List dirEdgeList  = new ArrayList();
-  private List nodes        = new ArrayList();
+  private final RightmostEdgeFinder finder;
+  private final List<DirectedEdge> dirEdgeList  = new ArrayList<>();
+  private final List<Node> nodes        = new ArrayList<>();
   private Coordinate rightMostCoord = null;
   private Envelope env = null;
 
@@ -57,8 +58,8 @@ class BufferSubgraph
     finder = new RightmostEdgeFinder();
   }
 
-  public List getDirectedEdges() { return dirEdgeList; }
-  public List getNodes() { return nodes; }
+  public List<DirectedEdge> getDirectedEdges() { return dirEdgeList; }
+  public List<Node> getNodes() { return nodes; }
 
   /**
    * Computes the envelope of the edges in the subgraph.
@@ -70,13 +71,12 @@ class BufferSubgraph
   {
     if (env == null) {
       Envelope edgeEnv = new Envelope();
-      for (Iterator it = dirEdgeList.iterator(); it.hasNext(); ) {
-        DirectedEdge dirEdge = (DirectedEdge) it.next();
-        Coordinate[] pts = dirEdge.getEdge().getCoordinates();
-        for (int i = 0; i < pts.length - 1; i++) {
-          edgeEnv.expandToInclude(pts[i]);
+        for (DirectedEdge dirEdge : dirEdgeList) {
+            Coordinate[] pts = dirEdge.getEdge().getCoordinates();
+            for (int i = 0; i < pts.length - 1; i++) {
+                edgeEnv.expandToInclude(pts[i]);
+            }
         }
-      }
       env = edgeEnv;
     }
     return env;
@@ -111,10 +111,10 @@ class BufferSubgraph
    */
   private void addReachable(Node startNode)
   {
-    Stack nodeStack = new Stack();
+    Stack<Node> nodeStack = new Stack<>();
     nodeStack.add(startNode);
     while (! nodeStack.empty()) {
-      Node node = (Node) nodeStack.pop();
+      Node node = nodeStack.pop();
       add(node, nodeStack);
     }
   }
@@ -124,11 +124,11 @@ class BufferSubgraph
    * @param node the node to add
    * @param nodeStack the current set of nodes being traversed
    */
-  private void add(Node node, Stack nodeStack)
+  private void add(Node node, Stack<Node> nodeStack)
   {
     node.setVisited(true);
     nodes.add(node);
-    for (Iterator i = ((DirectedEdgeStar) node.getEdges()).iterator(); i.hasNext(); ) {
+    for (Iterator<EdgeEnd> i = node.getEdges().iterator(); i.hasNext(); ) {
       DirectedEdge de = (DirectedEdge) i.next();
       dirEdgeList.add(de);
       DirectedEdge sym = de.getSym();
@@ -144,10 +144,9 @@ class BufferSubgraph
 
   private void clearVisitedEdges()
   {
-    for (Iterator it = dirEdgeList.iterator(); it.hasNext(); ) {
-      DirectedEdge de = (DirectedEdge) it.next();
-      de.setVisited(false);
-    }
+      for (DirectedEdge de : dirEdgeList) {
+          de.setVisited(false);
+      }
   }
 
   public void computeDepth(int outsideDepth)
@@ -170,10 +169,10 @@ class BufferSubgraph
    * @param startEdge edge to start processing with
    */
   // <FIX> MD - use iteration & queue rather than recursion, for speed and robustness
-  private void computeDepths(DirectedEdge startEdge)
+  private static void computeDepths(DirectedEdge startEdge)
   {
-    Set nodesVisited = new HashSet();
-    LinkedList nodeQueue = new LinkedList();
+    Set<Node> nodesVisited = new HashSet<>();
+    LinkedList<Node> nodeQueue = new LinkedList<>();
 
     Node startNode = startEdge.getNode();
     nodeQueue.addLast(startNode);
@@ -182,14 +181,14 @@ class BufferSubgraph
 
     while (! nodeQueue.isEmpty()) {
 //System.out.println(nodes.size() + " queue: " + nodeQueue.size());
-      Node n = (Node) nodeQueue.removeFirst();
+      Node n = nodeQueue.removeFirst();
       nodesVisited.add(n);
       // compute depths around node, starting at this edge since it has depths assigned
       computeNodeDepth(n);
 
       // add all adjacent nodes to process queue,
       // unless the node has been visited already
-      for (Iterator i = ((DirectedEdgeStar) n.getEdges()).iterator(); i.hasNext(); ) {
+      for (Iterator<EdgeEnd> i = n.getEdges().iterator(); i.hasNext(); ) {
         DirectedEdge de = (DirectedEdge) i.next();
         DirectedEdge sym = de.getSym();
         if (sym.isVisited()) continue;
@@ -202,11 +201,11 @@ class BufferSubgraph
     }
   }
 
-  private void computeNodeDepth(Node n)
+  private static void computeNodeDepth(Node n)
   {
     // find a visited dirEdge to start at
     DirectedEdge startEdge = null;
-    for (Iterator i = ((DirectedEdgeStar) n.getEdges()).iterator(); i.hasNext(); ) {
+    for (Iterator<EdgeEnd> i = n.getEdges().iterator(); i.hasNext(); ) {
       DirectedEdge de = (DirectedEdge) i.next();
       if (de.isVisited() || de.getSym().isVisited()) {
         startEdge = de;
@@ -223,14 +222,14 @@ class BufferSubgraph
     ((DirectedEdgeStar) n.getEdges()).computeDepths(startEdge);
 
     // copy depths to sym edges
-    for (Iterator i = ((DirectedEdgeStar) n.getEdges()).iterator(); i.hasNext(); ) {
+    for (Iterator<EdgeEnd> i = n.getEdges().iterator(); i.hasNext(); ) {
       DirectedEdge de = (DirectedEdge) i.next();
       de.setVisited(true);
       copySymDepths(de);
     }
   }
 
-  private void copySymDepths(DirectedEdge de)
+  private static void copySymDepths(DirectedEdge de)
   {
     DirectedEdge sym = de.getSym();
     sym.setDepth(Position.LEFT, de.getDepth(Position.RIGHT));
@@ -247,8 +246,6 @@ class BufferSubgraph
    */
   public void findResultEdges()
   {
-    for (Iterator it = dirEdgeList.iterator(); it.hasNext(); ) {
-      DirectedEdge de = (DirectedEdge) it.next();
       /**
        * Select edges which have an interior depth on the RHS
        * and an exterior depth on the LHS.
@@ -256,14 +253,22 @@ class BufferSubgraph
        * edges which have negative depths!  Negative depths
        * count as "outside".
        */
-      // <FIX> - handle negative depths
-      if (    de.getDepth(Position.RIGHT) >= 1
-          &&  de.getDepth(Position.LEFT)  <= 0
-          &&  ! de.isInteriorAreaEdge()) {
-        de.setInResult(true);
+      for (DirectedEdge de : dirEdgeList) {
+          /**
+           * Select edges which have an interior depth on the RHS
+           * and an exterior depth on the LHS.
+           * Note that because of weird rounding effects there may be
+           * edges which have negative depths!  Negative depths
+           * count as "outside".
+           */
+          // <FIX> - handle negative depths
+          if (de.getDepth(Position.RIGHT) >= 1
+                  && de.getDepth(Position.LEFT) <= 0
+                  && !de.isInteriorAreaEdge()) {
+              de.setInResult(true);
 //Debug.print("in result "); Debug.println(de);
+          }
       }
-    }
   }
 
   /**
@@ -277,15 +282,8 @@ class BufferSubgraph
    * This relationship is used to sort the BufferSubgraphs so that shells are guaranteed to
    * be built before holes.
    */
-  public int compareTo(Object o) {
-    BufferSubgraph graph = (BufferSubgraph) o;
-    if (this.rightMostCoord.x < graph.rightMostCoord.x) {
-      return -1;
-    }
-    if (this.rightMostCoord.x > graph.rightMostCoord.x) {
-      return 1;
-    }
-    return 0;
+  public int compareTo(BufferSubgraph graph) {
+      return Double.compare(this.rightMostCoord.x, graph.rightMostCoord.x);
   }
 
 /*
@@ -295,8 +293,8 @@ class BufferSubgraph
   public void saveDirEdges()
   {
     GeometryFactory fact = new GeometryFactory();
-    for (Iterator it = dirEdgeList.iterator(); it.hasNext(); ) {
-      DirectedEdge de = (DirectedEdge) it.next();
+    for (Iterator<DirectedEdge> it = dirEdgeList.iterator(); it.hasNext(); ) {
+      DirectedEdge de = it.next();
       double dx = de.getDx();
       double dy = de.getDy();
       Coordinate p0 = de.getCoordinate();

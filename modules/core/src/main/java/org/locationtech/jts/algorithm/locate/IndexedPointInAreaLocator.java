@@ -12,7 +12,6 @@
 package org.locationtech.jts.algorithm.locate;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.algorithm.RayCrossingCounter;
@@ -87,7 +86,7 @@ public class IndexedPointInAreaLocator
   
     /*
      // MD - slightly slower alternative
-    List segs = index.query(p.y, p.y);
+    List<LineSegment> segs = index.query(p.y, p.y);
     countSegs(rcc, segs);
     */
     
@@ -106,26 +105,25 @@ public class IndexedPointInAreaLocator
   }
   
   private static class SegmentVisitor
-    implements ItemVisitor
+    implements ItemVisitor<LineSegment>
   {
     private final RayCrossingCounter counter;
-    
+
     public SegmentVisitor(RayCrossingCounter counter)
     {
       this.counter = counter;
     }
-    
-    public void visitItem(Object item)
+
+    public void visitItem(LineSegment seg)
     {
-      LineSegment seg = (LineSegment) item;
       counter.countSegment(seg.getCoordinate(0), seg.getCoordinate(1));
     }
   }
-  
+
   private static class IntervalIndexedGeometry
   {
     private final boolean isEmpty;
-    private final SortedPackedIntervalRTree index= new SortedPackedIntervalRTree();
+    private final SortedPackedIntervalRTree<LineSegment> index= new SortedPackedIntervalRTree<>();
 
     public IntervalIndexedGeometry(Geometry geom)
     {
@@ -139,16 +137,15 @@ public class IndexedPointInAreaLocator
     
     private void init(Geometry geom)
     {
-      List lines = LinearComponentExtracter.getLines(geom);
-      for (Iterator i = lines.iterator(); i.hasNext(); ) {
-        LineString line = (LineString) i.next();
-        //-- only include rings of Polygons or LinearRings
-        if (! line.isClosed())
-          continue;
-        
-        Coordinate[] pts = line.getCoordinates();
-        addLine(pts);
-      }
+      List<LineString> lines = LinearComponentExtracter.getLines(geom);
+        for (LineString line : lines) {
+            //-- only include rings of Polygons or LinearRings
+            if (!line.isClosed())
+                continue;
+
+            Coordinate[] pts = line.getCoordinates();
+            addLine(pts);
+        }
     }
     
     private void addLine(Coordinate[] pts)
@@ -161,25 +158,22 @@ public class IndexedPointInAreaLocator
       }
     }
     
-    public List query(double min, double max)
+    public List<LineSegment> query(double min, double max)
     {
-     if (isEmpty) 
-        return new ArrayList();
-      
-      ArrayListVisitor visitor = new ArrayListVisitor();
+     if (isEmpty)
+        return new ArrayList<>();
+
+      ArrayListVisitor<LineSegment> visitor = new ArrayListVisitor<>();
       index.query(min, max, visitor);
       return visitor.getItems();
     }
     
-    public void query(double min, double max, ItemVisitor visitor)
+    public void query(double min, double max, ItemVisitor<? super LineSegment> visitor)
     {
-      if (isEmpty) 
+      if (isEmpty)
         return;
       index.query(min, max, visitor);
     }
   }
 
 }
-
-
-

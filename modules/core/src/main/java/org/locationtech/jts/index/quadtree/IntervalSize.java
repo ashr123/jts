@@ -32,7 +32,10 @@ public class IntervalSize {
    */
   public static final int MIN_BINARY_EXPONENT = -50;
 
-  /**
+    private IntervalSize() {
+    }
+
+    /**
    * Computes whether the interval [min, max] is effectively zero width.
    * I.e. the width of the interval is so much less than the
    * location of the interval that the midpoint of the interval cannot be

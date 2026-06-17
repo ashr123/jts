@@ -15,9 +15,6 @@ package org.locationtech.jts.algorithm;
  *@version 1.7
  */
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.CoordinateXY;
-import org.locationtech.jts.geom.CoordinateXYM;
-import org.locationtech.jts.geom.CoordinateXYZM;
 import org.locationtech.jts.geom.Coordinates;
 import org.locationtech.jts.geom.Envelope;
 
@@ -39,10 +36,7 @@ public class RobustLineIntersector
     if (Envelope.intersects(p1, p2, p)) {
       if ((Orientation.index(p1, p2, p) == 0)
           && (Orientation.index(p2, p1, p) == 0)) {
-        isProper = true;
-        if (p.equals(p1) || p.equals(p2)) {
-          isProper = false;
-        }
+          isProper = !p.equals(p1) && !p.equals(p2);
         result = POINT_INTERSECTION;
         return;
       }
@@ -276,7 +270,7 @@ public class RobustLineIntersector
    * @param q2 a segment endpoint
    * @return the computed intersection point
    */
-  private Coordinate intersectionSafe(Coordinate p1, Coordinate p2, Coordinate q1, Coordinate q2)
+  private static Coordinate intersectionSafe(Coordinate p1, Coordinate p2, Coordinate q1, Coordinate q2)
   {
     Coordinate intPt = Intersection.intersection(p1, p2, q1, q2);
     if (intPt == null)
@@ -419,8 +413,7 @@ public class RobustLineIntersector
     double plen = (xoff * xoff + yoff * yoff);
     double frac = Math.sqrt(plen / seglen);
     double zoff = dz * frac;
-    double zInterpolated = p1z + zoff;
-    return zInterpolated;
+      return p1z + zoff;
   }
 
   /**

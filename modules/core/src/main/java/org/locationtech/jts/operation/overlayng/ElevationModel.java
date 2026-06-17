@@ -65,12 +65,12 @@ class ElevationModel {
     return model;
   }
   
-  private Envelope extent;
+  private final Envelope extent;
   private int numCellX;
   private int numCellY;
-  private double cellSizeX;
-  private double cellSizeY;
-  private ElevationCell[][] cells;
+  private final double cellSizeX;
+  private final double cellSizeY;
+  private final ElevationCell[][] cells;
   private boolean isInitialized = false;
   private boolean hasZValue = false;
   private double averageZ = Double.NaN;
@@ -111,8 +111,8 @@ class ElevationModel {
       @Override
       public void filter(CoordinateSequence seq, int i) {
         if (! seq.hasZ()) {
-          hasZ = false;;
-          return;
+          hasZ = false;
+            return;
         }
         double z = seq.getOrdinate(i, Coordinate.Z);
         add(seq.getOrdinate(i, Coordinate.X),
@@ -146,17 +146,17 @@ class ElevationModel {
     isInitialized = true;
     int numCells = 0;
     double sumZ = 0.0;
-    
-    for (int i = 0; i < cells.length; i++) {
-      for (int j = 0; j < cells[0].length; j++) {
-        ElevationCell cell = cells[i][j];
-        if (cell != null) {
-          cell.compute();
-          numCells++;
-          sumZ += cell.getZ();
-        }
+
+      for (ElevationCell[] elevationCells : cells) {
+          for (int j = 0; j < cells[0].length; j++) {
+              ElevationCell cell = elevationCells[j];
+              if (cell != null) {
+                  cell.compute();
+                  numCells++;
+                  sumZ += cell.getZ();
+              }
+          }
       }
-    }
     averageZ = Double.NaN;
     if (numCells > 0) {
       averageZ = sumZ / numCells;

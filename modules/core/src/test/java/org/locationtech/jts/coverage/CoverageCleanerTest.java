@@ -19,7 +19,7 @@ import junit.textui.TestRunner;
 import test.jts.GeometryTestCase;
 
 public class CoverageCleanerTest extends GeometryTestCase {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(CoverageCleanerTest.class);
   }
   
@@ -91,7 +91,7 @@ public class CoverageCleanerTest extends GeometryTestCase {
         );
   }
 
-  String covWithGaps = "GEOMETRYCOLLECTION (POLYGON ((1 3, 9 3, 9 1, 1 1, 1 3)), POLYGON ((1 3, 1 9, 4 9, 4 3, 3 4, 1 3)), POLYGON ((4 9, 7 9, 7 3, 6 5, 5 5, 4 3, 4 9)), POLYGON ((7 9, 9 9, 9 3, 8 3.1, 7 3, 7 9)))";
+  static final String covWithGaps = "GEOMETRYCOLLECTION (POLYGON ((1 3, 9 3, 9 1, 1 1, 1 3)), POLYGON ((1 3, 1 9, 4 9, 4 3, 3 4, 1 3)), POLYGON ((4 9, 7 9, 7 3, 6 5, 5 5, 4 3, 4 9)), POLYGON ((7 9, 9 9, 9 3, 8 3.1, 7 3, 7 9)))";
 
   public void testMergeGapWidth_0() {
     checkCleanGapWidth(covWithGaps,
@@ -114,7 +114,7 @@ public class CoverageCleanerTest extends GeometryTestCase {
         );
   }
 
-  String covWithOverlap = "GEOMETRYCOLLECTION (POLYGON ((1 3, 5 3, 4 1, 1 1, 1 3)), POLYGON ((1 3, 1 9, 4 9, 4 3, 3 1.9, 1 3)))";
+  static final String covWithOverlap = "GEOMETRYCOLLECTION (POLYGON ((1 3, 5 3, 4 1, 1 1, 1 3)), POLYGON ((1 3, 1 9, 4 9, 4 3, 3 1.9, 1 3)))";
   
   public void testMergeOverlapMinArea() {
     checkCleanOverlapMerge(covWithOverlap,
@@ -215,20 +215,20 @@ public class CoverageCleanerTest extends GeometryTestCase {
     }
   }
   
-  private Geometry toGeometryCollection(Geometry[] actual) {
+  private static Geometry toGeometryCollection(Geometry[] actual) {
     return ((new GeometryFactory().createGeometryCollection(actual)));
   }
 
-  private Geometry[] toArray(Geometry geom) {
+  private static Geometry[] toArray(Geometry geom) {
     return GeometryFactory.toGeometryArray(PolygonalExtracter.getPolygonals(geom));
   }
 
-  private void checkCleanSnap(Geometry[] cov, double snapDist) {
+  private static void checkCleanSnap(Geometry[] cov, double snapDist) {
     Geometry[] covClean = CoverageCleaner.clean(cov, snapDist, 0);
     checkValidCoverage(covClean, snapDist);
   }
 
-  private void checkCleanSnap(Geometry[] cov, double snapDist, Geometry[] expected) {
+  private static void checkCleanSnap(Geometry[] cov, double snapDist, Geometry[] expected) {
     Geometry[] actual = CoverageCleaner.clean(cov, snapDist, 0);
     checkValidCoverage(actual, snapDist);
     checkEqual(expected, actual);
@@ -239,7 +239,7 @@ public class CoverageCleanerTest extends GeometryTestCase {
     checkCleanSnap(cov, snapDist);
   }
 
-  private void checkValidCoverage(Geometry[] coverage, double tolerance) {
+  private static void checkValidCoverage(Geometry[] coverage, double tolerance) {
     for (Geometry geom : coverage) {
       assertTrue(geom.isValid());
     }

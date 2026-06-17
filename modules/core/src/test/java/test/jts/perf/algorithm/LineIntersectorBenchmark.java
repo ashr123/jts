@@ -40,7 +40,7 @@ public class LineIntersectorBenchmark implements Runnable {
     exercise(new RobustLineIntersector());
   }
 
-  private void exercise(LineIntersector lineIntersector) {
+  private static void exercise(LineIntersector lineIntersector) {
     System.out.println(lineIntersector.getClass().getName());
     Date start = new Date();
     for (int i = 0; i < 1000000; i++) {
@@ -51,7 +51,7 @@ public class LineIntersectorBenchmark implements Runnable {
     System.out.println();
   }
 
-  private void exerciseOnce(LineIntersector lineIntersector) {
+  private static void exerciseOnce(LineIntersector lineIntersector) {
     Coordinate p1 = new Coordinate(10, 10);
     Coordinate p2 = new Coordinate(20, 20);
     Coordinate q1 = new Coordinate(20, 10);

@@ -30,7 +30,7 @@ class PointwisePrecisionReducerTransformer extends GeometryTransformer {
     return trans.transform(geom);
   }
   
-  private PrecisionModel targetPM;
+  private final PrecisionModel targetPM;
 
   PointwisePrecisionReducerTransformer(PrecisionModel targetPM) {
     this.targetPM = targetPM;

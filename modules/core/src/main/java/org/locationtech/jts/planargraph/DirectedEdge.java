@@ -14,7 +14,6 @@ package org.locationtech.jts.planargraph;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.algorithm.Orientation;
@@ -32,29 +31,30 @@ import org.locationtech.jts.geom.Quadrant;
  */
 public class DirectedEdge
     extends GraphComponent
-    implements Comparable
+    implements Comparable<DirectedEdge>
 {
   /**
    * Returns a List containing the parent Edge (possibly null) for each of the given
    * DirectedEdges.
    */
-  public static List toEdges(Collection dirEdges)
+  public static List<Edge> toEdges(Collection<? extends DirectedEdge> dirEdges)
   {
-    List edges = new ArrayList();
-    for (Iterator i = dirEdges.iterator(); i.hasNext(); ) {
-      edges.add( ((DirectedEdge) i.next()).parentEdge);
-    }
+    List<Edge> edges = new ArrayList<>();
+      for (DirectedEdge dirEdge : dirEdges) {
+          edges.add(dirEdge.parentEdge);
+      }
     return edges;
   }
 
   protected Edge parentEdge;
-  protected Node from;
-  protected Node to;
-  protected Coordinate p0, p1;
+  protected final Node from;
+  protected final Node to;
+  protected final Coordinate p0;
+    protected final Coordinate p1;
   protected DirectedEdge sym = null;  // optional
-  protected boolean edgeDirection;
-  protected int quadrant;
-  protected double angle;
+  protected final boolean edgeDirection;
+  protected final int quadrant;
+  protected final double angle;
 
   /**
    * Constructs a DirectedEdge connecting the <code>from</code> node to the
@@ -167,9 +167,8 @@ public class DirectedEdge
    * function can be used to decide the relative orientation of the vectors.
    * </ul>
    */
-  public int compareTo(Object obj)
+  public int compareTo(DirectedEdge de)
   {
-      DirectedEdge de = (DirectedEdge) obj;
       return compareDirection(de);
   }
 

@@ -12,6 +12,18 @@
 
 package org.locationtech.jtstest.testbuilder.ui;
 
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jtstest.util.StringUtil;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.text.JTextComponent;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.Insets;
@@ -26,26 +38,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.io.File;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.text.JTextComponent;
-
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jtstest.util.StringUtil;
+import java.util.List;
 
 
 public class SwingUtil {
 
-  public static FileFilter XML_FILE_FILTER = createFileFilter("JTS Test XML File (*.xml)", ".xml");
-  public static FileFilter HTML_FILE_FILTER = createFileFilter("HTML File (*.html)", ".html");
-  public static  FileFilter JAVA_FILE_FILTER = createFileFilter("Java File (*.java)", ".java");
-  public static  FileFilter PNG_FILE_FILTER = createFileFilter("PNG File (*.png)", ".png");
+  public static final FileFilter XML_FILE_FILTER = createFileFilter("JTS Test XML File (*.xml)", ".xml");
+  public static final FileFilter HTML_FILE_FILTER = createFileFilter("HTML File (*.html)", ".html");
+  public static final FileFilter JAVA_FILE_FILTER = createFileFilter("Java File (*.java)", ".java");
+  public static final FileFilter PNG_FILE_FILTER = createFileFilter("PNG File (*.png)", ".png");
+
+    private SwingUtil() {
+    }
 
     /**
      * 
@@ -60,15 +64,14 @@ public class SwingUtil {
     public static FileFilter createFileFilter(final String description, String extension)
     {
       final String dotExt = extension.startsWith(".") ? extension : "." + extension;
-      FileFilter ff =  new FileFilter() {
-        public String getDescription() {
-          return description;
-        }
-        public boolean accept(File f) {
-          return f.isDirectory() || f.toString().toLowerCase().endsWith(dotExt);
-        }
-      };
-      return ff;
+        return new FileFilter() {
+          public String getDescription() {
+            return description;
+          }
+          public boolean accept(File f) {
+            return f.isDirectory() || f.toString().toLowerCase().endsWith(dotExt);
+          }
+        };
     }
 
     /**
@@ -83,8 +86,7 @@ public class SwingUtil {
         if (JFileChooser.APPROVE_OPTION == fileChooser.showSaveDialog(comp)) {
           File file = fileChooser.getSelectedFile();
           if (! SwingUtil.confirmOverwrite(comp, file)) return null;
-          String fullFileName = fileChooser.getSelectedFile().toString();
-          return fullFileName;
+            return fileChooser.getSelectedFile().toString();
         }
       }
       catch (Exception x) {
@@ -100,9 +102,7 @@ public class SwingUtil {
       int decision = JOptionPane.showConfirmDialog(comp, file.getName()
            + " exists. Overwrite?", "Confirmation", JOptionPane.YES_NO_OPTION,
           JOptionPane.WARNING_MESSAGE);
-      if (decision == JOptionPane.NO_OPTION) {
-        return false;
-      }
+        return decision != JOptionPane.NO_OPTION;
     }
     return true;
   }
@@ -116,7 +116,7 @@ public class SwingUtil {
       comp.setBackground(SystemColor.control);
   }
   
-  public static Object coerce(Object val, Class clz) {
+  public static Object coerce(Object val, Class<?> clz) {
     if (val == null) return val;
     if (val.getClass() == clz) return val;
     if (val instanceof String && (clz == Double.class || clz == double.class))
@@ -146,40 +146,30 @@ public class SwingUtil {
   
   public static Integer getInteger(JTextField txt, Integer defaultVal) {
     String str = txt.getText();
-    if (str.trim().length() <= 0)
+    if (str.trim().isEmpty())
       return defaultVal;
 
-    int val = 0;
-    try {
-      val = Integer.parseInt(str);
-    } catch (NumberFormatException ex) {
-    }
-    return val;
+      return convertInteger(str);
   }
   
   public static Double getDouble(JTextField txt, Double defaultVal) {
     String str = txt.getText();
-    if (str.trim().length() <= 0)
+    if (str.trim().isEmpty())
       return defaultVal;
 
-    double val = 0;
-    try {
-      val = Double.parseDouble(str);
-    } catch (NumberFormatException ex) {
-    }
-    return val;
+      return convertDouble(str);
   }
   
   public static String value(JTextComponent txt) {
     return txt.getText();
   }
   
-  public static Object value(JComboBox cb, Object[] val)
+  public static Object value(JComboBox<?> cb, List<Object> val)
   {
   	int selIndex = cb.getSelectedIndex();
-  	if (selIndex == -1) 
+  	if (selIndex == -1)
   		return null;
-  	return val[selIndex];
+  	return val.get(selIndex);
   }
   
   public static void copyToClipboard(Object o, boolean isFormatted)

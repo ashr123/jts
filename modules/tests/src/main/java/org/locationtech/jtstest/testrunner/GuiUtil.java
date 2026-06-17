@@ -17,6 +17,8 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.beans.PropertyVetoException;
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JDesktopPane;
 import javax.swing.JFileChooser;
@@ -35,6 +37,9 @@ import org.locationtech.jtstest.util.StringUtil;
  * @version 1.7
  */
 public class GuiUtil {
+
+    private GuiUtil() {
+    }
 
     /**
      * Centers the first component on the second
@@ -97,20 +102,21 @@ public class GuiUtil {
         // Although JFileChooser won't give us this information,
         // we need it...
         Container c1 = (Container) chooser.getComponent(3);
-        JList list = null;
+        JList<?> list = null;
         while (c1 != null) {
             Container c = (Container) c1.getComponent(0);
             if (c instanceof JList) {
-                list = (JList) c;
+                list = (JList<?>) c;
                 break;
             }
             c1 = c;
         }
-        Object[] entries = list.getSelectedValues();
-        File[] files = new File[entries.length];
-        for (int k = 0; k < entries.length; k++) {
-            if (entries[k] instanceof File)
-                files[k] = (File) entries[k];
+        List<Object> entries = Arrays.asList(list.getSelectedValues());
+        File[] files = new File[entries.size()];
+        for (int k = 0; k < entries.size(); k++) {
+            Object entry = entries.get(k);
+            if (entry instanceof File)
+                files[k] = (File) entry;
         }
         return files;
     }
@@ -134,9 +140,9 @@ public class GuiUtil {
      */
     public static void formatTooltip(JComponent jcomponent) {
         String tip = jcomponent.getToolTipText();
-        if (tip == null || tip.length() == 0)
+        if (tip == null || tip.isEmpty())
             return;
-        if (tip.toLowerCase().indexOf("<html>") > -1)
+        if (tip.toLowerCase().contains("<html>"))
             return;
         tip = StringUtil.wrap(tip, 50);
         tip = StringUtil.replaceAll(tip, "\n", "<p>");

@@ -134,9 +134,9 @@ public class PointLocator
       }
     }
     else if (geom instanceof GeometryCollection) {
-      Iterator geomi = new GeometryCollectionIterator((GeometryCollection) geom);
+      Iterator<Geometry> geomi = new GeometryCollectionIterator(geom);
       while (geomi.hasNext()) {
-        Geometry g2 = (Geometry) geomi.next();
+        Geometry g2 = geomi.next();
         if (g2 != geom)
           computeLocation(p, g2);
       }
@@ -149,7 +149,7 @@ public class PointLocator
     if (loc == Location.BOUNDARY) numBoundaries++;
   }
 
-  private int locateOnPoint(Coordinate p, Point pt)
+  private static int locateOnPoint(Coordinate p, Point pt)
   {
   	// no point in doing envelope test, since equality test is just as fast
   	
@@ -168,8 +168,7 @@ public class PointLocator
     if (p.equals(seq.getCoordinate(0))
           || p.equals(seq.getCoordinate(seq.size() - 1)) ) {
       int boundaryCount = l.isClosed() ? 2 : 1;
-      int loc = boundaryRule.isInBoundary(boundaryCount) ? Location.BOUNDARY : Location.INTERIOR;
-      return loc;
+        return boundaryRule.isInBoundary(boundaryCount) ? Location.BOUNDARY : Location.INTERIOR;
     }
     if (PointLocation.isOnLine(p, seq)) {
       return Location.INTERIOR;
@@ -177,7 +176,7 @@ public class PointLocator
     return Location.EXTERIOR;
   }
 
-  private int locateInPolygonRing(Coordinate p, LinearRing ring)
+  private static int locateInPolygonRing(Coordinate p, LinearRing ring)
   {
   	// bounding-box check
   	if (! ring.getEnvelopeInternal().intersects(p)) return Location.EXTERIOR;
@@ -185,7 +184,7 @@ public class PointLocator
   	return PointLocation.locateInRing(p, ring.getCoordinates());
   }
 
-  private int locateInPolygon(Coordinate p, Polygon poly)
+  private static int locateInPolygon(Coordinate p, Polygon poly)
   {
     if (poly.isEmpty()) return Location.EXTERIOR;
 

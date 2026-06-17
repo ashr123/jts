@@ -53,8 +53,11 @@ public class HilbertCode
    * The maximum curve level that can be represented.
    */
   public static final int MAX_LEVEL = 16;
-  
-  /**
+
+    private HilbertCode() {
+    }
+
+    /**
    * The number of points in the curve for the given level.
    * The number of points is 2<sup>2 * level</sup>.
    * 
@@ -185,8 +188,8 @@ public class HilbertCode
    */
   private static int levelClamp(int level) {
     // clamp order to [1, 16]
-    int lvl = level < 1 ? 1 : level;
-    lvl = lvl > MAX_LEVEL ? MAX_LEVEL : lvl;
+    int lvl = Math.max(level, 1);
+    lvl = Math.min(lvl, MAX_LEVEL);
     return lvl;
   }
   

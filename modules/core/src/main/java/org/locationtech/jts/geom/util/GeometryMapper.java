@@ -13,7 +13,6 @@ package org.locationtech.jts.geom.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.geom.Geometry;
@@ -29,7 +28,10 @@ import org.locationtech.jts.geom.GeometryCollection;
  */
 public class GeometryMapper 
 {
-  /**
+    private GeometryMapper() {
+    }
+
+    /**
    * Maps the members of a {@link Geometry}
    * (which may be atomic or composite)
    * into another <tt>Geometry</tt> of most specific type.
@@ -43,7 +45,7 @@ public class GeometryMapper
    */
   public static Geometry map(Geometry geom, MapOp op)
   {
-    List mapped = new ArrayList();
+    List<Geometry> mapped = new ArrayList<>();
     for (int i = 0; i < geom.getNumGeometries(); i++) {
       Geometry g = op.map(geom.getGeometryN(i));
       if (g != null)
@@ -51,16 +53,15 @@ public class GeometryMapper
     }
     return geom.getFactory().buildGeometry(mapped);
   }
-  
-  public static Collection map(Collection geoms, MapOp op)
+
+  public static Collection<Geometry> map(Collection<? extends Geometry> geoms, MapOp op)
   {
-    List mapped = new ArrayList();
-    for (Iterator i = geoms.iterator(); i.hasNext(); ) {
-      Geometry g = (Geometry) i.next();
-      Geometry gr = op.map(g);
-      if (gr != null)
-        mapped.add(gr);
-    }
+    List<Geometry> mapped = new ArrayList<>();
+      for (Geometry g : geoms) {
+          Geometry gr = op.map(g);
+          if (gr != null)
+              mapped.add(gr);
+      }
     return mapped;
   }
   
@@ -80,10 +81,10 @@ public class GeometryMapper
    */
   public static Geometry flatMap(Geometry geom, int emptyDim, MapOp op)
   {
-    List<Geometry> mapped = new ArrayList<Geometry>();
+    List<Geometry> mapped = new ArrayList<>();
     flatMap(geom, op, mapped);
 
-    if (mapped.size() == 0) {
+    if (mapped.isEmpty()) {
       return geom.getFactory().createEmpty(emptyDim);
     }
     if (mapped.size() == 1)

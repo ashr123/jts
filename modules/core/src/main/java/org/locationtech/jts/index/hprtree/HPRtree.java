@@ -57,16 +57,16 @@ import org.locationtech.jts.util.IntArrayList;
  * @author Martin Davis
  *
  */
-public class HPRtree
-  implements SpatialIndex
+public class HPRtree<T>
+  implements SpatialIndex<T>
 {
   private static final int ENV_SIZE = 4;
 
   private static final int HILBERT_LEVEL = 12;
 
   private static final int DEFAULT_NODE_CAPACITY = 16;
-  
-  private List<Item> itemsToLoad = new ArrayList<>();
+
+  private List<Item<T>> itemsToLoad = new ArrayList<>();
 
   private final int nodeCapacity;
 
@@ -110,29 +110,29 @@ public class HPRtree
   }
   
   @Override
-  public void insert(Envelope itemEnv, Object item) {
+  public void insert(Envelope itemEnv, T item) {
     if (isBuilt) {
       throw new IllegalStateException("Cannot insert items after tree is built.");
     }
     numItems++;
-    itemsToLoad.add( new Item(itemEnv, item) );
+    itemsToLoad.add(new Item<>(itemEnv, item) );
     totalExtent.expandToInclude(itemEnv);
   }
 
   @Override
-  public List query(Envelope searchEnv) {
+  public List<T> query(Envelope searchEnv) {
     build();
-    
-    if (! totalExtent.intersects(searchEnv)) 
-      return new ArrayList();
-    
-    ArrayListVisitor visitor = new ArrayListVisitor();
+
+    if (! totalExtent.intersects(searchEnv))
+      return new ArrayList<>();
+
+    ArrayListVisitor<T> visitor = new ArrayListVisitor<>();
     query(searchEnv, visitor);
     return visitor.getItems();
   }
 
   @Override
-  public void query(Envelope searchEnv, ItemVisitor visitor) {
+  public void query(Envelope searchEnv, ItemVisitor<? super T> visitor) {
     build();
     if (! totalExtent.intersects(searchEnv)) 
       return;
@@ -144,7 +144,7 @@ public class HPRtree
     }
   }
 
-  private void queryTopLayer(Envelope searchEnv, ItemVisitor visitor) {
+  private void queryTopLayer(Envelope searchEnv, ItemVisitor<? super T> visitor) {
     int layerIndex = layerStartIndex.length - 2;
     int layerSize = layerSize(layerIndex);
     // query each node in layer
@@ -153,7 +153,7 @@ public class HPRtree
     }
   }
 
-  private void queryNode(int layerIndex, int nodeOffset, Envelope searchEnv, ItemVisitor visitor) {
+  private void queryNode(int layerIndex, int nodeOffset, Envelope searchEnv, ItemVisitor<? super T> visitor) {
     int layerStart = layerStartIndex[layerIndex];
     int nodeIndex = layerStart + nodeOffset;
     if (! intersects(nodeBounds, nodeIndex, searchEnv)) return;
@@ -175,7 +175,7 @@ public class HPRtree
     return ! isBeyond;
   }
   
-  private void queryNodeChildren(int layerIndex, int blockOffset, Envelope searchEnv, ItemVisitor visitor) {
+  private void queryNodeChildren(int layerIndex, int blockOffset, Envelope searchEnv, ItemVisitor<? super T> visitor) {
     int layerStart = layerStartIndex[layerIndex];
     int layerEnd = layerStartIndex[layerIndex + 1];
     for (int i = 0; i < nodeCapacity; i++) {
@@ -187,15 +187,16 @@ public class HPRtree
     }
   }
 
-  private void queryItems(int blockStart, Envelope searchEnv, ItemVisitor visitor) {
+  @SuppressWarnings("unchecked")
+  private void queryItems(int blockStart, Envelope searchEnv, ItemVisitor<? super T> visitor) {
     for (int i = 0; i < nodeCapacity; i++) {
       int itemIndex = blockStart + i;
       // don't query past end of items
       if (itemIndex >= numItems) break;
       if (intersects(itemBounds, itemIndex * ENV_SIZE, searchEnv)) {
-        visitor.visitItem(itemValues[itemIndex]);
+        visitor.visitItem((T) itemValues[itemIndex]);
       }
-    }    
+    }
   }
   
   private int layerSize(int layerIndex) {
@@ -205,7 +206,7 @@ public class HPRtree
   }
 
   @Override
-  public boolean remove(Envelope itemEnv, Object item) {
+  public boolean remove(Envelope itemEnv, T item) {
     // TODO Auto-generated method stub
     return false;
   }
@@ -250,7 +251,7 @@ public class HPRtree
     int valueIndex = 0;
     itemBounds = new double[itemsToLoad.size() * 4];
     itemValues = new Object[itemsToLoad.size()];
-    for (Item item : itemsToLoad) {
+    for (Item<T> item : itemsToLoad) {
       Envelope envelope = item.getEnvelope();
       itemBounds[boundsIndex++] = envelope.getMinX();
       itemBounds[boundsIndex++] = envelope.getMinY();
@@ -278,10 +279,9 @@ public class HPRtree
     int layerStart = layerStartIndex[layerIndex];
     int childLayerStart = layerStartIndex[layerIndex - 1];
     int layerSize = layerSize(layerIndex);
-    int childLayerEnd = layerStart;
-    for (int i = 0; i < layerSize; i += ENV_SIZE) {
+      for (int i = 0; i < layerSize; i += ENV_SIZE) {
       int childStart = childLayerStart + nodeCapacity * i;
-      computeNodeBounds(layerStart + i, childStart, childLayerEnd);
+      computeNodeBounds(layerStart + i, childStart, layerStart);
     }
   }
 
@@ -363,7 +363,7 @@ public class HPRtree
     HilbertEncoder encoder = new HilbertEncoder(HILBERT_LEVEL, totalExtent);
     int[] hilbertValues = new int[itemsToLoad.size()];
     int pos = 0;
-    for (Item item : itemsToLoad) {
+    for (Item<T> item : itemsToLoad) {
       hilbertValues[pos++] = encoder.encode(item.getEnvelope());
     }
     quickSortItemsIntoNodes(hilbertValues, 0, itemsToLoad.size() - 1);
@@ -393,7 +393,7 @@ public class HPRtree
   }
 
   private void swapItems(int[] values, int i, int j) {
-    Item tmpItemp = itemsToLoad.get(i);
+    Item<T> tmpItemp = itemsToLoad.get(i);
     itemsToLoad.set(i, itemsToLoad.get(j));
     itemsToLoad.set(j, tmpItemp);
 

@@ -25,7 +25,7 @@ import org.locationtech.jts.geom.Geometry;
  */
 class IndexedPointOnLineLocator implements PointOnGeometryLocator {
 
-  private Geometry inputGeom;
+  private final Geometry inputGeom;
 
   public IndexedPointOnLineLocator(Geometry geomLinear) {
     this.inputGeom = geomLinear;

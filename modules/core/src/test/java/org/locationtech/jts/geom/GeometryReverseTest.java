@@ -5,7 +5,7 @@ import test.jts.GeometryTestData;
 
 public class GeometryReverseTest  extends GeometryTestCase {
 
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) {
     junit.textui.TestRunner.run(GeometryReverseTest.class);
   }
 
@@ -19,7 +19,7 @@ public class GeometryReverseTest  extends GeometryTestCase {
     }
   }
 
-  private void checkReverse(final Geometry g) {
+  private static void checkReverse(final Geometry g) {
     int SRID = 123;
     g.setSRID(SRID );
 
@@ -29,21 +29,21 @@ public class GeometryReverseTest  extends GeometryTestCase {
 
     Geometry reverse = g.reverse();
 
-    assertTrue( g.getGeometryType() + ": Geometry types are not the same", g.getGeometryType() == reverse.getGeometryType());
+      assertSame(g.getGeometryType() + ": Geometry types are not the same", g.getGeometryType(), reverse.getGeometryType());
     assertEquals(g.getGeometryType() +": Geometry.getSRID() values are not the same", g.getSRID(), reverse.getSRID());
 
     assertTrue( g.getGeometryType() +": Sequences are not opposite", checkSequences(g, reverse) );
   }
 
-  private boolean checkSequences(Geometry g1, Geometry g2) {
+  private static boolean checkSequences(Geometry g1, Geometry g2) {
     int numGeometries = g1.getNumGeometries();
     if (numGeometries != g2.getNumGeometries())
       return false;
     for (int i = 0; i < numGeometries; i++)
     {
       Geometry gt1 = g1.getGeometryN(i);
-      int j = i; //g1 instanceof MultiLineString ? numGeometries - i - 1 : i;
-      Geometry gt2 = g2.getGeometryN(j);
+        //g1 instanceof MultiLineString ? numGeometries - i - 1 : i;
+        Geometry gt2 = g2.getGeometryN(i);
 
       if (gt1.getGeometryType() != gt2.getGeometryType())
         return false;
@@ -78,7 +78,7 @@ public class GeometryReverseTest  extends GeometryTestCase {
     return true;
   }
 
-  private boolean checkSequences(CoordinateSequence c1, CoordinateSequence c2) {
+  private static boolean checkSequences(CoordinateSequence c1, CoordinateSequence c2) {
 
     if (c1.size() != c2.size())
       return false;

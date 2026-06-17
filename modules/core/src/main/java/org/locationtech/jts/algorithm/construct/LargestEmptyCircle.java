@@ -152,12 +152,12 @@ public class LargestEmptyCircle {
     return lec.getRadiusLine();
   }
   
-  private Geometry obstacles;
-  private Geometry boundary;
-  private double tolerance;
+  private final Geometry obstacles;
+  private final Geometry boundary;
+  private final double tolerance;
 
-  private GeometryFactory factory;
-  private IndexedDistanceToPoint obstacleDistance;
+  private final GeometryFactory factory;
+  private final IndexedDistanceToPoint obstacleDistance;
   private IndexedPointInAreaLocator boundaryPtLocater;
   private IndexedFacetDistance boundaryDistance;
   private Envelope gridEnv;
@@ -248,9 +248,8 @@ public class LargestEmptyCircle {
    */
   public LineString getRadiusLine() {
     compute();
-    LineString radiusLine = factory.createLineString(
-        new Coordinate[] { centerPt.copy(), radiusPt.copy() });
-    return radiusLine;
+      return factory.createLineString(
+          new Coordinate[] { centerPt.copy(), radiusPt.copy() });
   }
   
   /**
@@ -269,8 +268,7 @@ public class LargestEmptyCircle {
       double boundaryDist = boundaryDistance.distance(p);
       return -boundaryDist;
     }
-    double dist = obstacleDistance.distance(p);
-    return dist;
+      return obstacleDistance.distance(p);
   }
 
   private double distanceToConstraints(double x, double y) {
@@ -400,8 +398,7 @@ public class LargestEmptyCircle {
      * is larger than the tolerance.
      */
     if (cell.isOutside()) {
-      boolean isOverlapSignificant = cell.getMaxDistance() > requiredTol;
-      return isOverlapSignificant;
+        return cell.getMaxDistance() > requiredTol;
     }
     
     /**
@@ -455,11 +452,11 @@ public class LargestEmptyCircle {
 
     private static final double SQRT2 = 1.4142135623730951;
 
-    private double x;
-    private double y;
-    private double hSide;
-    private double distance;
-    private double maxDist;
+    private final double x;
+    private final double y;
+    private final double hSide;
+    private final double distance;
+    private final double maxDist;
 
     Cell(double x, double y, double hSide, double distanceToConstraints) {
       this.x = x; // cell center x

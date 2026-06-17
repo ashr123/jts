@@ -34,15 +34,15 @@ public class CleanDuplicatePoints {
 
   public static Coordinate[] removeDuplicatePoints(Coordinate[] coord)
   {
-    List uniqueCoords = new ArrayList();
+    List<Coordinate> uniqueCoords = new ArrayList<>();
     Coordinate lastPt = null;
-    for (int i = 0; i < coord.length; i++) {
-      if (lastPt == null || ! lastPt.equals(coord[i])) {
-        lastPt = coord[i];
-        uniqueCoords.add(new Coordinate(lastPt));
+      for (Coordinate coordinate : coord) {
+          if (lastPt == null || !lastPt.equals(coordinate)) {
+              lastPt = coordinate;
+              uniqueCoords.add(new Coordinate(lastPt));
+          }
       }
-    }
-    return (Coordinate[]) uniqueCoords.toArray(new Coordinate[0]);
+    return uniqueCoords.toArray(new Coordinate[0]);
   }
 
   private GeometryFactory fact;
@@ -82,7 +82,7 @@ public class CleanDuplicatePoints {
   {
     Coordinate[] shellCoords = removeDuplicatePoints(poly.getExteriorRing().getCoordinates());
     LinearRing shell = fact.createLinearRing(shellCoords);
-    List holes = new ArrayList();
+    List<LinearRing> holes = new ArrayList<>();
     for (int i = 0; i < poly.getNumInteriorRing(); i++) {
       Coordinate[] holeCoords = removeDuplicatePoints(poly.getInteriorRingN(i).getCoordinates());
       holes.add(fact.createLinearRing(holeCoords));
@@ -92,7 +92,7 @@ public class CleanDuplicatePoints {
 
   private MultiPolygon clean(MultiPolygon g)
   {
-    List polys = new ArrayList();
+    List<Polygon> polys = new ArrayList<>();
     for (int i = 0; i < g.getNumGeometries(); i++) {
       Polygon poly = (Polygon) g.getGeometryN(i);
       polys.add(clean(poly));
@@ -101,7 +101,7 @@ public class CleanDuplicatePoints {
   }
   private MultiLineString clean(MultiLineString g)
   {
-    List lines = new ArrayList();
+    List<LineString> lines = new ArrayList<>();
     for (int i = 0; i < g.getNumGeometries(); i++) {
       LineString line = (LineString) g.getGeometryN(i);
       lines.add(clean(line));
@@ -110,7 +110,7 @@ public class CleanDuplicatePoints {
   }
   private GeometryCollection clean(GeometryCollection g)
   {
-    List geoms = new ArrayList();
+    List<Geometry> geoms = new ArrayList<>();
     for (int i = 0; i < g.getNumGeometries(); i++) {
       Geometry geom = g.getGeometryN(i);
       geoms.add(clean(geom));

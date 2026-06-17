@@ -33,8 +33,12 @@ import org.locationtech.jts.geom.Polygon;
  */
 public class GeometryFunctions 
 {
-	public static String lengthDescription = "Computes the length of perimeter of a Geometry";
-	public static double length(Geometry g)				{		return g.getLength();	}
+	public static final String lengthDescription = "Computes the length of perimeter of a Geometry";
+
+    private GeometryFunctions() {
+    }
+
+    public static double length(Geometry g)				{		return g.getLength();	}
   public static double area(Geometry g)         {   return g.getArea(); }
   public static double SRID(Geometry g)         {   return g.getSRID(); }
   
@@ -83,18 +87,15 @@ public class GeometryFunctions
 
   public static Geometry getPolygonHoles(Geometry geom)
   {
-    final List holePolys = new ArrayList();
-    geom.apply(new GeometryFilter() {
-
-      public void filter(Geometry geom) {
-        if (geom instanceof Polygon) {
-          Polygon poly = (Polygon) geom;
-          for (int i = 0; i < poly.getNumInteriorRing(); i++) {
-            Polygon hole = geom.getFactory().createPolygon(poly.getInteriorRingN(i), null);
-            holePolys.add(hole);
-          }
+    final List<Polygon> holePolys = new ArrayList<>();
+    geom.apply((GeometryFilter) geom1 -> {
+      if (geom1 instanceof Polygon) {
+        Polygon poly = (Polygon) geom1;
+        for (int i = 0; i < poly.getNumInteriorRing(); i++) {
+          Polygon hole = geom1.getFactory().createPolygon(poly.getInteriorRingN(i), null);
+          holePolys.add(hole);
         }
-      }      
+      }
     });
     return geom.getFactory().buildGeometry(holePolys);
   }
@@ -102,8 +103,7 @@ public class GeometryFunctions
 	public static Geometry getPolygonHoleN(Geometry g, int i)
 	{
 		if (g instanceof Polygon) {
-			LinearRing ring = ((Polygon) g).getInteriorRingN(i);
-			return ring;
+            return ((Polygon) g).getInteriorRingN(i);
 		}
 		return null;
 	}
@@ -118,7 +118,7 @@ public class GeometryFunctions
 	  //TODO: support adding to MultiPolygon
 	  Polygon poly = (Polygon) g;
 	  LinearRing shell = poly.getExteriorRing();
-	  List<LinearRing> holes = new ArrayList<LinearRing>();
+	  List<LinearRing> holes = new ArrayList<>();
 	  
     for (int i = 0; i < poly.getNumInteriorRing(); i++) {
       holes.add(poly.getInteriorRingN(i));

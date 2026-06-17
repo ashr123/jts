@@ -27,16 +27,16 @@ import junit.textui.TestRunner;
 public class SimpleGeometryPrecisionReducerTest
     extends TestCase
 {
-  private PrecisionModel pmFloat = new PrecisionModel();
-  private PrecisionModel pmFixed1 = new PrecisionModel(1);
-  private SimpleGeometryPrecisionReducer reducer = new SimpleGeometryPrecisionReducer(pmFixed1);
-  private SimpleGeometryPrecisionReducer reducerKeepCollapse
+  private final PrecisionModel pmFloat = new PrecisionModel();
+  private final PrecisionModel pmFixed1 = new PrecisionModel(1);
+  private final SimpleGeometryPrecisionReducer reducer = new SimpleGeometryPrecisionReducer(pmFixed1);
+  private final SimpleGeometryPrecisionReducer reducerKeepCollapse
       = new SimpleGeometryPrecisionReducer(pmFixed1);
 
-  private GeometryFactory gfFloat = new GeometryFactory(pmFloat, 0);
-  WKTReader reader = new WKTReader(gfFloat);
+  private final GeometryFactory gfFloat = new GeometryFactory(pmFloat, 0);
+  final WKTReader reader = new WKTReader(gfFloat);
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(SimpleGeometryPrecisionReducerTest.class);
   }
 

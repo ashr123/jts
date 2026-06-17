@@ -12,7 +12,6 @@
 package org.locationtech.jts.operation.union;
 
 import java.util.Arrays;
-import java.util.Comparator;
 
 /**
  * A data structure that represents a partition of a set
@@ -35,8 +34,8 @@ import java.util.Comparator;
  */
 public class DisjointSets 
 {
-  private int[] parent;
-  private int[] setSize;
+  private final int[] parent;
+  private final int[] setSize;
   private int numSets;
 
   /**
@@ -146,16 +145,13 @@ public class DisjointSets
     // can only use comparator on Integer array
     Integer[] itemsSort = arrayOfIntegerIndex(parent.length);
     // sort items by their subset root
-    Arrays.sort(itemsSort, new Comparator<Integer>() {
-      @Override
-      public int compare(Integer i1, Integer i2) {
-        int root1 = findRoot(i1);
-        int root2 = findRoot(i2);
-        if (root1 < root2) return -1;
-        if (root1 > root2) return 1;
-        // in same set - sort by value
-        return Integer.compare(i1,  i2);
-      }
+    Arrays.sort(itemsSort, (i1, i2) -> {
+      int root1 = findRoot(i1);
+      int root2 = findRoot(i2);
+      if (root1 < root2) return -1;
+      if (root1 > root2) return 1;
+      // in same set - sort by value
+      return Integer.compare(i1,  i2);
     });
     return itemsSort;
   }
@@ -178,9 +174,7 @@ public class DisjointSets
 
   private static int[] arrayOfValue(int size, int val) {
     int[] arr = new int[size];
-    for (int i = 0; i < arr.length; i++) {
-      arr[i] = val;
-    }
+      Arrays.fill(arr, val);
     return arr;
   }
   
@@ -193,10 +187,10 @@ public class DisjointSets
    * This means that the item ordering is stable; that is,
    * the items have the same order they did in the original set.
    */
-  public class Subsets {
-    private Integer[] item;
-    private int[] size;
-    private int[] start;
+  public static class Subsets {
+    private final Integer[] item;
+    private final int[] size;
+    private final int[] start;
     
     Subsets() {
       this.item = null;

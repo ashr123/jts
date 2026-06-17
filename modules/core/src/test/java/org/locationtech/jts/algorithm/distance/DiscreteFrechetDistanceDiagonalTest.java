@@ -40,7 +40,7 @@ public class DiscreteFrechetDistanceDiagonalTest extends TestCase {
     checkDiagonal(2,6, xy(0,0, 0,1, 0,2, 1,3, 1,4, 1,5));
   }
 
-  private void checkDiagonal(int cols, int rows, int[] xyExpected) {
+  private static void checkDiagonal(int cols, int rows, int[] xyExpected) {
     int[] xy = DiscreteFrechetDistance.bresenhamDiagonal(cols, rows);
     assertEquals(xyExpected.length, xy.length);
     for (int i = 0 ; i < xy.length; i++) {

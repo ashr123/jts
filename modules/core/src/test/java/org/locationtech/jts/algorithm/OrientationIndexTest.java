@@ -27,10 +27,10 @@ public class OrientationIndexTest
     extends TestCase
 {
 
-  private static WKTReader reader = new WKTReader();
+  private static final WKTReader reader = new WKTReader();
   //private CGAlgorithms rcga = new CGAlgorithms();
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(OrientationIndexTest.class);
   }
 
@@ -41,8 +41,7 @@ public class OrientationIndexTest
     assertTrue(isAllOrientationsEqual(getCoordinates("LINESTRING ( 0 0, 0 1, 1 1)")));
   }
   
-  public void testCCW2() throws Exception
-  {
+  public void testCCW2() {
     // experimental case - can't make it fail
     Coordinate[] pts2 = {
       new Coordinate(1.0000000000004998, -7.989685402102996),
@@ -52,8 +51,7 @@ public class OrientationIndexTest
     assertTrue(isAllOrientationsEqual(pts2));
   }
   
-  public void testOrientationIndexRobust() throws Exception 
-  { 
+  public void testOrientationIndexRobust() {
     Coordinate p0 = new Coordinate(219.3649559090992, 140.84159161824724); 
     Coordinate p1 = new Coordinate(168.9018919682399, -5.713787599646864); 
     Coordinate p = new Coordinate(186.80814046338352, 46.28973405831556); 

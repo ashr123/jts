@@ -77,10 +77,10 @@ class PreparedPolygonIntersects extends PreparedPolygonPredicate {
     /**
      * If any segments intersect, result is true
      */
-    List lineSegStr = SegmentStringUtil.extractSegmentStrings(geom);
-    // only request intersection finder if there are segments 
+    List<org.locationtech.jts.noding.NodedSegmentString> lineSegStr = SegmentStringUtil.extractSegmentStrings(geom);
+    // only request intersection finder if there are segments
     // (i.e. NOT for point inputs)
-    if (lineSegStr.size() > 0) {
+    if (!lineSegStr.isEmpty()) {
       boolean segsIntersect = prepPoly.getIntersectionFinder().intersects(
           lineSegStr);
       if (segsIntersect)
@@ -94,10 +94,8 @@ class PreparedPolygonIntersects extends PreparedPolygonPredicate {
      */
     if (geom.getDimension() == 2) {
       // TODO: generalize this to handle GeometryCollections
-      boolean isPrepGeomInArea = isAnyTargetComponentInAreaTest(geom,
-          prepPoly.getRepresentativePoints());
-      if (isPrepGeomInArea)
-        return true;
+        return isAnyTargetComponentInAreaTest(geom,
+            prepPoly.getRepresentativePoints());
     }
 
     return false;

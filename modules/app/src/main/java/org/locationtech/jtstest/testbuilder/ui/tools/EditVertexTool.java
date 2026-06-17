@@ -113,13 +113,13 @@ extends IndicatorTool
   	Point2D currentIndicatorLoc = toView(currentVertexLoc);
   	ind.add(getIndicatorCircle(currentIndicatorLoc));
   	if (adjVertices != null) {
-  		for (int i = 0; i < adjVertices.length; i++) {
-  	    GeneralPath line = new GeneralPath();
-  	    line.moveTo((float) currentIndicatorLoc.getX(), (float) currentIndicatorLoc.getY());
-  	    Point2D pt = toView(adjVertices[i]);
-  	    line.lineTo((float) pt.getX(), (float) pt.getY());
-  	    ind.add(line);
-  		}
+        for (Coordinate adjVertex : adjVertices) {
+            GeneralPath line = new GeneralPath();
+            line.moveTo((float) currentIndicatorLoc.getX(), (float) currentIndicatorLoc.getY());
+            Point2D pt = toView(adjVertex);
+            line.lineTo((float) pt.getX(), (float) pt.getY());
+            ind.add(line);
+        }
   	}
   	return ind;
   	
@@ -128,7 +128,7 @@ extends IndicatorTool
 
   private static final double IND_CIRCLE_RADIUS = 10.0;
 
-  protected Shape getIndicatorCircle(Point2D p) {
+  protected static Shape getIndicatorCircle(Point2D p) {
     return new Ellipse2D.Double(p.getX() - (IND_CIRCLE_RADIUS / 2), p.getY()
         - (IND_CIRCLE_RADIUS / 2), IND_CIRCLE_RADIUS, IND_CIRCLE_RADIUS);
   }

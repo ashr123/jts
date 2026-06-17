@@ -53,12 +53,12 @@ class Edge {
     if (pts[0].equals2D(pts[1])) return true;
     // TODO: is pts > 2 with equal points ever expected?
     if (pts.length > 2) {
-      if ( pts[ pts.length-1 ].equals2D(pts[ pts.length - 2 ])) return true;
+        return pts[pts.length - 1].equals2D(pts[pts.length - 2]);
     }
     return false;
   }
   
-  private Coordinate[] pts;
+  private final Coordinate[] pts;
   
   private int aDim = OverlayLabel.DIM_UNKNOWN;
   private int aDepthDelta = 0;
@@ -124,9 +124,7 @@ class Edge {
     // assert: the edges match (have the same coordinates up to direction)
     if (! getCoordinate(0).equals2D(edge2.getCoordinate(0)))
       return false;
-    if (! getCoordinate(1).equals2D(edge2.getCoordinate(1)))
-      return false;
-    return true;
+      return getCoordinate(1).equals2D(edge2.getCoordinate(1));
   }
   
   public OverlayLabel createLabel() {
@@ -228,9 +226,7 @@ class Edge {
   }
 
   private static int delSign(int depthDel) {
-    if(depthDel > 0) return 1;
-    if (depthDel < 0) return -1;
-    return 0;
+      return Integer.compare(depthDel, 0);
   }
 
   private void copyInfo(EdgeSourceInfo info) {
@@ -305,10 +301,9 @@ class Edge {
     String dirPtStr = (pts.length > 2)
         ? ", " + WKTWriter.format(pts[1])
             : "";
-    String ptsStr = WKTWriter.format(orig)
-        + dirPtStr
-        + " .. " + WKTWriter.format(dest);
-    return ptsStr;
+      return WKTWriter.format(orig)
+          + dirPtStr
+          + " .. " + WKTWriter.format(dest);
   }
 
   public static String infoString(int index, int dim, boolean isHole, int depthDelta) {
@@ -316,7 +311,7 @@ class Edge {
         (index == 0 ? "A:" : "B:")
         + OverlayLabel.dimensionSymbol(dim)
         + ringRoleSymbol( dim, isHole )
-        + Integer.toString(depthDelta);  // force to string
+        + depthDelta;  // force to string
   }
   
   private static String ringRoleSymbol(int dim, boolean isHole) {

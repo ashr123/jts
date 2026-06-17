@@ -18,7 +18,6 @@ import org.locationtech.jts.algorithm.Orientation;
 import org.locationtech.jts.algorithm.locate.IndexedPointInAreaLocator;
 import org.locationtech.jts.algorithm.locate.PointOnGeometryLocator;
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.CoordinateArrays;
 import org.locationtech.jts.geom.CoordinateList;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -29,13 +28,13 @@ import org.locationtech.jts.geom.TopologyException;
 
 class OverlayEdgeRing {
   
-  private OverlayEdge startEdge;
+  private final OverlayEdge startEdge;
   private LinearRing ring;
   private boolean isHole;
-  private Coordinate[] ringPts;
+  private final Coordinate[] ringPts;
   private IndexedPointInAreaLocator locator;
   private OverlayEdgeRing shell;
-  private List<OverlayEdgeRing> holes = new ArrayList<OverlayEdgeRing>(); // a list of EdgeRings which are holes in this EdgeRing
+  private final List<OverlayEdgeRing> holes = new ArrayList<>(); // a list of EdgeRings which are holes in this EdgeRing
 
   public OverlayEdgeRing(OverlayEdge start, GeometryFactory geometryFactory) {
     startEdge = start;
@@ -228,11 +227,10 @@ class OverlayEdgeRing {
     if (holes != null) {
       holeLR = new LinearRing[holes.size()];
       for (int i = 0; i < holes.size(); i++) {
-        holeLR[i] = (LinearRing) holes.get(i).getRing();
+        holeLR[i] = holes.get(i).getRing();
       }
     }
-    Polygon poly = factory.createPolygon(ring, holeLR);
-    return poly;
+      return factory.createPolygon(ring, holeLR);
   }
 
   public OverlayEdge getEdge() {

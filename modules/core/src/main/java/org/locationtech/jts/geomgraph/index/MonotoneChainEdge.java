@@ -35,17 +35,16 @@ import org.locationtech.jts.geomgraph.Edge;
  */
 public class MonotoneChainEdge {
 
-  Edge e;
-  Coordinate[] pts; // cache a reference to the coord array, for efficiency
+  final Edge e;
+  final Coordinate[] pts; // cache a reference to the coord array, for efficiency
   // the lists of start/end indexes of the monotone chains.
   // Includes the end point of the edge as a sentinel
-  int[] startIndex;
+  final int[] startIndex;
 
   public MonotoneChainEdge(Edge e) {
     this.e = e;
     pts = e.getCoordinates();
-    MonotoneChainIndexer mcb = new MonotoneChainIndexer();
-    startIndex = mcb.getChainStartIndices(pts);
+      startIndex = MonotoneChainIndexer.getChainStartIndices(pts);
   }
 
   public Coordinate[] getCoordinates() { return pts; }
@@ -55,13 +54,13 @@ public class MonotoneChainEdge {
   {
     double x1 = pts[startIndex[chainIndex]].x;
     double x2 = pts[startIndex[chainIndex + 1]].x;
-    return x1 < x2 ? x1 : x2;
+    return Math.min(x1, x2);
   }
   public double getMaxX(int chainIndex)
   {
     double x1 = pts[startIndex[chainIndex]].x;
     double x2 = pts[startIndex[chainIndex + 1]].x;
-    return x1 > x2 ? x1 : x2;
+    return Math.max(x1, x2);
   }
 
   public void computeIntersects(MonotoneChainEdge mce, SegmentIntersector si)

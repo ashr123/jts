@@ -22,8 +22,11 @@ import org.locationtech.jts.operation.union.UnaryUnionOp;
 import org.locationtech.jts.operation.union.UnionStrategy;
 
 public class OverlayNGRobustFunctions {
-  
-  private static Geometry overlay(Geometry a, Geometry b, int opcode) {
+
+    private OverlayNGRobustFunctions() {
+    }
+
+    private static Geometry overlay(Geometry a, Geometry b, int opcode) {
     return OverlayNGRobust.overlay(a, b, opcode );
   }
   

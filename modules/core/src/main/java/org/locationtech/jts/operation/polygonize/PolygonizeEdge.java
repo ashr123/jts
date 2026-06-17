@@ -22,7 +22,7 @@ import org.locationtech.jts.planargraph.Edge;
 class PolygonizeEdge
     extends Edge
 {
-  private LineString line;
+  private final LineString line;
 
   public PolygonizeEdge(LineString line)
   {

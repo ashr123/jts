@@ -37,4 +37,6 @@ public class GeoJsonConstants {
   public static final String NAME_FEATURE = "Feature";
   public static final String NAME_FEATURECOLLECTION = "FeatureCollection";
 
+    private GeoJsonConstants() {
+    }
 }

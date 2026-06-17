@@ -29,8 +29,11 @@ import org.locationtech.jtstest.geomfunction.Metadata;
 
 public class OverlayNGSRFunctions {
 
-  public static Geometry intersection(Geometry a, Geometry b, 
-      @Metadata(title="Grid Scale") double scaleFactor) {
+    private OverlayNGSRFunctions() {
+    }
+
+    public static Geometry intersection(Geometry a, Geometry b,
+                                        @Metadata(title="Grid Scale") double scaleFactor) {
     return OverlayNG.overlay(a, b, INTERSECTION, new PrecisionModel(scaleFactor));
   }
   
@@ -69,12 +72,11 @@ public class OverlayNGSRFunctions {
      * is a non-overlapping polygonal coverage!
      */
     Geometry homoGeom = extractHomo(a);
-    Geometry reduced = PrecisionReducer.reducePrecision(homoGeom, new PrecisionModel(scaleFactor));
-    return reduced;
+      return PrecisionReducer.reducePrecision(homoGeom, new PrecisionModel(scaleFactor));
     /*
     // Not sure why this is needed? 
     // Should be part of precision reducer, or Overlay (strict mode)
-    List components = null;
+    List<? extends Geometry> components = null;
     switch (a.getDimension()) {
       case 2: 
         components = PolygonExtracter.getPolygons(union);
@@ -96,7 +98,7 @@ public class OverlayNGSRFunctions {
    */
   static Geometry extractHomo(Geometry geom) {
     int resultDimension = geom.getDimension();
-    List components = null;
+    List<? extends Geometry> components = null;
     switch (resultDimension) {
     case 2: 
       components = PolygonExtracter.getPolygons(geom);
@@ -105,8 +107,7 @@ public class OverlayNGSRFunctions {
       components = LineStringExtracter.getLines(geom);
       break;
     }
-    Geometry result = geom.getFactory().buildGeometry(components);
-    return result;
+      return geom.getFactory().buildGeometry(components);
   }
   
 }

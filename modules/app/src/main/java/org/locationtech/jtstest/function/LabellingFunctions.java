@@ -19,7 +19,10 @@ import org.locationtech.jtstest.testbuilder.geom.ConstrainedInteriorPoint;
 
 public class LabellingFunctions {
 
-  public static Geometry labelPoint(Geometry g) {
+    private LabellingFunctions() {
+    }
+
+    public static Geometry labelPoint(Geometry g) {
     Coordinate pt = ConstrainedInteriorPoint.getCoordinate((Polygon) g);
     return g.getFactory().createPoint(pt);
   }

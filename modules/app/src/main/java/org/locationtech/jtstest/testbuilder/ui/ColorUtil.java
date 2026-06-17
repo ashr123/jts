@@ -19,7 +19,10 @@ import org.locationtech.jts.math.MathUtil;
 
 public class ColorUtil {
 
-  public static Color gray(int grayVal)
+    private ColorUtil() {
+    }
+
+    public static Color gray(int grayVal)
   {
     return new Color(grayVal, grayVal, grayVal);
   }
@@ -55,8 +58,8 @@ public class ColorUtil {
   {
     float[] hsb = new float[3];
     Color.RGBtoHSB(clr.getRed(), clr.getGreen(), clr.getBlue(), hsb);
-    hsb[1] = (float) MathUtil.clamp(saturation, 0, 1);;
-    return Color.getHSBColor(hsb[0], hsb[1], hsb[2]);
+    hsb[1] = (float) MathUtil.clamp(saturation, 0, 1);
+      return Color.getHSBColor(hsb[0], hsb[1], hsb[2]);
   }
 
   public static float getHue(Color clr) {

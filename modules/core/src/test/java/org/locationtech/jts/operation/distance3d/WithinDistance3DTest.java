@@ -24,9 +24,9 @@ import junit.textui.TestRunner;
 public class WithinDistance3DTest extends TestCase 
 {
 	static GeometryFactory geomFact = new GeometryFactory();
-	static WKTReader rdr = new WKTReader();
+	static final WKTReader rdr = new WKTReader();
 	
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		TestRunner.run(WithinDistance3DTest.class);
 	}
 
@@ -185,7 +185,7 @@ public class WithinDistance3DTest extends TestCase
 				0);				
 	}
 	
-	String polyHoleFlat = "POLYGON ((100 200 0, 200 200 0, 200 100 0, 100 100 0, 100 200 0), (120 180 0, 180 180 0, 180 120 0, 120 120 0, 120 180 0))";
+	static final String polyHoleFlat = "POLYGON ((100 200 0, 200 200 0, 200 100 0, 100 100 0, 100 200 0), (120 180 0, 180 180 0, 180 120 0, 120 120 0, 120 180 0))";
 
 	public void testLinePolygonHoleFlat()
 	{
@@ -239,12 +239,12 @@ public class WithinDistance3DTest extends TestCase
 	// Convenience methods
 	//==========================================================
 	
-	private void checkWithinDistance(String wkt1, String wkt2, double distance)
+	private static void checkWithinDistance(String wkt1, String wkt2, double distance)
 	{
 		checkWithinDistance(wkt1, wkt2, distance, true);
 	}
 	
-	private void checkWithinDistance(String wkt1, String wkt2, double distance, boolean expectedResult)
+	private static void checkWithinDistance(String wkt1, String wkt2, double distance, boolean expectedResult)
 	{
 		Geometry g1;
 		Geometry g2;
@@ -263,7 +263,7 @@ public class WithinDistance3DTest extends TestCase
 		checkWithinDistance(g2, g1, distance, expectedResult);
 	}
 
-	private void checkWithinDistance(Geometry g1, Geometry g2, double distance, boolean expectedResult)
+	private static void checkWithinDistance(Geometry g1, Geometry g2, double distance, boolean expectedResult)
 	{
 		boolean isWithinDist = Distance3DOp.isWithinDistance(g1, g2, distance);
 		assertEquals(expectedResult, isWithinDist);

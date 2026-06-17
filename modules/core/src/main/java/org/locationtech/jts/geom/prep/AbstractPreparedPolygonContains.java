@@ -11,14 +11,13 @@
  */
 package org.locationtech.jts.geom.prep;
 
-import java.util.List;
-
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.Polygonal;
 import org.locationtech.jts.noding.SegmentIntersectionDetector;
 import org.locationtech.jts.noding.SegmentStringUtil;
 
+import java.util.List;
 
 
 /**
@@ -149,7 +148,7 @@ abstract class AbstractPreparedPolygonContains
 		if (geom instanceof Polygonal) {
 			// TODO: generalize this to handle GeometryCollections
 			boolean isTargetInTestArea = isAnyTargetComponentInAreaTest(geom, prepPoly.getRepresentativePoints());
-			if (isTargetInTestArea) return false;
+            return !isTargetInTestArea;
 		}
 		return true;
 	}
@@ -180,8 +179,7 @@ abstract class AbstractPreparedPolygonContains
      * which implies not contained.
      */
     if (requireSomePointInInterior) {
-      boolean isAnyInTargetInterior = isAnyTestPointInTargetInterior(geom);
-      return isAnyInTargetInterior;
+        return isAnyTestPointInTargetInterior(geom);
     }
     return true;
   }
@@ -203,30 +201,28 @@ abstract class AbstractPreparedPolygonContains
      * a proper intersection implies not contained 
      * (due to the Epsilon-Neighbourhood Exterior Intersection condition) 
      */
-		if (isSingleShell(prepPoly.getGeometry())) return true;
-		return false;
-	}
+        return isSingleShell(prepPoly.getGeometry());
+    }
 	
   /**
    * Tests whether a geometry consists of a single polygon with no holes.
    *  
    * @return true if the geometry is a single polygon with no holes
    */
-	private boolean isSingleShell(Geometry geom)
+	private static boolean isSingleShell(Geometry geom)
 	{
     // handles single-element MultiPolygons, as well as Polygons
 		if (geom.getNumGeometries() != 1) return false;
 		
 		Polygon poly = (Polygon) geom.getGeometryN(0);
 		int numHoles = poly.getNumInteriorRing();
-		if (numHoles == 0) return true;
-		return false;
-	}
+        return numHoles == 0;
+    }
 	
 	private void findAndClassifyIntersections(Geometry geom)
 	{
-    List lineSegStr = SegmentStringUtil.extractSegmentStrings(geom);
-    
+    List<org.locationtech.jts.noding.NodedSegmentString> lineSegStr = SegmentStringUtil.extractSegmentStrings(geom);
+
 		SegmentIntersectionDetector intDetector = new SegmentIntersectionDetector();
 		intDetector.setFindAllIntersectionTypes(true);
 		prepPoly.getIntersectionFinder().intersects(lineSegStr, intDetector);

@@ -17,7 +17,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jtstest.testbuilder.ui.Viewport;
 
 public class StyleGroup implements Style {
-  private Style[] styles;
+  private final Style[] styles;
 
   public StyleGroup(Style ... styles) {
     this.styles = styles;

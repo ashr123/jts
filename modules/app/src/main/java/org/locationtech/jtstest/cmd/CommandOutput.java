@@ -18,10 +18,9 @@ import java.io.PrintWriter;
 
 public class CommandOutput {
   
-  private StringBuilder outputBuffer = new StringBuilder();
+  private final StringBuilder outputBuffer = new StringBuilder();
   private boolean isCapture = false;
-  private String outputFilename;
-  private PrintWriter outWriter;
+    private PrintWriter outWriter;
   
   public CommandOutput() {
     outWriter = new PrintWriter(System.out, true);
@@ -32,8 +31,7 @@ public class CommandOutput {
   }
   
   public CommandOutput(String outputFile) {
-    this.outputFilename = outputFile;
-    File file = new File(outputFile);
+      File file = new File(outputFile);
     FileWriter fw = null;
     try {
       fw = new FileWriter(file);

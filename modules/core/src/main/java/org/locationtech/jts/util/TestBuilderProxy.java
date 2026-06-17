@@ -37,7 +37,10 @@ public class TestBuilderProxy {
   private static Method methodShowIndicator;
   private static Method methodShowIndicatorLine;
 
-  private static void init() {
+    private TestBuilderProxy() {
+    }
+
+    private static void init() {
     if (tbClass != null) return;
     try {
       tbClass = TestBuilderProxy.class.getClassLoader().loadClass(CLASS_FUNCTIONS_UTIL);

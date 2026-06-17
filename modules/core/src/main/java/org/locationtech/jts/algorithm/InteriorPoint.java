@@ -45,8 +45,11 @@ import org.locationtech.jts.geom.GeometryFilter;
  * @see LargestEmptyCircle
  */
 public class InteriorPoint {
-  
-  /**
+
+    private InteriorPoint() {
+    }
+
+    /**
    * Computes a location of an interior point in a {@link Geometry}.
    * Handles all geometry types.
    * 

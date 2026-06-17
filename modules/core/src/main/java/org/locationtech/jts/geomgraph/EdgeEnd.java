@@ -30,9 +30,9 @@ import org.locationtech.jts.util.Assert;
  * @version 1.7
  */
 public class EdgeEnd
-  implements Comparable
+  implements Comparable<EdgeEnd>
 {
-  protected Edge edge;  // the parent edge of this edge end
+  protected final Edge edge;  // the parent edge of this edge end
   protected Label label;
 
   private Node node;          // the node this edge end originates at
@@ -74,9 +74,8 @@ public class EdgeEnd
   public void setNode(Node node) { this.node = node; }
   public Node getNode() { return node; }
 
-  public int compareTo(Object obj)
+  public int compareTo(EdgeEnd e)
   {
-      EdgeEnd e = (EdgeEnd) obj;
       return compareDirection(e);
   }
   /**

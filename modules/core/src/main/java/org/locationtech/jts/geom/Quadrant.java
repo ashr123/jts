@@ -29,8 +29,11 @@ public class Quadrant
 	public static final int NW = 1;
 	public static final int SW = 2;
 	public static final int SE = 3;
-	
-  /**
+
+    private Quadrant() {
+    }
+
+    /**
    * Returns the quadrant of a directed line segment (specified as x and y
    * displacements, which cannot both be 0).
    * 
@@ -86,8 +89,7 @@ public class Quadrant
     if (quad1 == quad2) return false;
     int diff = (quad1 - quad2 + 4) % 4;
     // if quadrants are not adjacent, they are opposite
-    if (diff == 2) return true;
-    return false;
+      return diff == 2;
   }
 
   /** 
@@ -103,8 +105,8 @@ public class Quadrant
     // if quadrants are not adjacent, they do not share a common halfplane
     if (diff == 2) return -1;
     //
-    int min = (quad1 < quad2) ? quad1 : quad2;
-    int max = (quad1 > quad2) ? quad1 : quad2;
+    int min = Math.min(quad1, quad2);
+    int max = Math.max(quad1, quad2);
     // for this one case, the righthand plane is NOT the minimum index;
     if (min == 0 && max == 3) return 3;
     // in general, the halfplane index is the minimum of the two adjacent quadrants

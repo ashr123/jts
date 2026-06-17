@@ -34,7 +34,7 @@ import org.locationtech.jts.util.Debug;
  */
 public class BufferResultValidator 
 {
-  private static boolean VERBOSE = false;
+  private static final boolean VERBOSE = false;
   
 	/**
 	 * Maximum allowable fraction of buffer distance the 
@@ -46,9 +46,7 @@ public class BufferResultValidator
   public static boolean isValid(Geometry g, double distance, Geometry result)
   {
   	BufferResultValidator validator = new BufferResultValidator(g, distance, result);
-    if (validator.isValid())
-    	return true;
-    return false;
+      return validator.isValid();
   }
 
   /**
@@ -69,9 +67,9 @@ public class BufferResultValidator
     return null;
   }
 
-  private Geometry input;
-  private double distance;
-  private Geometry result;
+  private final Geometry input;
+  private final double distance;
+  private final Geometry result;
   private boolean isValid = true;
   private String errorMsg = null;
   private Coordinate errorLocation = null;

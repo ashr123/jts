@@ -59,8 +59,7 @@ public class Interval {
 
   public boolean overlaps(double min, double max)
   {
-    if (this.min > max || this.max < min) return false;
-    return true;
+      return !(this.min > max) && !(this.max < min);
   }
 
   public boolean contains(Interval interval)

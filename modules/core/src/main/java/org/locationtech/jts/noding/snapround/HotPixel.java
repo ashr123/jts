@@ -46,14 +46,14 @@ public class HotPixel
   
   private static final double TOLERANCE = 0.5;
 
-  private Coordinate originalPt;
-  private double scaleFactor;
+  private final Coordinate originalPt;
+  private final double scaleFactor;
   
   /**
    * The scaled ordinates of the hot pixel point
    */
-  private double hpx;
-  private double hpy;
+  private final double hpx;
+  private final double hpy;
   
   /**
    * Indicates if this hot pixel must be a node in the output.
@@ -160,8 +160,7 @@ public class HotPixel
     // check Top side
     if (y >= hpy + TOLERANCE) return false;
     // check Bottom side
-    if (y < hpy - TOLERANCE) return false;
-    return true;
+      return !(y < hpy - TOLERANCE);
   }
 
   /**
@@ -248,17 +247,15 @@ public class HotPixel
     int orientUL = CGAlgorithmsDD.orientationIndex(px, py, qx, qy, minx, maxy);
     if (orientUL == 0) {
       // upward segment does not intersect pixel interior
-      if (py < qy) return false;
+        return !(py < qy);
       // downward segment must intersect pixel interior
-      return true;
     }
     
     int orientUR = CGAlgorithmsDD.orientationIndex(px, py, qx, qy, maxx, maxy);
     if (orientUR == 0) {
       // downward segment does not intersect pixel interior
-      if (py > qy) return false;
+        return !(py > qy);
       // upward segment must intersect pixel interior
-      return true;
     }
     //--- check crossing Top side 
     if (orientUL != orientUR) {
@@ -278,9 +275,8 @@ public class HotPixel
     int orientLR = CGAlgorithmsDD.orientationIndex(px, py, qx, qy, maxx, miny);
     if (orientLR == 0) {
       // upward segment does not intersect pixel interior
-      if (py < qy) return false;
+        return !(py < qy);
       // downward segment must intersect pixel interior
-      return true;
     }
 
     //--- check crossing Bottom side
@@ -288,12 +284,9 @@ public class HotPixel
       return true;
     }
     //--- check crossing Right side
-    if (orientLR != orientUR) {
-      return true;
-    }
+      return orientLR != orientUR;
 
     // segment does not intersect pixel
-    return false;
   }
   
   private static final int UPPER_RIGHT = 0;
@@ -334,9 +327,7 @@ public class HotPixel
     li.computeIntersection(p0, p1, corner[2], corner[3]);
     if (li.hasIntersection()) return true;
     li.computeIntersection(p0, p1, corner[3], corner[0]);
-    if (li.hasIntersection()) return true;
-
-    return false;
+      return li.hasIntersection();
   }
   
   public String toString() {

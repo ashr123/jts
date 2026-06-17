@@ -118,7 +118,7 @@ public class CGAlgorithms
     
   }
 
-  public CGAlgorithms()
+  private CGAlgorithms()
   {
   }
 
@@ -383,11 +383,7 @@ public class CGAlgorithms
      * 
      * Then the distance from C to P = |s|*L.
      */
-    double len2 = (B.x - A.x) * (B.x - A.x) + (B.y - A.y) * (B.y - A.y);
-    double s = ((A.y - p.y) * (B.x - A.x) - (A.x - p.x) * (B.y - A.y))
-        / len2;
-
-    return Math.abs(s) * Math.sqrt(len2);
+      return Distance.pointToLinePerpendicular(p, A, B);
   }
 
   /**

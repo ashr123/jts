@@ -37,7 +37,7 @@ public class WKBHexFileReader
 {
 	private File file = null;
   private Reader reader;
-	private WKBReader wkbReader;
+	private final WKBReader wkbReader;
 	private int count = 0;
 	private int limit = -1;
 	private int offset = 0;
@@ -107,8 +107,8 @@ public class WKBHexFileReader
 	 * @throws IOException if an I/O exception was encountered
 	 * @throws ParseException if an error occurred reading a geometry
 	 */
-	public List read() 
-	throws IOException, ParseException 
+	public List<Geometry> read()
+	throws IOException, ParseException
 	{
     // do this here so that constructors don't throw exceptions
     if (file != null)
@@ -116,23 +116,20 @@ public class WKBHexFileReader
     
 		count = 0;
 		try {
-			BufferedReader bufferedReader = new BufferedReader(reader);
-			try {
-				return read(bufferedReader);
-			} finally {
-				bufferedReader.close();
-			}
+            try (BufferedReader bufferedReader = new BufferedReader(reader)) {
+                return read(bufferedReader);
+            }
 		} finally {
 			reader.close();
 		}
 	}
 	
-	private List read(BufferedReader bufferedReader) throws IOException,
+	private List<Geometry> read(BufferedReader bufferedReader) throws IOException,
 			ParseException {
-		List geoms = new ArrayList();
+		List<Geometry> geoms = new ArrayList<>();
 		while (! isAtEndOfFile(bufferedReader) && ! isAtLimit(geoms)) {
 		  String line = bufferedReader.readLine().trim();
-		  if (line.length() == 0) 
+		  if (line.isEmpty())
 		    continue;
 			Geometry g = wkbReader.read(WKBReader.hexToBytes(line));
 			if (count >= offset)
@@ -142,19 +139,18 @@ public class WKBHexFileReader
 		return geoms;
 	}
 	
-	private boolean isAtLimit(List geoms)
+	private boolean isAtLimit(List<? extends Geometry> geoms)
 	{
 		if (limit < 0) return false;
-		if (geoms.size() < limit) return false;
-		return true;
-	}
+        return geoms.size() >= limit;
+    }
 	
   private static final int MAX_LOOKAHEAD = 1000;
   
   /**
 	 * Tests if reader is at EOF.
 	 */
-	private boolean isAtEndOfFile(BufferedReader bufferedReader)
+	private static boolean isAtEndOfFile(BufferedReader bufferedReader)
 			throws IOException 
 			{
 		bufferedReader.mark(MAX_LOOKAHEAD);

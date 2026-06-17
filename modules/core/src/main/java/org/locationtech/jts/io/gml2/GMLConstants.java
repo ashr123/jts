@@ -50,4 +50,7 @@ final public class GMLConstants{
 	  public static final String GML_COORD_X = "X";
 	  public static final String GML_COORD_Y = "Y";
 	  public static final String GML_COORD_Z = "Z";
+
+    private GMLConstants() {
+    }
 }

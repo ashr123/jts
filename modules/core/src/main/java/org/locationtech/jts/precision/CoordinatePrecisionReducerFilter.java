@@ -31,7 +31,7 @@ import org.locationtech.jts.geom.PrecisionModel;
 public class CoordinatePrecisionReducerFilter
 	implements CoordinateSequenceFilter
 {
-	private PrecisionModel precModel;
+	private final PrecisionModel precModel;
 	
 	/**
 	 * Creates a new precision reducer filter.

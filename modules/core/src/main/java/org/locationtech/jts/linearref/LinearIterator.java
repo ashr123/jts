@@ -44,7 +44,7 @@ public class LinearIterator
     return loc.getSegmentIndex();
   }
 
-  private Geometry linearGeom;
+  private final Geometry linearGeom;
   private final int numLines;
 
   /**
@@ -116,10 +116,8 @@ public class LinearIterator
   public boolean hasNext()
   {
     if (componentIndex >= numLines) return false;
-    if (componentIndex == numLines - 1
-        && vertexIndex >= currentLine.getNumPoints())
-      return false;
-    return true;
+      return componentIndex != numLines - 1
+              || vertexIndex < currentLine.getNumPoints();
   }
 
   /**
@@ -146,9 +144,7 @@ public class LinearIterator
   public boolean isEndOfLine() {
     if (componentIndex >= numLines) return false;
     //LineString currentLine = (LineString) linear.getGeometryN(componentIndex);
-    if (vertexIndex < currentLine.getNumPoints() - 1)
-      return false;
-    return true;
+      return vertexIndex >= currentLine.getNumPoints() - 1;
   }
 
   /**

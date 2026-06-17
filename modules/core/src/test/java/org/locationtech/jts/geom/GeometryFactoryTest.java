@@ -28,11 +28,11 @@ import test.jts.GeometryTestCase;
  */
 public class GeometryFactoryTest extends GeometryTestCase {
 
-  PrecisionModel precisionModel = new PrecisionModel();
-  GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
+  final PrecisionModel precisionModel = new PrecisionModel();
+  final GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
   WKTReader reader = new WKTReader(geometryFactory);
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(GeometryFactoryTest.class);
   }
 
@@ -74,9 +74,9 @@ public class GeometryFactoryTest extends GeometryTestCase {
     checkEmpty( geometryFactory.createGeometryCollection(), GeometryCollection.class);
   }
   
-  private void checkEmpty(Geometry geom, Class clz) {
+  private static void checkEmpty(Geometry geom, Class<?> clz) {
     assertTrue(geom.isEmpty());
-    assertTrue( geom.getClass() == clz );
+      assertSame(geom.getClass(), clz);
   }
 
   public void testDeepCopy() 
@@ -84,7 +84,7 @@ public class GeometryFactoryTest extends GeometryTestCase {
     Point g = (Point) read("POINT ( 10 10) ");
     Geometry g2 = geometryFactory.createGeometry(g);
     g.getCoordinateSequence().setOrdinate(0, 0, 99);
-    assertTrue(! g.equalsExact(g2));
+      assertFalse(g.equalsExact(g2));
   }
   
   public void testMultiPointCS()
@@ -131,7 +131,7 @@ public class GeometryFactoryTest extends GeometryTestCase {
     Geometry g2 = geometryFactory.createGeometry(g);
     assertTrue(g.equalsExact(g2));
     // check a copy has been made
-    assertTrue(g != g2);
+      assertNotSame(g, g2);
   }
   
 }

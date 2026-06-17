@@ -33,8 +33,8 @@ public class HoleRemover {
     boolean value(Geometry geom);
   }
 
-  private Geometry geom;
-  private Predicate isRemoved;
+  private final Geometry geom;
+  private final Predicate isRemoved;
 
   /**
    * Creates a new hole remover instance.
@@ -71,8 +71,8 @@ public class HoleRemover {
       return pihr.getResult();
     }
     
-    private Polygon poly;
-    private Predicate isRemoved;
+    private final Polygon poly;
+    private final Predicate isRemoved;
 
     public PolygonHoleRemover(Polygon poly, Predicate isRemoved) {
       this.poly = poly;
@@ -84,7 +84,7 @@ public class HoleRemover {
       GeometryFactory gf = poly.getFactory();
       Polygon shell = gf.createPolygon(poly.getExteriorRing());
       
-      List holes = new ArrayList();
+      List<LinearRing> holes = new ArrayList<>();
       for (int i = 0; i < poly.getNumInteriorRing(); i++) {
         LinearRing hole = poly.getInteriorRingN(i);
         if (! isRemoved.value(hole)) {
@@ -96,9 +96,8 @@ public class HoleRemover {
         return poly;
       
       // return new polygon with covered holes only
-      Polygon result = gf.createPolygon(poly.getExteriorRing(),
-          GeometryFactory.toLinearRingArray(holes));
-      return result;
+        return gf.createPolygon(poly.getExteriorRing(),
+            GeometryFactory.toLinearRingArray(holes));
     }
 
   }

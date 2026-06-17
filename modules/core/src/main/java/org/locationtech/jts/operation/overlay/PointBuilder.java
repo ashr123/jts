@@ -12,7 +12,6 @@
 package org.locationtech.jts.operation.overlay;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.algorithm.PointLocator;
@@ -27,9 +26,9 @@ import org.locationtech.jts.geomgraph.Node;
  * @version 1.7
  */
 public class PointBuilder {
-  private OverlayOp op;
-  private GeometryFactory geometryFactory;
-  private List resultPointList = new ArrayList();
+  private final OverlayOp op;
+  private final GeometryFactory geometryFactory;
+  private final List<Point> resultPointList = new ArrayList<>();
 
   public PointBuilder(OverlayOp op, GeometryFactory geometryFactory, PointLocator ptLocator) {
     this.op = op;
@@ -43,7 +42,7 @@ public class PointBuilder {
    *
    * @return a list of the Points objects in the result
    */
-  public List build(int opCode)
+  public List<Point> build(int opCode)
   {
     extractNonCoveredResultNodes(opCode);
     /**
@@ -67,27 +66,29 @@ public class PointBuilder {
     // testing only
     //if (true) return resultNodeList;
 
-    for (Iterator nodeit = op.getGraph().getNodes().iterator(); nodeit.hasNext(); ) {
-      Node n = (Node) nodeit.next();
+      /**
+       * For nodes on edges, only INTERSECTION can result in edge nodes being included even
+       * if none of their incident edges are included
+       */
+      for (Node n : op.getGraph().getNodes()) {
+          // filter out nodes which are known to be in the result
+          if (n.isInResult())
+              continue;
+          // if an incident edge is in the result, then the node coordinate is included already
+          if (n.isIncidentEdgeInResult())
+              continue;
+          if (n.getEdges().getDegree() == 0 || opCode == OverlayOp.INTERSECTION) {
 
-      // filter out nodes which are known to be in the result
-      if (n.isInResult())
-        continue;
-      // if an incident edge is in the result, then the node coordinate is included already
-      if (n.isIncidentEdgeInResult())
-        continue;
-      if (n.getEdges().getDegree() == 0 || opCode == OverlayOp.INTERSECTION) {
-
-        /**
-         * For nodes on edges, only INTERSECTION can result in edge nodes being included even
-         * if none of their incident edges are included
-         */
-          Label label = n.getLabel();
-          if (OverlayOp.isResultOfOp(label, opCode)) {
-            filterCoveredNodeToPoint(n);
+              /**
+               * For nodes on edges, only INTERSECTION can result in edge nodes being included even
+               * if none of their incident edges are included
+               */
+              Label label = n.getLabel();
+              if (OverlayOp.isResultOfOp(label, opCode)) {
+                  filterCoveredNodeToPoint(n);
+              }
           }
       }
-    }
     //System.out.println("connectedResultNodes collected = " + connectedResultNodes.size());
   }
 

@@ -36,9 +36,10 @@ import org.locationtech.jts.geom.Point;
 public class ConstructionExample
 {
 
-  public static void main(String[] args)
-      throws Exception
-  {
+    private ConstructionExample() {
+    }
+
+    public static void main(String[] args) {
     // create a factory using default values (e.g. floating precision)
     GeometryFactory fact = new GeometryFactory();
 

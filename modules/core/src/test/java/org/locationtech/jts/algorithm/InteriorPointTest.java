@@ -15,7 +15,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.geom.Coordinate;
@@ -26,7 +25,6 @@ import org.locationtech.jts.io.WKTFileReader;
 import org.locationtech.jts.io.WKTReader;
 import org.locationtech.jts.util.Stopwatch;
 
-import junit.framework.TestCase;
 import junit.textui.TestRunner;
 import test.jts.GeometryTestCase;
 import test.jts.TestFiles;
@@ -34,12 +32,12 @@ import test.jts.TestFiles;
 
 public class InteriorPointTest extends GeometryTestCase
 {
-  public static void main(String args[])
+  public static void main(String[] args)
   {
     TestRunner.run(InteriorPointTest.class);
   }
 
-  WKTReader rdr = new WKTReader();
+  final WKTReader rdr = new WKTReader();
 
   public InteriorPointTest(String name)
   {
@@ -74,31 +72,30 @@ public class InteriorPointTest extends GeometryTestCase
     checkInteriorPointFile(fileRdr);
   }
 
-  private void checkInteriorPointFile(WKTFileReader fileRdr) throws IOException, ParseException
+  private static void checkInteriorPointFile(WKTFileReader fileRdr) throws IOException, ParseException
   {
-    List polys = fileRdr.read();
+    List<Geometry> polys = fileRdr.read();
     checkInteriorPoint(polys);
   }
 
-  void checkInteriorPoint(List geoms)
+  static void checkInteriorPoint(List<? extends Geometry> geoms)
   {
     Stopwatch sw = new Stopwatch();
-    for (Iterator i = geoms.iterator(); i.hasNext();) {
-      Geometry g = (Geometry) i.next();
-      checkInteriorPoint(g);
-      System.out.print(".");
-    }
+      for (Geometry g : geoms) {
+          checkInteriorPoint(g);
+          System.out.print(".");
+      }
     //System.out.println();
     //System.out.println("  " + sw.getTimeString());
   }
 
-  private void checkInteriorPoint(Geometry g)
+  private static void checkInteriorPoint(Geometry g)
   {
     Point ip = g.getInteriorPoint();
     assertTrue(g.contains(ip));
   }
   
-  private void checkInteriorPoint(Geometry g, Coordinate expectedPt)
+  private static void checkInteriorPoint(Geometry g, Coordinate expectedPt)
   {
     Point ip = g.getInteriorPoint();
     assertTrue(ip.getCoordinate().equals2D(expectedPt));

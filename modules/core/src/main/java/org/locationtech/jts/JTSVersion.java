@@ -66,21 +66,21 @@ public class JTSVersion {
    *
    * @return the major number of the release version.
    */
-  public int getMajor() { return MAJOR; }
+  public static int getMajor() { return MAJOR; }
 
   /**
    * Gets the minor number of the release version.
    *
    * @return the minor number of the release version.
    */
-  public int getMinor() { return MINOR; }
+  public static int getMinor() { return MINOR; }
 
   /**
    * Gets the patch number of the release version.
    *
    * @return the patch number of the release version.
    */
-  public int getPatch() { return PATCH; }
+  public static int getPatch() { return PATCH; }
 
   /**
    * Gets the full version number, suitable for display.
@@ -90,7 +90,7 @@ public class JTSVersion {
   public String toString()
   {
     String ver = MAJOR + "." + MINOR + "." + PATCH;
-    if (RELEASE_INFO != null && RELEASE_INFO.length() > 0)
+    if (RELEASE_INFO != null && !RELEASE_INFO.isEmpty())
       return ver + " " + RELEASE_INFO;
     return ver;
   }

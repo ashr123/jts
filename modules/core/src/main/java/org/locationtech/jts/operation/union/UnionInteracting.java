@@ -38,13 +38,13 @@ public class UnionInteracting
 	}
 
 	
-	private GeometryFactory geomFactory;
+	private final GeometryFactory geomFactory;
 	
-	private Geometry g0;
-	private Geometry g1;
+	private final Geometry g0;
+	private final Geometry g1;
 	
-	private boolean[] interacts0;
-	private boolean[] interacts1;
+	private final boolean[] interacts0;
+	private final boolean[] interacts1;
 	
 	public UnionInteracting(Geometry g0, Geometry g1)
 	{
@@ -81,10 +81,8 @@ public class UnionInteracting
 		
 		Geometry disjoint0 = extractElements(g0, interacts0, false);
 		Geometry disjoint1 = extractElements(g1, interacts1, false);
-		
-  	Geometry overallUnion = GeometryCombiner.combine(union, disjoint0, disjoint1);
-  	
-  	return overallUnion;
+
+        return GeometryCombiner.combine(union, disjoint0, disjoint1);
 
 	}
 
@@ -112,7 +110,7 @@ public class UnionInteracting
   private Geometry extractElements(Geometry geom, 
   		boolean[] interacts, boolean isInteracting)
   {
-  	List extractedGeoms = new ArrayList();
+  	List<Geometry> extractedGeoms = new ArrayList<>();
   	for (int i = 0; i < geom.getNumGeometries(); i++) { 
   		Geometry elem = geom.getGeometryN(i);
   		if (interacts[i] == isInteracting)

@@ -1,6 +1,5 @@
 package org.locationtech.jts.noding.snapround;
 
-import org.locationtech.jts.algorithm.RobustLineIntersector;
 import org.locationtech.jts.geom.Coordinate;
 
 import junit.framework.TestCase;
@@ -8,7 +7,7 @@ import junit.textui.TestRunner;
 
 public class HotPixelTest extends TestCase {
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(HotPixelTest.class);
   }
 
@@ -201,9 +200,9 @@ public class HotPixelTest extends TestCase {
 
   //================================================
   
-  private void checkIntersects(boolean expected, 
-      double x, double y, double scale, 
-      double x1, double y1, double x2, double y2) {
+  private static void checkIntersects(boolean expected,
+                                      double x, double y, double scale,
+                                      double x1, double y1, double x2, double y2) {
     HotPixel hp = new HotPixel(new Coordinate(x,y), scale);
     Coordinate p1 = new Coordinate(x1,y1);
     Coordinate p2 = new Coordinate(x2,y2);

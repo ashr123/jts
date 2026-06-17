@@ -11,6 +11,8 @@
  */
 package org.locationtech.jts.index.quadtree;
 
+import org.locationtech.jts.precision.CommonBits;
+
 /**
  * DoubleBits manipulates Double numbers
  * by using bit manipulation and bit-field extraction.
@@ -69,7 +71,7 @@ public class DoubleBits {
     return db1.getDouble();
   }
 
-  private double x;
+  private final double x;
   private long xBits;
 
   public DoubleBits(double x)
@@ -89,8 +91,7 @@ public class DoubleBits {
   public int biasedExponent()
   {
     int signExp = (int) (xBits >> 52);
-    int exp = signExp & 0x07ff;
-    return exp;
+      return signExp & 0x07ff;
   }
 
   /**
@@ -110,8 +111,7 @@ public class DoubleBits {
 
   public int getBit(int i)
   {
-    long mask = (1L << i);
-    return (xBits & mask) != 0 ? 1 : 0;
+      return CommonBits.getBit(xBits, i);
   }
 
   /**
@@ -142,10 +142,9 @@ public class DoubleBits {
     String zero64 = "0000000000000000000000000000000000000000000000000000000000000000";
     String padStr =  zero64 + numStr;
     String bitStr = padStr.substring(padStr.length() - 64);
-    String str = bitStr.substring(0, 1) + "  "
-        + bitStr.substring(1, 12) + "(" + getExponent() + ") "
-        + bitStr.substring(12)
-        + " [ " + x + " ]";
-    return str;
+      return bitStr.charAt(0) + "  "
+          + bitStr.substring(1, 12) + "(" + getExponent() + ") "
+          + bitStr.substring(12)
+          + " [ " + x + " ]";
   }
 }

@@ -57,9 +57,9 @@ import org.locationtech.jts.geom.Polygon;
  */
 class RelatePointLocator {
   
-  private Geometry geom;
+  private final Geometry geom;
   private boolean isPrepared = false;
-  private BoundaryNodeRule boundaryRule;
+  private final BoundaryNodeRule boundaryRule;
   private AdjacentEdgeLocator adjEdgeLocator;
   private Set<Coordinate> points;
   private List<LineString> lines;
@@ -123,21 +123,21 @@ class RelatePointLocator {
 
   private void addPoint(Point pt) {
     if (points == null) {
-      points = new HashSet<Coordinate>();
+      points = new HashSet<>();
     }
     points.add(pt.getCoordinate());
   }
 
   private void addLine(LineString line) {
     if (lines == null) {
-      lines = new ArrayList<LineString>();
+      lines = new ArrayList<>();
     }
     lines.add(line);
   }
 
   private void addPolygonal(Geometry polygonal) {
     if (polygons == null) {
-      polygons = new ArrayList<Geometry>();
+      polygons = new ArrayList<>();
     }
     polygons.add(polygonal);
   }
@@ -233,9 +233,8 @@ class RelatePointLocator {
      */
     if (isNode && (geom instanceof Polygon || geom instanceof MultiPolygon))
       return DimensionLocation.AREA_BOUNDARY;
-    
-    int dimLoc = computeDimLocation(p, isNode, parentPolygonal);
-    return dimLoc;
+
+      return computeDimLocation(p, isNode, parentPolygonal);
   }
 
   private int computeDimLocation(Coordinate p, boolean isNode, Geometry parentPolygonal) {
@@ -285,7 +284,7 @@ class RelatePointLocator {
     return Location.EXTERIOR;
   }
 
-  private int locateOnLine(Coordinate p, boolean isNode, LineString l)
+  private static int locateOnLine(Coordinate p, boolean isNode, LineString l)
   {
     // bounding-box check
     if (! l.getEnvelopeInternal().intersects(p)) 

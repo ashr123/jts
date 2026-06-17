@@ -16,7 +16,6 @@ package org.locationtech.jts.geomgraph.index;
  */
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.geomgraph.Edge;
@@ -35,7 +34,7 @@ public class SimpleMCSweepLineIntersector
   extends EdgeSetIntersector
 {
 
-  List events = new ArrayList();
+  final List<SweepLineEvent> events = new ArrayList<>();
   // statistics information
   int nOverlaps;
 
@@ -46,7 +45,7 @@ public class SimpleMCSweepLineIntersector
   public SimpleMCSweepLineIntersector() {
   }
 
-  public void computeIntersections(List edges, SegmentIntersector si, boolean testAllSegments)
+  public void computeIntersections(List<? extends Edge> edges, SegmentIntersector si, boolean testAllSegments)
   {
     if (testAllSegments)
       addEdges(edges, null);
@@ -55,27 +54,25 @@ public class SimpleMCSweepLineIntersector
     computeIntersections(si);
   }
 
-  public void computeIntersections(List edges0, List edges1, SegmentIntersector si)
+  public void computeIntersections(List<? extends Edge> edges0, List<? extends Edge> edges1, SegmentIntersector si)
   {
     addEdges(edges0, edges0);
     addEdges(edges1, edges1);
     computeIntersections(si);
   }
 
-  private void addEdges(List edges)
+  private void addEdges(List<? extends Edge> edges)
   {
-    for (Iterator i = edges.iterator(); i.hasNext(); ) {
-      Edge edge = (Edge) i.next();
-      // edge is its own group
-      addEdge(edge, edge);
-    }
+      for (Edge edge : edges) {
+          // edge is its own group
+          addEdge(edge, edge);
+      }
   }
-  private void addEdges(List edges, Object edgeSet)
+  private void addEdges(List<? extends Edge> edges, Object edgeSet)
   {
-    for (Iterator i = edges.iterator(); i.hasNext(); ) {
-      Edge edge = (Edge) i.next();
-      addEdge(edge, edgeSet);
-    }
+      for (Edge edge : edges) {
+          addEdge(edge, edgeSet);
+      }
   }
 
   private void addEdge(Edge edge, Object edgeSet)
@@ -101,7 +98,7 @@ public class SimpleMCSweepLineIntersector
     // set DELETE event indexes
     for (int i = 0; i < events.size(); i++ )
     {
-      SweepLineEvent ev = (SweepLineEvent) events.get(i);
+      SweepLineEvent ev = events.get(i);
       if (ev.isDelete()) {
         ev.getInsertEvent().setDeleteEventIndex(i);
       }
@@ -115,11 +112,11 @@ public class SimpleMCSweepLineIntersector
 
     for (int i = 0; i < events.size(); i++ )
     {
-      SweepLineEvent ev = (SweepLineEvent) events.get(i);
+      SweepLineEvent ev = events.get(i);
       if (ev.isInsert()) {
         processOverlaps(i, ev.getDeleteEventIndex(), ev, si);
       }
-      if (si.isDone()) {
+      if (SegmentIntersector.isDone()) {
     	  break;
       }
     }
@@ -134,7 +131,7 @@ public class SimpleMCSweepLineIntersector
      * Last index can be skipped, because it must be a Delete event.
      */
     for (int i = start; i < end; i++ ) {
-      SweepLineEvent ev1 = (SweepLineEvent) events.get(i);
+      SweepLineEvent ev1 = events.get(i);
       if (ev1.isInsert()) {
         MonotoneChain mc1 = (MonotoneChain) ev1.getObject();
         // don't compare edges in same group, if labels are present

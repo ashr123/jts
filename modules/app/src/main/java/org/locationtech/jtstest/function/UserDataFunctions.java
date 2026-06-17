@@ -17,7 +17,10 @@ import org.locationtech.jts.geom.Geometry;
 
 public class UserDataFunctions {
 
-  public static Geometry area(Geometry g) {
+    private UserDataFunctions() {
+    }
+
+    public static Geometry area(Geometry g) {
     Geometry result = g.copy();
     List<Geometry> geoms = FunctionsUtil.elements(result);
     // annotate geometries with area

@@ -267,8 +267,8 @@ public class DirectedHausdorffDistance {
     return geom.getEnvelopeInternal().getDiameter() / AUTO_TOLERANCE_FACTOR;
   }
 
-  private Geometry target;
-  private TargetDistance targetDistance;
+  private final Geometry target;
+  private final TargetDistance targetDistance;
 
   /**
    * Create a new instance for a target geometry.
@@ -405,11 +405,11 @@ public class DirectedHausdorffDistance {
   }
   
   private Coordinate[] computeForPoints(Geometry geom, double maxDistanceLimit) {
-    double maxDist = -1.0;;
-    Coordinate[] maxDistPtsAB = null;
-    Iterator geomi = new GeometryCollectionIterator(geom);
+    double maxDist = -1.0;
+      Coordinate[] maxDistPtsAB = null;
+    Iterator<Geometry> geomi = new GeometryCollectionIterator(geom);
     while (geomi.hasNext()) {
-      Geometry geomElem = (Geometry) geomi.next();
+      Geometry geomElem = geomi.next();
       if (! (geomElem instanceof Point))
         continue;
       
@@ -588,13 +588,12 @@ public class DirectedHausdorffDistance {
       return null;
     
     //TODO: extract polygonal geoms from A
-    Geometry polygonal = geom;
-    
-    /**
+
+      /**
      * Optimization - skip if A interior cannot intersect B,
      * and thus farther point must lie on A boundary
      */
-    if (polygonal.getEnvelopeInternal().disjoint(target.getEnvelopeInternal())) {
+    if (geom.getEnvelopeInternal().disjoint(target.getEnvelopeInternal())) {
       return null;
     }
     
@@ -606,7 +605,7 @@ public class DirectedHausdorffDistance {
      */
     //TODO: add short-circuiting based on maxDistanceLimit?
     
-    Point centerPt = LargestEmptyCircle.getCenter(target, polygonal, tolerance * AREA_INTERIOR_TOLERANCE_FACTOR);
+    Point centerPt = LargestEmptyCircle.getCenter(target, geom, tolerance * AREA_INTERIOR_TOLERANCE_FACTOR);
     Coordinate ptA = centerPt.getCoordinate();
     /**
      * If LEC centre is in B, the max distance is zero, so return null.
@@ -631,14 +630,10 @@ public class DirectedHausdorffDistance {
    * @return the segment priority queue
    */
   private PriorityQueue<DHDSegment> createSegQueue(Geometry geom) {
-    PriorityQueue<DHDSegment> priq = new PriorityQueue<DHDSegment>();
-    geom.apply(new GeometryComponentFilter() {
-
-      @Override
-      public void filter(Geometry geom) {
-        if (geom instanceof LineString) {
-          addSegments(geom.getCoordinates(), priq);
-        }
+    PriorityQueue<DHDSegment> priq = new PriorityQueue<>();
+    geom.apply((GeometryComponentFilter) geom1 -> {
+      if (geom1 instanceof LineString) {
+        addSegments(geom1.getCoordinates(), priq);
       }
     });
     return priq;
@@ -675,15 +670,15 @@ public class DirectedHausdorffDistance {
       
       if (segMaxDist == null 
           || seg.getMaxDistance() > segMaxDist.getMaxDistance()) {
-        segMaxDist = seg;;
+        segMaxDist = seg;
       }
       //System.out.println(seg.distance());
     }
   }
   
   private static class TargetDistance {
-    private IndexedFacetDistance distanceToFacets;
-    private boolean isArea;
+    private final IndexedFacetDistance distanceToFacets;
+    private final boolean isArea;
     private IndexedPointInPolygonsLocator ptInArea;
     
     public TargetDistance(Geometry geom) {
@@ -708,8 +703,7 @@ public class DirectedHausdorffDistance {
           return p;
         }
       }
-      Coordinate nearestPt = distanceToFacets.nearestPoint(p);
-      return nearestPt;
+        return distanceToFacets.nearestPoint(p);
     }
     
     public boolean isInterior(Coordinate p) {
@@ -726,8 +720,7 @@ public class DirectedHausdorffDistance {
       if (segDist == 0)
         return false;
       //-- only need to test one point to check interior
-      boolean isInterior = isInterior(p0);
-      return isInterior;
+        return isInterior(p0);
     }
 
   }
@@ -746,9 +739,9 @@ public class DirectedHausdorffDistance {
       return seg;
     }
 
-    private Coordinate p0;
+    private final Coordinate p0;
     private Coordinate nearPt0;
-    private Coordinate p1;
+    private final Coordinate p1;
     private Coordinate nearPt1;
     private double maxDistanceBound = Double.NEGATIVE_INFINITY;
     private double maxDistance;

@@ -29,6 +29,7 @@ import org.locationtech.jts.noding.MCIndexNoder;
 import org.locationtech.jts.noding.NodedSegmentString;
 import org.locationtech.jts.noding.Noder;
 import org.locationtech.jts.noding.NodingIntersectionFinder;
+import org.locationtech.jts.noding.SegmentString;
 import org.locationtech.jts.noding.SegmentStringUtil;
 import org.locationtech.jts.noding.snap.SnappingNoder;
 import org.locationtech.jts.noding.snapround.SnapRoundingNoder;
@@ -38,7 +39,10 @@ import org.locationtech.jtstest.geomfunction.Metadata;
 public class NodingFunctions 
 {
 
-  public static boolean isNodingValid(Geometry geom) {
+    private NodingFunctions() {
+    }
+
+    public static boolean isNodingValid(Geometry geom) {
     FastNodingValidator nv = new FastNodingValidator(
         SegmentStringUtil.extractBasicSegmentStrings(geom));
     return nv.isValid();
@@ -55,9 +59,9 @@ public class NodingFunctions
     FastNodingValidator nv = new FastNodingValidator(
         SegmentStringUtil.extractBasicSegmentStrings(geom));
     nv.isValid();
-    List intPts = nv.getIntersections();
-    if (intPts.size() == 0) return FunctionsUtil.getFactoryOrDefault(geom).createPoint();
-    return FunctionsUtil.getFactoryOrDefault(geom).createPoint((Coordinate) intPts.get(0));
+    List<Coordinate> intPts = nv.getIntersections();
+    if (intPts.isEmpty()) return FunctionsUtil.getFactoryOrDefault(geom).createPoint();
+    return FunctionsUtil.getFactoryOrDefault(geom).createPoint(intPts.get(0));
   }
   
   @Metadata(description="Finds intersection points between linestrings")
@@ -72,8 +76,7 @@ public class NodingFunctions
   private static Coordinate[] dedup(List<Coordinate> ptsList) {
     List<Coordinate> ptsNoDup = new ArrayList<>(
         new HashSet<>(ptsList));
-    Coordinate[] pts = CoordinateArrays.toCoordinateArray(ptsNoDup);
-    return pts;
+      return CoordinateArrays.toCoordinateArray(ptsNoDup);
   }
   
   @Metadata(description="Finds interior intersection points between segments")
@@ -82,7 +85,7 @@ public class NodingFunctions
     NodingIntersectionFinder intFinder = NodingIntersectionFinder
         .createInteriorIntersectionsFinder( new RobustLineIntersector() );
     processNodes(geom, intFinder);
-    List intPts = intFinder.getIntersections();
+    List<Coordinate> intPts = intFinder.getIntersections();
     return FunctionsUtil.getFactoryOrDefault(null)
         .createMultiPointFromCoords( dedup(intPts) );
   }
@@ -145,15 +148,13 @@ public class NodingFunctions
     List<NodedSegmentString> segs = extractNodedSegmentStrings(geom, geom2);
     Noder noder = new SnappingNoder(snapDistance);
     noder.computeNodes(segs);
-    Collection nodedSegStrings = noder.getNodedSubstrings();
+    Collection<SegmentString> nodedSegStrings = noder.getNodedSubstrings();
     return SegmentStringUtil.toGeometry(nodedSegStrings, FunctionsUtil.getFactoryOrDefault(geom));
   }
 
   private static List<NodedSegmentString> extractNodedSegmentStrings(Geometry geom1, Geometry geom2) {
-    @SuppressWarnings("unchecked")
     List<NodedSegmentString> segs = SegmentStringUtil.extractNodedSegmentStrings(geom1);
     if (geom2 != null) {
-      @SuppressWarnings("unchecked")
       List<NodedSegmentString> segs2 = SegmentStringUtil.extractNodedSegmentStrings(geom2);
       segs.addAll(segs2);
     }
@@ -171,7 +172,7 @@ public class NodingFunctions
     PrecisionModel pm = new PrecisionModel(scaleFactor);
     Noder noder = new SnapRoundingNoder(pm);
     noder.computeNodes(segs);
-    Collection nodedSegStrings = noder.getNodedSubstrings();
+    Collection<SegmentString> nodedSegStrings = noder.getNodedSubstrings();
     return SegmentStringUtil.toGeometry(nodedSegStrings, FunctionsUtil.getFactoryOrDefault(geom));
   }
 

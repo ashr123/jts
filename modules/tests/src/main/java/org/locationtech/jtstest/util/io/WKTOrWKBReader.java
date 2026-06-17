@@ -39,15 +39,14 @@ public class WKTOrWKBReader
   {
     if (Character.isDigit(ch)) return true;
     char chLow = Character.toLowerCase(ch);
-    if (ch >= 'a' && ch <= 'f') return true;
-    return false;
+      return ch >= 'a' && ch <= 'f';
   }
 
   private static final int MAX_CHARS_TO_CHECK = 6;
 
   private GeometryFactory geomFactory;
-  private WKTReader wktReader;
-  private WKBReader wkbReader;
+  private final WKTReader wktReader;
+  private final WKBReader wkbReader;
 
   public WKTOrWKBReader()
   {

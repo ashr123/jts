@@ -69,7 +69,7 @@ public class UnaryUnionOp
 	 * @return the union of the geometries, 
 	 * or <code>null</code> if the input is empty
 	 */
-	public static Geometry union(Collection geoms)
+	public static Geometry union(Collection<Geometry> geoms)
 	{
 		UnaryUnionOp op = new UnaryUnionOp(geoms);
 		return op.union();
@@ -87,7 +87,7 @@ public class UnaryUnionOp
 	 * @return the union of the geometries,
 	 * or an empty GEOMETRYCOLLECTION
 	 */
-	public static Geometry union(Collection geoms, GeometryFactory geomFact)
+	public static Geometry union(Collection<Geometry> geoms, GeometryFactory geomFact)
 	{
 		UnaryUnionOp op = new UnaryUnionOp(geoms, geomFact);
 		return op.union();
@@ -119,7 +119,7 @@ public class UnaryUnionOp
 	 * @param geoms a collection of geometries
 	 * @param geomFact the geometry factory to use if the collection is empty
 	 */
-	public UnaryUnionOp(Collection geoms, GeometryFactory geomFact)
+	public UnaryUnionOp(Collection<Geometry> geoms, GeometryFactory geomFact)
 	{
 		this.geomFact = geomFact;
 		extract(geoms);
@@ -132,7 +132,7 @@ public class UnaryUnionOp
 	 * 
 	 * @param geoms a collection of geometries
 	 */
-	public UnaryUnionOp(Collection geoms)
+	public UnaryUnionOp(Collection<Geometry> geoms)
 	{
 		extract(geoms);
 	}
@@ -151,7 +151,7 @@ public class UnaryUnionOp
 	  this.unionFunction = unionFun;
 	}
 	
-	private void extract(Collection geoms)
+	private void extract(Collection<Geometry> geoms)
 	{
 	  extracter = InputExtracter.extract(geoms);
 	}
@@ -192,9 +192,9 @@ public class UnaryUnionOp
 		if (extracter.isEmpty()) {
 		  return geomFact.createEmpty( extracter.getDimension() );
 		}
-    List points = extracter.getExtract(0);
-    List lines = extracter.getExtract(1);
-    List polygons = extracter.getExtract(2);
+    List<? extends Geometry> points = extracter.getExtract(0);
+    List<? extends Geometry> lines = extracter.getExtract(1);
+    List<? extends Geometry> polygons = extracter.getExtract(2);
     
 		/**
 		 * For points and lines, only a single union operation is 
@@ -203,19 +203,19 @@ public class UnaryUnionOp
 		 * This is not the case for polygons, so Cascaded Union is required.
 		 */
 		Geometry unionPoints = null;
-		if (points.size() > 0) {
+		if (!points.isEmpty()) {
 			Geometry ptGeom = geomFact.buildGeometry(points);
 			unionPoints = unionNoOpt(ptGeom);
 		}
 		
 		Geometry unionLines = null;
-		if (lines.size() > 0) {
+		if (!lines.isEmpty()) {
 			Geometry lineGeom = geomFact.buildGeometry(lines);
 			unionLines = unionNoOpt(lineGeom);
 		}
 		
 		Geometry unionPolygons = null;
-		if (polygons.size() > 0) {
+		if (!polygons.isEmpty()) {
 			unionPolygons = CascadedPolygonUnion.union(polygons, unionFunction);
 		}
 		
@@ -249,7 +249,7 @@ public class UnaryUnionOp
    * @return the union of the input(s)
    * or null if both inputs are null
    */
-  private Geometry unionWithNull(Geometry g0, Geometry g1)
+  private static Geometry unionWithNull(Geometry g0, Geometry g1)
   {
   	if (g0 == null && g1 == null)
   		return null;

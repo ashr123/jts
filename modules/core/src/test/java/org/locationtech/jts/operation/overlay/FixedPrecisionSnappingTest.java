@@ -23,9 +23,9 @@ import junit.framework.TestCase;
 
 public class FixedPrecisionSnappingTest extends TestCase 
 {
-	PrecisionModel pm = new PrecisionModel(1.0);
-	GeometryFactory fact = new GeometryFactory(pm);
-	WKTReader rdr = new WKTReader(fact);
+	final PrecisionModel pm = new PrecisionModel(1.0);
+	final GeometryFactory fact = new GeometryFactory(pm);
+	final WKTReader rdr = new WKTReader(fact);
 	
 	public FixedPrecisionSnappingTest(String name) {
 		super(name);

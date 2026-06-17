@@ -29,10 +29,9 @@ public class HtmlSvgTestWriter {
     return writer.write(testCaseList);
   }
 
-  private SVGWriter svgWriter = new SVGWriter();
-  private int viewSize = 200;
-  
-  public HtmlSvgTestWriter() {}
+  private final SVGWriter svgWriter = new SVGWriter();
+
+    public HtmlSvgTestWriter() {}
 
   public String write(TestCaseList tcList) {
     StringBuilder sb = new StringBuilder();
@@ -94,13 +93,13 @@ public class HtmlSvgTestWriter {
     sb.append("<hr />\n");
  }
 
-  private void writeGeomText(StringBuilder sb, Geometry geom, String clr) {
+  private static void writeGeomText(StringBuilder sb, Geometry geom, String clr) {
     if (geom == null) return;
     String attr = String.format("style='color:%s'", clr);
     sb.append( HtmlUtil.elemAttr("div", attr, HtmlUtil.elem("code", geom.toString())));
   }
 
-  private void writeTitle(int i, Testable tc, StringBuilder sb) {
+  private static void writeTitle(int i, Testable tc, StringBuilder sb) {
     String desc = tc.getDescription();
     String title = desc == null ? "" : ": " + desc;
     sb.append(String.format(
@@ -119,17 +118,18 @@ public class HtmlSvgTestWriter {
       
       Envelope env = sceneEnv(ga, gb);
       Coordinate centre = env.centre();
-      
+
+      int viewSize = 200;
       String wh = "width='" + viewSize + "' height='" + viewSize + "'";
       String viewBox = env.getMinX() + " " + env.getMinY() + " " + env.getWidth() + " " + env.getHeight();
       // transform to flip the Y axis to match SVG
       String trans = String.format("translate(0 %f) scale( 1 -1 ) translate(0 %f)", centre.y, -centre.y);
       
-      sb.append("<svg " + wh + " viewBox='" + viewBox + "'  version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>\n");
+      sb.append("<svg ").append(wh).append(" viewBox='").append(viewBox).append("'  version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>\n");
       String nameStr =name == null ? "" : name;
       String descStr = description == null ? "" : description;
-      sb.append("  <desc>" + descStr + "</desc>\n");
-      sb.append("  <g transform='" + trans + "'>\n\n");
+      sb.append("  <desc>").append(descStr).append("</desc>\n");
+      sb.append("  <g transform='").append(trans).append("'>\n\n");
 
       writeGeometryWithClass(sb, ga, "geomA");
       writeGeometryWithClass(sb, gb, "geomB");

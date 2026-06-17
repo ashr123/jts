@@ -25,14 +25,14 @@ import org.locationtech.jts.index.ItemVisitor;
  *
  * @version 1.7
  */
-public abstract class NodeBase implements Serializable {
+public abstract class NodeBase<T> implements Serializable {
 
 //DEBUG private static int itemCount = 0;  // debugging
-  
+
   /**
    * Gets the index of the subquad that wholly contains the given envelope.
    * If none does, returns -1.
-   * 
+   *
    * @return the index of the subquad that wholly contains the given envelope
    * or -1 if no subquad wholly contains the envelope
    */
@@ -50,7 +50,7 @@ public abstract class NodeBase implements Serializable {
     return subnodeIndex;
   }
 
-  protected List items = Collections.synchronizedList(new ArrayList());
+  protected final List<T> items = Collections.synchronizedList(new ArrayList<>());
 
   /**
    * subquads are numbered as follows:
@@ -60,16 +60,17 @@ public abstract class NodeBase implements Serializable {
    *  0 | 1
    * </pre>
    */
-  protected Node[] subnode = new Node[4];
+  @SuppressWarnings("unchecked")
+  protected final Node<T>[] subnode = (Node<T>[]) new Node[4];
 
   public NodeBase() {
   }
 
-  public List getItems() { return items; }
+  public List<T> getItems() { return items; }
 
   public boolean hasItems() { return ! items.isEmpty(); }
 
-  public void add(Object item)
+  public void add(T item)
   {
     items.add(item);
 //DEBUG itemCount++;
@@ -83,7 +84,7 @@ public abstract class NodeBase implements Serializable {
    * @param item the item to remove
    * @return <code>true</code> if the item was found and removed
    */
-  public boolean remove(Envelope itemEnv, Object item)
+  public boolean remove(Envelope itemEnv, T item)
   {
     // use envelope to restrict nodes scanned
     if (! isSearchMatch(itemEnv))
@@ -141,7 +142,7 @@ public abstract class NodeBase implements Serializable {
 
   //<<TODO:RENAME?>> Sounds like this method adds resultItems to items
   //(like List#addAll). Perhaps it should be renamed to "addAllItemsTo" [Jon Aquino]
-  public List addAllItems(List resultItems)
+  public List<T> addAllItems(List<T> resultItems)
   {
     // this node may have items as well as subnodes (since items may not
     // be wholely contained in any single subnode
@@ -155,7 +156,7 @@ public abstract class NodeBase implements Serializable {
   }
   protected abstract boolean isSearchMatch(Envelope searchEnv);
 
-  public void addAllItemsFromOverlapping(Envelope searchEnv, List resultItems)
+  public void addAllItemsFromOverlapping(Envelope searchEnv, List<T> resultItems)
   {
     if (! isSearchMatch(searchEnv))
       return;
@@ -171,7 +172,7 @@ public abstract class NodeBase implements Serializable {
     }
   }
 
-  public void visit(Envelope searchEnv, ItemVisitor visitor)
+  public void visit(Envelope searchEnv, ItemVisitor<? super T> visitor)
   {
     if (! isSearchMatch(searchEnv))
       return;
@@ -187,12 +188,12 @@ public abstract class NodeBase implements Serializable {
     }
   }
 
-  private void visitItems(Envelope searchEnv, ItemVisitor visitor)
+  private void visitItems(Envelope searchEnv, ItemVisitor<? super T> visitor)
   {
     // would be nice to filter items based on search envelope, but can't until they contain an envelope
     synchronized (items) {
-        for (int i = 0; i < items.size(); i++) {
-            visitor.visitItem(items.get(i));
+        for (T item : items) {
+            visitor.visitItem(item);
         }
     }
   }

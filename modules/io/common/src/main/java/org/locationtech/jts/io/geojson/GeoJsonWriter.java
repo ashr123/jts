@@ -57,7 +57,7 @@ public class GeoJsonWriter {
    */
   public static final String EPSG_PREFIX = "EPSG:";
   
-  private double scale;
+  private final double scale;
   private boolean isEncodeCRS = true;
   private boolean isForceCCW = false;
 
@@ -135,7 +135,7 @@ public class GeoJsonWriter {
 
   private Map<String, Object> create(Geometry geometry, boolean encodeCRS) {
 
-    Map<String, Object> result = new LinkedHashMap<String, Object>();
+    Map<String, Object> result = new LinkedHashMap<>();
     result.put(GeoJsonConstants.NAME_TYPE, geometry.getGeometryType());
 
     if (geometry instanceof Point) {
@@ -145,12 +145,7 @@ public class GeoJsonWriter {
       final String jsonString = coordinateSequence.size() == 0
           ? JSON_ARRAY_EMPTY : getJsonString(coordinateSequence);
 
-      result.put(GeoJsonConstants.NAME_COORDINATES, new JSONAware() {
-
-        public String toJSONString() {
-          return jsonString;
-        }
-      });
+      result.put(GeoJsonConstants.NAME_COORDINATES, (JSONAware) () -> jsonString);
 
     } else if (geometry instanceof LineString) {
       LineString lineString = (LineString) geometry;
@@ -159,18 +154,13 @@ public class GeoJsonWriter {
       final String jsonString = coordinateSequence.size() == 0
           ? JSON_ARRAY_EMPTY : getJsonString(coordinateSequence);
 
-      result.put(GeoJsonConstants.NAME_COORDINATES, new JSONAware() {
-
-        public String toJSONString() {
-          return jsonString;
-        }
-      });
+      result.put(GeoJsonConstants.NAME_COORDINATES, (JSONAware) () -> jsonString);
 
     } else if (geometry instanceof Polygon) {
       Polygon polygon = (Polygon) geometry;
 
       if (isForceCCW) {
-        polygon = (Polygon) OrientationTransformer.transformCCW(polygon);
+        polygon = OrientationTransformer.transformCCW(polygon);
       }
 
       result.put(GeoJsonConstants.NAME_COORDINATES, makeJsonAware(polygon));
@@ -197,8 +187,8 @@ public class GeoJsonWriter {
     } else if (geometry instanceof GeometryCollection) {
       GeometryCollection geometryCollection = (GeometryCollection) geometry;
 
-      ArrayList<Map<String, Object>> geometries = new ArrayList<Map<String, Object>>(
-          geometryCollection.getNumGeometries());
+      ArrayList<Map<String, Object>> geometries = new ArrayList<>(
+              geometryCollection.getNumGeometries());
 
       for (int i = 0; i < geometryCollection.getNumGeometries(); i++) {
         geometries.add(create(geometryCollection.getGeometryN(i), false));
@@ -217,12 +207,12 @@ public class GeoJsonWriter {
     return result;
   }
 
-  private Map<String, Object> createCRS(int srid) {
+  private static Map<String, Object> createCRS(int srid) {
 
-    Map<String, Object> result = new LinkedHashMap<String, Object>();
+    Map<String, Object> result = new LinkedHashMap<>();
     result.put(GeoJsonConstants.NAME_TYPE, GeoJsonConstants.NAME_NAME);
 
-    Map<String, Object> props = new LinkedHashMap<String, Object>();
+    Map<String, Object> props = new LinkedHashMap<>();
     props.put(GeoJsonConstants.NAME_NAME, EPSG_PREFIX + srid);
 
     result.put(GeoJsonConstants.NAME_PROPERTIES, props);
@@ -231,27 +221,17 @@ public class GeoJsonWriter {
   }
 
   private List<JSONAware> makeJsonAware(Polygon poly) {
-    ArrayList<JSONAware> result = new ArrayList<JSONAware>();
+    ArrayList<JSONAware> result = new ArrayList<>();
 
     {
       final String jsonString = getJsonString(poly.getExteriorRing()
           .getCoordinateSequence());
-      result.add(new JSONAware() {
-
-        public String toJSONString() {
-          return jsonString;
-        }
-      });
+      result.add(() -> jsonString);
     }
     for (int i = 0; i < poly.getNumInteriorRing(); i++) {
       final String jsonString = getJsonString(poly.getInteriorRingN(i)
           .getCoordinateSequence());
-      result.add(new JSONAware() {
-
-        public String toJSONString() {
-          return jsonString;
-        }
-      });
+      result.add(() -> jsonString);
     }
 
     return result;
@@ -259,8 +239,8 @@ public class GeoJsonWriter {
 
   private List<Object> makeJsonAware(GeometryCollection geometryCollection) {
 
-    ArrayList<Object> list = new ArrayList<Object>(
-        geometryCollection.getNumGeometries());
+    ArrayList<Object> list = new ArrayList<>(
+            geometryCollection.getNumGeometries());
     for (int i = 0; i < geometryCollection.getNumGeometries(); i++) {
       Geometry geometry = geometryCollection.getGeometryN(i);
       
@@ -272,22 +252,12 @@ public class GeoJsonWriter {
         LineString lineString = (LineString) geometry;
         final String jsonString = getJsonString(lineString
             .getCoordinateSequence());
-        list.add(new JSONAware() {
-
-          public String toJSONString() {
-            return jsonString;
-          }
-        });
+        list.add((JSONAware) () -> jsonString);
       } 
       else if (geometry instanceof Point) {
         Point point = (Point) geometry;
         final String jsonString = getJsonString(point.getCoordinateSequence());
-        list.add(new JSONAware() {
-
-          public String toJSONString() {
-            return jsonString;
-          }
-        });
+        list.add((JSONAware) () -> jsonString);
       }
     }
 
@@ -295,7 +265,7 @@ public class GeoJsonWriter {
   }
 
   private String getJsonString(CoordinateSequence coordinateSequence) {
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
 
     if (coordinateSequence.size() > 1) {
       result.append("[");

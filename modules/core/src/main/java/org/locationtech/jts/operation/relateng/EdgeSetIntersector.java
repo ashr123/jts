@@ -13,7 +13,6 @@ package org.locationtech.jts.operation.relateng;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.geom.Envelope;
@@ -25,9 +24,9 @@ import org.locationtech.jts.noding.SegmentString;
 
 class EdgeSetIntersector {
 
-  private HPRtree index = new HPRtree();
-  private Envelope envelope;
-  private List<MonotoneChain> monoChains = new ArrayList<MonotoneChain>();
+  private final HPRtree<MonotoneChain> index = new HPRtree<>();
+  private final Envelope envelope;
+  private final List<MonotoneChain> monoChains = new ArrayList<>();
   private int idCounter = 0;
   
   public EdgeSetIntersector(List<RelateSegmentString> edgesA, List<RelateSegmentString> edgesB, Envelope env) {

@@ -18,7 +18,7 @@ import test.jts.GeometryTestCase;
 
 public class OverlayAreaTest extends GeometryTestCase {
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(OverlayAreaTest.class);
   }
   

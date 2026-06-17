@@ -26,8 +26,8 @@ import org.locationtech.jts.io.geojson.GeoJsonReader;
 public class GeoJsonMultiReader {
   private static final String GEOJSON_FEATURECOLLECTION = "FeatureCollection";
   private static final String GEOJSON_COORDINATES = "coordinates";
-  private GeometryFactory geomFact;
-  private GeoJsonReader rdr;
+  private final GeometryFactory geomFact;
+  private final GeoJsonReader rdr;
 
   public GeoJsonMultiReader(GeometryFactory geomFact) {
     this.geomFact = geomFact;
@@ -56,7 +56,7 @@ public class GeoJsonMultiReader {
   private List<Geometry> readGeometryList(String s) throws ParseException {
     // TODO: trim string to include only Geometry object
     Geometry geom = rdr.read(s);
-    List<Geometry> geomList = new ArrayList<Geometry>();
+    List<Geometry> geomList = new ArrayList<>();
     geomList.add(geom);
     return geomList;
   }
@@ -64,7 +64,7 @@ public class GeoJsonMultiReader {
   private List<Geometry> readFeatureCollectionList(String s) throws ParseException {
     Pattern p = Pattern.compile("\\{[^\\{\\}]+?\\}");
     Matcher m = p.matcher(s);
-    List<Geometry> geoms = new ArrayList<Geometry>();
+    List<Geometry> geoms = new ArrayList<>();
     while (true) {
       boolean isFound = m.find();
       if (! isFound) break;
@@ -87,11 +87,11 @@ public class GeoJsonMultiReader {
     return geomFact.createGeometryCollection(GeometryFactory.toGeometryArray(geoms));
   }
 
-  private boolean isGeometry(String s) {
-    return s.indexOf(GEOJSON_COORDINATES) >= 0;
+  private static boolean isGeometry(String s) {
+    return s.contains(GEOJSON_COORDINATES);
   }
 
   private static boolean isFeatureCollection(String s) {
-    return s.indexOf(GEOJSON_FEATURECOLLECTION) >= 0;
+    return s.contains(GEOJSON_FEATURECOLLECTION);
   }
 }

@@ -28,12 +28,12 @@ import org.locationtech.jts.util.Stopwatch;
 public class IteratedBufferStressTest 
 {
 
-  private PrecisionModel precisionModel = new PrecisionModel();
+  private final PrecisionModel precisionModel = new PrecisionModel();
 //  private PrecisionModel precisionModel = new PrecisionModel(1);
-  private GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
-  WKTReader rdr = new WKTReader(geometryFactory);
+  private final GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
+  final WKTReader rdr = new WKTReader(geometryFactory);
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
   	try {
   		(new IteratedBufferStressTest()).run();
   	}
@@ -43,7 +43,7 @@ public class IteratedBufferStressTest
   
   }
 
-  String inputWKT = 
+  static final String inputWKT =
   	"POLYGON ((110 320, 190 220, 60 200, 180 120, 120 40, 290 150, 410 40, 410 230, 500 340, 320 310, 260 370, 220 310, 110 320), (220 260, 250 180, 290 220, 360 150, 350 250, 260 280, 220 260))";
 
   public IteratedBufferStressTest() {  }
@@ -64,7 +64,7 @@ public class IteratedBufferStressTest
   	}
   }
   
-  Geometry doBuffer(Geometry g, double dist)
+  static Geometry doBuffer(Geometry g, double dist)
   {
 		System.out.println("Buffering with dist = " + dist);
 		Geometry buf = g.buffer(dist);
@@ -75,5 +75,3 @@ public class IteratedBufferStressTest
 
   }
 }
-
-

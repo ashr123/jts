@@ -25,7 +25,7 @@ public class NearestPointFinder
     return finder.getNearestPoint(pt, tolerance);
   }
 
-  private Geometry geom;
+  private final Geometry geom;
   
   public NearestPointFinder(Geometry geom) {
     this.geom = geom;
@@ -41,9 +41,9 @@ public class NearestPointFinder
   static class NearestPointFilter implements CoordinateSequenceFilter
   {
     private double tolerance = 0.0;
-    private Coordinate basePt;
+    private final Coordinate basePt;
     private Coordinate nearestPt = null;
-    private double dist = Double.MAX_VALUE;
+    private static final double dist = Double.MAX_VALUE;
     
     public NearestPointFilter(Coordinate basePt, double tolerance)
     {
@@ -60,7 +60,6 @@ public class NearestPointFinder
       if (nearestPt == null || basePt.distance(p) < dist) {
         nearestPt = p;
         dist = basePt.distance(nearestPt);
-        return;
       }
     }
     

@@ -19,16 +19,18 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.util.LineStringExtracter;
 
 public class NodingTestUtil {
-  
-  public static Geometry toLines(Collection<NodedSegmentString> nodedList, 
-      GeometryFactory geomFact) {
+
+    private NodingTestUtil() {
+    }
+
+    public static Geometry toLines(Collection<? extends SegmentString> nodedList,
+                                   GeometryFactory geomFact) {
     LineString[] lines = new LineString[ nodedList.size() ];
     int i = 0;
-    for (NodedSegmentString nss : nodedList) {
+    for (SegmentString nss : nodedList) {
       Coordinate[] pts = nss.getCoordinates();
       LineString line = geomFact.createLineString(pts);
       lines[i++] = line;
@@ -38,7 +40,7 @@ public class NodingTestUtil {
   }
 
   public static List<NodedSegmentString> toSegmentStrings(List<LineString> lines) {
-    List<NodedSegmentString> nssList = new ArrayList<NodedSegmentString>();
+    List<NodedSegmentString> nssList = new ArrayList<>();
     for (LineString line : lines) {
       NodedSegmentString nss = new NodedSegmentString(line.getCoordinates(), line);
       nssList.add(nss);
@@ -46,8 +48,8 @@ public class NodingTestUtil {
     return nssList;
   }
   
-  public static List<NodedSegmentString> getNodedSubstrings(NodedSegmentString nss) {
-    List<NodedSegmentString> resultEdgelist = new ArrayList<NodedSegmentString>();
+  public static List<SegmentString> getNodedSubstrings(NodedSegmentString nss) {
+    List<SegmentString> resultEdgelist = new ArrayList<>();
     nss.getNodeList().addSplitEdges(resultEdgelist);
     return resultEdgelist;
   }
@@ -68,17 +70,16 @@ public class NodingTestUtil {
     if (geom2 != null) {
       lines.addAll( LineStringExtracter.getLines(geom2) );
     }
-    List ssList = toSegmentStrings(lines);
+    List<NodedSegmentString> ssList = toSegmentStrings(lines);
     
     Noder noderValid = new ValidatingNoder(noder);
     noderValid.computeNodes(ssList);
-    Collection<NodedSegmentString> nodedList = noder.getNodedSubstrings();
-    
-    Geometry result = toLines(nodedList, geom1.getFactory());
-    return result;
+    Collection<SegmentString> nodedList = noder.getNodedSubstrings();
+
+      return toLines(nodedList, geom1.getFactory());
   }
   
-  public NodedSegmentString createNSS(double... ords) {
+  public static NodedSegmentString createNSS(double... ords) {
     if (ords.length % 2 != 0) {
       throw new IllegalArgumentException("Must provide pairs of ordinates");
     }
@@ -87,7 +88,6 @@ public class NodingTestUtil {
       Coordinate p = new Coordinate(ords[i],ords[i+1]);
       pts[i / 2] = p;
     }
-    NodedSegmentString nss = new NodedSegmentString(pts, null);
-    return nss;
+      return new NodedSegmentString(pts, null);
   }
 }

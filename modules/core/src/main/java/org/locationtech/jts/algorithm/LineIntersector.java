@@ -102,10 +102,7 @@ public abstract class LineIntersector
       dist = 0.0;
     }
     else if (p.equals(p1)) {
-      if (dx > dy)
-        dist = dx;
-      else
-        dist = dy;
+        dist = Math.max(dx, dy);
     }
     else {
       double pdx = Math.abs(p.x - p0.x);
@@ -138,16 +135,16 @@ public abstract class LineIntersector
   }
 
   protected int result;
-  protected Coordinate[][] inputLines = new Coordinate[2][2];
-  protected Coordinate[] intPt = new Coordinate[2];
+  protected final Coordinate[][] inputLines = new Coordinate[2][2];
+  protected final Coordinate[] intPt = new Coordinate[2];
   /**
    * The indexes of the endpoints of the intersection lines, in order along
    * the corresponding line
    */
   protected int[][] intLineIndex;
   protected boolean isProper;
-  protected Coordinate pa;
-  protected Coordinate pb;
+  protected final Coordinate pa;
+  protected final Coordinate pb;
   /**
    * If makePrecise is true, computed intersection coordinates will be made precise
    * using Coordinate#makePrecise
@@ -319,8 +316,7 @@ public abstract class LineIntersector
   public boolean isInteriorIntersection()
   {
     if (isInteriorIntersection(0)) return true;
-    if (isInteriorIntersection(1)) return true;
-    return false;
+      return isInteriorIntersection(1);
   }
 
   /**
@@ -408,8 +404,7 @@ public abstract class LineIntersector
    * @return the edge distance of the intersection point
    */
   public double getEdgeDistance(int segmentIndex, int intIndex) {
-    double dist = computeEdgeDistance(intPt[intIndex], inputLines[segmentIndex][0],
-        inputLines[segmentIndex][1]);
-    return dist;
+      return computeEdgeDistance(intPt[intIndex], inputLines[segmentIndex][0],
+          inputLines[segmentIndex][1]);
   }
 }

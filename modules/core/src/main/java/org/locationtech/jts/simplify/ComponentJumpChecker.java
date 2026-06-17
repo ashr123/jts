@@ -28,7 +28,7 @@ import org.locationtech.jts.geom.LineSegment;
 class ComponentJumpChecker {
   
   //TODO: use a spatial index?
-  private Collection<TaggedLineString> components;
+  private final Collection<TaggedLineString> components;
 
   public ComponentJumpChecker(Collection<TaggedLineString> taggedLines) {
     components = taggedLines;
@@ -94,15 +94,13 @@ class ComponentJumpChecker {
   private static boolean hasJumpAtComponent(Coordinate compPt, TaggedLineString line, int start, int end, LineSegment seg) {
     int sectionCount = crossingCount(compPt, line, start, end);
     int segCount = crossingCount(compPt, seg);
-    boolean hasJump = sectionCount % 2 != segCount % 2;
-    return hasJump;
+      return sectionCount % 2 != segCount % 2;
   }
   
   private static boolean hasJumpAtComponent(Coordinate compPt, LineSegment seg1, LineSegment seg2, LineSegment seg) {
     int sectionCount = crossingCount(compPt, seg1, seg2);
     int segCount = crossingCount(compPt, seg);
-    boolean hasJump = sectionCount % 2 != segCount % 2;
-    return hasJump;
+      return sectionCount % 2 != segCount % 2;
   }
 
   private static int crossingCount(Coordinate compPt, LineSegment seg) {

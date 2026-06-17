@@ -12,9 +12,10 @@
 
 package org.locationtech.jtstest.util.io;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
@@ -34,17 +35,19 @@ import org.xml.sax.SAXException;
 
 public class IOUtil 
 {
-  public static Geometry readFile(String filename, GeometryFactory geomFact)
-  throws Exception, IOException 
-  {
+    private IOUtil() {
+    }
+
+    public static Geometry readFile(String filename, GeometryFactory geomFact)
+  throws Exception {
     String ext = FileUtil.extension(filename);
-    if (ext.equalsIgnoreCase(".shp"))
+    if (".shp".equalsIgnoreCase(ext))
       return readShapefile(filename, geomFact);
-    if (ext.equalsIgnoreCase(".wkb"))
+    if (".wkb".equalsIgnoreCase(ext))
       return readWKBHexFile(filename, geomFact);
-    if (ext.equalsIgnoreCase(".gml"))
+    if (".gml".equalsIgnoreCase(ext))
       return readGMLFile(filename, geomFact);
-    if (ext.equalsIgnoreCase(".geojson") || ext.equalsIgnoreCase(".json"))
+    if (".geojson".equalsIgnoreCase(ext) || ".json".equalsIgnoreCase(ext))
       return readGeoJSONFile(filename, geomFact);
     return readWKTFile(filename, geomFact);
   }
@@ -52,21 +55,22 @@ public class IOUtil
   private static Geometry readShapefile(String filename, GeometryFactory geomFact)
   throws Exception 
   {
-    Shapefile shpfile = new Shapefile(new FileInputStream(filename));
-    shpfile.readStream(geomFact);
-    List geomList = new ArrayList();
-    do {
-      Geometry geom = shpfile.next();
-      if (geom == null)
-        break;
-      geomList.add(geom);
-    } while (true);
-    
-    return geomFact.createGeometryCollection(GeometryFactory.toGeometryArray(geomList));
+    try (Shapefile shpfile = new Shapefile(Files.newInputStream(Paths.get(filename)))) {
+      shpfile.readStream(geomFact);
+      List<Geometry> geomList = new ArrayList<>();
+      do {
+        Geometry geom = shpfile.next();
+        if (geom == null)
+          break;
+        geomList.add(geom);
+      } while (true);
+
+      return geomFact.createGeometryCollection(GeometryFactory.toGeometryArray(geomList));
+    }
   }
   
   private static Geometry readGMLFile(String filename, GeometryFactory geomFact)
-  throws ParseException, IOException, SAXException, ParserConfigurationException 
+  throws IOException, SAXException, ParserConfigurationException
   {
     return readGMLString(FileUtil.readText(filename), geomFact);
   }
@@ -120,10 +124,10 @@ public class IOUtil
     WKTReader reader = new WKTReader(geomFact);
     WKTFileReader fileReader = new WKTFileReader(new StringReader(wkt), reader);
     fileReader.setStrictParsing(isStrict);
-    List geomList = fileReader.read();
-    
+    List<Geometry> geomList = fileReader.read();
+
     if (geomList.size() == 1)
-      return (Geometry) geomList.get(0);
+      return geomList.get(0);
     
     return geomFact.createGeometryCollection(GeometryFactory.toGeometryArray(geomList));
   }
@@ -133,25 +137,22 @@ public class IOUtil
   {
     WKBReader reader = new WKBReader(geomFact);
     WKBHexFileReader fileReader = new WKBHexFileReader(new StringReader(wkb), reader);
-    List geomList = fileReader.read();
-    
+    List<Geometry> geomList = fileReader.read();
+
     if (geomList.size() == 1)
-      return (Geometry) geomList.get(0);
+      return geomList.get(0);
     
     return geomFact.createGeometryCollection(GeometryFactory.toGeometryArray(geomList));
   }
   
   public static Geometry readGMLString(String gml, GeometryFactory geomFact)
-  throws ParseException, IOException, SAXException, ParserConfigurationException 
+  throws IOException, SAXException, ParserConfigurationException
   {
-    GMLReader reader = new GMLReader();
-    Geometry geom = reader.read(gml, geomFact);
-    return geom;
+      return GMLReader.read(gml, geomFact);
   }
   
   private static Geometry readGeoJSONFile(String filename, GeometryFactory geomFact)
-  throws ParseException, IOException, SAXException, ParserConfigurationException 
-  {
+  throws ParseException, IOException {
     return readGeoJSONString(FileUtil.readText(filename), geomFact);
   }
   
@@ -159,8 +160,7 @@ public class IOUtil
   throws ParseException 
   {
     GeoJsonMultiReader reader = new GeoJsonMultiReader(geomFact);
-    Geometry geom = reader.read(s);
-    return geom;
+      return reader.read(s);
   }
   
 

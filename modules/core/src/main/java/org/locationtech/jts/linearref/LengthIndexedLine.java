@@ -28,7 +28,7 @@ import org.locationtech.jts.geom.LineString;
  */
 public class LengthIndexedLine
 {
-  private Geometry linearGeom;
+  private final Geometry linearGeom;
 
   /**
    * Constructs an object which allows a linear {@link Geometry}
@@ -174,11 +174,10 @@ public class LengthIndexedLine
   public double[] indicesOf(Geometry subLine)
   {
     LinearLocation[] locIndex = LocationIndexOfLine.indicesOf(linearGeom, subLine);
-    double[] index = new double[] {
-      LengthLocationMap.getLength(linearGeom, locIndex[0]),
-      LengthLocationMap.getLength(linearGeom, locIndex[1])
-      };
-    return index;
+      return new double[] {
+        LengthLocationMap.getLength(linearGeom, locIndex[0]),
+        LengthLocationMap.getLength(linearGeom, locIndex[1])
+        };
   }
 
 
@@ -200,7 +199,7 @@ public class LengthIndexedLine
    * Returns the index of the start of the line
    * @return the start index
    */
-  public double getStartIndex()
+  public static double getStartIndex()
   {
     return 0.0;
   }
@@ -239,9 +238,8 @@ public class LengthIndexedLine
     if (posIndex < startIndex) return startIndex;
 
     double endIndex = getEndIndex();
-    if (posIndex > endIndex) return endIndex;
+      return Math.min(posIndex, endIndex);
 
-    return posIndex;
   }
   
   private double positiveIndex(double index)

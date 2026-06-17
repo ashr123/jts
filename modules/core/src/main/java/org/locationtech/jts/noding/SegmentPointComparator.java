@@ -28,7 +28,10 @@ import org.locationtech.jts.util.Assert;
  */
 public class SegmentPointComparator {
 
-  /**
+    private SegmentPointComparator() {
+    }
+
+    /**
    * Compares two {@link Coordinate}s for their relative position along a segment
    * lying in the specified {@link Octant}.
    *
@@ -60,18 +63,14 @@ public class SegmentPointComparator {
 
   public static int relativeSign(double x0, double x1)
   {
-    if (x0 < x1) return -1;
-    if (x0 > x1) return 1;
-    return 0;
+      return Double.compare(x0, x1);
   }
 
   private static int compareValue(int compareSign0, int compareSign1)
   {
     if (compareSign0 < 0) return -1;
     if (compareSign0 > 0) return 1;
-    if (compareSign1 < 0) return -1;
-    if (compareSign1 > 0) return 1;
-    return 0;
+      return Integer.compare(compareSign1, 0);
 
   }
 }

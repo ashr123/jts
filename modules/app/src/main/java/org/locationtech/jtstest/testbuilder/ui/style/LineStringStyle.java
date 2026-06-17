@@ -33,9 +33,7 @@ public abstract class LineStringStyle
   public LineStringStyle() {
   }
 
-  public void paint(Geometry geom, Viewport viewport, Graphics2D g) 
-    throws Exception
-  {
+  public void paint(Geometry geom, Viewport viewport, Graphics2D g) {
     // cull non-visible geometries
     if (! viewport.intersectsInModel(geom.getEnvelopeInternal())) 
       return;
@@ -66,13 +64,10 @@ public abstract class LineStringStyle
       for (int i = 0; i < polygon.getNumInteriorRing(); i++) {
           paint(polygon.getInteriorRingN(i), POLY_HOLE, viewport, g);
       }
-      return;
     }
   }
 
-  public void paint(LineString line, int lineType, Viewport viewport, Graphics2D g) 
-  throws Exception
-  {
+  public void paint(LineString line, int lineType, Viewport viewport, Graphics2D g) {
     // cull non-visible geometries
     if (! viewport.intersectsInModel(line.getEnvelopeInternal())) 
       return;
@@ -83,7 +78,7 @@ public abstract class LineStringStyle
   protected abstract void paintLineString(LineString lineString,
   		int lineType,
       Viewport viewport, Graphics2D graphics)
-  throws Exception;
+          ;
 
 
 }

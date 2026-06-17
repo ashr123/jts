@@ -27,12 +27,15 @@ public class Position {
   
   /** Specifies that a location is to the <i>right</i> of a component */  
   public static final int RIGHT   = 2;
-  
-  /**
+
+    private Position() {
+    }
+
+    /**
    * Returns LEFT if the position is RIGHT, RIGHT if the position is LEFT, or the position
    * otherwise.
    */
-  public static final int opposite(int position)
+  public static int opposite(int position)
   {
     if (position == LEFT) return RIGHT;
     if (position == RIGHT) return LEFT;

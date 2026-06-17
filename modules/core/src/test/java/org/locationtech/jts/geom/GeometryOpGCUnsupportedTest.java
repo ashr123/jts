@@ -4,7 +4,7 @@ import test.jts.GeometryTestCase;
 
 public class GeometryOpGCUnsupportedTest extends GeometryTestCase {
 
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) {
     junit.textui.TestRunner.run(GeometryOpGCUnsupportedTest.class);
   }
   
@@ -12,8 +12,8 @@ public class GeometryOpGCUnsupportedTest extends GeometryTestCase {
     super(name);
   }
   
-  static String WKT_GC = "GEOMETRYCOLLECTION (POLYGON ((100 200, 200 200, 200 100, 100 100, 100 200)), LINESTRING (150 250, 250 250))";
-  static String WKT_POLY = "POLYGON ((50 50, 50 150, 150 150, 150 50, 50 50))"; 
+  static final String WKT_GC = "GEOMETRYCOLLECTION (POLYGON ((100 200, 200 200, 200 100, 100 100, 100 200)), LINESTRING (150 250, 250 250))";
+  static final String WKT_POLY = "POLYGON ((50 50, 50 150, 150 150, 150 50, 50 50))";
       
   public void testBoundary() {
     final Geometry a = read(WKT_GC);
@@ -88,11 +88,11 @@ public class GeometryOpGCUnsupportedTest extends GeometryTestCase {
      */
     abstract void operation();
    
-    void check(Class exClz) {
+    void check(Class<? extends Throwable> exClz) {
       assertTrue( isError( exClz ) );
     }
-    
-    boolean isError(Class exClz) {
+
+    boolean isError(Class<? extends Throwable> exClz) {
       try {
         operation();
         return false;

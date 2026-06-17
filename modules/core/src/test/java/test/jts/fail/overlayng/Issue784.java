@@ -27,43 +27,43 @@ import junit.textui.TestRunner;
  */
 public class Issue784 extends TestCase {
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(Issue784.class);
   }
   
-  private GeometryFactory gf = new GeometryFactory();
+  private final GeometryFactory gf = new GeometryFactory();
   
-  private Function<double[][], Polygon> createPolygon = points -> gf.createPolygon(
+  private final Function<double[][], Polygon> createPolygon = points -> gf.createPolygon(
       IntStream.range(0, points[0].length)
               .mapToObj(index -> new CoordinateXY(points[0][index], points[1][index]))
               .toArray(CoordinateXY[]::new)
       );
 
-  Polygon p1 = createPolygon.apply(new double[][]{
+  final Polygon p1 = createPolygon.apply(new double[][]{
     {-16.15907384118054, -16.28767148661218, -13.719459554848422, -13.639456293556348, -16.15907384118054},
     {1.0157206673651495, 7.6835050482212575, 5.212481574525698, 1.0643148816523527, 1.0157206673651495}
   });
-  Polygon p2 = createPolygon.apply(new double[][]{
+  final Polygon p2 = createPolygon.apply(new double[][]{
     {-12.725226307666448, -13.639456293556348, -13.719459768757051, -12.78759751645274, -12.725226307666448},
     {1.0819470369308437, 1.0643148816523527, 5.212481780339414, 4.315883851167196, 1.0819470369308437}
   });
-  Polygon p3 = createPolygon.apply(new double[][]{
+  final Polygon p3 = createPolygon.apply(new double[][]{
   {-13.621824029083443, -16.14144162383529, -16.15907384118054, -13.639456293556348, -13.621824029083443},
   {0.15008489786842003, 0.10149068267229658, 1.0157206673651493, 1.0643148816523527, 0.15008489786842003}
   });
-  Polygon p3r = createPolygon.apply(new double[][]{
+  final Polygon p3r = createPolygon.apply(new double[][]{
   {-13.621824029083443, -16.14144162383529, -16.15907384118054, -13.639456293556348, -13.621824029083443},
   {0.1500848978684200, 0.10149068267229658, 1.0157206673651493, 1.0643148816523527, 0.1500848978684200}
   });
-  Polygon p4 = createPolygon.apply(new double[][]{
+  final Polygon p4 = createPolygon.apply(new double[][]{
       {-17.219533690879903, -16.28767148661218, -16.15907384118054, -17.073303827070436, -17.219533690879903},
       {8.580102931174729, 7.683505048221257, 1.0157206673651495, 0.9980885120866584, 8.580102931174729}
   });
-  Polygon p5 = createPolygon.apply(new double[][]{
+  final Polygon p5 = createPolygon.apply(new double[][]{
       {-12.707594043193543, -13.621824029083443, -13.639456293556348, -12.725226307666448, -12.707594043193543},
       {0.1677170531469111, 0.15008489786842005, 1.0643148816523527, 1.0819470369308437, 0.1677170531469111}
   });
-  Polygon p6 = createPolygon.apply(new double[][]{
+  final Polygon p6 = createPolygon.apply(new double[][]{
       {-17.055671609725188, -17.073303827070436, -16.15907384118054, -16.14144162383529, -17.055671609725188},
       {0.0838585273938056, 0.9980885120866584, 1.0157206673651493, 0.1014906826722966, 0.0838585273938056}
   });
@@ -71,10 +71,9 @@ public class Issue784 extends TestCase {
 
   /**
    * Simplest reproducer.
-   * 
-   * @throws ParseException
+   *
    */
-  public void testUnion_p3p5() throws ParseException {
+  public void testUnion_p3p5() {
     //checkUnion("35 - p3 Rounded", p3r, p5);
     checkUnion("35 - p3 Full", p3, p5);
   }
@@ -113,15 +112,14 @@ public class Issue784 extends TestCase {
   
   /**
    * See simpler case.
-   * 
-   * @throws ParseException
+   *
    */
-  public void xtestUnion_p2p3p5() throws ParseException {
+  public void xtestUnion_p2p3p5() {
       checkUnion("235 - p3 Rounded", p2, p3r, p5);
       checkUnion("235 - p3 Full", p2, p3, p5);
   }
 
-  private void checkUnion(String title, Polygon p2, Polygon p3, Polygon p5) {
+  private static void checkUnion(String title, Polygon p2, Polygon p3, Polygon p5) {
     Geometry p25 = union(p2, p5);
     Geometry pall = union(p3, p25);
     double areaSum = p2.getArea() + p3.getArea() + p5.getArea();
@@ -129,7 +127,7 @@ public class Issue784 extends TestCase {
     checkAreas(title, pall, areaSum);
   }
 
-  private void checkUnion(String title, Polygon p1, Polygon p2) {
+  private static void checkUnion(String title, Polygon p1, Polygon p2) {
     Geometry pUnion = union(p1, p2);
     double areaSum = p1.getArea() + p2.getArea();
     
@@ -140,14 +138,14 @@ public class Issue784 extends TestCase {
     return OverlayNGRobust.overlay(a, b, OverlayNG.UNION);
   }
   
-  private void checkAreas(String title, Geometry union, double areaSum) {
+  private static void checkAreas(String title, Geometry union, double areaSum) {
     boolean isOk = isAreasClose(union, areaSum);
     String status = isOk ? "Success" : "FAILED!";
     System.out.println(title + " - Union status: " + status);
     assertTrue(isOk); 
   }
 
-  private boolean isAreasClose(Geometry geom, double area) {
+  private static boolean isAreasClose(Geometry geom, double area) {
     double geomArea = geom.getArea();
     double areaDelta = Math.abs(geomArea - area);
     double deltaFrac = areaDelta / Math.max(geomArea, area);

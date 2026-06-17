@@ -28,7 +28,7 @@ import org.locationtech.jts.geom.Coordinate;
 public class SegmentIntersectionDetector
     implements SegmentIntersector
 {
-  private LineIntersector li;
+  private final LineIntersector li;
   private boolean findProper = false;
   private boolean findAllTypes = false;
   
@@ -170,10 +170,9 @@ public class SegmentIntersectionDetector
 			 * OR no location has yet been recorded
 			 * save the location data
 			 */
-			boolean saveLocation = true;
-			if (findProper && ! isProper) saveLocation = false;
-			
-			if (intPt == null || saveLocation) {
+			boolean saveLocation = !findProper || isProper;
+
+        if (intPt == null || saveLocation) {
 
 				// record intersection location (approximate)
 				intPt = li.getIntersection(0);

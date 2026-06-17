@@ -35,9 +35,9 @@ import junit.textui.TestRunner;
 public class RobustLineIntersectionTest 
 extends TestCase 
 {
-  private WKTReader reader = new WKTReader();
+  private final WKTReader reader = new WKTReader();
 
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		TestRunner.run(RobustLineIntersectionTest.class);
 	}
 
@@ -216,11 +216,8 @@ extends TestCase
 
 	/**
 	 * Result of this test should be the same as the WKT one!
-	 * @throws ParseException
-	 */
-	public void testCmp5CaseRaw() 
-	throws ParseException
-	{
+     */
+	public void testCmp5CaseRaw() {
 		checkIntersection(
 				new Coordinate[] { 
 						new Coordinate(4348433.262114629, 5552595.478385733),
@@ -288,10 +285,10 @@ extends TestCase
 	 * @param expectedIntPt the expected intersection points (maybe null if not tested)
 	 * @param distanceTolerance tolerance to use for equality test
 	 */
-	void checkIntersection(Coordinate[] pt, 
-			int expectedIntersectionNum, 
-			Coordinate[] expectedIntPt,
-			double distanceTolerance)
+    static void checkIntersection(Coordinate[] pt,
+                                  int expectedIntersectionNum,
+                                  Coordinate[] expectedIntPt,
+                                  double distanceTolerance)
 	{
 		LineIntersector li = new RobustLineIntersector();
 		li.computeIntersection(pt[0], pt[1], pt[2], pt[3]);
@@ -324,7 +321,7 @@ extends TestCase
 		}
 	}
 	
-	void checkIntPoints(Coordinate expectedPt, Coordinate actualPt, double distanceTolerance)
+	static void checkIntPoints(Coordinate expectedPt, Coordinate actualPt, double distanceTolerance)
 	{
 		boolean isEqual = equals(expectedPt, actualPt, distanceTolerance);
 		assertTrue("Int Pts not equal - " 
@@ -346,7 +343,7 @@ extends TestCase
     checkInputNotAltered(pt, scaleFactor);
   }
 
-	public void checkInputNotAltered(Coordinate[] pt, int scaleFactor)
+	public static void checkInputNotAltered(Coordinate[] pt, int scaleFactor)
 	  {
 	    // save input points
 	    Coordinate[] savePt = new Coordinate[4];

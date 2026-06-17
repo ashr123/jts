@@ -8,7 +8,7 @@ import test.jts.GeometryTestCase;
 
 public class PolygonNodeTopologyTest extends GeometryTestCase {
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(PolygonNodeTopologyTest.class);
   }
 
@@ -63,7 +63,7 @@ public class PolygonNodeTopologyTest extends GeometryTestCase {
     Coordinate[] b = readPts(wktB);
     // assert: a[1] = b[1]
     boolean isCrossing = PolygonNodeTopology.isCrossing(a[1], a[0], a[2], b[0], b[2]);
-    assertTrue(isCrossing == isExpected);
+      assertEquals(isCrossing, isExpected);
   }
   
   private void checkInterior(String wktA, String wktB) {
@@ -79,7 +79,7 @@ public class PolygonNodeTopologyTest extends GeometryTestCase {
     Coordinate[] b = readPts(wktB);
     // assert: a[1] = b[1]
     boolean isInterior = PolygonNodeTopology.isInteriorSegment(a[1], a[0], a[2], b[1]);
-    assertTrue(isInterior == isExpected);
+      assertEquals(isInterior, isExpected);
   }
 
   private Coordinate[] readPts(String wkt) {

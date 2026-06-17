@@ -23,7 +23,10 @@ import org.locationtech.jts.geom.Coordinate;
 public class NonRobustCGAlgorithms
 {
 
-  /**
+    private NonRobustCGAlgorithms() {
+    }
+
+    /**
    * Computes whether a ring defined by an array of {@link Coordinate} is
    * oriented counter-clockwise.
    * <p>
@@ -62,10 +65,7 @@ public class NonRobustCGAlgorithms
 		}
 	}
 	/* p is inside if an odd number of crossings. */
-	if( (crossings % 2) == 1 )
-		return	true;
-	else
-		return	false;
+      return (crossings % 2) == 1;
   }
 
   /**
@@ -168,9 +168,7 @@ public class NonRobustCGAlgorithms
         double dx2 = q.x - p2.x;
         double dy2 = q.y - p2.y;
         double det = dx1*dy2 - dx2*dy1;
-        if (det > 0.0) return 1;
-        if (det < 0.0) return -1;
-        return 0;
+      return Double.compare(det, 0.0);
   }
 
   /**

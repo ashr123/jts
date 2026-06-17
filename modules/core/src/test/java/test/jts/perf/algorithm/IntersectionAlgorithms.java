@@ -25,7 +25,10 @@ import org.locationtech.jts.precision.CommonBits;
  */
 public class IntersectionAlgorithms {
 
-  public static Coordinate intersectionBasic(Coordinate p1, Coordinate p2, Coordinate q1, Coordinate q2) {
+    private IntersectionAlgorithms() {
+    }
+
+    public static Coordinate intersectionBasic(Coordinate p1, Coordinate p2, Coordinate q1, Coordinate q2) {
     double px = p1.y - p2.y;
     double py = p2.x - p1.x;
     double pw = p1.x * p2.y - p2.x * p1.y;

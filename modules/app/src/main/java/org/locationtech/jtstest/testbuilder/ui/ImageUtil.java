@@ -25,9 +25,12 @@ import javax.imageio.ImageIO;
 
 public class ImageUtil 
 {
-	public static String IMAGE_FORMAT_NAME_PNG = "png";
-	
-  public static void saveImageToClipboard(Component comp, String formatName)
+	public static final String IMAGE_FORMAT_NAME_PNG = "png";
+
+    private ImageUtil() {
+    }
+
+    public static void saveImageToClipboard(Component comp, String formatName)
   throws IOException
   {
     Image image = new BufferedImage(

@@ -14,7 +14,6 @@ package org.locationtech.jts.triangulate;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -38,19 +37,18 @@ import org.locationtech.jts.geom.Geometry;
  */
 public class VertexTaggedGeometryDataMapper 
 {
-	private Map coordDataMap = new TreeMap();
+	private final Map<Coordinate, Object> coordDataMap = new TreeMap<>();
 	
 	public VertexTaggedGeometryDataMapper()
 	{
 		
 	}
 	
-	public void loadSourceGeometries(Collection geoms)
+	public void loadSourceGeometries(Collection<? extends Geometry> geoms)
 	{
-		for (Iterator i = geoms.iterator(); i.hasNext(); ) {
-			Geometry geom = (Geometry) i.next();
-			loadVertices(geom.getCoordinates(), geom.getUserData());
-		}
+        for (Geometry geom : geoms) {
+            loadVertices(geom.getCoordinates(), geom.getUserData());
+        }
 	}
 	
 	public void loadSourceGeometries(Geometry geomColl)
@@ -63,14 +61,14 @@ public class VertexTaggedGeometryDataMapper
 	
 	private void loadVertices(Coordinate[] pts, Object data)
 	{
-		for (int i = 0; i < pts.length; i++) {
-			coordDataMap.put(pts[i], data);
-		}
+        for (Coordinate pt : pts) {
+            coordDataMap.put(pt, data);
+        }
 	}
 	
-	public List getCoordinates()
+	public List<Coordinate> getCoordinates()
 	{
-		return new ArrayList(coordDataMap.keySet());
+		return new ArrayList<>(coordDataMap.keySet());
 	}
 	
 	/**

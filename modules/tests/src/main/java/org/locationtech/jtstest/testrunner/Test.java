@@ -27,19 +27,19 @@ import org.locationtech.jtstest.util.StringUtil;
  */
 public class Test implements Runnable 
 {
-  private String description;
-  private String operation;
+  private final String description;
+  private final String operation;
   private Result expectedResult;
-  private int testIndex;
-  private String geometryIndex;
-  private List<String> arguments;
-  private TestCase testCase;
+  private final int testIndex;
+  private final String geometryIndex;
+  private final List<String> arguments;
+  private final TestCase testCase;
   private boolean passed;
-  private double tolerance;
+  private final double tolerance;
   
   // cache for actual computed result
   private Geometry targetGeometry;
-  private Object[] operationArgs;
+  private List<Object> operationArgs;
   private boolean isRun = false;
   private Result actualResult = null;
   private Exception exception = null;
@@ -56,7 +56,7 @@ public class Test implements Runnable
     this.expectedResult = expectedResult;
     this.testIndex = testIndex;
     this.geometryIndex = geometryIndex;
-    this.arguments = new ArrayList<String>(arguments);
+    this.arguments = new ArrayList<>(arguments);
     this.testCase = testCase;
   }
 
@@ -93,7 +93,7 @@ public class Test implements Runnable
   }
 
   public String getArgument(int i) {
-    return (String) arguments.get(i);
+    return arguments.get(i);
   }
 
   public int getArgumentCount() {
@@ -176,7 +176,7 @@ public class Test implements Runnable
   		return actualResult;
   	
   	isRun = true;
-    targetGeometry = geometryIndex.equalsIgnoreCase("A")
+    targetGeometry = "A".equalsIgnoreCase(geometryIndex)
          ? testCase.getGeometryA()
          : testCase.getGeometryB();
 
@@ -192,46 +192,45 @@ public class Test implements Runnable
   }
   	
   public String toXml() {
-    String xml = "";
-    xml += "<test>" + StringUtil.newLine;
-    if (description != null && description.length() > 0) {
-      xml += "  <desc>" + StringUtil.escapeHTML(description) + "</desc>" +
-          StringUtil.newLine;
+    StringBuilder xml = new StringBuilder();
+    xml.append("<test>").append(StringUtil.newLine);
+    if (description != null && !description.isEmpty()) {
+      xml.append("  <desc>").append(StringUtil.escapeHTML(description)).append("</desc>").append(StringUtil.newLine);
     }
-    xml += "  <op name=\"" + operation + "\"";
-    xml += " arg1=\"" + geometryIndex + "\"";
+    xml.append("  <op name=\"").append(operation).append("\"");
+    xml.append(" arg1=\"").append(geometryIndex).append("\"");
     int j = 2;
     for (String argument : arguments ) {
       Assert.isTrue(argument != null);
-      xml += " arg" + j + "=\"" + argument + "\"";
+      xml.append(" arg").append(j).append("=\"").append(argument).append("\"");
       j++;
     }
 
-    xml += ">" + StringUtil.newLine;
-    xml += StringUtil.indent(expectedResult.toFormattedString(), 4) + StringUtil.newLine;
-    xml += "  </op>" + StringUtil.newLine;
-    xml += "</test>" + StringUtil.newLine;
-    return xml;
+    xml.append(">").append(StringUtil.newLine);
+    xml.append(StringUtil.indent(expectedResult.toFormattedString(), 4)).append(StringUtil.newLine);
+    xml.append("  </op>").append(StringUtil.newLine);
+    xml.append("</test>").append(StringUtil.newLine);
+    return xml.toString();
   }
 
-  private Object[] convertArgs(List argStr)
+  private List<Object> convertArgs(List<String> argStr)
   {
-    Object[] args = new Object[argStr.size()];
-    for (int i = 0; i < args.length; i++) {
-      args[i] = convertArgToGeomOrString((String) argStr.get(i));
-    }
+    List<Object> args = new ArrayList<>();
+      for (String s : argStr) {
+          args.add(convertArgToGeomOrString(s));
+      }
     return args;
   }
 
   private Object convertArgToGeomOrString(String argStr)
   {
-    if (argStr.equalsIgnoreCase("null")) {
+    if ("null".equalsIgnoreCase(argStr)) {
       return null;
     }
-    if (argStr.equalsIgnoreCase("A")) {
+    if ("A".equalsIgnoreCase(argStr)) {
       return testCase.getGeometryA();
     }
-    if (argStr.equalsIgnoreCase("B")) {
+    if ("B".equalsIgnoreCase(argStr)) {
       return testCase.getGeometryB();
     }
     return argStr;
@@ -239,4 +238,3 @@ public class Test implements Runnable
 
 
 }
-

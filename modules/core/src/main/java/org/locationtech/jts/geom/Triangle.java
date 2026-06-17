@@ -15,6 +15,8 @@ import org.locationtech.jts.algorithm.Angle;
 import org.locationtech.jts.algorithm.HCoordinate;
 import org.locationtech.jts.algorithm.Orientation;
 import org.locationtech.jts.math.DD;
+import org.locationtech.jts.math.MathUtil;
+import org.locationtech.jts.triangulate.quadedge.Vertex;
 
 /**
  * Represents a planar triangle, and provides methods for calculating various
@@ -44,9 +46,7 @@ public class Triangle
       return false;
     if (!Angle.isAcute(b, c, a))
       return false;
-    if (!Angle.isAcute(c, a, b))
-      return false;
-    return true;
+      return Angle.isAcute(c, a, b);
   }
   
   /**
@@ -77,8 +77,7 @@ public class Triangle
         Orientation.CLOCKWISE : Orientation.COUNTERCLOCKWISE;
     if (exteriorIndex == Orientation.index(a, b, p)) return false;
     if (exteriorIndex == Orientation.index(b, c, p)) return false;
-    if (exteriorIndex == Orientation.index(c, a, p)) return false;
-    return true;
+      return exteriorIndex != Orientation.index(c, a, p);
   }
 
   /**
@@ -340,12 +339,7 @@ public class Triangle
     double lenAB = a.distance(b);
     double lenBC = b.distance(c);
     double lenCA = c.distance(a);
-    double maxLen = lenAB;
-    if (lenBC > maxLen)
-      maxLen = lenBC;
-    if (lenCA > maxLen)
-      maxLen = lenCA;
-    return maxLen;
+      return MathUtil.max(lenAB, lenBC, lenCA);
   }
 
   /**
@@ -373,8 +367,7 @@ public class Triangle
     double dx = c.x - a.x;
     double dy = c.y - a.y;
 
-    Coordinate splitPt = new Coordinate(a.x + frac * dx, a.y + frac * dy);
-    return splitPt;
+      return new Coordinate(a.x + frac * dx, a.y + frac * dy);
   }
 
   /**
@@ -458,9 +451,8 @@ public class Triangle
 
     // tri area = 1/2 * | u x v |
     double absSq = crossx * crossx + crossy * crossy + crossz * crossz;
-    double area3D = Math.sqrt(absSq) / 2;
 
-    return area3D;
+      return Math.sqrt(absSq) / 2;
   }
   
   /**
@@ -485,25 +477,15 @@ public class Triangle
   public static double interpolateZ(Coordinate p, Coordinate v0, Coordinate v1,
       Coordinate v2)
   {
-    double x0 = v0.x;
-    double y0 = v0.y;
-    double a = v1.x - x0;
-    double b = v2.x - x0;
-    double c = v1.y - y0;
-    double d = v2.y - y0;
-    double det = a * d - b * c;
-    double dx = p.x - x0;
-    double dy = p.y - y0;
-    double t = (d * dx - b * dy) / det;
-    double u = (-c * dx + a * dy) / det;
-    double z = v0.getZ() + t * (v1.getZ() - v0.getZ()) + u * (v2.getZ() - v0.getZ());
-    return z;
+      return Vertex.interpolateZ(p, v0, v1, v2);
   }  
   
   /**
    * The coordinates of the vertices of the triangle
    */
-  public Coordinate p0, p1, p2;
+  public final Coordinate p0;
+    public final Coordinate p1;
+    public final Coordinate p2;
 
   /**
    * Creates a new triangle with the given vertices.

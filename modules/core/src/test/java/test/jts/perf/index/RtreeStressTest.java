@@ -16,17 +16,16 @@ public class RtreeStressTest {
   private static final double BASE_MAX = 1000;
   private static final double SIZE_MAX = 100;
 
-  public static void main(String[] args) throws Exception
-  {
+  public static void main(String[] args) {
     RtreeStressTest test = new RtreeStressTest();
     test.run();
   }
-  HPRtree hpRtree;
-  STRtree stRtree;
-  
+  HPRtree<String> hpRtree;
+  STRtree<String> stRtree;
+
   private void run() {
-    hpRtree = new HPRtree();
-    stRtree = new STRtree();
+    hpRtree = new HPRtree<>();
+    stRtree = new STRtree<>();
     
     //loadRandom(NUM_ITEMS);
     loadGrid(NUM_ITEMS);
@@ -49,19 +48,19 @@ public class RtreeStressTest {
     CountItemVisitor hpVisitor = new CountItemVisitor();
     hpRtree.query(env, hpVisitor);
     
-    //List hpResult = hpRtree.query(env);
-    List hprResult = null;
-    
+    //List<String> hpResult = hpRtree.query(env);
+    List<String> hprResult = null;
+
     //CountItemVisitor stVisitor = new CountItemVisitor();
     //stRtree.query(env, stVisitor);
 
-    //List strResult = stRtree.query(env);
-    List strResult = null;
-    
+    //List<String> strResult = stRtree.query(env);
+    List<String> strResult = null;
+
     checkResults(hprResult, strResult);
   }
 
-  private void checkResults(List hprResult, List strResult) {
+  private static void checkResults(List<?> hprResult, List<?> strResult) {
     if (hprResult == null) return;
     if (strResult == null) return;
     
@@ -95,13 +94,12 @@ public class RtreeStressTest {
     }
   }
 
-  private Envelope randomEnvelope(double baseMin, double baseMax, double size) {
+  private static Envelope randomEnvelope(double baseMin, double baseMax, double size) {
     double x = random(baseMin, baseMax);
     double y = random(baseMin, baseMax);
     double sizeX = random(size);
     double sizeY = random(size);
-    Envelope env = new Envelope(x, x + sizeX, y, y + sizeY);
-    return env;
+      return new Envelope(x, x + sizeX, y, y + sizeY);
   }
 
   private void insert(Envelope env, String id) {
@@ -109,7 +107,7 @@ public class RtreeStressTest {
     stRtree.insert(env, id);
   }
 
-  private double random(double x) {
+  private static double random(double x) {
     return x * Math.random();
   }
 

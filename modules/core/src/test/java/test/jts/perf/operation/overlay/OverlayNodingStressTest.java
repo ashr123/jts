@@ -44,7 +44,7 @@ public class OverlayNodingStressTest
 	private static final int ITER_LIMIT = 10000;
 	private static final int BATCH_SIZE = 20;
 	
-	private Random rand = new Random((long) (Math.PI * 10e8));
+	private final Random rand = new Random((long) (Math.PI * 10e8));
 	private int failureCount = 0;
 	
   public OverlayNodingStressTest(String name) {
@@ -57,8 +57,7 @@ public class OverlayNodingStressTest
 
   private double getRand()
   {
-  	double r = rand.nextDouble();
-  	return r;
+      return rand.nextDouble();
   }
   
 	public void testNoding()
@@ -79,7 +78,7 @@ public class OverlayNodingStressTest
 			);
 	}
 
-	public Geometry[] generateGeometryStar(double angle1, double angle2) {
+	public static Geometry[] generateGeometryStar(double angle1, double angle2) {
 		RotatedRectangleFactory rrFact = new RotatedRectangleFactory();
 		Polygon rr1 = rrFact.createRectangle(100, 20, angle1);
 		Polygon rr2 = rrFact.createRectangle(100, 20, angle2);
@@ -152,8 +151,8 @@ class RotatedRectangleFactory
 		
 	}
 	
-	private static double PI_OVER_2 = Math.PI / 2;
-	private GeometryFactory fact = new GeometryFactory();
+	private static final double PI_OVER_2 = Math.PI / 2;
+	private final GeometryFactory fact = new GeometryFactory();
 	
 	public Polygon createRectangle(double length, double width, double angle)
 	{
@@ -178,10 +177,8 @@ class RotatedRectangleFactory
 		};
 		// close polygon
 		pts[4] = new Coordinate(pts[0]);
-		Polygon poly = fact.createPolygon(fact.createLinearRing(pts), null);
-		return poly;
+        return fact.createPolygon(fact.createLinearRing(pts), null);
 	}
 	
 
 }
-  

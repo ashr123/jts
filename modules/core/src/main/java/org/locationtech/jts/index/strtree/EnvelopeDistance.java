@@ -22,7 +22,10 @@ import org.locationtech.jts.math.MathUtil;
  */
 public class EnvelopeDistance 
 {
-  /**
+    private EnvelopeDistance() {
+    }
+
+    /**
    * Computes the maximum distance between the points defining two envelopes.
    * It is equal to the length of the diagonal of 
    * the envelope containing both input envelopes.

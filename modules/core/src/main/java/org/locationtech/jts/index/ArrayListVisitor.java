@@ -16,15 +16,15 @@ import java.util.ArrayList;
 
 /**
  * Builds an array of all visited items.
- * 
+ *
  * @version 1.7
  */
-public class ArrayListVisitor
-    implements ItemVisitor
+public class ArrayListVisitor<T>
+    implements ItemVisitor<T>
 {
 
-  private ArrayList items = new ArrayList();
-  
+  private final ArrayList<T> items = new ArrayList<>();
+
   /**
    * Creates a new instance.
    */
@@ -33,19 +33,19 @@ public class ArrayListVisitor
 
   /**
    * Visits an item.
-   * 
+   *
    * @param item the item to visit
    */
-  public void visitItem(Object item)
+  public void visitItem(T item)
   {
     items.add(item);
   }
 
   /**
    * Gets the array of visited items.
-   * 
+   *
    * @return the array of items
    */
-  public ArrayList getItems() { return items; }
+  public ArrayList<T> getItems() { return items; }
 
 }

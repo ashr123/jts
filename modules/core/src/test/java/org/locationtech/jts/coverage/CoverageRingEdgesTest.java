@@ -22,7 +22,7 @@ import junit.textui.TestRunner;
 import test.jts.GeometryTestCase;
 
 public class CoverageRingEdgesTest  extends GeometryTestCase {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(CoverageRingEdgesTest.class);
   }
   
@@ -60,7 +60,7 @@ public class CoverageRingEdgesTest  extends GeometryTestCase {
     checkEqual(expected, edgeLines);
   }
 
-  private MultiLineString toArray(List<CoverageEdge> edges, GeometryFactory geomFactory) {
+  private static MultiLineString toArray(List<CoverageEdge> edges, GeometryFactory geomFactory) {
     LineString[] lines = new LineString[edges.size()];
     for (int i = 0; i < edges.size(); i++) {
       lines[i] = edges.get(i).toLineString(geomFactory);

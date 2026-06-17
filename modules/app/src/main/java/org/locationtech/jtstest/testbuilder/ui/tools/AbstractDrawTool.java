@@ -34,7 +34,7 @@ public abstract class AbstractDrawTool extends LineBandTool {
 		super.mouseClicked(e);
 	}
 
-	protected void bandFinished() throws Exception {
+	protected void bandFinished() {
 		setType();
 		geomModel().addComponent(getCoordinates());
 		panel().updateGeom();

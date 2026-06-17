@@ -37,8 +37,8 @@ public class RandomOffsetLineStringGenerator
 		return rlg.generate(fact);
 	}
 	
-	private double maxSegLen;
-	private int numPts;
+	private final double maxSegLen;
+	private final int numPts;
 	private int exponent2 = 5;
 	private Coordinate[] pts;
 	private Coordinate endPoint;
@@ -108,7 +108,7 @@ public class RandomOffsetLineStringGenerator
 		}
 	}
 	
-	private Coordinate computeRandomOffset(Coordinate p0, Coordinate p1, double segFrac)
+	private static Coordinate computeRandomOffset(Coordinate p0, Coordinate p1, double segFrac)
 	{
 		double len = p0.distance(p1);
 		double len2 = len / 2;
@@ -117,7 +117,7 @@ public class RandomOffsetLineStringGenerator
 		return seg.pointAlongOffset(segFrac, offsetLen);
 	}
 	
-	private double randomFractionPerturbation()
+	private static double randomFractionPerturbation()
 	{
 		double rnd = Math.random();
 		double mag = rnd * rnd * rnd;

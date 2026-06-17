@@ -35,7 +35,7 @@ class OffsetCurveSection
 implements Comparable<OffsetCurveSection> {
   
   public static Geometry toGeometry(List<OffsetCurveSection> sections, GeometryFactory geomFactory) {
-    if (sections.size() == 0)
+    if (sections.isEmpty())
       return geomFactory.createLineString();
     if (sections.size() == 1)
       return geomFactory.createLineString(sections.get(0).getCoordinates());
@@ -60,7 +60,7 @@ implements Comparable<OffsetCurveSection> {
    * @return the simplified linestring for the joined sections
    */
   public static Geometry toLine(List<OffsetCurveSection> sections, GeometryFactory geomFactory) {
-    if (sections.size() == 0)
+    if (sections.isEmpty())
       return geomFactory.createLineString();
     if (sections.size() == 1)
       return geomFactory.createLineString(sections.get(0).getCoordinates());
@@ -102,9 +102,9 @@ implements Comparable<OffsetCurveSection> {
     return new OffsetCurveSection(sectionPts, loc, locLast);
   }
   
-  private Coordinate[] sectionPts;
-  private double location;
-  private double locLast;
+  private final Coordinate[] sectionPts;
+  private final double location;
+  private final double locLast;
 
   OffsetCurveSection(Coordinate[] pts, double loc, double locLast) {
     this.sectionPts = pts;

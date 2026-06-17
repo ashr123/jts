@@ -39,16 +39,16 @@ public class SegmentPointComparatorTest
     checkNodePosition(0, 1, 0, 1, 1, -1);
   }
 
-  private void checkNodePosition(int octant,
-      double x0, double y0,
-    double x1, double y1,
-    int expectedPositionValue
-    )
+  private static void checkNodePosition(int octant,
+                                        double x0, double y0,
+                                        double x1, double y1,
+                                        int expectedPositionValue
+  )
   {
     int posValue = SegmentPointComparator.compare(octant,
         new Coordinate(x0, y0),
         new Coordinate(x1, y1)
         );
-    assertTrue(posValue == expectedPositionValue);
+      assertEquals(posValue, expectedPositionValue);
   }
 }

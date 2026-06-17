@@ -12,23 +12,26 @@
 
 package org.locationtech.jtstest.geomop;
 
-public class ArgumentConverter 
+import java.util.ArrayList;
+import java.util.List;
+
+public class ArgumentConverter
 {
-	public ArgumentConverter()
+	private ArgumentConverter()
 	{
-		
+
 	}
-	
-  public Object[] convert(Class[] parameterTypes, Object[] args)
+
+  public static List<Object> convert(Class<?>[] parameterTypes, List<Object> args)
   {
-  	Object[] actualArgs = new Object[args.length];
-    for (int i = 0; i < args.length; i++ ) {
-    	actualArgs[i] = convert(parameterTypes[i], args[i]);
+  	List<Object> actualArgs = new ArrayList<>();
+    for (int i = 0; i < args.size(); i++ ) {
+    	actualArgs.add(convert(parameterTypes[i], args.get(i)));
     }
     return actualArgs;
   }
 
-  public Object convert(Class destClass, Object srcValue)
+  public static Object convert(Class<?> destClass, Object srcValue)
   {
     if (srcValue instanceof String) {
       return convertFromString(destClass, (String) srcValue);
@@ -40,13 +43,13 @@ public class ArgumentConverter
     return null;
   }
 
-  private Object convertFromString(Class destClass, String src)
+  private static Object convertFromString(Class<?> destClass, String src)
   {
     if (destClass == Boolean.class || destClass == boolean.class) {
-      if (src.equals("true")) {
+      if ("true".equals(src)) {
         return Boolean.TRUE;
       }
-      else if (src.equals("false")) {
+      else if ("false".equals(src)) {
         return Boolean.FALSE;
       }
       throwInvalidConversion(destClass, src);
@@ -76,7 +79,7 @@ public class ArgumentConverter
     return null;
   }
 
-  private void throwInvalidConversion(Class destClass, Object srcValue)
+  private static void throwInvalidConversion(Class<?> destClass, Object srcValue)
   {
   	throw new IllegalArgumentException("Cannot convert " + srcValue + " to " + destClass.getName());
   }

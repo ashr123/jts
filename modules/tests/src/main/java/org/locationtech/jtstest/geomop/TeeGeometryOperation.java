@@ -11,6 +11,8 @@
  */
 package org.locationtech.jtstest.geomop;
 
+import java.util.List;
+
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jtstest.testrunner.Result;
 
@@ -39,7 +41,7 @@ implements GeometryOperation
   	
   }
   
-  public Class getReturnType(String opName)
+  public Class<?> getReturnType(String opName)
   {
   	return chainOp.getReturnType(opName);
   }
@@ -65,15 +67,15 @@ implements GeometryOperation
    * @throws Exception
    * @see GeometryOperation#invoke
    */
-	public Result invoke(String opName, Geometry geometry, Object[] args)
+	public Result invoke(String opName, Geometry geometry, List<Object> args)
 	  throws Exception
-	{	  
-	  runTeeOp(opName, geometry, args);  
-	  
+	{
+	  runTeeOp(opName, geometry, args);
+
 	  return chainOp.invoke(opName, geometry, args);
 	}
 
-	protected abstract void runTeeOp(String opName, Geometry geometry, Object[] args);
+	protected abstract void runTeeOp(String opName, Geometry geometry, List<Object> args);
 
 	
 }

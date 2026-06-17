@@ -47,11 +47,11 @@ class RelateSegmentString extends BasicSegmentString {
     return pts;
   }
   
-  private boolean isA;
-  private int dimension;
-  private int id;
-  private int ringId;
-  private RelateGeometry inputGeom;
+  private final boolean isA;
+  private final int dimension;
+  private final int id;
+  private final int ringId;
+  private final RelateGeometry inputGeom;
   private Geometry parentPolygonal = null;
 
   private RelateSegmentString(Coordinate[] pts, boolean isA, int dimension, int id, int ringId, Geometry poly, RelateGeometry inputGeom) {
@@ -82,8 +82,7 @@ class RelateSegmentString extends BasicSegmentString {
         || intPt.equals2D(getCoordinate(segIndex + 1));
     Coordinate prev = prevVertex(segIndex, intPt);
     Coordinate next = nextVertex(segIndex, intPt);
-    NodeSection a = new NodeSection(isA, dimension, id, ringId, parentPolygonal, isNodeAtVertex, prev, intPt, next);
-    return a;
+      return new NodeSection(isA, dimension, id, ringId, parentPolygonal, isNodeAtVertex, prev, intPt, next);
   }
   
   /**
@@ -145,10 +144,8 @@ class RelateSegmentString extends BasicSegmentString {
       return true;
     if (pt.equals2D(getCoordinate(segIndex+1))) {
       boolean isFinalSegment = segIndex == size() - 2;
-      if (isClosed() || ! isFinalSegment)
-        return false;
+        return !isClosed() && isFinalSegment;
       //-- for final segment, process intersections with final endpoint
-      return true;
     }
     //-- intersection is interior - process it
     return true;

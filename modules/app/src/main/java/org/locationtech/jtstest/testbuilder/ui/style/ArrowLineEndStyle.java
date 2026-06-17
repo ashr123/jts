@@ -16,7 +16,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
-import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 
 import org.locationtech.jtstest.testbuilder.ui.ColorUtil;
@@ -45,8 +44,7 @@ public class ArrowLineEndStyle
   }
 
   protected void paint(Point2D terminal, Point2D next, Viewport viewport,
-      Graphics2D g) throws NoninvertibleTransformException 
-  {
+      Graphics2D g) {
     // can't compute valid arrow for zero-length segments
     if (terminal.equals(next)) {
       return;
@@ -96,11 +94,10 @@ public class ArrowLineEndStyle
   public static Point2D fin(Point2D shaftTip, Point2D shaftTail, double length,
       double angle) {
     double shaftLength = shaftTip.distance(shaftTail);
-    Point2D finTail = shaftTip;
-    Point2D finTip = AWTUtil.add(AWTUtil.multiply(AWTUtil.subtract(shaftTail,
-        shaftTip), length / shaftLength), finTail);
+      Point2D finTip = AWTUtil.add(AWTUtil.multiply(AWTUtil.subtract(shaftTail,
+        shaftTip), length / shaftLength), shaftTip);
     AffineTransform affineTransform = new AffineTransform();
-    affineTransform.rotate((angle * Math.PI) / 180, finTail.getX(), finTail
+    affineTransform.rotate((angle * Math.PI) / 180, shaftTip.getX(), shaftTip
         .getY());
 
     return affineTransform.transform(finTip, null);

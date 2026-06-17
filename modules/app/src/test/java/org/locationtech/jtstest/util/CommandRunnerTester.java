@@ -3,12 +3,14 @@ package org.locationtech.jtstest.util;
 import java.io.IOException;
 
 public class CommandRunnerTester {
-  public static void main(String[] args) {
-    CommandRunnerTester tester = new CommandRunnerTester();
-    tester.run();
+    private CommandRunnerTester() {
+    }
+
+    public static void main(String[] args) {
+      CommandRunnerTester.run();
   }
 
-  private void run() {
+  private static void run() {
     //String cmd = "xdir.exe foo";
     String cmd = "D:\\proj\\jts\\git\\jts-md\\bin\\jtsop";
     

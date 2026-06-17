@@ -19,18 +19,20 @@ import java.io.Serializable;
  *
  * @version 1.7
  */
-public class ItemBoundable implements Boundable, Serializable {
-  private Object bounds;
-  private Object item;
+public class ItemBoundable<B, I> implements Boundable<B>, Serializable {
+    private final B bounds;
+    private final I item;
 
-  public ItemBoundable(Object bounds, Object item) {
-    this.bounds = bounds;
-    this.item = item;
-  }
+    public ItemBoundable(B bounds, I item) {
+        this.bounds = bounds;
+        this.item = item;
+    }
 
-  public Object getBounds() {
-    return bounds;
-  }
+    public B getBounds() {
+        return bounds;
+    }
 
-  public Object getItem() { return item; }
+    public I getItem() {
+        return item;
+    }
 }

@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.prep.PreparedGeometry;
 import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
 import org.locationtech.jts.geom.util.PolygonExtracter;
@@ -42,19 +43,19 @@ public class PartitionedUnion {
   
   public static Geometry union(Geometry geoms)
   {
-    List polys = PolygonExtracter.getPolygons(geoms);
+    List<Polygon> polys = PolygonExtracter.getPolygons(geoms);
     PartitionedUnion op = new PartitionedUnion(polys);
     return op.union();
   }
 
-  private Geometry[] inputPolys;
+  private final Geometry[] inputPolys;
   
-  public PartitionedUnion(Collection<Geometry> polys)
+  public PartitionedUnion(Collection<? extends Geometry> polys)
   {
     this.inputPolys = toArray(polys);
   }
-  
-  private static Geometry[] toArray(Collection<Geometry> polys) {
+
+  private static Geometry[] toArray(Collection<? extends Geometry> polys) {
     return polys.toArray(new Geometry[0]);
   }
   
@@ -63,21 +64,17 @@ public class PartitionedUnion {
     if (inputPolys.length == 0)
       return null;
     
-    SpatialPartition part = new SpatialPartition(inputPolys, new SpatialPartition.EquivalenceRelation() {
-      
-      @Override
-      public boolean isEquivalent(int i, int j) {
-         //return inputPolys[i].intersects(inputPolys[j]);
-        //*
-         PreparedGeometry pg = PreparedGeometryFactory.prepare(inputPolys[i]);
-         return pg.intersects(inputPolys[j]);
-         //*/
-      }
+    SpatialPartition part = new SpatialPartition(inputPolys, (i, j) -> {
+       //return inputPolys[i].intersects(inputPolys[j]);
+      //*
+       PreparedGeometry pg = PreparedGeometryFactory.prepare(inputPolys[i]);
+       return pg.intersects(inputPolys[j]);
+       //*/
     });
     
     //--- compute union of each set
     GeometryFactory geomFactory = inputPolys[0].getFactory();
-    List<Geometry> unionGeoms = new ArrayList<Geometry>();
+    List<Geometry> unionGeoms = new ArrayList<>();
     int numSets = part.getCount();
     for (int i = 0; i < numSets; i++) {
       Geometry geom = union(part, i);
@@ -86,13 +83,13 @@ public class PartitionedUnion {
     return geomFactory.buildGeometry(unionGeoms);
   }
 
-  private Geometry union(SpatialPartition part, int s) {
+  private static Geometry union(SpatialPartition part, int s) {
     //--- one geom in partition, so just copy it
     if (part.getSize(s) == 1) {
       return part.getGeometry(s, 0).copy();
     }
 
-    List<Geometry> setGeoms = new ArrayList<Geometry>();
+    List<Geometry> setGeoms = new ArrayList<>();
     for (int i = 0; i < part.getSize(s); i++) {
       setGeoms.add( part.getGeometry(s, i) );
     }

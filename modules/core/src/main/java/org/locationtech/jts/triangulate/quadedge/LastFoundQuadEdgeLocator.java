@@ -22,7 +22,7 @@ import java.util.Collection;
  * @author Martin Davis
  */
 public class LastFoundQuadEdgeLocator implements QuadEdgeLocator {
-    private QuadEdgeSubdivision subdiv;
+    private final QuadEdgeSubdivision subdiv;
     private QuadEdge            lastEdge = null;
 
     public LastFoundQuadEdgeLocator(QuadEdgeSubdivision subdiv) {
@@ -35,9 +35,9 @@ public class LastFoundQuadEdgeLocator implements QuadEdgeLocator {
     }
 
     private QuadEdge findEdge() {
-        Collection edges = subdiv.getEdges();
+        Collection<QuadEdge> edges = subdiv.getEdges();
         // assume there is an edge - otherwise will get an exception
-        return (QuadEdge) edges.iterator().next();
+        return edges.iterator().next();
     }
 
     /**

@@ -14,7 +14,6 @@ package org.locationtech.jtstest.testbuilder.topostretch;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.algorithm.Orientation;
@@ -26,18 +25,18 @@ import org.locationtech.jts.geom.LineString;
 
 class StretchedVertexFinder 
 {
-	public static List findNear(Collection linestrings, double tolerance, Envelope mask, Coordinate[] pts)
+	public static List<StretchedVertex> findNear(Collection<LineString> linestrings, double tolerance, Envelope mask, Coordinate[] pts)
 	{
 		StretchedVertexFinder finder = new StretchedVertexFinder(linestrings, tolerance, mask);
 		return finder.getNearVertices(pts);
 	}
-	
-	private Collection linestrings;
+
+	private final Collection<LineString> linestrings;
 	private double tolerance = 0.0;
 	private Envelope limitEnv = null;
-	private List nearVerts = new ArrayList();
-	
-	public StretchedVertexFinder(Collection linestrings, double tolerance)
+	private final List<StretchedVertex> nearVerts = new ArrayList<>();
+
+	public StretchedVertexFinder(Collection<LineString> linestrings, double tolerance)
 	{
 		this.linestrings = linestrings;
 		this.tolerance = tolerance;
@@ -51,7 +50,7 @@ class StretchedVertexFinder
 	 * @param tolerance the distance tolerance for points to be stretched
 	 * @param limitEnv the envelope to limit searching to
 	 */
-	public StretchedVertexFinder(Collection linestrings, double tolerance, Envelope limitEnv)
+	public StretchedVertexFinder(Collection<LineString> linestrings, double tolerance, Envelope limitEnv)
 	{
 		this(linestrings, tolerance);
 		this.limitEnv = limitEnv;
@@ -64,18 +63,17 @@ class StretchedVertexFinder
 	 * @param pts the points to test for stretching
 	 * @return a list of StretchedVertexes
 	 */
-	public List getNearVertices(Coordinate[] pts)
+	public List<StretchedVertex> getNearVertices(Coordinate[] pts)
 	{
 		findNearVertices(pts);
 		return nearVerts;
 	}
-	
+
 	private void findNearVertices()
 	{
-		for (Iterator i = linestrings.iterator(); i.hasNext(); ) {
-			LineString line = (LineString) i.next();
-			findNearVertices(line);
-		}
+        for (LineString line : linestrings) {
+            findNearVertices(line);
+        }
 	}
 	
   private static int geomPointsLen(Coordinate[] pts)
@@ -104,10 +102,9 @@ class StretchedVertexFinder
 	
 	private void findNearVertex(Coordinate linePt)
 	{
-		for (Iterator i = linestrings.iterator(); i.hasNext(); ) {
-			LineString testLine = (LineString) i.next();
-			findNearVertex(linePt, testLine);
-		}
+        for (LineString testLine : linestrings) {
+            findNearVertex(linePt, testLine);
+        }
 	}
 
   /**
@@ -166,8 +163,7 @@ class StretchedVertexFinder
   private static boolean contains(Envelope env, Coordinate p0, Coordinate p1)
   {
     if (! env.contains(p0)) return false;
-    if (! env.contains(p1)) return false;
-    return true;
+      return env.contains(p1);
   }
   
 	private static boolean isPointNearButNotOnSeg(Coordinate p, Coordinate p0, Coordinate p1, double distTol)
@@ -181,12 +177,10 @@ class StretchedVertexFinder
 		distSeg.p0 = p0;
 		distSeg.p1 = p1;
 		double segDist = distSeg.distance(p);
-		if (segDist > distTol)
-			return false;
-		return true;
-	}
+        return !(segDist > distTol);
+    }
 
-	private static LineSegment distSeg = new LineSegment();
+	private static final LineSegment distSeg = new LineSegment();
 	
 	private static double distanceToSeg(Coordinate p, Coordinate p0, Coordinate p1)
 	{

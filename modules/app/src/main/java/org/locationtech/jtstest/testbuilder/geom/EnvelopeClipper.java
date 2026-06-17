@@ -17,7 +17,7 @@ import org.locationtech.jts.geom.LineSegment;
 
 public class EnvelopeClipper {
   
-  private Envelope env;
+  private final Envelope env;
 
   public EnvelopeClipper(Envelope env) {
     this.env = env;
@@ -40,13 +40,12 @@ public class EnvelopeClipper {
         return true;
     }
     if (p0.y == p1.y) {
-      if (p0.y == env.getMinY() || p0.x == env.getMaxY())
-        return true;
+        return p0.y == env.getMinY() || p0.x == env.getMaxY();
     }
     return false;
   }
   
-  private Coordinate clipEndpoint(Envelope env, Coordinate p0, Coordinate p1) {
+  private static Coordinate clipEndpoint(Envelope env, Coordinate p0, Coordinate p1) {
     Coordinate clipPt = new Coordinate(p0);
     if (p0.x < env.getMinX()) {
       clipPt.x = intersectionLineX(p0, p1, env.getMinX());
@@ -63,7 +62,7 @@ public class EnvelopeClipper {
     return clipPt;
   }
 
-  private double intersectionLineY(Coordinate a, Coordinate b, double y) {
+  private static double intersectionLineY(Coordinate a, Coordinate b, double y) {
     // short-circuit if segment is parallel to Y axis
     if (b.x == a.x) return a.x;
     
@@ -72,7 +71,7 @@ public class EnvelopeClipper {
     return a.x + intercept;
   }
 
-  private double intersectionLineX(Coordinate a, Coordinate b, double x) {
+  private static double intersectionLineX(Coordinate a, Coordinate b, double x) {
     // short-circuit if segment is parallel to X axis
     if (b.y == a.y) return a.y;
     

@@ -34,7 +34,7 @@ public class GeometryArea {
     return area.getArea();
   }
   
-  private Geometry geom;
+  private final Geometry geom;
 
   public GeometryArea(Geometry geom) {
     this.geom = geom;
@@ -46,7 +46,7 @@ public class GeometryArea {
     return filter.area;
   }
   
-  private class PolygonAreaFilter implements GeometryFilter {
+  private static class PolygonAreaFilter implements GeometryFilter {
     double area = 0;
     @Override
     public void filter(Geometry geom) {
@@ -56,7 +56,7 @@ public class GeometryArea {
     }
   }
   
-  private double areaPolygon(Polygon geom) {
+  private static double areaPolygon(Polygon geom) {
     double area = areaRing(geom.getExteriorRing());
     for (int i = 0; i < geom.getNumInteriorRing(); i++) {
       LinearRing hole = geom.getInteriorRingN(i);
@@ -65,7 +65,7 @@ public class GeometryArea {
     return area;
   }
   
-  public double areaRing(LinearRing ring) {
+  public static double areaRing(LinearRing ring) {
     // TODO: handle hole rings, multiPolygons
     CoordinateSequence seq = ring.getCoordinateSequence();
     boolean isCW = ! Orientation.isCCW(seq);
@@ -74,8 +74,7 @@ public class GeometryArea {
     double area = 0;
     for (int i = 1; i < seq.size(); i++) {
       int i0 = i - 1;
-      int i1 = i;
-      /**
+        /**
        * Sum the partial areas for the two
        * opposing SegmentVectors representing the edge.
        * If the ring is oriented CW then the interior is to the right of the vector,
@@ -83,10 +82,10 @@ public class GeometryArea {
        */
       area += EdgeVector.area2Term(
           seq.getX(i0), seq.getY(i0),
-          seq.getX(i1), seq.getY(i1),
+          seq.getX(i), seq.getY(i),
           isCW)
           + EdgeVector.area2Term(
-              seq.getX(i1), seq.getY(i1),
+              seq.getX(i), seq.getY(i),
               seq.getX(i0), seq.getY(i0),
               ! isCW);
     }

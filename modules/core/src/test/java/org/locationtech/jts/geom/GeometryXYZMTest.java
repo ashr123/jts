@@ -1,7 +1,6 @@
 package org.locationtech.jts.geom;
 
 import org.locationtech.jts.geom.impl.PackedCoordinateSequenceFactory;
-import org.locationtech.jts.io.ParseException;
 
 import junit.textui.TestRunner;
 import test.jts.GeometryTestCase;
@@ -15,11 +14,11 @@ import test.jts.GeometryTestCase;
  *
  */
 public class GeometryXYZMTest extends GeometryTestCase {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(GeometryXYZMTest.class);
   }
 
-  static GeometryFactory geomFact = new GeometryFactory(PackedCoordinateSequenceFactory.DOUBLE_FACTORY);
+  static final GeometryFactory geomFact = new GeometryFactory(PackedCoordinateSequenceFactory.DOUBLE_FACTORY);
 
   public GeometryXYZMTest(String name) { super(name); }
   

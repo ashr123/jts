@@ -37,8 +37,8 @@ import org.locationtech.jts.geom.PrecisionModel;
 public class OffsetCurveBuilder 
 {  
   private double distance = 0.0;
-  private PrecisionModel precisionModel;
-  private BufferParameters bufParams;
+  private final PrecisionModel precisionModel;
+  private final BufferParameters bufParams;
   
   public OffsetCurveBuilder(
                 PrecisionModel precisionModel,
@@ -89,9 +89,8 @@ public class OffsetCurveBuilder
       else
         computeLineBufferCurve(inputPts, segGen);
     }
-    
-    Coordinate[] lineCoord = segGen.getCoordinates();
-    return lineCoord;
+
+      return segGen.getCoordinates();
   }
 
   /**
@@ -111,8 +110,7 @@ public class OffsetCurveBuilder
     if (distance == 0.0) return true;
     // a negative width buffer of a line or point is empty,
     // except for single-sided buffers, where the sign indicates the side
-    if (distance < 0.0 && ! bufParams.isSingleSided()) return true;
-    return false;
+      return distance < 0.0 && !bufParams.isSingleSided();
   }
 
   /**

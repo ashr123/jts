@@ -209,7 +209,7 @@ class PolygonTopologyAnalyzer {
     return null;
   }
   
-  private boolean isInvertedRingValid;
+  private final boolean isInvertedRingValid;
   
   private PolygonIntersectionAnalyzer intFinder;
   private List<PolygonRing> polyRings = null;
@@ -260,10 +260,7 @@ class PolygonTopologyAnalyzer {
       }
     }
     checkInteriorDisconnectedByHoleCycle();
-    if (disconnectionPt != null) {
-      return true;
-    }
-    return false;
+      return disconnectionPt != null;
   }
 
   /**
@@ -321,7 +318,6 @@ class PolygonTopologyAnalyzer {
     
     if (intFinder.hasDoubleTouch()) {
       disconnectionPt = intFinder.getDoubleTouchLocation();
-      return;
     }
   }
   
@@ -335,7 +331,7 @@ class PolygonTopologyAnalyzer {
   }
 
   private static List<SegmentString> createSegmentStrings(Geometry geom, boolean isInvertedRingValid) {
-    List<SegmentString> segStrings = new ArrayList<SegmentString>();
+    List<SegmentString> segStrings = new ArrayList<>();
     if (geom instanceof LinearRing) {
       LinearRing ring = (LinearRing) geom;
       segStrings.add( createSegString(ring, null));
@@ -369,7 +365,7 @@ class PolygonTopologyAnalyzer {
       PolygonRing polyRing = (PolygonRing) ss.getData();
       if (polyRing != null) {
         if (polyRings == null) {
-          polyRings = new ArrayList<PolygonRing>();
+          polyRings = new ArrayList<>();
         }
         polyRings.add(polyRing);
       }
@@ -384,9 +380,8 @@ class PolygonTopologyAnalyzer {
     if (CoordinateArrays.hasRepeatedPoints(pts)) {
       pts = CoordinateArrays.removeRepeatedPoints(pts);
     }
-    
-    SegmentString ss = new BasicSegmentString(pts, polyRing);
-    return ss;
+
+      return new BasicSegmentString(pts, polyRing);
   }
 
 }

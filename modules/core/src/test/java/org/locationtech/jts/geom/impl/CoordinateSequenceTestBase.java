@@ -37,7 +37,7 @@ public abstract class CoordinateSequenceTestBase
 {
   public static final int SIZE = 100;
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(CoordinateSequenceTestBase.class);
   }
 
@@ -48,10 +48,10 @@ public abstract class CoordinateSequenceTestBase
   public void testZeroLength()
   {
     CoordinateSequence seq = getCSFactory().create(0, 3);
-    assertTrue(seq.size() == 0);
+      assertEquals(0, seq.size());
 
     CoordinateSequence seq2 = getCSFactory().create((Coordinate[]) null);
-    assertTrue(seq2.size() == 0);
+      assertEquals(0, seq2.size());
   }
 
   public void testCreateBySizeAndModify()
@@ -124,7 +124,7 @@ public abstract class CoordinateSequenceTestBase
     return (CoordinateSequence) o;
   }
 
-  Coordinate[] createArray(int size)
+  static Coordinate[] createArray(int size)
   {
     Coordinate[] coords = new Coordinate[size];
     for (int i = 0; i < size; i++) {
@@ -134,7 +134,7 @@ public abstract class CoordinateSequenceTestBase
     return coords;
   }
 
-  boolean isAllCoordsEqual(CoordinateSequence seq, Coordinate coord)
+  static boolean isAllCoordsEqual(CoordinateSequence seq, Coordinate coord)
   {
     for (int i = 0; i < seq.size(); i++) {
       if (!coord.equals(seq.getCoordinate(i))) return false;
@@ -165,7 +165,7 @@ public abstract class CoordinateSequenceTestBase
    * @param coords
    * @return
    */
-  boolean isEqual(CoordinateSequence seq, Coordinate[] coords)
+  static boolean isEqual(CoordinateSequence seq, Coordinate[] coords)
   {
     if (seq.size() != coords.length) return false;
     
@@ -207,8 +207,7 @@ public abstract class CoordinateSequenceTestBase
     }
     return true;
   }
-  boolean isEqual( double expected, double actual) {
+  static boolean isEqual(double expected, double actual) {
     return expected == actual || (Double.isNaN(expected)&&Double.isNaN(actual));
   }
 }
-

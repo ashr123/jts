@@ -63,13 +63,11 @@ public class HSBPalette {
   float sInc = 0.1f;
   float bInc = 0.1f;
   
-  private int numEntries;
-  private float sLo;
-  private float bLo;
-  private float hBase;
-  private float hRange;
-  
-  private float h1;
+  private final int numEntries;
+  private final float sLo;
+  private final float bLo;
+
+    private final float h1;
   
   public HSBPalette(
     int numH, float hBase, float hRange,
@@ -79,9 +77,7 @@ public class HSBPalette {
     this.numH = numH;
     this.numS = numS;
     this.numB = numB;
-    this.hBase = hBase;
-    this.hRange = hRange;
-    this.h1 = hBase;
+      this.h1 = hBase;
     this.sLo = sLo;
     this.bLo = bLo;
     // TODO: make this mod 1

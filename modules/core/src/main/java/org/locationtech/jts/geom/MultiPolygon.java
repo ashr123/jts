@@ -96,16 +96,16 @@ public class MultiPolygon
     if (isEmpty()) {
       return getFactory().createMultiLineString();
     }
-    ArrayList allRings = new ArrayList();
-    for (int i = 0; i < geometries.length; i++) {
-      Polygon polygon = (Polygon) geometries[i];
-      Geometry rings = polygon.getBoundary();
-      for (int j = 0; j < rings.getNumGeometries(); j++) {
-        allRings.add(rings.getGeometryN(j));
+    ArrayList<Geometry> allRings = new ArrayList<>();
+      for (Geometry geometry : geometries) {
+          Polygon polygon = (Polygon) geometry;
+          Geometry rings = polygon.getBoundary();
+          for (int j = 0; j < rings.getNumGeometries(); j++) {
+              allRings.add(rings.getGeometryN(j));
+          }
       }
-    }
     LineString[] allRingsArray = new LineString[allRings.size()];
-    return getFactory().createMultiLineString((LineString[]) allRings.toArray(allRingsArray));
+    return getFactory().createMultiLineString(allRings.toArray(allRingsArray));
   }
 
   public boolean equalsExact(Geometry other, double tolerance) {
@@ -146,5 +146,3 @@ public class MultiPolygon
     return Geometry.TYPECODE_MULTIPOLYGON;
   }
 }
-
-

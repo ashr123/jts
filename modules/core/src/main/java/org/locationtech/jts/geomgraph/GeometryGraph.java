@@ -86,14 +86,14 @@ public class GeometryGraph
         ? Location.BOUNDARY : Location.INTERIOR;
   }
 
-  private Geometry parentGeom;
+  private final Geometry parentGeom;
 
   /**
    * The lineEdgeMap is a map of the linestring components of the
    * parentGeometry to the edges which are derived from them.
    * This is used to efficiently perform findEdge queries
    */
-  private Map lineEdgeMap = new HashMap();
+  private final Map<LineString, Edge> lineEdgeMap = new HashMap<>();
 
   private BoundaryNodeRule boundaryNodeRule = null;
 
@@ -102,8 +102,8 @@ public class GeometryGraph
    * whether nodes are in the boundary or not
    */
   private boolean useBoundaryDeterminationRule = true;
-  private int argIndex;  // the index of this geometry as an argument to a spatial function (used for labelling)
-  private Collection boundaryNodes;
+  private final int argIndex;  // the index of this geometry as an argument to a spatial function (used for labelling)
+  private Collection<Node> boundaryNodes;
   private boolean hasTooFewPoints = false;
   private Coordinate invalidPoint = null;
 
@@ -111,7 +111,7 @@ public class GeometryGraph
   // for use if geometry is not Polygonal
   private final PointLocator ptLocator = new PointLocator();
   
-  private EdgeSetIntersector createEdgeSetIntersector()
+  private static EdgeSetIntersector createEdgeSetIntersector()
   {
   // various options for computing intersections, from slowest to fastest
 
@@ -167,7 +167,7 @@ public class GeometryGraph
 
   public BoundaryNodeRule getBoundaryNodeRule() { return boundaryNodeRule; }
 
-  public Collection getBoundaryNodes()
+  public Collection<Node> getBoundaryNodes()
   {
     if (boundaryNodes == null)
       boundaryNodes = nodes.getBoundaryNodes(argIndex);
@@ -176,27 +176,25 @@ public class GeometryGraph
 
   public Coordinate[] getBoundaryPoints()
   {
-    Collection coll = getBoundaryNodes();
+    Collection<Node> coll = getBoundaryNodes();
     Coordinate[] pts = new Coordinate[coll.size()];
     int i = 0;
-    for (Iterator it = coll.iterator(); it.hasNext(); ) {
-      Node node = (Node) it.next();
-      pts[i++] = node.getCoordinate().copy();
-    }
+      for (Node node : coll) {
+          pts[i++] = node.getCoordinate().copy();
+      }
     return pts;
   }
 
   public Edge findEdge(LineString line)
   {
-    return (Edge) lineEdgeMap.get(line);
+    return lineEdgeMap.get(line);
   }
 
-  public void computeSplitEdges(List edgelist)
+  public void computeSplitEdges(List<Edge> edgelist)
   {
-    for (Iterator i = edges.iterator(); i.hasNext(); ) {
-      Edge e = (Edge) i.next();
-      e.eiList.addSplitEdges(edgelist);
-    }
+      for (Edge e : edges) {
+          e.eiList.addSplitEdges(edgelist);
+      }
   }
   private void add(Geometry g)
   {
@@ -377,8 +375,8 @@ public class GeometryGraph
     EdgeSetIntersector esi = createEdgeSetIntersector();
     esi.computeIntersections(edges, g.edges, si);
 /*
-for (Iterator i = g.edges.iterator(); i.hasNext();) {
-Edge e = (Edge) i.next();
+for (Iterator<Edge> i = g.edges.iterator(); i.hasNext();) {
+Edge e = i.next();
 Debug.print(e.getEdgeIntersectionList());
 }
 */
@@ -420,14 +418,13 @@ Debug.print(e.getEdgeIntersectionList());
 
   private void addSelfIntersectionNodes(int argIndex)
   {
-    for (Iterator i = edges.iterator(); i.hasNext(); ) {
-      Edge e = (Edge) i.next();
-      int eLoc = e.getLabel().getLocation(argIndex);
-      for (Iterator eiIt = e.eiList.iterator(); eiIt.hasNext(); ) {
-        EdgeIntersection ei = (EdgeIntersection) eiIt.next();
-        addSelfIntersectionNode(argIndex, ei.coord, eLoc);
+      for (Edge e : edges) {
+          int eLoc = e.getLabel().getLocation(argIndex);
+          for (Iterator<EdgeIntersection> eiIt = e.eiList.iterator(); eiIt.hasNext(); ) {
+              EdgeIntersection ei = eiIt.next();
+              addSelfIntersectionNode(argIndex, ei.coord, eLoc);
+          }
       }
-    }
   }
   /**
    * Add a node for a self-intersection.

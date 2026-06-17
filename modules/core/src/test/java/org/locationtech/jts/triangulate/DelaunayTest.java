@@ -25,11 +25,11 @@ import test.jts.GeometryTestCase;
  */
 public class DelaunayTest extends GeometryTestCase {
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(DelaunayTest.class);
   }
   
-	private GeometryFactory geomFact = new GeometryFactory();
+	private final GeometryFactory geomFact = new GeometryFactory();
 
   public DelaunayTest(String name) { super(name); }
 

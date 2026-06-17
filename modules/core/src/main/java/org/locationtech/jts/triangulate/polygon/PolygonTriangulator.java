@@ -89,7 +89,7 @@ public class PolygonTriangulator {
   private void compute() {
     @SuppressWarnings("unchecked")
     List<Polygon> polys = PolygonExtracter.getPolygons(inputGeom);
-    triList = new ArrayList<Tri>();
+    triList = new ArrayList<>();
     for (Polygon poly : polys) {
       if (poly.isEmpty()) continue;
       List<Tri> polyTriList = triangulatePolygon(poly);
@@ -102,13 +102,12 @@ public class PolygonTriangulator {
    * 
    * @return GeometryCollection of triangular polygons
    */
-  private List<Tri> triangulatePolygon(Polygon poly) {
+  private static List<Tri> triangulatePolygon(Polygon poly) {
     Coordinate[] polyShell = PolygonHoleJoiner.join(poly);
-    
-    List<Tri> triList = PolygonEarClipper.triangulate(polyShell);
-    //Tri.validate(triList);
 
-    return triList;
+      //Tri.validate(triList);
+
+    return PolygonEarClipper.triangulate(polyShell);
   }
 
 }

@@ -31,7 +31,7 @@ public class KdtreePerfTest extends PerformanceTestCase {
 	}
 
 	@Override
-	public void startRun(int size) throws Exception {
+	public void startRun(int size) {
 		Random rnd = new Random(12345);
 		points = new ArrayList<>(size);
 		for (int i = 0; i < size; i++) {

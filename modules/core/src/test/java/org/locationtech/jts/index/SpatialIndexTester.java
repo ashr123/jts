@@ -11,7 +11,6 @@
  */
 package org.locationtech.jts.index;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.geom.Envelope;
@@ -23,10 +22,10 @@ import org.locationtech.jts.geom.Envelope;
  */
 public class SpatialIndexTester 
 {
-  private static boolean VERBOSE = false;
+  private static final boolean VERBOSE = false;
   
-  private SpatialIndex index;
-  private ArrayList sourceData;
+  private SpatialIndex<Envelope> index;
+  private ArrayList<Envelope> sourceData;
   private boolean isSuccess = true;
   
   public SpatialIndexTester() {
@@ -37,18 +36,18 @@ public class SpatialIndexTester
     return isSuccess;
   }
   
-  public void setSpatialIndex(SpatialIndex index)
+  public void setSpatialIndex(SpatialIndex<Envelope> index)
   {
     this.index = index;
   }
 
-  public SpatialIndex getSpatialIndex()
+  public SpatialIndex<Envelope> getSpatialIndex()
   {
     return index;
   }
 
   public void init() {
-    sourceData = new ArrayList();
+    sourceData = new ArrayList<>();
     addSourceData(0, sourceData);
     addSourceData(OFFSET, sourceData);
     if (VERBOSE) {
@@ -69,11 +68,10 @@ public class SpatialIndexTester
     doTest(index, QUERY_ENVELOPE_EXTENT_2, sourceData);
   }
 
-  private void insert(List sourceData, SpatialIndex index) {
-    for (Iterator i = sourceData.iterator(); i.hasNext(); ) {
-      Envelope envelope = (Envelope) i.next();
-      index.insert(envelope, envelope);
-    }
+  private static void insert(List<Envelope> sourceData, SpatialIndex<Envelope> index) {
+      for (Envelope envelope : sourceData) {
+          index.insert(envelope, envelope);
+      }
   }
 
   private static final double CELL_EXTENT = 20.31;
@@ -83,7 +81,7 @@ public class SpatialIndexTester
   private static final double QUERY_ENVELOPE_EXTENT_1 = 1.009;
   private static final double QUERY_ENVELOPE_EXTENT_2 = 11.7;
 
-  private void addSourceData(double offset, List sourceData) {
+  private static void addSourceData(double offset, List<Envelope> sourceData) {
     for (int i = 0; i < CELLS_PER_GRID_SIDE; i++) {
       double minx = (i * CELL_EXTENT) + offset;
       double maxx = minx + FEATURE_EXTENT;
@@ -96,7 +94,7 @@ public class SpatialIndexTester
     }
   }
 
-  private void doTest(SpatialIndex index, double queryEnvelopeExtent, List sourceData) {
+  private void doTest(SpatialIndex<Envelope> index, double queryEnvelopeExtent, List<Envelope> sourceData) {
    int extraMatchCount = 0;
     int expectedMatchCount = 0;
     int actualMatchCount = 0;
@@ -104,8 +102,8 @@ public class SpatialIndexTester
     for (int x = 0; x < CELL_EXTENT * CELLS_PER_GRID_SIDE; x+= queryEnvelopeExtent) {
       for (int y = 0; y < CELL_EXTENT * CELLS_PER_GRID_SIDE; y+= queryEnvelopeExtent) {
         Envelope queryEnvelope = new Envelope(x, x+queryEnvelopeExtent, y, y+queryEnvelopeExtent);
-        List expectedMatches = intersectingEnvelopes(queryEnvelope, sourceData);
-        List actualMatches = index.query(queryEnvelope);
+        List<Envelope> expectedMatches = intersectingEnvelopes(queryEnvelope, sourceData);
+        List<Envelope> actualMatches = index.query(queryEnvelope);
         // since index returns candidates only, it may return more than the expected value
         if (expectedMatches.size() > actualMatches.size()) {
           isSuccess = false;
@@ -130,30 +128,31 @@ public class SpatialIndexTester
     }
   }
 
-  private void compare(List expectedEnvelopes, List actualEnvelopes) {
+  private void compare(List<Envelope> expectedEnvelopes, List<Envelope> actualEnvelopes) {
     //Don't use #containsAll because we want to check using
     //==, not #equals. [Jon Aquino]
-    for (Iterator i = expectedEnvelopes.iterator(); i.hasNext(); ) {
-      Envelope expected = (Envelope) i.next();
-      boolean found = false;
-      for (Iterator j = actualEnvelopes.iterator(); j.hasNext(); ) {
-        Envelope actual = (Envelope) j.next();
-        if (actual.equals(expected)) {
-          found = true;
-          break;
-        }
+      for (Envelope expected : expectedEnvelopes) {
+          boolean found = false;
+          for (Envelope actual : actualEnvelopes) {
+              if (actual.equals(expected)) {
+                  found = true;
+                  break;
+              }
+          }
+          if (!found) {
+              isSuccess = false;
+              break;
+          }
       }
-      if (! found)
-        isSuccess = false;
-    }
   }
 
-  private List intersectingEnvelopes(Envelope queryEnvelope, List envelopes) {
-    ArrayList intersectingEnvelopes = new ArrayList();
-    for (Iterator i = envelopes.iterator(); i.hasNext(); ) {
-      Envelope candidate = (Envelope) i.next();
-      if (candidate.intersects(queryEnvelope)) { intersectingEnvelopes.add(candidate); }
-    }
+  private static List<Envelope> intersectingEnvelopes(Envelope queryEnvelope, List<Envelope> envelopes) {
+    ArrayList<Envelope> intersectingEnvelopes = new ArrayList<>();
+      for (Envelope candidate : envelopes) {
+          if (candidate.intersects(queryEnvelope)) {
+              intersectingEnvelopes.add(candidate);
+          }
+      }
     return intersectingEnvelopes;
   }
 }

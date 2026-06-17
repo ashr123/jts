@@ -5,7 +5,7 @@ import test.jts.GeometryTestData;
 
 public class GeometryCopyTest extends GeometryTestCase {
 
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) {
     junit.textui.TestRunner.run(GeometryCopyTest.class);
   }
   
@@ -24,11 +24,11 @@ public class GeometryCopyTest extends GeometryTestCase {
     checkCopy( read( GeometryTestData.WKT_GC ));
   }
 
-  private void checkCopy(final Geometry g) {
+  private static void checkCopy(final Geometry g) {
     int SRID = 123;
     g.setSRID(SRID );
     
-    Object DATA = new Integer(999);
+    Object DATA = 999;
     g.setUserData(DATA);
     
     Geometry copy = g.copy();

@@ -81,19 +81,18 @@ public class UnaryUnionNG {
   }
   
   private static UnionStrategy createUnionStrategy(PrecisionModel pm) {
-    UnionStrategy unionSRFun = new UnionStrategy() {
+      return new UnionStrategy() {
 
-      public Geometry union(Geometry g0, Geometry g1) {
-        return OverlayNG.overlay(g0, g1, UNION, pm);
-      }
+        public Geometry union(Geometry g0, Geometry g1) {
+          return OverlayNG.overlay(g0, g1, UNION, pm);
+        }
 
-      @Override
-      public boolean isFloatingPrecision() {
-         return OverlayUtil.isFloating(pm);
-      }
-      
-    };
-    return unionSRFun;
+        @Override
+        public boolean isFloatingPrecision() {
+           return OverlayUtil.isFloating(pm);
+        }
+
+      };
   }
   
   private UnaryUnionNG() {

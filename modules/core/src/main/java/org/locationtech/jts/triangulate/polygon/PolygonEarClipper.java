@@ -23,7 +23,6 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.Triangle;
 import org.locationtech.jts.index.VertexSequencePackedRtree;
-import org.locationtech.jts.io.WKTWriter;
 import org.locationtech.jts.triangulate.tri.Tri;
 
 /**
@@ -84,7 +83,7 @@ class PolygonEarClipper {
    * Note that a KDtree cannot be used because the vertex indices must be stored
    * and duplicates must be stored.
    */
-  private VertexSequencePackedRtree vertexCoordIndex;
+  private final VertexSequencePackedRtree vertexCoordIndex;
 
   /**
    * Creates a new ear-clipper instance.
@@ -132,7 +131,7 @@ class PolygonEarClipper {
   }
   
   public List<Tri> compute() {
-    List<Tri> triList = new ArrayList<Tri>();
+    List<Tri> triList = new ArrayList<>();
 
     /**
      * Count scanned corners, to catch infinite loops
@@ -228,15 +227,6 @@ class PolygonEarClipper {
     
     int dupApexIndex = NO_VERTEX_INDEX;
     //--- check for duplicate vertices
-    for (int i = 0; i < result.length; i++) {
-      int vertIndex = result[i];
-      
-      if (vertIndex == cornerIndex 
-          || vertIndex == vertex.length - 1
-          || isRemoved(vertIndex)) 
-        continue;
-      
-      Coordinate v = vertex[vertIndex];
       /**
        * If the vertex is equal to the corner apex, record it.
        * This can happen where the polygon ring self-touches,
@@ -245,21 +235,32 @@ class PolygonEarClipper {
        * So only report this if no properly intersecting vertex is found,
        * for efficiency.
        */
-      if ( v.equals2D(corner[1]) ) {
-        dupApexIndex = vertIndex;
+      for (int vertIndex : result) {
+          if (vertIndex == cornerIndex
+                  || vertIndex == vertex.length - 1
+                  || isRemoved(vertIndex))
+              continue;
+
+          Coordinate v = vertex[vertIndex];
+          /**
+           * If the vertex is equal to the corner apex, record it.
+           * This can happen where the polygon ring self-touches,
+           * usually due to hole joining.
+           * This will require a full scan to check the incident segments.
+           * So only report this if no properly intersecting vertex is found,
+           * for efficiency.
+           */
+          if (v.equals2D(corner[1])) {
+              dupApexIndex = vertIndex;
+          }
+          //--- don't need to check other corner vertices
+          else if (v.equals2D(corner[0]) || v.equals2D(corner[2])) {
+          }
+          //--- this is a properly intersecting vertex
+          else if (Triangle.intersects(corner[0], corner[1], corner[2], v))
+              return vertIndex;
       }
-      //--- don't need to check other corner vertices 
-      else if ( v.equals2D(corner[0]) || v.equals2D(corner[2]) ) {
-        continue;
-      }
-      //--- this is a properly intersecting vertex
-      else if (Triangle.intersects(corner[0], corner[1], corner[2], v) )
-        return vertIndex;
-    }
-    if (dupApexIndex != NO_VERTEX_INDEX) {
       return dupApexIndex;
-    }
-    return NO_VERTEX_INDEX;
   }
 
   /**

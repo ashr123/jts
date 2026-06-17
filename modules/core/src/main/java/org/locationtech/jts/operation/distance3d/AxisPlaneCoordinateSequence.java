@@ -70,8 +70,8 @@ public class AxisPlaneCoordinateSequence implements CoordinateSequence {
 	private static final int[] XZ_INDEX = new int[] { 0,2 };
 	private static final int[] YZ_INDEX = new int[] { 1,2 };
 	
-	private CoordinateSequence seq;
-	private int[] indexMap;
+	private final CoordinateSequence seq;
+	private final int[] indexMap;
 	
 	private AxisPlaneCoordinateSequence(CoordinateSequence seq, int[] indexMap) {
 		this.seq = seq;

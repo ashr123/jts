@@ -42,9 +42,9 @@ import org.locationtech.jts.geom.util.AffineTransformation;
  */
 public class GeometricShapeFactory
 {
-  protected GeometryFactory geomFact;
+  protected final GeometryFactory geomFact;
   protected PrecisionModel precModel = null;
-  protected Dimensions dim = new Dimensions();
+  protected final Dimensions dim = new Dimensions();
   protected int nPts = 100;
   
   /**
@@ -262,9 +262,8 @@ public class GeometricShapeFactory
     Coordinate centre = dim.getCentre();
     
     double r4 = Math.pow(radius, power);
-    double y0 = radius;
-    
-    double xyInt = Math.pow(r4 / 2, recipPow);
+
+      double xyInt = Math.pow(r4 / 2, recipPow);
     
     int nSegsInOct = nPts / 8;
     int totPts = nSegsInOct * 8 + 1;
@@ -273,7 +272,7 @@ public class GeometricShapeFactory
     
     for (int i = 0; i <= nSegsInOct; i++) {
   		double x = 0.0;
-  		double y = y0;
+  		double y = radius;
     	if (i != 0) {
     		x = xInc * i;
     		double x4 = Math.pow(x, power);

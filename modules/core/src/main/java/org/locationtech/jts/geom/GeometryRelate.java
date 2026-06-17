@@ -32,23 +32,26 @@ import org.locationtech.jts.operation.relateng.RelatePredicate;
  */
 class GeometryRelate 
 {
-  public static String RELATE_PROPERTY_NAME = "jts.relate";
+  public static final String RELATE_PROPERTY_NAME = "jts.relate";
   
-  public static String RELATE_PROPERTY_VALUE_NG = "ng";
-  public static String RELATE_PROPERTY_VALUE_OLD = "old";
+  public static final String RELATE_PROPERTY_VALUE_NG = "ng";
+  public static final String RELATE_PROPERTY_VALUE_OLD = "old";
   
   /**
    * Currently the old relate implementation is the default
    */
-  public static boolean RELATE_NG_DEFAULT = false;
+  public static final boolean RELATE_NG_DEFAULT = false;
 
   private static boolean isRelateNG = RELATE_NG_DEFAULT;
 
   static {
     setRelateImpl(System.getProperty(RELATE_PROPERTY_NAME));
   }
-  
-  /**
+
+    private GeometryRelate() {
+    }
+
+    /**
    * This function is provided primarily for unit testing.
    * It is not recommended to use it dynamically, since 
    * that may result in inconsistent overlay behaviour.

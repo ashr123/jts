@@ -26,19 +26,19 @@ import org.locationtech.jts.operation.distance.DistanceOp;
  */
 public class ClosestPointExample
 {
-  static GeometryFactory fact = new GeometryFactory();
-  static WKTReader wktRdr = new WKTReader(fact);
+  static final GeometryFactory fact = new GeometryFactory();
+  static final WKTReader wktRdr = new WKTReader(fact);
 
   public static void main(String[] args) {
     ClosestPointExample example = new ClosestPointExample();
-    example.run();
+    run();
   }
 
-  public ClosestPointExample()
+  private ClosestPointExample()
   {
   }
 
-  public void run()
+  public static void run()
   {
     findClosestPoint(
         "POLYGON ((200 180, 60 140, 60 260, 200 180))",
@@ -63,7 +63,7 @@ public class ClosestPointExample
        "LINESTRING ( 120 215, 185 224, 209 207, 238 222, 254 186 )");
   }
 
-  public void findClosestPoint(String wktA, String wktB)
+  public static void findClosestPoint(String wktA, String wktB)
   {
     System.out.println("-------------------------------------");
     try {

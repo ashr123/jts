@@ -23,12 +23,14 @@ import org.locationtech.jts.util.Stopwatch;
 
 public class VoronoiPerfTest 
 {
-  public static void main(String args[]) {
-  	VoronoiPerfTest test = new VoronoiPerfTest();
-  	test.run();
+    private VoronoiPerfTest() {
+    }
+
+    public static void main(String[] args) {
+      run();
   }
   
-	public void run()
+	public static void run()
 	{
 		run(10);
 		run(100);
@@ -42,9 +44,9 @@ public class VoronoiPerfTest
 	
 	final static double SIDE_LEN = 10.0;
 	
-	public void run(int nPts)
+	public static void run(int nPts)
 	{
-		List pts = randomPoints(nPts);
+		List<Coordinate> pts = randomPoints(nPts);
 		Stopwatch sw = new Stopwatch();
 		DelaunayTriangulationBuilder builder = new DelaunayTriangulationBuilder();
 		builder.setSites(pts);
@@ -54,9 +56,9 @@ public class VoronoiPerfTest
 //		System.out.println(g);
 	}
 	
-	List randomPoints(int nPts)
+	static List<Coordinate> randomPoints(int nPts)
 	{
-		List pts = new ArrayList();
+		List<Coordinate> pts = new ArrayList<>();
 		
 		int nSide = (int) Math.sqrt(nPts) + 1;
 		

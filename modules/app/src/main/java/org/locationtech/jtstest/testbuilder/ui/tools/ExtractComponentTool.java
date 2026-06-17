@@ -13,7 +13,7 @@ package org.locationtech.jtstest.testbuilder.ui.tools;
 
 import java.awt.Cursor;
 
-import org.locationtech.jtstest.testbuilder.JTSTestBuilder;
+import org.locationtech.jtstest.testbuilder.controller.JTSTestBuilderController;
 
 /**
  * Extracts a component of a geometry to a new Test Case
@@ -35,7 +35,7 @@ public class ExtractComponentTool extends BoxBandTool {
   protected void gestureFinished() 
   {  
     boolean isSegments = isControlKeyDown();
-    JTSTestBuilder.controller().copyElementsToTestCase(getBox(), isSegments);
+    JTSTestBuilderController.copyElementsToTestCase(getBox(), isSegments);
   }
 
 }

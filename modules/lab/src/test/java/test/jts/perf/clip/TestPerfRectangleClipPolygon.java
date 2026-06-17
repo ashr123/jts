@@ -8,18 +8,19 @@ import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.io.WKTFileReader;
 import org.locationtech.jts.io.WKTReader;
-import org.locationtech.jts.util.Assert;
 import org.locationtech.jts.util.Stopwatch;
 import org.locationtech.jtslab.clip.RectangleClipPolygon;
 
 public class TestPerfRectangleClipPolygon {
   
-  static GeometryFactory factory = new GeometryFactory();
-  
-  public static void main(String[] args) {
-    TestPerfRectangleClipPolygon test = new TestPerfRectangleClipPolygon();
-    try {
-      test.run();
+  static final GeometryFactory factory = new GeometryFactory();
+
+    private TestPerfRectangleClipPolygon() {
+    }
+
+    public static void main(String[] args) {
+      try {
+      run();
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -27,10 +28,10 @@ public class TestPerfRectangleClipPolygon {
   }
   public static List<Geometry> readWKTFile(String filename) throws Exception {
     WKTFileReader fileRdr = new WKTFileReader(filename, new WKTReader());
-    return (List<Geometry>) fileRdr.read();
+    return fileRdr.read();
   }
   
-  private void run() {
+  private static void run() {
     Geometry data = loadData();
     
     System.out.println("Dataset: # geometries = " + data.getNumGeometries()
@@ -42,7 +43,7 @@ public class TestPerfRectangleClipPolygon {
     System.out.println("Time: " + sw.getTimeString());
   }
   
-  private GeometryCollection loadData() {
+  private static GeometryCollection loadData() {
     List<Geometry> data = null;
     try {
        data = readWKTFile("testdata/world.wkt");
@@ -52,7 +53,7 @@ public class TestPerfRectangleClipPolygon {
     return factory.createGeometryCollection(GeometryFactory.toGeometryArray(data));
   }
   
-  private void runClip(Geometry data) {
+  private static void runClip(Geometry data) {
     Envelope dataEnv = data.getEnvelopeInternal();
 
     int gridSize = 20;
@@ -64,7 +65,7 @@ public class TestPerfRectangleClipPolygon {
       }
     }
   }
-  private void runClip(Geometry rect,Geometry data) {
+  private static void runClip(Geometry rect, Geometry data) {
     for (int i = 0; i < data.getNumGeometries(); i++) {
       Geometry geom = data.getGeometryN(i);
       clip(rect, geom);
@@ -72,12 +73,12 @@ public class TestPerfRectangleClipPolygon {
     }
   }
   
-  private Geometry clip(Geometry rect, Geometry geom) {
+  private static Geometry clip(Geometry rect, Geometry geom) {
     RectangleClipPolygon clipper = new RectangleClipPolygon(rect);
     return clipper.clip(geom);
   }
   
-  private Geometry rectangleIntersection(Geometry rect, Geometry geom) {
+  private static Geometry rectangleIntersection(Geometry rect, Geometry geom) {
     Envelope env = rect.getEnvelopeInternal();
     Geometry result;
     if (env.contains(geom.getEnvelopeInternal())) {
@@ -89,7 +90,7 @@ public class TestPerfRectangleClipPolygon {
     return rect.intersection(geom);
   }
   
-  private Envelope envelope(List<Geometry> world) {
+  private static Envelope envelope(List<Geometry> world) {
     Envelope env = new Envelope();
     for (Geometry geom : world) {
       env.expandToInclude(geom.getEnvelopeInternal());

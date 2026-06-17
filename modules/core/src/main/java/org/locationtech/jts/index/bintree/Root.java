@@ -21,8 +21,8 @@ import org.locationtech.jts.util.Assert;
  *
  * @version 1.7
  */
-public class Root
-  extends NodeBase
+public class Root<T>
+  extends NodeBase<T>
 {
 
   // the singleton root node is centred at the origin.
@@ -35,7 +35,7 @@ public class Root
   /**
    * Insert an item into the tree this is the root of.
    */
-  public void insert(Interval itemInterval, Object item)
+  public void insert(Interval itemInterval, T item)
   {
     int index = getSubnodeIndex(itemInterval, origin);
     // if index is -1, itemEnv must contain the origin.
@@ -47,14 +47,14 @@ public class Root
      * the item must be contained in one interval, so insert it into the
      * tree for that interval (which may not yet exist)
      */
-    Node node = subnode[index];
+    Node<T> node = subnode[index];
     /**
      *  If the subnode doesn't exist or this item is not contained in it,
      *  have to expand the tree upward to contain the item.
      */
 
     if (node == null || ! node.getInterval().contains(itemInterval)) {
-       Node largerNode = Node.createExpanded(node, itemInterval);
+       Node<T> largerNode = Node.createExpanded(node, itemInterval);
        subnode[index] = largerNode;
     }
     /**
@@ -70,7 +70,7 @@ public class Root
    * the given Node.  Lower levels of the tree will be created
    * if necessary to hold the item.
    */
-  private void insertContained(Node tree, Interval itemInterval, Object item)
+  private void insertContained(Node<T> tree, Interval itemInterval, T item)
   {
     Assert.isTrue(tree.getInterval().contains(itemInterval));
    /**
@@ -79,7 +79,7 @@ public class Root
     * the smallest existing node containing the query
     */
     boolean isZeroArea = IntervalSize.isZeroWidth(itemInterval.getMin(), itemInterval.getMax());
-    NodeBase node;
+    NodeBase<T> node;
     if (isZeroArea)
       node = tree.find(itemInterval);
     else

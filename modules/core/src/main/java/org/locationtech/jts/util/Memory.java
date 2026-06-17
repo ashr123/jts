@@ -19,7 +19,10 @@ package org.locationtech.jts.util;
  */
 public class Memory 
 {
-	public static long used()
+    private Memory() {
+    }
+
+    public static long used()
 	{
 		Runtime runtime = Runtime.getRuntime ();
 		return runtime.totalMemory() - runtime.freeMemory();

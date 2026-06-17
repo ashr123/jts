@@ -18,8 +18,8 @@ import org.locationtech.jts.geom.Geometry;
 public class IndexedGeometryContainer
 implements GeometryContainer
 {
-  private GeometryEditModel geomModel;
-  private int index;
+  private final GeometryEditModel geomModel;
+  private final int index;
   
   public IndexedGeometryContainer(GeometryEditModel geomModel, int index) {
     this.geomModel = geomModel;

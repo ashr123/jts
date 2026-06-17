@@ -25,7 +25,7 @@ import junit.framework.TestCase;
  */
 public abstract class AbstractIndexedLineTest extends TestCase {
 
-  private WKTReader reader = new WKTReader();
+  private final WKTReader reader = new WKTReader();
 
   public AbstractIndexedLineTest(String name) {
     super(name);

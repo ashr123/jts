@@ -42,8 +42,8 @@ class TriDelaunayImprover {
     improver.improve();
   }
   
-  private static int MAX_ITERATION = 200;
-  private List<Tri> triList;
+  private static final int MAX_ITERATION = 200;
+  private final List<Tri> triList;
 
   private TriDelaunayImprover(List<Tri> triList) {
     this.triList = triList;
@@ -67,7 +67,7 @@ class TriDelaunayImprover {
    * 
    * @return the number of flips that were made
    */
-  private int improveScan(List<Tri> triList) {
+  private static int improveScan(List<Tri> triList) {
     int improveCount = 0;
     for (int i = 0; i < triList.size() - 1; i++) {
       Tri tri = triList.get(i);
@@ -90,7 +90,7 @@ class TriDelaunayImprover {
    * @param tri1 a Tri
    * @return true if the triangles were flipped
    */
-  private boolean improveNonDelaunay(Tri tri, int index) {
+  private static boolean improveNonDelaunay(Tri tri, int index) {
     if ( tri == null ) {
       return false;
     }
@@ -147,8 +147,7 @@ class TriDelaunayImprover {
   private static boolean isConvex(Coordinate adj0, Coordinate adj1, Coordinate opp0, Coordinate opp1) {
     int dir0 = Orientation.index(opp0, adj0, opp1);
     int dir1 = Orientation.index(opp1, adj1, opp0);
-    boolean isConvex = dir0 == dir1;
-    return isConvex;
+      return dir0 == dir1;
   }  
 
   /**
@@ -164,9 +163,8 @@ class TriDelaunayImprover {
    * @return true if the triangles are Delaunay
    */
   private static boolean isDelaunay(Coordinate adj0, Coordinate adj1, Coordinate opp0, Coordinate opp1) {
-    if (isInCircle(adj0, adj1, opp0, opp1)) return false; 
-    if (isInCircle(adj1, adj0, opp1, opp0)) return false;
-    return true;
+    if (isInCircle(adj0, adj1, opp0, opp1)) return false;
+      return !isInCircle(adj1, adj0, opp1, opp0);
   }
 
   /**

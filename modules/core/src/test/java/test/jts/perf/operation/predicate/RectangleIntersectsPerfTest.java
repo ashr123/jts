@@ -35,8 +35,8 @@ public class RectangleIntersectsPerfTest
   static final int NUM_LINES = 5000;
   static final int NUM_LINE_PTS = 1000;
   
-  static PrecisionModel pm = new PrecisionModel();
-  static GeometryFactory fact = new GeometryFactory(pm, 0);
+  static final PrecisionModel pm = new PrecisionModel();
+  static final GeometryFactory fact = new GeometryFactory(pm, 0);
   static WKTReader wktRdr = new WKTReader(fact);
   static WKTWriter wktWriter = new WKTWriter();
 
@@ -44,7 +44,7 @@ public class RectangleIntersectsPerfTest
 
   public static void main(String[] args) {
   	RectangleIntersectsPerfTest test = new RectangleIntersectsPerfTest();
-    test.test();
+    test();
   }
 
   boolean testFailed = false;
@@ -52,7 +52,7 @@ public class RectangleIntersectsPerfTest
   public RectangleIntersectsPerfTest() {
   }
 
-  public void test()
+  public static void test()
   {
 //    test(5);
 //    test(10);
@@ -69,7 +69,7 @@ public class RectangleIntersectsPerfTest
     */
   }
   
-  void test(int nPts)
+  static void test(int nPts)
   {
     double size = 100;
     Coordinate origin = new Coordinate(0, 0);
@@ -79,23 +79,21 @@ public class RectangleIntersectsPerfTest
   	 * This defeats the  MonotoneChain optimization in the full relate
   	 * algorithm, and provides a more realistic test.
   	 */
-  	Geometry sinePolyCrinkly = GeometryPrecisionReducer.reduce(sinePoly, 
-  	    new PrecisionModel(size / 10));
-  	Geometry target = sinePolyCrinkly;
-  	
-    Geometry rect = createRectangle(origin, 5);
+
+      Geometry rect = createRectangle(origin, 5);
 //    System.out.println(target);
     //System.out.println("Running with " + nPts + " points");
-    testRectangles(target, 100, 5);
+    testRectangles(GeometryPrecisionReducer.reduce(sinePoly,
+        new PrecisionModel(size / 10)), 100, 5);
   }
 
-  void testRectangles(Geometry target, int nRect, double rectSize)
+  static void testRectangles(Geometry target, int nRect, double rectSize)
   {
     Geometry[] rects = createRectangles(target.getEnvelopeInternal(), nRect, rectSize);
     test(rects, target);
   }
   
-  void test(Geometry[] rect, Geometry g)
+  static void test(Geometry[] rect, Geometry g)
   {
     System.out.println("Target # pts: " + g.getNumPoints()
         + "  -- # Rectangles: " + rect.length
@@ -105,10 +103,10 @@ public class RectangleIntersectsPerfTest
     Stopwatch sw = new Stopwatch();
     int count = 0;
     for (int i = 0; i < MAX_ITER; i++) {
-      for (int j = 0; j < rect.length; j++) {
+        for (Geometry geometry : rect) {
 //      rect[j].relate(g);
-        rect[j].intersects(g);
-      }
+            geometry.intersects(g);
+        }
     }
     System.out.println("Finished in " + sw.getTimeString());
     System.out.println();
@@ -125,13 +123,13 @@ public class RectangleIntersectsPerfTest
    * @param rectSize
    * @return
    */
-  Geometry[] createRectangles(Envelope env, int nRect, double rectSize )
+  static Geometry[] createRectangles(Envelope env, int nRect, double rectSize)
   {
-    int nSide =  1 + (int)Math.sqrt((double) nRect);
+    int nSide =  1 + (int)Math.sqrt(nRect);
     double dx = env.getWidth() / nSide;
     double dy = env.getHeight() / nSide;
 
-    List rectList = new ArrayList();
+    List<Geometry> rectList = new ArrayList<>();
     for (int i = 0; i < nSide; i++) {
       for (int j = 0; j < nSide; j++) {
         double baseX = env.getMinX() + i * dx;
@@ -146,26 +144,24 @@ public class RectangleIntersectsPerfTest
     return GeometryFactory.toGeometryArray(rectList);
   }
   
-  Geometry createRectangle(Coordinate origin, double size) {
+  static Geometry createRectangle(Coordinate origin, double size) {
     GeometricShapeFactory gsf = new GeometricShapeFactory();
     gsf.setCentre(origin);
     gsf.setSize(size);
     gsf.setNumPoints(4);
-    Geometry g = gsf.createRectangle();
-    // Polygon gRect = gsf.createRectangle();
+      // Polygon gRect = gsf.createRectangle();
     // Geometry g = gRect.getExteriorRing();
-    return g;
+    return gsf.createRectangle();
   }
   
-  Geometry createSineStar(Coordinate origin, double size, int nPts) {
+  static Geometry createSineStar(Coordinate origin, double size, int nPts) {
 		SineStarFactory gsf = new SineStarFactory();
 		gsf.setCentre(origin);
 		gsf.setSize(size);
 		gsf.setNumPoints(nPts);
 		gsf.setArmLengthRatio(2);
 		gsf.setNumArms(20);
-		Geometry poly = gsf.createSineStar();
-		return poly;
+      return gsf.createSineStar();
 	}
   
   

@@ -15,7 +15,7 @@ import test.jts.GeometryTestCase;
 
 public class GeometryCoordinateTest extends GeometryTestCase {
 
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) {
     junit.textui.TestRunner.run(GeometryCoordinateTest.class);
   }
   
@@ -55,7 +55,7 @@ public class GeometryCoordinateTest extends GeometryTestCase {
     checkCoordinate(read(wkt), new Coordinate(x, y));
   }
   
-  private void checkCoordinate(final Geometry g, Coordinate expected) {
+  private static void checkCoordinate(final Geometry g, Coordinate expected) {
     Coordinate actual = g.getCoordinate();
     checkEqualXY( expected, actual );
   }

@@ -12,7 +12,6 @@
 package org.locationtech.jts.operation;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -100,9 +99,9 @@ public class BoundaryOp
     return true;
   }
   
-  private Geometry geom;
-  private GeometryFactory geomFact;
-  private BoundaryNodeRule bnRule;
+  private final Geometry geom;
+  private final GeometryFactory geomFact;
+  private final BoundaryNodeRule bnRule;
 
   /**
    * Creates a new instance for the given geometry.
@@ -170,12 +169,12 @@ public class BoundaryOp
   }
 */
 
-  private Map endpointMap;
+  private Map<Coordinate, Counter> endpointMap;
 
   private Coordinate[] computeBoundaryCoordinates(MultiLineString mLine)
   {
-    List bdyPts = new ArrayList();
-    endpointMap = new TreeMap();
+    List<Coordinate> bdyPts = new ArrayList<>();
+    endpointMap = new TreeMap<>();
     for (int i = 0; i < mLine.getNumGeometries(); i++) {
       LineString line = (LineString) mLine.getGeometryN(i);
       if (line.getNumPoints() == 0)
@@ -184,26 +183,21 @@ public class BoundaryOp
       addEndpoint(line.getCoordinateN(line.getNumPoints() - 1));
     }
 
-    for (Iterator it = endpointMap.entrySet().iterator(); it.hasNext(); ) {
-      Map.Entry entry = (Map.Entry) it.next();
-      Counter counter = (Counter) entry.getValue();
-      int valence = counter.count;
-      if (bnRule.isInBoundary(valence)) {
-        bdyPts.add(entry.getKey());
+      for (Map.Entry<Coordinate, Counter> entry : endpointMap.entrySet()) {
+          Counter counter = entry.getValue();
+          int valence = counter.count;
+          if (bnRule.isInBoundary(valence)) {
+              bdyPts.add(entry.getKey());
+          }
       }
-    }
 
     return CoordinateArrays.toCoordinateArray(bdyPts);
   }
 
   private void addEndpoint(Coordinate pt)
   {
-    Counter counter = (Counter) endpointMap.get(pt);
-    if (counter == null) {
-      counter = new Counter();
-      endpointMap.put(pt, counter);
-    }
-    counter.count++;
+      Counter counter = endpointMap.computeIfAbsent(pt, k -> new Counter());
+      counter.count++;
   }
 
   private Geometry boundaryLineString(LineString line)

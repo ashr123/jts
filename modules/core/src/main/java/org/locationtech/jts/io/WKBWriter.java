@@ -194,12 +194,11 @@ public class WKBWriter
    */
   public static String toHex(byte[] bytes)
   {
-    StringBuffer buf = new StringBuffer();
-    for (int i = 0; i < bytes.length; i++) {
-      byte b = bytes[i];
-      buf.append(toHexDigit((b >> 4) & 0x0F));
-      buf.append(toHexDigit(b & 0x0F));
-    }
+    StringBuilder buf = new StringBuilder();
+      for (byte b : bytes) {
+          buf.append(toHexDigit((b >> 4) & 0x0F));
+          buf.append(toHexDigit(b & 0x0F));
+      }
     return buf.toString();
   }
 
@@ -212,14 +211,14 @@ public class WKBWriter
     return (char) ('A' + (n - 10));
   }
 
-  private EnumSet<Ordinate> outputOrdinates;
+  private final EnumSet<Ordinate> outputOrdinates;
   private int outputDimension = 2;
-  private int byteOrder;
+  private final int byteOrder;
   private boolean includeSRID = false;
-  private ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
-  private OutStream byteArrayOutStream = new OutputStreamOutStream(byteArrayOS);
+  private final ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
+  private final OutStream byteArrayOutStream = new OutputStreamOutStream(byteArrayOS);
   // holds output data values
-  private byte[] buf = new byte[8];
+  private final byte[] buf = new byte[8];
 
   /**
    * Creates a writer that writes {@link Geometry}s with

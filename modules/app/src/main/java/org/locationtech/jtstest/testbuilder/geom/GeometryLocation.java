@@ -28,11 +28,11 @@ public class GeometryLocation
   /**
    * The top-level geometry containing the location
    */
-  private Geometry parent;
+  private final Geometry parent;
   /**
    * The Geometry component containing the location
    */
-  private Geometry component;
+  private final Geometry component;
   
   /**
    * The path of indexes to the component containing the location
@@ -122,7 +122,7 @@ public class GeometryLocation
   
   public String pathString()
   {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < componentPath.length; i++) {
 			if (i > 0) {
           buf.append(":");
@@ -134,7 +134,7 @@ public class GeometryLocation
   
 	public String toFacetString()
 	{
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		
 		// facet index
 		buf.append("[");
@@ -147,7 +147,7 @@ public class GeometryLocation
 		buf.append(" ");
 		buf.append(index);
 		if (! isVertex()) {
-			buf.append("-" + (index + 1));
+			buf.append("-").append(index + 1);
 		}
 		buf.append("]  ");
 		

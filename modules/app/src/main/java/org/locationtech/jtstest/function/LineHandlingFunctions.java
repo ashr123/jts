@@ -13,7 +13,6 @@ package org.locationtech.jtstest.function;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.dissolve.LineDissolver;
@@ -26,12 +25,15 @@ import org.locationtech.jts.operation.linemerge.LineSequencer;
 import org.locationtech.jtstest.geomfunction.Metadata;
 
 public class LineHandlingFunctions {
-	
-  public static Geometry mergeLines(Geometry g)
+
+    private LineHandlingFunctions() {
+    }
+
+    public static Geometry mergeLines(Geometry g)
   {
     LineMerger merger = new LineMerger();
     merger.add(g);
-    Collection lines = merger.getMergedLineStrings();
+    Collection<LineString> lines = merger.getMergedLineStrings();
     return g.getFactory().buildGeometry(lines);
   }
   
@@ -42,35 +44,33 @@ public class LineHandlingFunctions {
   
   public static Geometry extractLines(Geometry g)
   {
-    List lines = LinearComponentExtracter.getLines(g);
+    List<LineString> lines = LinearComponentExtracter.getLines(g);
     return g.getFactory().buildGeometry(lines);
   }
   public static Geometry extractSegments(Geometry g)
   {
-    List lines = LinearComponentExtracter.getLines(g);
-    List segments = new ArrayList();
-    for (Iterator it = lines.iterator(); it.hasNext(); ) {
-      LineString line = (LineString) it.next();
-      for (int i = 1; i < line.getNumPoints(); i++) {
-        LineString seg = g.getFactory().createLineString(
-            new Coordinate[] { line.getCoordinateN(i-1), line.getCoordinateN(i) }       
-          );
-        segments.add(seg);
+    List<LineString> lines = LinearComponentExtracter.getLines(g);
+    List<LineString> segments = new ArrayList<>();
+      for (LineString line : lines) {
+          for (int i = 1; i < line.getNumPoints(); i++) {
+              LineString seg = g.getFactory().createLineString(
+                      new Coordinate[]{line.getCoordinateN(i - 1), line.getCoordinateN(i)}
+              );
+              segments.add(seg);
+          }
       }
-    }
     return g.getFactory().buildGeometry(segments);
   }
   public static Geometry extractChains(Geometry g, int maxChainSize)
   {
-    List lines = LinearComponentExtracter.getLines(g);
-    List chains = new ArrayList();
-    for (Iterator it = lines.iterator(); it.hasNext(); ) {
-      LineString line = (LineString) it.next();
-      for (int i = 0; i < line.getNumPoints() - 1; i += maxChainSize) {
-        LineString chain = extractChain(line, i, maxChainSize);
-        chains.add(chain);
+    List<LineString> lines = LinearComponentExtracter.getLines(g);
+    List<LineString> chains = new ArrayList<>();
+      for (LineString line : lines) {
+          for (int i = 0; i < line.getNumPoints() - 1; i += maxChainSize) {
+              LineString chain = extractChain(line, i, maxChainSize);
+              chains.add(chain);
+          }
       }
-    }
     return g.getFactory().buildGeometry(chains);
   }
   

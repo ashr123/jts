@@ -33,14 +33,14 @@ public class VertexLabelStyle  implements Style
 
   private static final double MIN_VEW_DIST_SQ = 900;
 
-  private Font font = new Font(FontGlyphReader.FONT_SERIF, Font.PLAIN, DEFAULT_FONT_SIZE);
+  private static final Font font = new Font(FontGlyphReader.FONT_SERIF, Font.PLAIN, DEFAULT_FONT_SIZE);
   
   private Color color;
   private int size;
   
   // reuse point objects to avoid creation overhead
-  private Point2D pM = new Point2D.Double();
-  private Point2D pV = new Point2D.Double();
+  private final Point2D pM = new Point2D.Double();
+  private final Point2D pV = new Point2D.Double();
 
 
   public VertexLabelStyle(Color color) {
@@ -77,8 +77,8 @@ public class VertexLabelStyle  implements Style
     // don't label duplicate closing point
     if (len > 1 && coordinates[0].equals2D(coordinates[len - 1])) len--;
     
-    Point2D lastDrawnPV = new Point2D.Double();;
-    for (int i = 0; i < len; i++) {
+    Point2D lastDrawnPV = new Point2D.Double();
+      for (int i = 0; i < len; i++) {
       Coordinate pt = coordinates[i];
       if (! viewport.containsInModel(pt)) {
           continue;
@@ -92,7 +92,7 @@ public class VertexLabelStyle  implements Style
       
       int dir = 2;  // Use N for points
       if (len > 1) {
-        Coordinate p1 = coordinates[ i <= 0 ? 0 : i-1 ];
+        Coordinate p1 = coordinates[ i == 0 ? 0 : i-1 ];
         Coordinate p2 = coordinates[ (i >= len - 1) ? len - 2 : i+1 ];
         dir = labelDirection(pt, p1, p2);
       }
@@ -109,7 +109,7 @@ public class VertexLabelStyle  implements Style
     return OrdinateFormat.DEFAULT.format(p.x) + "," + OrdinateFormat.DEFAULT.format(p.y);
   }
   
-  private boolean isTooClose(Point2D p0, Point2D p1) {
+  private static boolean isTooClose(Point2D p0, Point2D p1) {
     double dx = p1.getX() - p0.getX();
     double dy = p1.getY() - p0.getY();
     
@@ -118,7 +118,7 @@ public class VertexLabelStyle  implements Style
     return len < MIN_VEW_DIST_SQ;
   }
 
-  private static float[][] DIR_ALIGN = {
+  private static final float[][] DIR_ALIGN = {
       { 0, 0.5f },  // 0 - E
       { 0, 0 },     // 1 - NE
       { 0.5f, 0 },  // 2 - N
@@ -129,7 +129,7 @@ public class VertexLabelStyle  implements Style
       { 0, 1 }      // 7 - SE
   };
   
-  private int labelDirection(Coordinate pt, Coordinate p1, Coordinate p2) {
+  private static int labelDirection(Coordinate pt, Coordinate p1, Coordinate p2) {
     double dx1 = p1.getX() - pt.getX();
     double dy1 = p1.getY() - pt.getY();
     double dx2 = p2.getX() - pt.getX();

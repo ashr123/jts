@@ -174,10 +174,9 @@ public class WKTWriter
     return buf.toString();
   }
 
-  private EnumSet<Ordinate> outputOrdinates;
+  private final EnumSet<Ordinate> outputOrdinates;
   private final int outputDimension;
-  private PrecisionModel precisionModel = null;
-  private OrdinateFormat ordinateFormat = null;
+    private OrdinateFormat ordinateFormat = null;
   private boolean isFormatted = false;
   private int coordsPerLine = -1;
   private String indentTabStr ;
@@ -312,8 +311,7 @@ public class WKTWriter
    *    the flag indicating if {@link Coordinate#z}/{} is actually a measure value.
    */
   public void setPrecisionModel(PrecisionModel precisionModel) {
-    this.precisionModel = precisionModel;
-    this.ordinateFormat = OrdinateFormat.create(precisionModel.getMaximumSignificantDigits());
+      this.ordinateFormat = OrdinateFormat.create(precisionModel.getMaximumSignificantDigits());
   }
 
   /**
@@ -398,8 +396,7 @@ public class WKTWriter
     
     // no precision model was specified, so use the geometry's
     PrecisionModel pm = geometry.getPrecisionModel();
-    OrdinateFormat formatter = createFormatter(pm);
-    return formatter;
+      return createFormatter(pm);
   }
 
   /**
@@ -673,7 +670,7 @@ public class WKTWriter
    * @param  writer     the output writer to append to
    * @param  formatter  the formatter to use for writing ordinate values
    */
-  private void appendCoordinate(
+  private static void appendCoordinate(
           CoordinateSequence seq, EnumSet<Ordinate> outputOrdinates, int i,
           Writer writer, OrdinateFormat formatter)
       throws IOException
@@ -723,7 +720,7 @@ public class WKTWriter
    * @param writer         the output writer to append to.
    * @throws IOException   if an error occurs while using the writer.
    */
-  private void appendOrdinateText(EnumSet<Ordinate> outputOrdinates, Writer writer) throws IOException {
+  private static void appendOrdinateText(EnumSet<Ordinate> outputOrdinates, Writer writer) throws IOException {
 
     if (outputOrdinates.contains(Ordinate.Z))
       writer.append(WKTConstants.Z);

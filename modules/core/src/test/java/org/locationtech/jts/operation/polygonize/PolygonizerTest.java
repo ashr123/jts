@@ -15,6 +15,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Polygon;
 
 import test.jts.GeometryTestCase;
 
@@ -117,7 +119,7 @@ public class PolygonizerTest extends GeometryTestCase {
     });
   }
 
-  String[] LINES_CHECKERBOARD = new String[] {
+  final String[] LINES_CHECKERBOARD = new String[] {
       "LINESTRING (10 20, 20 20)", 
       "LINESTRING (10 20, 10 30)",
       "LINESTRING (20 10, 10 10, 10 20)", 
@@ -206,8 +208,8 @@ public class PolygonizerTest extends GeometryTestCase {
   private void checkPolygonize(boolean extractOnlyPolygonal, String[] inputWKT, String[] expectedWKT) {
     Polygonizer polygonizer = new Polygonizer(extractOnlyPolygonal);
     polygonizer.add(readList(inputWKT));
-    List expected = readList(expectedWKT);
-    Collection actual = polygonizer.getPolygons();
+    List<Geometry> expected = readList(expectedWKT);
+    Collection<Polygon> actual = polygonizer.getPolygons();
     checkEqual(expected, actual);
   }
 
@@ -215,7 +217,7 @@ public class PolygonizerTest extends GeometryTestCase {
     Polygonizer polygonizer = new Polygonizer();
     polygonizer.add(readList(inputWKT));
     try {
-      Collection actual = polygonizer.getPolygons();
+      Collection<Polygon> actual = polygonizer.getPolygons();
     }
     catch (Throwable ex) {
       ex.printStackTrace();
@@ -226,7 +228,7 @@ public class PolygonizerTest extends GeometryTestCase {
   private void checkPolygonizeInvalidRings(String inputWKT, String expectedWKT) {
     Polygonizer polygonizer = new Polygonizer();
     polygonizer.add(read(inputWKT));
-    Collection actualList = polygonizer.getInvalidRingLines();
+    Collection<LineString> actualList = polygonizer.getInvalidRingLines();
     Geometry expected = read(expectedWKT);
     Geometry actual = expected.getFactory().buildGeometry(actualList);
     /**

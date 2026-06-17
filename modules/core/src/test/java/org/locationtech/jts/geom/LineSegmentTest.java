@@ -11,9 +11,6 @@
  */
 package org.locationtech.jts.geom;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import junit.textui.TestRunner;
 import test.jts.GeometryTestCase;
 
@@ -23,13 +20,13 @@ import test.jts.GeometryTestCase;
  */
 public class LineSegmentTest extends GeometryTestCase {
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(LineSegmentTest.class);
   }
 
   public LineSegmentTest(String name) { super(name); }
 
-  private static double ROOT2 = Math.sqrt(2);
+  private static final double ROOT2 = Math.sqrt(2);
   
   /**
    * Test hash code collisions.
@@ -41,7 +38,7 @@ public class LineSegmentTest extends GeometryTestCase {
     checkHashcode(new LineSegment(580.0, 1330.0, 590.0, 1330.0), new LineSegment(580.0, 1340.0, 590.0, 1340.));
   }
 
-  private void checkHashcode(LineSegment seg, LineSegment seg2) {
+  private static void checkHashcode(LineSegment seg, LineSegment seg2) {
     //System.out.format("Seg 1: %d   Seg 2: %d\n", seg.hashCode(), seg2.hashCode());
     assertTrue(seg.hashCode() != seg2.hashCode());
   }
@@ -53,7 +50,7 @@ public class LineSegmentTest extends GeometryTestCase {
     assertTrue(Double.isNaN(seg.projectionFactor(new Coordinate(11, 0))));
     
     LineSegment seg2 = new LineSegment(10, 0, 20, 0);
-    assertTrue(seg2.projectionFactor(new Coordinate(11, 0)) == 0.1);
+      assertEquals(0.1, seg2.projectionFactor(new Coordinate(11, 0)));
   }
   
   public void testProjectPoint() {
@@ -126,9 +123,9 @@ public class LineSegmentTest extends GeometryTestCase {
   
   private static final double MAX_ABS_ERROR_INTERSECTION = 1e-5;
   
-  private void checkLineIntersection(double p1x, double p1y, double p2x, double p2y, 
-      double q1x, double q1y, double q2x, double q2y, 
-      double expectedx, double expectedy) {
+  private static void checkLineIntersection(double p1x, double p1y, double p2x, double p2y,
+                                            double q1x, double q1y, double q2x, double q2y,
+                                            double expectedx, double expectedy) {
     LineSegment seg1 = new LineSegment(p1x, p1y, p2x, p2y);
     LineSegment seg2 = new LineSegment(q1x, q1y, q2x, q2y);
     
@@ -160,22 +157,21 @@ public class LineSegmentTest extends GeometryTestCase {
     checkDistancePerpendicularOriented(1,1,  1,1,  1,2, 1);    
   }
   
-  private void checkDistancePerpendicular(double x0, double y0, double x1, double y1, double px, double py, 
-      double expected) {
+  private static void checkDistancePerpendicular(double x0, double y0, double x1, double y1, double px, double py,
+                                                 double expected) {
     LineSegment seg = new LineSegment(x0, y0, x1, y1);
     double dist = seg.distancePerpendicular(new Coordinate(px, py));
     assertEquals(expected, dist, 0.000001);
   }
   
-  private void checkDistancePerpendicularOriented(double x0, double y0, double x1, double y1, double px, double py, 
-      double expected) {
+  private static void checkDistancePerpendicularOriented(double x0, double y0, double x1, double y1, double px, double py,
+                                                         double expected) {
     LineSegment seg = new LineSegment(x0, y0, x1, y1);
     double dist = seg.distancePerpendicularOriented(new Coordinate(px, py));
     assertEquals(expected, dist, 0.000001);
   }
   
-  public void testOffsetPoint() throws Exception
-  {
+  public void testOffsetPoint() {
     checkOffsetPoint(0, 0, 10, 10, 0.0, ROOT2, -1, 1);
     checkOffsetPoint(0, 0, 10, 10, 0.0, -ROOT2, 1, -1);
     
@@ -193,16 +189,15 @@ public class LineSegmentTest extends GeometryTestCase {
 
   }
 
-  public void testOffsetLine() throws Exception
-  {
+  public void testOffsetLine() {
     checkOffsetLine(0, 0, 10, 10, 0, 0, 0, 10, 10 );
     
     checkOffsetLine(0, 0, 10, 10, ROOT2, -1, 1,  9, 11 );
     checkOffsetLine(0, 0, 10, 10, -ROOT2, 1, -1, 11, 9);
   }
   
-  void checkOffsetPoint(double x0, double y0, double x1, double y1, double segFrac, double offset, 
-      double expectedX, double expectedY)
+  static void checkOffsetPoint(double x0, double y0, double x1, double y1, double segFrac, double offset,
+                               double expectedX, double expectedY)
   {
     LineSegment seg = new LineSegment(x0, y0, x1, y1);
     Coordinate p = seg.pointAlongOffset(segFrac, offset);
@@ -210,8 +205,8 @@ public class LineSegmentTest extends GeometryTestCase {
     assertTrue(equalsTolerance(new Coordinate(expectedX, expectedY), p, 0.000001));
   }
   
-  void checkOffsetLine(double x0, double y0, double x1, double y1, double offset, 
-      double expectedX0, double expectedY0, double expectedX1, double expectedY1)
+  static void checkOffsetLine(double x0, double y0, double x1, double y1, double offset,
+                              double expectedX0, double expectedY0, double expectedX1, double expectedY1)
   {
     LineSegment seg = new LineSegment(x0, y0, x1, y1);
     LineSegment actual = seg.offset(offset);
@@ -223,8 +218,7 @@ public class LineSegmentTest extends GeometryTestCase {
   public static boolean equalsTolerance(Coordinate p0, Coordinate p1, double tolerance)
   {
   	if (Math.abs(p0.x - p1.x) > tolerance) return false;
-  	if (Math.abs(p0.y - p1.y) > tolerance) return false;
-  	return true;
+      return !(Math.abs(p0.y - p1.y) > tolerance);
   }
   
   public void testReflect() {
@@ -232,8 +226,8 @@ public class LineSegmentTest extends GeometryTestCase {
     checkReflect(0, 1, 10, 1, 1, 2, 1, 0 );
   }
   
-  void checkReflect(double x0, double y0, double x1, double y1, double x, double y, 
-      double expectedX, double expectedY)
+  static void checkReflect(double x0, double y0, double x1, double y1, double x, double y,
+                           double expectedX, double expectedY)
   {
     LineSegment seg = new LineSegment(x0, y0, x1, y1);
     Coordinate p = seg.reflect(new Coordinate(x, y));
@@ -268,26 +262,26 @@ public class LineSegmentTest extends GeometryTestCase {
   	
   }
   
-  void checkOrientationIndex(double x0, double y0, double x1, double y1, double px, double py, 
-  		int expectedOrient)
+  static void checkOrientationIndex(double x0, double y0, double x1, double y1, double px, double py,
+                                    int expectedOrient)
   {
   	LineSegment seg = new LineSegment(x0, y0, x1, y1);
   	checkOrientationIndex(seg, px, py, expectedOrient);
   }
   
-  void checkOrientationIndex(LineSegment seg, 
-  		double px, double py, 
-  		int expectedOrient)
+  static void checkOrientationIndex(LineSegment seg,
+                                    double px, double py,
+                                    int expectedOrient)
   {
   	Coordinate p = new Coordinate(px, py);
   	int orient = seg.orientationIndex(p);
-  	assertTrue(orient == expectedOrient);
+      assertEquals(orient, expectedOrient);
   }
   
-  void checkOrientationIndex(LineSegment seg, 
-  		double s0x, double s0y, 
-  		double s1x, double s1y, 
-  		int expectedOrient)
+  static void checkOrientationIndex(LineSegment seg,
+                                    double s0x, double s0y,
+                                    double s1x, double s1y,
+                                    int expectedOrient)
   {
   	LineSegment seg2 = new LineSegment(s0x, s0y, s1x, s1y);
   	int orient = seg.orientationIndex(seg2);

@@ -32,7 +32,7 @@ public class IsSimpleTest
 {
   private static final double TOLERANCE = 0.00005;
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(IsSimpleTest.class);
   }
 
@@ -43,9 +43,8 @@ public class IsSimpleTest
 
   /**
    * 2 LineStrings touching at an endpoint
-   * @throws Exception
    */
-  public void test2TouchAtEndpoint() throws Exception {
+  public void test2TouchAtEndpoint() {
 		String a = "MULTILINESTRING((0 1, 1 1, 2 1), (0 0, 1 0, 2 1))";
 		checkIsSimple(a, BoundaryNodeRule.MOD2_BOUNDARY_RULE, true,
 				new Coordinate(2, 1));
@@ -56,9 +55,8 @@ public class IsSimpleTest
   /**
    * 3 LineStrings touching at an endpoint.
    *
-   * @throws Exception
    */
-  public void test3TouchAtEndpoint() throws Exception {
+  public void test3TouchAtEndpoint() {
 		String a = "MULTILINESTRING ((0 1, 1 1, 2 1),   (0 0, 1 0, 2 1),  (0 2, 1 2, 2 1))";
 
 		// rings are simple under all rules
@@ -68,7 +66,7 @@ public class IsSimpleTest
 				new Coordinate(2, 1));
 	}
 
-	public void testCross() throws Exception {
+	public void testCross() {
 		String a = "MULTILINESTRING ((20 120, 120 20), (20 20, 120 120))";
 		checkIsSimple(a, BoundaryNodeRule.MOD2_BOUNDARY_RULE, false,
 				new Coordinate(70, 70));
@@ -77,9 +75,7 @@ public class IsSimpleTest
 	}
 
 
-  public void testMultiLineStringWithRingTouchAtEndpoint()
-      throws Exception
-  {
+  public void testMultiLineStringWithRingTouchAtEndpoint() {
     String a = "MULTILINESTRING ((100 100, 20 20, 200 20, 100 100), (100 200, 100 100))";
 
     // under Mod-2, the ring has no boundary, so the line intersects the interior ==> not simple
@@ -88,9 +84,7 @@ public class IsSimpleTest
     checkIsSimple(a, BoundaryNodeRule.ENDPOINT_BOUNDARY_RULE,  true  );
   }
 
-  public void testRing()
-      throws Exception
-  {
+  public void testRing() {
     String a = "LINESTRING (100 100, 20 20, 200 20, 100 100)";
 
     // rings are simple under all rules
@@ -169,7 +163,7 @@ public class IsSimpleTest
 // if geom is not simple, should have a valid location
     assertTrue(isSimple || nonSimpleLoc != null);
 
-    assertTrue(expectedResult == isSimple);
+      assertEquals(expectedResult, isSimple);
 
     if ( !isSimple && expectedLocation != null ) {
       assertTrue(expectedLocation.distance(nonSimpleLoc) < TOLERANCE);

@@ -39,8 +39,8 @@ class RobustClipEnvelopeComputer {
     return cec.getEnvelope();
   }
   
-  private Envelope targetEnv;
-  private Envelope clipEnv;
+  private final Envelope targetEnv;
+  private final Envelope clipEnv;
 
   public RobustClipEnvelopeComputer(Envelope targetEnv) {
     this.targetEnv = targetEnv;

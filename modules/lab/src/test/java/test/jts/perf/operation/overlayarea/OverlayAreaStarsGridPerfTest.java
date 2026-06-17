@@ -11,7 +11,6 @@
  */
 package test.jts.perf.operation.overlayarea;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,16 +19,14 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.util.SineStarFactory;
-import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.operation.overlayarea.OverlayArea;
 
 import test.jts.perf.PerformanceTestCase;
 import test.jts.perf.PerformanceTestRunner;
-import test.jts.util.IOUtil;
 
 public class OverlayAreaStarsGridPerfTest extends PerformanceTestCase
 {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     PerformanceTestRunner.run(OverlayAreaStarsGridPerfTest.class);
   }
   boolean verbose = true;
@@ -42,8 +39,7 @@ public class OverlayAreaStarsGridPerfTest extends PerformanceTestCase
     setRunIterations(1);
   }
 
-  public void startRun(int size) throws IOException, ParseException
-  {
+  public void startRun(int size) {
     geom = createSineStar(size, 0);
     grid = grid(geom, 100_00);
     
@@ -80,10 +76,8 @@ public class OverlayAreaStarsGridPerfTest extends PerformanceTestCase
     gsf.setCentre(new Coordinate(0, offset));
     gsf.setSize(100);
     gsf.setNumPoints(nPts);
-    
-    Geometry g = gsf.createSineStar();
-    
-    return g;
+
+      return gsf.createSineStar();
   }
   
   public static Geometry grid(Geometry g, int nCells)
@@ -101,7 +95,7 @@ public class OverlayAreaStarsGridPerfTest extends PerformanceTestCase
     double cellSizeX = env.getWidth() / nCellsOnSideX;
     double cellSizeY = env.getHeight() / nCellsOnSideY;
     
-    List geoms = new ArrayList(); 
+    List<Geometry> geoms = new ArrayList<>();
 
     for (int i = 0; i < nCellsOnSideX; i++) {
       for (int j = 0; j < nCellsOnSideY; j++) {

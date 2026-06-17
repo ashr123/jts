@@ -26,11 +26,11 @@ import org.locationtech.jts.io.twkb.TWKBTestSupport.TWKBTestData;
 
 public class TWKBReadWriteTest {
 
-    public @Rule TWKBTestSupport testSupport = new TWKBTestSupport();
+    public final @Rule TWKBTestSupport testSupport = new TWKBTestSupport();
 
-    private TWKBWriter writer = new TWKBWriter();
+    private final TWKBWriter writer = new TWKBWriter();
 
-    private TWKBReader reader = new TWKBReader();
+    private final TWKBReader reader = new TWKBReader();
 
     public @Test void testXYPrecision() throws ParseException {
         final String encodeWKT = "POINT (12345678.12345678 0)";
@@ -137,7 +137,7 @@ public class TWKBReadWriteTest {
                     record.isIncludeSize(), record.isIncludeBbox());
             log("input   : %s", record.getInputGeometry());
             log("expected: %s", record.getExpectedTWKBHex());
-            log("encoded : %s", testSupport.toHexString(encoded));
+            log("encoded : %s", TWKBTestSupport.toHexString(encoded));
             log("expected: %s", record.getExpectedGeometry());
             log("parsed  : %s", parsed);
             log("----------");
@@ -145,7 +145,7 @@ public class TWKBReadWriteTest {
         }
     }
 
-    private void log(String fmt, Object... args) {
+    private static void log(String fmt, Object... args) {
         System.err.printf(fmt + "\n", args);
     }
 
@@ -163,7 +163,7 @@ public class TWKBReadWriteTest {
         assertTrue(String.format("Expected %s, got %s", expectedGeometry, parsed), equals);
     }
 
-    private Geometry geom(String wkt) throws ParseException {
+    private static Geometry geom(String wkt) throws ParseException {
         WKTReader wktreader = new WKTReader();
         wktreader.setIsOldJtsCoordinateSyntaxAllowed(false);
         return wktreader.read(wkt);

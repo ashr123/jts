@@ -123,7 +123,7 @@ public class CoverageSimplifier {
     return simplifier.simplify(0, tolerance);
   }
   
-  private Geometry[] coverage;
+  private final Geometry[] coverage;
   private double smoothWeight = CornerArea.DEFAULT_SMOOTH_WEIGHT;
   private double removableSizeFactor = 1.0;
   
@@ -209,7 +209,7 @@ public class CoverageSimplifier {
     return simplify(covRings, covEdges, edges);
   }
 
-  private Edge[] createEdges(List<CoverageEdge> covEdges, double[] tolerances) {
+  private static Edge[] createEdges(List<CoverageEdge> covEdges, double[] tolerances) {
     TPVWSimplifier.Edge[] edges = new TPVWSimplifier.Edge[covEdges.size()];
     for (int i = 0; i < covEdges.size(); i++) {
       CoverageEdge covEdge = covEdges.get(i);
@@ -219,7 +219,7 @@ public class CoverageSimplifier {
     return edges;
   }
 
-  private double computeTolerance(CoverageEdge covEdge, double[] tolerances) {
+  private static double computeTolerance(CoverageEdge covEdge, double[] tolerances) {
     int index0 = covEdge.getAdjacentIndex(0);
     // assert: index0 >= 0
     double tolerance = tolerances[index0];
@@ -245,8 +245,7 @@ public class CoverageSimplifier {
     CornerArea cornerArea = new CornerArea(smoothWeight);
     TPVWSimplifier.simplify(edges, cornerArea, removableSizeFactor);
     setCoordinates(covEdges, edges);
-    Geometry[] result = covRings.buildCoverage();
-    return result;
+      return covRings.buildCoverage();
   }
 
   private static TPVWSimplifier.Edge[] createEdges(List<CoverageEdge> covEdges, double toleranceInner, double toleranceOuter) {
@@ -268,7 +267,7 @@ public class CoverageSimplifier {
     return covEdge.isInner() ? toleranceInner : toleranceOuter;
   }
   
-  private void setCoordinates(List<CoverageEdge> covEdges, Edge[] edges) {
+  private static void setCoordinates(List<CoverageEdge> covEdges, Edge[] edges) {
     for (int i = 0; i < covEdges.size(); i++) {
       Edge edge = edges[i];
       if (edge.getTolerance() > 0) {

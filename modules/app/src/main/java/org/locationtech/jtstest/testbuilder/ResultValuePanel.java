@@ -34,13 +34,13 @@ extends JPanel
   Object currResult = null;
  
   
-  JPanel labelPanel = new JPanel();
-  JLabel resultLabel = new JLabel();
-  BorderLayout labelPanelLayout = new BorderLayout();
+  final JPanel labelPanel = new JPanel();
+  final JLabel resultLabel = new JLabel();
+  final BorderLayout labelPanelLayout = new BorderLayout();
   
-	JScrollPane jScrollPane1 = new JScrollPane();
-	JTextArea txtResult = new JTextArea();
-  BorderLayout tabPanelLayout = new BorderLayout();
+	final JScrollPane jScrollPane1 = new JScrollPane();
+	final JTextArea txtResult = new JTextArea();
+  final BorderLayout tabPanelLayout = new BorderLayout();
 	
 	public ResultValuePanel() {
 		try {
@@ -50,7 +50,7 @@ extends JPanel
 		}
 	}
 	
-  void jbInit() throws Exception {
+  void jbInit() {
     
     this.setLayout(tabPanelLayout);
 

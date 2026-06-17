@@ -25,7 +25,10 @@ import org.locationtech.jts.geom.Location;
  */
 public class PointLocation {
 
-  /**
+    private PointLocation() {
+    }
+
+    /**
    * Tests whether a point lies on a line segment.
    * 
    * @param p the point to test
@@ -40,8 +43,7 @@ public class PointLocation {
     //-- handle zero-length segments
     if (p.equals2D(p0))
       return true;
-    boolean isOnLine = Orientation.COLLINEAR == Orientation.index(p0, p1, p);
-    return isOnLine;
+      return Orientation.COLLINEAR == Orientation.index(p0, p1, p);
   }
   
   /**

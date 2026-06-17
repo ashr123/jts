@@ -57,10 +57,10 @@ class RelateEdge {
   /**
    * Indicates that the location is currently unknown
    */
-  private static int LOC_UNKNOWN = Location.NONE;
+  private static final int LOC_UNKNOWN = Location.NONE;
   
-  private RelateNode node;
-  private Coordinate dirPt;
+  private final RelateNode node;
+  private final Coordinate dirPt;
   
   private int aDim = DIM_UNKNOWN;
   private int aLocLeft = LOC_UNKNOWN;
@@ -343,20 +343,18 @@ class RelateEdge {
   }
 
   private String labelString() {
-    StringBuilder buf = new StringBuilder();
-    buf.append("A:");
-    buf.append(locationString(RelateGeometry.GEOM_A));
-    buf.append("/B:");
-    buf.append(locationString(RelateGeometry.GEOM_B));
-    return buf.toString();
+      String buf = "A:" +
+              locationString(RelateGeometry.GEOM_A) +
+              "/B:" +
+              locationString(RelateGeometry.GEOM_B);
+    return buf;
   }
 
   private String locationString(boolean isA) {
-    StringBuilder buf = new StringBuilder();
-    buf.append(Location.toLocationSymbol(location(isA, Position.LEFT)));
-    buf.append(Location.toLocationSymbol(location(isA, Position.ON)));
-    buf.append(Location.toLocationSymbol(location(isA, Position.RIGHT)));
-    return buf.toString();
+      String buf = String.valueOf(Location.toLocationSymbol(location(isA, Position.LEFT))) +
+              Location.toLocationSymbol(location(isA, Position.ON)) +
+              Location.toLocationSymbol(location(isA, Position.RIGHT));
+    return buf;
   }
 
 }

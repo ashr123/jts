@@ -12,7 +12,6 @@
 package org.locationtech.jts.operation.overlayng;
 
 import static org.locationtech.jts.operation.overlayng.OverlayNG.DIFFERENCE;
-import static org.locationtech.jts.operation.overlayng.OverlayNG.INTERSECTION;
 import static org.locationtech.jts.operation.overlayng.OverlayNG.UNION;
 
 import org.locationtech.jts.geom.Geometry;
@@ -31,7 +30,7 @@ import test.jts.GeometryTestCase;
  */
 public class OverlayNGSnappingNoderTest extends GeometryTestCase {
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(OverlayNGSnappingNoderTest.class);
   }
 

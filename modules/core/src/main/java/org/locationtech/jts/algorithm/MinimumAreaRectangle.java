@@ -148,8 +148,7 @@ public class MinimumAreaRectangle
       diameterIndex = findFurthestVertex(ring, segBase, diameterIndex, 0);
       
       Coordinate diamPt = ring[diameterIndex];
-      Coordinate diamBasePt = segBase.project(diamPt);  
-      segDiam.p0 = diamBasePt;
+        segDiam.p0 = segBase.project(diamPt);
       segDiam.p1 = diamPt;
       
       leftSideIndex = findFurthestVertex(ring, segDiam, leftSideIndex, 1);
@@ -179,7 +178,7 @@ public class MinimumAreaRectangle
         inputGeom.getFactory());
   }
 
-  private int findFurthestVertex(Coordinate[] pts, LineSegment baseSeg, int startIndex, int orient)
+  private static int findFurthestVertex(Coordinate[] pts, LineSegment baseSeg, int startIndex, int orient)
   {
     double maxDistance = orientedDistance(baseSeg, pts[startIndex], orient);
     double nextDistance = maxDistance;
@@ -198,7 +197,7 @@ public class MinimumAreaRectangle
     return maxIndex;
   }
 
-  private boolean isFurtherOrEqual(double d1, double d2, int orient) {
+  private static boolean isFurtherOrEqual(double d1, double d2, int orient) {
     switch (orient) {
     case 0: return Math.abs(d1) >= Math.abs(d2);
     case 1: return d1 >= d2;

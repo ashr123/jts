@@ -16,8 +16,8 @@ package org.locationtech.jts.geomgraph.index;
  */
 public class MonotoneChain {
 
-  MonotoneChainEdge mce;
-  int chainIndex;
+  final MonotoneChainEdge mce;
+  final int chainIndex;
 
   public MonotoneChain(MonotoneChainEdge mce, int chainIndex) {
     this.mce = mce;

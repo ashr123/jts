@@ -11,6 +11,8 @@
  */
 package org.locationtech.jtstest.testrunner;
 
+import java.util.List;
+
 import org.locationtech.jts.algorithm.distance.DiscreteHausdorffDistance;
 import org.locationtech.jts.geom.Geometry;
 
@@ -26,7 +28,7 @@ import org.locationtech.jts.geom.Geometry;
 public class BufferResultMatcher
  implements ResultMatcher
 {
-	private ResultMatcher defaultMatcher = new EqualityResultMatcher();
+	private final ResultMatcher defaultMatcher = new EqualityResultMatcher();
 	
 	/**
 	 * Tests whether the two results are equal within the given
@@ -34,14 +36,14 @@ public class BufferResultMatcher
 	 * 
 	 * @return true if the actual and expected results are considered equal
 	 */
-	public boolean isMatch(Geometry geom, String opName, Object[] args, 
+	public boolean isMatch(Geometry geom, String opName, List<Object> args,
 			Result actualResult, Result expectedResult,
 			double tolerance)
 	{
-		if (! opName.equalsIgnoreCase("buffer"))
+		if (! "buffer".equalsIgnoreCase(opName))
 			return defaultMatcher.isMatch(geom, opName, args, actualResult, expectedResult, tolerance);
-		
-		double distance = Double.parseDouble((String) args[0]);
+
+		double distance = Double.parseDouble((String) args.get(0));
 		return isBufferResultMatch(
 				((GeometryResult) actualResult).getGeometry(),
 				((GeometryResult) expectedResult).getGeometry(),
@@ -56,7 +58,7 @@ public class BufferResultMatcher
 	 */
 	private static final double MIN_DISTANCE_TOLERANCE = 1.0e-8; 
 	
-	public boolean isBufferResultMatch(Geometry actualBuffer, Geometry expectedBuffer, double distance)
+	public static boolean isBufferResultMatch(Geometry actualBuffer, Geometry expectedBuffer, double distance)
 	{
 		if (actualBuffer.isEmpty() && expectedBuffer.isEmpty())
 			return true;
@@ -70,14 +72,11 @@ public class BufferResultMatcher
 		*/
 		if (! isSymDiffAreaInTolerance(actualBuffer, expectedBuffer))
 			return false;
-		
-		if (! isBoundaryHausdorffDistanceInTolerance(actualBuffer, expectedBuffer, distance))
-			return false;
-		
-		return true;
-	}
+
+        return isBoundaryHausdorffDistanceInTolerance(actualBuffer, expectedBuffer, distance);
+    }
 	
-	public boolean isSymDiffAreaInTolerance(Geometry actualBuffer, Geometry expectedBuffer)
+	public static boolean isSymDiffAreaInTolerance(Geometry actualBuffer, Geometry expectedBuffer)
 	{
 		double area = expectedBuffer.getArea();
 		Geometry diff = actualBuffer.symDifference(expectedBuffer);
@@ -95,7 +94,7 @@ public class BufferResultMatcher
 		return frac < MAX_RELATIVE_AREA_DIFFERENCE;
 	}
 	
-	public boolean isBoundaryHausdorffDistanceInTolerance(Geometry actualBuffer, Geometry expectedBuffer, double distance)
+	public static boolean isBoundaryHausdorffDistanceInTolerance(Geometry actualBuffer, Geometry expectedBuffer, double distance)
 	{
 		Geometry actualBdy = actualBuffer.getBoundary();
 		Geometry expectedBdy = expectedBuffer.getBoundary();
@@ -106,9 +105,7 @@ public class BufferResultMatcher
     double expectedDistanceTol = Math.abs(distance) / MAX_HAUSDORFF_DISTANCE_FACTOR;
     if (expectedDistanceTol < MIN_DISTANCE_TOLERANCE)
     	expectedDistanceTol = MIN_DISTANCE_TOLERANCE;
-    if (maxDistanceFound > expectedDistanceTol)
-    	return false;
-    return true;
-	}
+        return !(maxDistanceFound > expectedDistanceTol);
+    }
 	
 }

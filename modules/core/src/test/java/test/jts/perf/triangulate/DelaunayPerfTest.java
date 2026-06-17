@@ -23,12 +23,14 @@ import org.locationtech.jts.util.Stopwatch;
 
 public class DelaunayPerfTest 
 {
-  public static void main(String args[]) {
-  	DelaunayPerfTest test = new DelaunayPerfTest();
-  	test.run();
+    private DelaunayPerfTest() {
+    }
+
+    public static void main(String[] args) {
+      run();
   }
   
-	public void run()
+	public static void run()
 	{
 		run(10);
 		run(10);
@@ -49,9 +51,9 @@ public class DelaunayPerfTest
 	
 	final static double SIDE_LEN = 10.0;
 	
-	public void run(int nPts)
+	public static void run(int nPts)
 	{
-		List pts = randomPoints(nPts);
+		List<Coordinate> pts = randomPoints(nPts);
 		System.out.println("# pts: " + pts.size());
 		Stopwatch sw = new Stopwatch();
 		DelaunayTriangulationBuilder builder = new DelaunayTriangulationBuilder();
@@ -66,9 +68,9 @@ public class DelaunayPerfTest
 //		System.out.println(g);
 	}
 	
-	List randomPointsInGrid(int nPts)
+	static List<Coordinate> randomPointsInGrid(int nPts)
 	{
-		List pts = new ArrayList();
+		List<Coordinate> pts = new ArrayList<>();
 		
 		int nSide = (int) Math.sqrt(nPts) + 1;
 		
@@ -82,9 +84,9 @@ public class DelaunayPerfTest
 		return pts;
 	}
 	
-	List randomPoints(int nPts)
+	static List<Coordinate> randomPoints(int nPts)
 	{
-		List pts = new ArrayList();
+		List<Coordinate> pts = new ArrayList<>();
 		
 		for (int i = 0; i < nPts; i++) {
 				double x = SIDE_LEN * Math.random();

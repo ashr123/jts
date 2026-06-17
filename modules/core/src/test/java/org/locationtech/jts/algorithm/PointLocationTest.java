@@ -24,7 +24,7 @@ import test.jts.GeometryTestCase;
  */
 public class PointLocationTest extends GeometryTestCase {
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(PointLocationTest.class);
   }
 
@@ -32,16 +32,16 @@ public class PointLocationTest extends GeometryTestCase {
     super(name);
   }
 
-  public void testOnLineOnVertex() throws Exception {
+  public void testOnLineOnVertex() {
     checkOnLine(20, 20, "LINESTRING (0 00, 20 20, 30 30)", true);
   }
 
-  public void testOnLineInSegment() throws Exception {
+  public void testOnLineInSegment() {
     checkOnLine(10, 10, "LINESTRING (0 0, 20 20, 0 40)", true);
     checkOnLine(10, 30, "LINESTRING (0 0, 20 20, 0 40)", true);
   }
 
-  public void testNotOnLine() throws Exception {
+  public void testNotOnLine() {
     checkOnLine(0, 100, "LINESTRING (10 10, 20 10, 30 10)", false);
   }
 
@@ -66,14 +66,14 @@ public class PointLocationTest extends GeometryTestCase {
     LineString line = (LineString) read(wktLine);
     Coordinate p0 = line.getCoordinateN(0);
     Coordinate p1 = line.getCoordinateN(1);
-    assertTrue(expected == PointLocation.isOnSegment(new Coordinate(x,y), p0, p1));
+      assertEquals(expected, PointLocation.isOnSegment(new Coordinate(x, y), p0, p1));
   }
 
   void checkOnLine(double x, double y, String wktLine, boolean expected) {
     LineString line = (LineString) read(wktLine);
-    assertTrue(expected == PointLocation.isOnLine(new Coordinate(x,y), line.getCoordinates()));
-    
-    assertTrue(expected == PointLocation.isOnLine(new Coordinate(x,y), line.getCoordinateSequence()));
+      assertEquals(expected, PointLocation.isOnLine(new Coordinate(x, y), line.getCoordinates()));
+
+      assertEquals(expected, PointLocation.isOnLine(new Coordinate(x, y), line.getCoordinateSequence()));
   }
 
 }

@@ -29,12 +29,12 @@ public class PolygonUnionPerfTest
 
   static final int MAX_ITER = 1;
 
-  static PrecisionModel pm = new PrecisionModel();
-  static GeometryFactory fact = new GeometryFactory(pm, 0);
+  static final PrecisionModel pm = new PrecisionModel();
+  static final GeometryFactory fact = new GeometryFactory(pm, 0);
   static WKTReader wktRdr = new WKTReader(fact);
   static WKTWriter wktWriter = new WKTWriter();
 
-  GeometryFactory factory = new GeometryFactory();
+  final GeometryFactory factory = new GeometryFactory();
   
   public static void main(String[] args) {
     PolygonUnionPerfTest test = new PolygonUnionPerfTest();
@@ -77,8 +77,8 @@ public class PolygonUnionPerfTest
     System.out.println("---------------------------------------------------------");
     System.out.println("# pts/item: " + nPts);
 
-    List polys = createPolys(nItems, size, nPts);
-    
+    List<Geometry> polys = createPolys(nItems, size, nPts);
+
 //    System.out.println();
     //System.out.println("Running with " + nPts + " points");
     
@@ -101,7 +101,7 @@ public class PolygonUnionPerfTest
    * @param nPts
    * @return
    */
-  List createPolys(int nItems, double size, int nPts)
+  List<Geometry> createPolys(int nItems, double size, int nPts)
   {
 
   	// between 0 and 1
@@ -110,7 +110,7 @@ public class PolygonUnionPerfTest
     
     int nCells = (int) Math.sqrt(nItems);
 
-    List geoms = new ArrayList();
+    List<Geometry> geoms = new ArrayList<>();
 //    double width = env.getWidth();
     double width = nCells * (1 - overlapPct) * size;
     
@@ -141,12 +141,11 @@ public class PolygonUnionPerfTest
     gsf.setCentre(base);
     gsf.setSize(size);
     gsf.setNumPoints(nPts);
-    
-    Geometry poly = gsf.createCircle();
-//    Geometry poly = gsf.createRectangle();
+
+      //    Geometry poly = gsf.createRectangle();
     
 //    System.out.println(circle);
-    return poly;
+    return gsf.createCircle();
   }
   
     

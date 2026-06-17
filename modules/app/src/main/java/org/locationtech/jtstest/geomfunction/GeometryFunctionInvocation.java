@@ -12,15 +12,17 @@
 
 package org.locationtech.jtstest.geomfunction;
 
+import java.util.List;
+
 import org.locationtech.jts.geom.Geometry;
 
 public class GeometryFunctionInvocation {
 
-  private GeometryFunction function;
-  private Object[] args;
-  private Geometry target;
+  private final GeometryFunction function;
+  private final List<Object> args;
+  private final Geometry target;
 
-  public GeometryFunctionInvocation(GeometryFunction function, Geometry target, Object[] args) {
+  public GeometryFunctionInvocation(GeometryFunction function, Geometry target, List<Object> args) {
     this.function = function;
     this.target = target;
     this.args = args;
@@ -30,10 +32,10 @@ public class GeometryFunctionInvocation {
     if (function == null)
       return null;
     String funArgs = toString(target);
-    if (args.length > 0) {
+    if (!args.isEmpty()) {
       funArgs += ", " + toString(args);
     }
-    return function.getCategory() 
+    return function.getCategory()
         + "." + function.getName()
         + "( " + funArgs + " )";
   }
@@ -42,18 +44,18 @@ public class GeometryFunctionInvocation {
     return function;
   }
 
-  public Object[] getArgs() {
+  public List<Object> getArgs() {
     return args;
   }
-  
-  public static String toString(Object[] param)
+
+  public static String toString(List<Object> param)
   {
     if (param == null) return "";
-    
-    StringBuffer buf = new StringBuffer();
-    for (int i = 0; i < param.length; i++) {
+
+    StringBuilder buf = new StringBuilder();
+    for (int i = 0; i < param.size(); i++) {
       if (i > 0) buf.append(", ");
-      buf.append(toString(param[i]));
+      buf.append(toString(param.get(i)));
     }
     return buf.toString();
   }

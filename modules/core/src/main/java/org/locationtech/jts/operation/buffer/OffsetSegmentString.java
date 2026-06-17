@@ -30,7 +30,7 @@ class OffsetSegmentString
 {
   private static final Coordinate[] COORDINATE_ARRAY_TYPE = new Coordinate[0];
 
-  private ArrayList ptList;
+  private final ArrayList<Coordinate> ptList;
   private PrecisionModel precisionModel = null;
   
   /**
@@ -42,7 +42,7 @@ class OffsetSegmentString
 
   public OffsetSegmentString()
   {
-  	ptList = new ArrayList();
+  	ptList = new ArrayList<>();
   }
   
   public void setPrecisionModel(PrecisionModel precisionModel)
@@ -69,9 +69,9 @@ class OffsetSegmentString
   public void addPts(Coordinate[] pt, boolean isForward)
   {
     if (isForward) {
-      for (int i = 0; i < pt.length; i++) {
-        addPt(pt[i]);
-      }
+        for (Coordinate coordinate : pt) {
+            addPt(coordinate);
+        }
     }
     else {
       for (int i = pt.length - 1; i >= 0; i--) {
@@ -90,20 +90,18 @@ class OffsetSegmentString
    */
   private boolean isRedundant(Coordinate pt)
   {
-    if (ptList.size() < 1)
+    if (ptList.isEmpty())
     	return false;
-    Coordinate lastPt = (Coordinate) ptList.get(ptList.size() - 1);
+    Coordinate lastPt = ptList.get(ptList.size() - 1);
     double ptDist = pt.distance(lastPt);
-    if (ptDist < minimimVertexDistance)
-    	return true;
-    return false;
+      return ptDist < minimimVertexDistance;
   }
   
   public void closeRing()
   {
-    if (ptList.size() < 1) return;
-    Coordinate startPt = new Coordinate((Coordinate) ptList.get(0));
-    Coordinate lastPt = (Coordinate) ptList.get(ptList.size() - 1);
+    if (ptList.isEmpty()) return;
+    Coordinate startPt = new Coordinate(ptList.get(0));
+    Coordinate lastPt = ptList.get(ptList.size() - 1);
     if (startPt.equals(lastPt)) return;
     ptList.add(startPt);
   }
@@ -123,8 +121,7 @@ class OffsetSegmentString
       if (! start.equals(end) ) addPt(start);
     }
     */
-    Coordinate[] coord = (Coordinate[]) ptList.toArray(COORDINATE_ARRAY_TYPE);
-    return coord;
+      return ptList.toArray(COORDINATE_ARRAY_TYPE);
   }
 
   public String toString()

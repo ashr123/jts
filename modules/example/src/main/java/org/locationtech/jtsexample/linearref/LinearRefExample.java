@@ -26,28 +26,28 @@ import org.locationtech.jts.linearref.LengthIndexedLine;
 
 public class LinearRefExample {
 
-  static GeometryFactory fact = new GeometryFactory();
-  static WKTReader rdr = new WKTReader(fact);
+  static final GeometryFactory fact = new GeometryFactory();
+  static final WKTReader rdr = new WKTReader(fact);
 
   public static void main(String[] args)
       throws Exception
   {
     LinearRefExample example = new LinearRefExample();
-    example.run();
+    run();
   }
 
 
-  public LinearRefExample() {
+  private LinearRefExample() {
   }
 
-  public void run()
+  public static void run()
       throws Exception
   {
     runExtractedLine("LINESTRING (0 0, 10 10, 20 20)", 1, 10);
     runExtractedLine("MULTILINESTRING ((0 0, 10 10), (20 20, 25 25, 30 40))", 1, 20);
   }
 
-  public void runExtractedLine(String wkt, double start, double end)
+  public static void runExtractedLine(String wkt, double start, double end)
     throws ParseException
   {
     System.out.println("=========================");

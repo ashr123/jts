@@ -23,7 +23,7 @@ import test.jts.GeometryTestCase;
 
 public class CoveragePolygonValidatorTest extends GeometryTestCase {
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(CoveragePolygonValidatorTest.class);
   }
   
@@ -217,7 +217,7 @@ public class CoveragePolygonValidatorTest extends GeometryTestCase {
     checkEqual(expected, actual);
   }
 
-  private Geometry[] extractPolygons(Geometry geom) {
+  private static Geometry[] extractPolygons(Geometry geom) {
     List<Polygon> polygons = PolygonExtracter.getPolygons(geom);
     return GeometryFactory.toPolygonArray(polygons);
   }

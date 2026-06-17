@@ -32,16 +32,18 @@ public class VoronoiCircularStressTest {
   
   private static final int NUM_CASES = 1000;
 
-  public static void main(String args[]) {
-    VoronoiCircularStressTest test = new VoronoiCircularStressTest();
-    test.run(NUM_CASES);
+    private VoronoiCircularStressTest() {
+    }
+
+    public static void main(String[] args) {
+      VoronoiCircularStressTest.run(NUM_CASES);
   }
   
   final static GeometryFactory geomFact = new GeometryFactory();
   
   private static final double WIDTH = 1000;
   
-  private void run(int numCases) {
+  private static void run(int numCases) {
     int numValid = 0;
     for (int i = 0; i < numCases; i++) {
       boolean isValid = runVoronoi(i);
@@ -52,7 +54,7 @@ public class VoronoiCircularStressTest {
         numCases, numValid, numCases - numValid);
   }
 
-  private boolean runVoronoi(int i) {
+  private static boolean runVoronoi(int i) {
     LineString line = createRandomLine(WIDTH, 4);
     Geometry lineBuf = line.buffer((WIDTH / 100));
     //System.out.println(lineBuf);
@@ -62,18 +64,17 @@ public class VoronoiCircularStressTest {
     return isValid;
   }
 
-  private LineString createRandomLine(double width, int nPts) {
+  private static LineString createRandomLine(double width, int nPts) {
     Coordinate[] pts = new Coordinate[nPts];
     for (int i = 0; i < nPts; i++) {
       double x = width * Math.random();
       double y = width * Math.random();
       pts[i] = new Coordinate(x, y);
     }
-    LineString line = geomFact.createLineString(pts);
-    return line;
+      return geomFact.createLineString(pts);
   }
   
-  boolean checkVoronoiValid(Geometry sites) {
+  static boolean checkVoronoiValid(Geometry sites) {
     Geometry result = null;
     try {
       result = computeVoronoi(sites); 
@@ -88,7 +89,6 @@ public class VoronoiCircularStressTest {
   private static Geometry computeVoronoi(Geometry sites) {
     VoronoiDiagramBuilder builder = new VoronoiDiagramBuilder();
     builder.setSites(sites);
-    Geometry result = builder.getDiagram(sites.getFactory());
-    return result;
+      return builder.getDiagram(sites.getFactory());
   }
 }

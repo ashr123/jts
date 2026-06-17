@@ -34,7 +34,7 @@ import org.locationtech.jts.geom.Location;
 class IMPatternMatcher extends IMPredicate
 {
   private String imPattern = null;
-  private IntersectionMatrix patternMatrix;
+  private final IntersectionMatrix patternMatrix;
   
   public IMPatternMatcher(String imPattern) {
     this.imPattern = imPattern;
@@ -59,12 +59,10 @@ class IMPatternMatcher extends IMPredicate
   }
   
   private static boolean requireInteraction(IntersectionMatrix im) {
-    boolean requiresInteraction = 
-        isInteraction(im.get(Location.INTERIOR, Location.INTERIOR))
-        || isInteraction(im.get(Location.INTERIOR, Location.BOUNDARY))
-        || isInteraction(im.get(Location.BOUNDARY, Location.INTERIOR))
-        || isInteraction(im.get(Location.BOUNDARY, Location.BOUNDARY));
-    return requiresInteraction;
+      return isInteraction(im.get(Location.INTERIOR, Location.INTERIOR))
+      || isInteraction(im.get(Location.INTERIOR, Location.BOUNDARY))
+      || isInteraction(im.get(Location.BOUNDARY, Location.INTERIOR))
+      || isInteraction(im.get(Location.BOUNDARY, Location.BOUNDARY));
   }
   
   private static boolean isInteraction(int imDim) {
@@ -102,8 +100,7 @@ class IMPatternMatcher extends IMPredicate
   
   @Override
   public boolean valueIM() {
-    boolean val = intMatrix.matches(imPattern);
-    return val;
+      return intMatrix.matches(imPattern);
   }
   
   public String toString() {

@@ -20,7 +20,7 @@ import org.locationtech.jts.io.WKTReader;
 
 public class InvalidHoleRemoverTest extends TestCase {
 
-  private WKTReader reader = new WKTReader();
+  private final WKTReader reader = new WKTReader();
 
   public InvalidHoleRemoverTest(String name) {
     super(name);
@@ -70,7 +70,7 @@ public class InvalidHoleRemoverTest extends TestCase {
     checkEqual(expected, actual);
   }
 
-  private void checkEqual(Geometry expected, Geometry actual) {
+  private static void checkEqual(Geometry expected, Geometry actual) {
     Geometry actualNorm = actual.norm();
     boolean equal = actualNorm.equalsExact(expected.norm());
     if (! equal) {

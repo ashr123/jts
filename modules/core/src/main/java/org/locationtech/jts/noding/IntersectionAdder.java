@@ -39,9 +39,9 @@ public class IntersectionAdder
   private boolean hasInterior = false;
 
   // the proper intersection point found
-  private Coordinate properIntersectionPoint = null;
+  private final Coordinate properIntersectionPoint = null;
 
-  private LineIntersector li;
+  private final LineIntersector li;
   private boolean isSelfIntersection;
   //private boolean intersectionFound;
   public int numIntersections = 0;
@@ -97,10 +97,8 @@ public class IntersectionAdder
           return true;
         if (e0.isClosed()) {
           int maxSegIndex = e0.size() - 1;
-          if (    (segIndex0 == 0 && segIndex1 == maxSegIndex)
-              ||  (segIndex1 == 0 && segIndex0 == maxSegIndex) ) {
-            return true;
-          }
+            return (segIndex0 == 0 && segIndex1 == maxSegIndex)
+                    || (segIndex1 == 0 && segIndex0 == maxSegIndex);
         }
       }
     }

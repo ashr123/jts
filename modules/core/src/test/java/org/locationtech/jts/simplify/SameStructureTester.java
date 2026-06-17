@@ -56,10 +56,8 @@ public class SameStructureTester {
 
   private static boolean isSameStructurePolygon(Polygon g1, Polygon g2)
   {
-    if (g1.getNumInteriorRing() != g2.getNumInteriorRing())
-        return false;
+      return g1.getNumInteriorRing() == g2.getNumInteriorRing();
     // could check for both empty or nonempty here
-    return true;
   }
 
   private static boolean isSameStructureLineString(LineString g1, LineString g2)

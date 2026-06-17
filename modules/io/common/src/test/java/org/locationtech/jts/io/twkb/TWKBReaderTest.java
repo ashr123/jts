@@ -13,12 +13,9 @@
 package org.locationtech.jts.io.twkb;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.locationtech.jts.geom.Geometry;
@@ -27,7 +24,6 @@ import org.locationtech.jts.geom.impl.PackedCoordinateSequenceFactory;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBReader;
 import org.locationtech.jts.io.WKTReader;
-import org.locationtech.jts.io.twkb.TWKBReader;
 import org.locationtech.jts.io.twkb.TWKBTestSupport.TWKBTestData;
 
 /**
@@ -38,11 +34,11 @@ import org.locationtech.jts.io.twkb.TWKBTestSupport.TWKBTestData;
  */
 public class TWKBReaderTest {
 
-    public @Rule TWKBTestSupport testSupport = new TWKBTestSupport();
+    public final @Rule TWKBTestSupport testSupport = new TWKBTestSupport();
 
     private GeometryFactory geomFactory = new GeometryFactory();
 
-    private TWKBReader reader = new TWKBReader();
+    private final TWKBReader reader = new TWKBReader();
 
     public @Test void testZMPrecision() throws ParseException {
 
@@ -146,7 +142,7 @@ public class TWKBReaderTest {
         assertTrue(String.format("Expected %s, got %s", expected, parsed), equals);
     }
 
-    private void log(String fmt, Object... args) {
+    private static void log(String fmt, Object... args) {
         System.err.printf(fmt + "\n", args);
     }
 

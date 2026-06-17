@@ -90,8 +90,7 @@ public class ZoomTool extends BasicTool
   	drawBand(g);
 
   	// draw new band
-  	Point currPoint = e.getPoint();
-  	mouseEnd = currPoint;
+      mouseEnd = e.getPoint();
   	drawBand(g);
   }
 
@@ -126,9 +125,7 @@ public class ZoomTool extends BasicTool
   private boolean isSignificantMouseMove(Point p)
   {
     int delta = Math.abs(mouseStart.x - p.x) + Math.abs(mouseStart.y - p.y);
-  	if (delta < MIN_MOVEMENT)
-  		return false;
-  	return true;
+      return delta >= MIN_MOVEMENT;
   }
   
   public static void drawRect(Graphics g, Point p0, Point p1)
@@ -144,4 +141,3 @@ public class ZoomTool extends BasicTool
     g.drawLine(p0.x, p0.y, p1.x, p1.y);
   }
 }
-

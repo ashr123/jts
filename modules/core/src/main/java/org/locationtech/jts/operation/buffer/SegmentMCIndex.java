@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.index.ItemVisitor;
 import org.locationtech.jts.index.chain.MonotoneChain;
 import org.locationtech.jts.index.chain.MonotoneChainBuilder;
 import org.locationtech.jts.index.chain.MonotoneChainSelectAction;
@@ -29,14 +28,14 @@ import org.locationtech.jts.index.strtree.STRtree;
  *
  */
 class SegmentMCIndex {
-  private STRtree index;
-  
+  private final STRtree<MonotoneChain> index;
+
   public SegmentMCIndex(Coordinate[] segs) {
     index = buildIndex(segs);
   }
-  
-  private STRtree buildIndex(Coordinate[] segs) {
-    STRtree index = new STRtree();
+
+  private static STRtree<MonotoneChain> buildIndex(Coordinate[] segs) {
+    STRtree<MonotoneChain> index = new STRtree<>();
     List<MonotoneChain> segChains = MonotoneChainBuilder.getChains(segs, segs);
     for (MonotoneChain mc : segChains ) {
       index.insert(mc.getEnvelope(), mc);
@@ -45,11 +44,6 @@ class SegmentMCIndex {
   }
 
   public void query(Envelope env, MonotoneChainSelectAction action) {
-    index.query(env, new ItemVisitor() {
-      public void visitItem(Object item) {
-        MonotoneChain testChain = (MonotoneChain) item;
-        testChain.select(env, action);
-      }
-    });
+    index.query(env, item -> item.select(env, action));
   }
 }

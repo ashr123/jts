@@ -68,7 +68,7 @@ public class ShapeWriter
 	/**
 	 * Cache a Point2D object to use to transfer coordinates into shape
 	 */
-	private Point2D transPoint = new Point2D.Double();
+	private final Point2D transPoint = new Point2D.Double();
 
 	/**
 	 * If true, decimation will be used to reduce the number of vertices
@@ -236,7 +236,7 @@ public class ShapeWriter
 		GeometryCollectionShape shape = new GeometryCollectionShape();
 		// add components to GC shape
 		for (int i = 0; i < gc.getNumGeometries(); i++) {
-			Geometry g = (Geometry) gc.getGeometryN(i);
+			Geometry g = gc.getGeometryN(i);
 			shape.add(toShape(g));
 		}
 		return shape;

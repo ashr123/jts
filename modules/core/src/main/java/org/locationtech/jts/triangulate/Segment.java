@@ -25,7 +25,7 @@ import org.locationtech.jts.geom.LineSegment;
  */
 public class Segment 
 {
-    private LineSegment ls;
+    private final LineSegment ls;
     private Object data = null;
 
     /** 

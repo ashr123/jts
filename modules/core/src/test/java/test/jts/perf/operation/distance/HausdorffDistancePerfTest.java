@@ -32,7 +32,7 @@ public class HausdorffDistancePerfTest extends PerformanceTestCase {
   
   static final boolean VERBOSE = false;
 
-  static GeometryFactory geomFact = new GeometryFactory();
+  static final GeometryFactory geomFact = new GeometryFactory();
   
   public static void main(String[] args) {
     PerformanceTestRunner.run(HausdorffDistancePerfTest.class);
@@ -78,7 +78,7 @@ public class HausdorffDistancePerfTest extends PerformanceTestCase {
     }
   }
   
-  private void checkHausdorff(Geometry g, Geometry b) {
+  private static void checkHausdorff(Geometry g, Geometry b) {
     double distDHD = DiscreteHausdorffDistance.distance(g, b, 0.01);
     
     double distHD = DirectedHausdorffDistance.hausdorffDistance(g, b);
@@ -95,7 +95,7 @@ public class HausdorffDistancePerfTest extends PerformanceTestCase {
     checkFullyWithinDistance(g, b);
   }
 
-  private void checkFullyWithinDistance(Geometry g, Geometry b) {
+  private static void checkFullyWithinDistance(Geometry g, Geometry b) {
     double distDHD = DirectedHausdorffDistance.distance(g, b, 0.01);
     double tol = distDHD / 1000;
     boolean isWithin = DirectedHausdorffDistance.isFullyWithinDistance(g, b, 1.05 * distDHD, tol);
@@ -107,8 +107,8 @@ public class HausdorffDistancePerfTest extends PerformanceTestCase {
     }
   }
 
-  private List<Geometry> createCircleGrid(double size, int nSide) {
-    List<Geometry> geoms = new ArrayList<Geometry>();
+  private static List<Geometry> createCircleGrid(double size, int nSide) {
+    List<Geometry> geoms = new ArrayList<>();
     
     double inc = size / nSide;
     
@@ -123,15 +123,13 @@ public class HausdorffDistancePerfTest extends PerformanceTestCase {
     return geoms;
   }
 
-  private Geometry createSineStar(double loc, double size, int nPts)
+  private static Geometry createSineStar(double loc, double size, int nPts)
   {
     SineStarFactory gsf = new SineStarFactory(geomFact);
     gsf.setCentre(new Coordinate(loc, loc));
     gsf.setSize(size);
     gsf.setNumPoints(nPts);
-    
-    Geometry g = gsf.createSineStar().getBoundary();
 
-    return g;
+      return gsf.createSineStar().getBoundary();
   }
 }

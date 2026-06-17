@@ -17,8 +17,8 @@ public class FastOverlayFilter {
   // superceded by overlap clipping?
   // TODO: perhaps change this to RectangleClipping, with fast/looser semantics?
   
-  private Geometry targetGeom;
-  private boolean isTargetRectangle;
+  private final Geometry targetGeom;
+  private final boolean isTargetRectangle;
 
   public FastOverlayFilter(Geometry geom) {
     this.targetGeom = geom;
@@ -57,7 +57,7 @@ public class FastOverlayFilter {
     return null;
   }
 
-  private Geometry createEmpty(Geometry geom) {
+  private static Geometry createEmpty(Geometry geom) {
     // empty result has dimension of non-rectangle input
     return OverlayUtil.createEmptyResult(geom.getDimension(), geom.getFactory());
   }
@@ -75,11 +75,11 @@ public class FastOverlayFilter {
     return null;
   }
 
-  private boolean isEnvelopeIntersects(Geometry a, Geometry b) {
+  private static boolean isEnvelopeIntersects(Geometry a, Geometry b) {
     return a.getEnvelopeInternal().intersects( b.getEnvelopeInternal() );
   }
 
-  private boolean isEnvelopeCovers(Geometry a, Geometry b) {
+  private static boolean isEnvelopeCovers(Geometry a, Geometry b) {
     return a.getEnvelopeInternal().covers( b.getEnvelopeInternal() );
   }
 }

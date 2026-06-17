@@ -32,9 +32,9 @@ class CleanCoverage {
    * The areas in the clean coverage.
    * Entries may be null, if no resultant corresponded to the input area.
    */
-  private CleanArea[] cov;
+  private final CleanArea[] cov;
   //-- used for finding areas to merge gaps
-  private Quadtree covIndex;
+  private Quadtree<CleanArea> covIndex;
 
   public CleanCoverage(int size) {
     cov = new CleanArea[size]; 
@@ -56,10 +56,9 @@ class CleanCoverage {
     //-- sort parent indexes ascending, so that overlaps merge to first parent by default
     int[] indexesAsc = parentIndexes.toArray();
     Arrays.sort(indexesAsc);
-    for (int i = 0; i < indexesAsc.length; i++) {
-      int index = indexesAsc[i];
-      strat.checkMergeTarget(index, cov[index], poly);
-    }
+      for (int index : indexesAsc) {
+          strat.checkMergeTarget(index, cov[index], poly);
+      }
     return strat.getTarget();
   }
 
@@ -77,7 +76,7 @@ class CleanCoverage {
      * of an invalid input polygon. 
      * Discard polygon.
      */
-    if (adjacents.size() == 0)
+    if (adjacents.isEmpty())
       return;
     
     CleanArea mergeTarget = findMaxBorderLength(gap, adjacents);
@@ -86,7 +85,7 @@ class CleanCoverage {
     covIndex.insert(mergeTarget.getEnvelope(), mergeTarget);
   }
   
-  private CleanArea findMaxBorderLength(Polygon poly, List<CleanArea> areas) {
+  private static CleanArea findMaxBorderLength(Polygon poly, List<CleanArea> areas) {
     double maxLen = 0;
     CleanArea maxLenArea = null;
     for (CleanArea a : areas) {
@@ -101,10 +100,9 @@ class CleanCoverage {
   }
 
   private List<CleanArea> findAdjacentAreas(Geometry poly) {
-    List<CleanArea> adjacents = new ArrayList<CleanArea>();
+    List<CleanArea> adjacents = new ArrayList<>();
     RelateNG rel = RelateNG.prepare(poly);
     Envelope queryEnv = poly.getEnvelopeInternal();
-    @SuppressWarnings("unchecked")
     List<CleanArea> candidateAdjIndex = covIndex.query(queryEnv);
     for (CleanArea area : candidateAdjIndex) {
       if (area != null && area.isAdjacent(rel)) {
@@ -115,13 +113,13 @@ class CleanCoverage {
   }
 
   private void createIndex() {
-    covIndex = new Quadtree();
-    for (int i = 0; i < cov.length; i++) {
-      //-- null areas are never merged to
-      if (cov[i] != null) {
-        covIndex.insert(cov[i].getEnvelope(), cov[i]);
+    covIndex = new Quadtree<>();
+      for (CleanArea cleanArea : cov) {
+          //-- null areas are never merged to
+          if (cleanArea != null) {
+              covIndex.insert(cleanArea.getEnvelope(), cleanArea);
+          }
       }
-    }
   }
   
   public Geometry[] toCoverage(GeometryFactory geomFactory) {
@@ -141,7 +139,7 @@ class CleanCoverage {
   
   private static class CleanArea {
     //TODO: is it any faster to store single polygons explicitly and only create array if needed?
-    List<Polygon> polys = new ArrayList<Polygon>(); 
+    final List<Polygon> polys = new ArrayList<>();
     
     public void add(Polygon poly) {
       polys.add(poly);
@@ -192,13 +190,13 @@ class CleanCoverage {
     }
   }
 
-  public static interface MergeStrategy {
+  public interface MergeStrategy {
 
-    public int getTarget();
+    int getTarget();
 
-    public void checkMergeTarget(int areaIndex, CleanArea cleanArea, Polygon poly);
+    void checkMergeTarget(int areaIndex, CleanArea cleanArea, Polygon poly);
     
-    public class BorderMergeStrategy implements MergeStrategy {
+    class BorderMergeStrategy implements MergeStrategy {
 
       private int targetIndex = -1;
       private double targetBorderLen;
@@ -218,11 +216,11 @@ class CleanCoverage {
       }
     }
     
-    public class AreaMergeStrategy implements MergeStrategy {
+    class AreaMergeStrategy implements MergeStrategy {
 
       private int targetIndex = -1;
       private double targetArea;
-      private boolean isMax;
+      private final boolean isMax;
 
       AreaMergeStrategy(boolean isMax) {
         this.isMax = isMax;
@@ -246,10 +244,10 @@ class CleanCoverage {
       }
     }
     
-    public class IndexMergeStrategy implements MergeStrategy {
+    class IndexMergeStrategy implements MergeStrategy {
 
       private int targetIndex = -1;
-      private boolean isMax;
+      private final boolean isMax;
 
       IndexMergeStrategy(boolean isMax) {
         this.isMax = isMax;

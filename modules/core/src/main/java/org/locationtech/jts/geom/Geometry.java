@@ -11,10 +11,6 @@
  */
 package org.locationtech.jts.geom;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Iterator;
-
 import org.locationtech.jts.algorithm.Centroid;
 import org.locationtech.jts.algorithm.ConvexHull;
 import org.locationtech.jts.algorithm.InteriorPoint;
@@ -25,11 +21,14 @@ import org.locationtech.jts.operation.distance.DistanceOp;
 import org.locationtech.jts.operation.linemerge.LineMerger;
 import org.locationtech.jts.operation.predicate.RectangleContains;
 import org.locationtech.jts.operation.predicate.RectangleIntersects;
-import org.locationtech.jts.operation.relate.RelateOp;
 import org.locationtech.jts.operation.union.UnaryUnionOp;
 import org.locationtech.jts.operation.valid.IsSimpleOp;
 import org.locationtech.jts.operation.valid.IsValidOp;
 import org.locationtech.jts.util.Assert;
+
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Iterator;
 
 
 /**
@@ -149,7 +148,7 @@ import org.locationtech.jts.util.Assert;
  *@version 1.7
  */
 public abstract class Geometry
-    implements Cloneable, Comparable, Serializable
+    implements Cloneable, Comparable<Geometry>, Serializable
 {
   private static final long serialVersionUID = 8763622679187376702L;
     
@@ -171,11 +170,7 @@ public abstract class Geometry
   public static final String TYPENAME_MULTIPOLYGON = "MultiPolygon";
   public static final String TYPENAME_GEOMETRYCOLLECTION = "GeometryCollection";
   
-  private final static GeometryComponentFilter geometryChangedFilter = new GeometryComponentFilter() {
-    public void filter(Geometry geom) {
-      geom.geometryChangedAction();
-    }
-  };
+  private final static GeometryComponentFilter geometryChangedFilter = Geometry::geometryChangedAction;
 
   /**
    *  The bounding box of this <code>Geometry</code>.
@@ -224,11 +219,11 @@ public abstract class Geometry
    *      <code>isEmpty</code> methods return <code>false</code>
    */
   protected static boolean hasNonEmptyElements(Geometry[] geometries) {
-    for (int i = 0; i < geometries.length; i++) {
-      if (!geometries[i].isEmpty()) {
-        return true;
+      for (Geometry geometry : geometries) {
+          if (!geometry.isEmpty()) {
+              return true;
+          }
       }
-    }
     return false;
   }
 
@@ -239,12 +234,12 @@ public abstract class Geometry
    *@return        <code>true</code> if any of <code>array</code>s elements are
    *      <code>null</code>
    */
-  protected static boolean hasNullElements(Object[] array) {
-    for (int i = 0; i < array.length; i++) {
-      if (array[i] == null) {
-        return true;
+  protected static <T> boolean hasNullElements(T[] array) {
+      for (Object o : array) {
+          if (o == null) {
+              return true;
+          }
       }
-    }
     return false;
   }
 
@@ -1642,18 +1637,17 @@ public abstract class Geometry
    *      defined in "Normal Form For Geometry" in the JTS Technical
    *      Specifications
    */
-  public int compareTo(Object o) {
-    Geometry other = (Geometry) o;
-    if (getTypeCode() != other.getTypeCode()) {
-      return getTypeCode() - other.getTypeCode();
+  public int compareTo(Geometry o) {
+      if (getTypeCode() != o.getTypeCode()) {
+      return getTypeCode() - o.getTypeCode();
     }
-    if (isEmpty() && other.isEmpty()) {
+    if (isEmpty() && o.isEmpty()) {
       return 0;
     }
     if (isEmpty()) {
       return -1;
     }
-    if (other.isEmpty()) {
+    if (o.isEmpty()) {
       return 1;
     }
     return compareToSameClass(o);
@@ -1798,12 +1792,13 @@ public abstract class Geometry
    *@return    the first non-zero <code>compareTo</code> result, if any;
    *      otherwise, zero
    */
-  protected int compare(Collection a, Collection b) {
-    Iterator i = a.iterator();
-    Iterator j = b.iterator();
+  protected static int compare(Collection<?> a, Collection<?> b) {
+    Iterator<?> i = a.iterator();
+    Iterator<?> j = b.iterator();
     while (i.hasNext() && j.hasNext()) {
-      Comparable aElement = (Comparable) i.next();
-      Comparable bElement = (Comparable) j.next();
+      @SuppressWarnings("unchecked")
+      Comparable<Object> aElement = (Comparable<Object>) i.next();
+      Object bElement = j.next();
       int comparison = aElement.compareTo(bElement);
       if (comparison != 0) {
         return comparison;
@@ -1818,22 +1813,20 @@ public abstract class Geometry
     return 0;
   }
 
-  protected boolean equal(Coordinate a, Coordinate b, double tolerance) {
+  protected static boolean equal(Coordinate a, Coordinate b, double tolerance) {
     if (tolerance == 0) { return a.equals(b); }
     return a.distance(b) <= tolerance;
   }
 
   abstract protected int getTypeCode();
 
-  private Point createPointFromInternalCoord(Coordinate coord, Geometry exemplar)
+  private static Point createPointFromInternalCoord(Coordinate coord, Geometry exemplar)
   {
     // create empty point for null input
     if (coord == null) 
       return exemplar.getFactory().createPoint();
-    exemplar.getPrecisionModel().makePrecise(coord);
-    return exemplar.getFactory().createPoint(coord);
+      return GeometryFactory.createPointFromInternalCoord(coord, exemplar);
   }
 
 
 }
-

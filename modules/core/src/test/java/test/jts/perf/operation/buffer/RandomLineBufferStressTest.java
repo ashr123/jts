@@ -28,11 +28,11 @@ import org.locationtech.jts.operation.buffer.validate.BufferResultValidator;
 public class RandomLineBufferStressTest 
 {
 
-  private PrecisionModel precisionModel = new PrecisionModel();
-  private GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
+  private final PrecisionModel precisionModel = new PrecisionModel();
+  private final GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
   WKTReader rdr = new WKTReader(geometryFactory);
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
   	try {
   		(new RandomLineBufferStressTest()).run();
   	}
@@ -44,9 +44,7 @@ public class RandomLineBufferStressTest
 
   public RandomLineBufferStressTest() {  }
 
-  void run()
-  throws Exception
-  {
+  void run() {
   	while (true) {
   		run(10);
   		run(100);
@@ -54,9 +52,7 @@ public class RandomLineBufferStressTest
   	}
   }
   
-  void run(int numPts)
-  throws Exception
-  {
+  void run(int numPts) {
   	double lineScale = 1.0;
   	
   	Geometry line = RandomOffsetLineStringGenerator.generate(lineScale, numPts, geometryFactory);
@@ -70,9 +66,7 @@ public class RandomLineBufferStressTest
   
   private int caseCount = 0;
   
-  void runCase(Geometry line, double dist, double lineScale, int numPts)
-  throws Exception
-  {
+  void runCase(Geometry line, double dist, double lineScale, int numPts) {
   	caseCount++;
   	System.out.println("Running case " + caseCount 
   			+ "  (line scale = " + lineScale
@@ -82,7 +76,7 @@ public class RandomLineBufferStressTest
   	checkBuffer(line, dist);
   }
   
-  void checkBuffer(Geometry g, double distance)
+  static void checkBuffer(Geometry g, double distance)
   {
   	Geometry buf = g.buffer(distance);
   	String isValidMsg = BufferResultValidator.isValidMsg(g, distance, buf);
@@ -98,5 +92,3 @@ public class RandomLineBufferStressTest
   
   
 }
-
-

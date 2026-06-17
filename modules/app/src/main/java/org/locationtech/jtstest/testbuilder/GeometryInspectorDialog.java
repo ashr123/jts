@@ -48,8 +48,7 @@ public class GeometryInspectorDialog extends JDialog
     this(frame, "Geometry Inspector", false);
   }
   
-  void initUI() throws Exception
-  {
+  void initUI() {
     inspectPanel = new InspectorPanel(false);
     getContentPane().add(inspectPanel);
   }

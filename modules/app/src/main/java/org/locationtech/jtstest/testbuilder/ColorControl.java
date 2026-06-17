@@ -22,7 +22,10 @@ import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
 public class ColorControl {
-  public interface ColorListener {
+    private ColorControl() {
+    }
+
+    public interface ColorListener {
     void colorChanged(Color clr);
   }
   

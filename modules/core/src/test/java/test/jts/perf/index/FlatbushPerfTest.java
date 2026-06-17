@@ -33,8 +33,8 @@ public class FlatbushPerfTest extends PerformanceTestCase {
   private static final int NUM_QUERIES = 1_000;
   private Envelope[] items;
   private Envelope[] queries;
-  private HPRtree hprtree;
-  private STRtree strtree;
+  private HPRtree<Envelope> hprtree;
+  private STRtree<Envelope> strtree;
 
   public static void main(String[] args) {
     PerformanceTestRunner.run(FlatbushPerfTest.class);
@@ -76,7 +76,7 @@ public class FlatbushPerfTest extends PerformanceTestCase {
     System.out.println("STRTree Build time = " + sw.getTimeString());
   }
   
-  private <T extends SpatialIndex> T createIndex(Supplier<T> supplier, Consumer<T> builder) {
+  private <T extends SpatialIndex<Envelope>> T createIndex(Supplier<T> supplier, Consumer<T> builder) {
     T index = supplier.get();
     for (Envelope env : items) {
       index.insert(env, env);
@@ -85,7 +85,7 @@ public class FlatbushPerfTest extends PerformanceTestCase {
     return index;
   }
 
-  private void warmupQueries(SpatialIndex index) {
+  private static void warmupQueries(SpatialIndex<Envelope> index) {
     Random random = new Random(0);
     CountItemVisitor visitor = new CountItemVisitor();
     for (int i = 0; i < NUM_QUERIES; i++) {

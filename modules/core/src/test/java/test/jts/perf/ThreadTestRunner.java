@@ -23,11 +23,14 @@ public class ThreadTestRunner
 
   public static final int DEFAULT_THREAD_COUNT = 10;
 
-  public static void run(ThreadTestCase testcase)
+    private ThreadTestRunner() {
+    }
+
+    public static void run(ThreadTestCase testcase)
   {
     testcase.setup();
     
-    for (int i = 0; i < testcase.getThreadCount(); i++) {
+    for (int i = 0; i < ThreadTestCase.getThreadCount(); i++) {
       Runnable runnable = testcase.getRunnable(i);
       Thread t = new Thread(runnable);
       t.start();

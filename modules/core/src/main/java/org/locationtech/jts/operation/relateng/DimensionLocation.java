@@ -29,8 +29,11 @@ class DimensionLocation {
   public static final int LINE_BOUNDARY = 111;
   public static final int AREA_INTERIOR = 120;
   public static final int AREA_BOUNDARY = 121;
-    
-  public static int locationArea(int loc) {
+
+    private DimensionLocation() {
+    }
+
+    public static int locationArea(int loc) {
     switch (loc) {
     case Location.INTERIOR: return AREA_INTERIOR;
     case Location.BOUNDARY: return AREA_BOUNDARY;

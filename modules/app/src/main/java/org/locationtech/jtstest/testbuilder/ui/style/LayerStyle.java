@@ -27,7 +27,7 @@ public class LayerStyle implements Style  {
 
   public static final int INIT_OFFSET_SIZE = 5;
   
-  private BasicStyle geomStyle;
+  private final BasicStyle geomStyle;
   private StyleList decoratorStyle;
   private VertexStyle vertexStyle;
   private DataLabelStyle labelStyle;
@@ -297,8 +297,7 @@ public class LayerStyle implements Style  {
         );
     Coordinate[] pts = ocb.getOffsetCurve(geom.getCoordinates(), distance);
     Geometry offsetLine = geom.getFactory().createLineString(pts);
-    Geometry trimLine = trimLine(offsetLine, Math.abs(distance * 1.5) );
-    return trimLine;
+      return trimLine(offsetLine, Math.abs(distance * 1.5) );
   }
 
   private static Geometry trimLine(Geometry line, double distance) {

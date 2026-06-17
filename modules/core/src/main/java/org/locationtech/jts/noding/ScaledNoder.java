@@ -14,7 +14,6 @@ package org.locationtech.jts.noding;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.geom.Coordinate;
@@ -37,8 +36,8 @@ import org.locationtech.jts.geom.CoordinateArrays;
 public class ScaledNoder
     implements Noder
 {
-  private Noder noder;
-  private double scaleFactor;
+  private final Noder noder;
+  private final double scaleFactor;
   private double offsetX;
   private double offsetY;
   private boolean isScaled = false;
@@ -56,28 +55,27 @@ public class ScaledNoder
 
   public boolean isIntegerPrecision() { return scaleFactor == 1.0; }
 
-  public Collection getNodedSubstrings()
+  public Collection<SegmentString> getNodedSubstrings()
   {
-    Collection splitSS = noder.getNodedSubstrings();
+    Collection<SegmentString> splitSS = noder.getNodedSubstrings();
     if (isScaled) rescale(splitSS);
     return splitSS;
   }
 
-  public void computeNodes(Collection inputSegStrings)
+  public void computeNodes(Collection<? extends SegmentString> inputSegStrings)
   {
-    Collection intSegStrings = inputSegStrings;
+    Collection<? extends SegmentString> intSegStrings = inputSegStrings;
     if (isScaled)
       intSegStrings = scale(inputSegStrings);
     noder.computeNodes(intSegStrings);
   }
 
-  private Collection scale(Collection segStrings)
+  private Collection<SegmentString> scale(Collection<? extends SegmentString> segStrings)
   {
-    List nodedSegmentStrings = new ArrayList(segStrings.size());
-    for (Iterator i = segStrings.iterator(); i.hasNext(); ) {
-      SegmentString ss = (SegmentString) i.next();
-      nodedSegmentStrings.add(new NodedSegmentString(scale(ss.getCoordinates()), ss.getData()));
-    }
+    List<SegmentString> nodedSegmentStrings = new ArrayList<>(segStrings.size());
+      for (SegmentString ss : segStrings) {
+          nodedSegmentStrings.add(new NodedSegmentString(scale(ss.getCoordinates()), ss.getData()));
+      }
     return nodedSegmentStrings;
   }
 
@@ -91,26 +89,24 @@ public class ScaledNoder
           pts[i].getZ()
         );
     }
-    Coordinate[] roundPtsNoDup = CoordinateArrays.removeRepeatedPoints(roundPts);
-    return roundPtsNoDup;
+      return CoordinateArrays.removeRepeatedPoints(roundPts);
   }
 
   //private double scale(double val) { return (double) Math.round(val * scaleFactor); }
 
-  private void rescale(Collection segStrings)
+  private void rescale(Collection<? extends SegmentString> segStrings)
   {
-    for (Iterator i = segStrings.iterator(); i.hasNext(); ) {
-      SegmentString ss = (SegmentString) i.next();
-      rescale(ss.getCoordinates());
-    }
+      for (SegmentString ss : segStrings) {
+          rescale(ss.getCoordinates());
+      }
   }
 
   private void rescale(Coordinate[] pts)
   {
-    for (int i = 0; i < pts.length; i++) {
-      pts[i].x = pts[i].x / scaleFactor + offsetX;
-      pts[i].y = pts[i].y / scaleFactor + offsetY;
-    }
+      for (Coordinate pt : pts) {
+          pt.x = pt.x / scaleFactor + offsetX;
+          pt.y = pt.y / scaleFactor + offsetY;
+      }
     /*
     if (pts.length == 2 && pts[0].equals2D(pts[1])) {
       System.out.println(pts);

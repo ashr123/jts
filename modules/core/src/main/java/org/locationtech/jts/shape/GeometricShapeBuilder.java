@@ -22,7 +22,7 @@ public abstract class GeometricShapeBuilder
 {
 	protected Envelope extent = new Envelope(0, 1, 0, 1);
 	protected int numPts = 0;
-	protected GeometryFactory geomFactory;
+	protected final GeometryFactory geomFactory;
 	
 	public GeometricShapeBuilder(GeometryFactory geomFactory)
 	{

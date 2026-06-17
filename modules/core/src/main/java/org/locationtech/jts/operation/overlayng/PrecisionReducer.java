@@ -15,7 +15,6 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.geom.TopologyException;
-import org.locationtech.jts.precision.GeometryPrecisionReducer;
 
 /**
  * Functions to reduce the precision of a geometry
@@ -59,8 +58,7 @@ public class PrecisionReducer {
       ov.setAreaResultOnly(true);
     }
     try {
-      Geometry reduced = ov.getResult();
-      return reduced;
+        return ov.getResult();
     }
     catch (TopologyException ex) {
       throw new IllegalArgumentException("Reduction failed, possible invalid input");

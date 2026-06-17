@@ -36,7 +36,7 @@ public class WKTFileReader
 	private File file = null;
   private Reader reader;
 //  private Reader fileReader = new FileReader(file);
-	private WKTReader wktReader;
+	private final WKTReader wktReader;
 	private int count = 0;
 	private int limit = -1;
 	private int offset = 0;
@@ -119,8 +119,8 @@ public class WKTFileReader
 	 * @throws IOException if an I/O exception was encountered
 	 * @throws ParseException if an error occurred reading a geometry
 	 */
-	public List read() 
-	throws IOException, ParseException 
+	public List<Geometry> read()
+	throws IOException, ParseException
 	{
     // do this here so that constructors don't throw exceptions
     if (file != null)
@@ -128,32 +128,29 @@ public class WKTFileReader
     
 		count = 0;
 		try {
-			BufferedReader bufferedReader = new BufferedReader(reader);
-			try {
-				return read(bufferedReader);
-			} finally {
-				bufferedReader.close();
-			}
+            try (BufferedReader bufferedReader = new BufferedReader(reader)) {
+                return read(bufferedReader);
+            }
 		} finally {
 			reader.close();
 		}
 	}
 	
-  private List read(BufferedReader bufferedReader) 
+  private List<Geometry> read(BufferedReader bufferedReader)
       throws IOException, ParseException {
-    List geoms = new ArrayList();
+    List<Geometry> geoms = new ArrayList<>();
     try {
       read(bufferedReader, geoms);
     }
     catch (ParseException ex) {
       // throw if strict or error is on first geometry
-      if (isStrictParsing || geoms.size() == 0)
+      if (isStrictParsing || geoms.isEmpty())
         throw ex;
     }
     return geoms;
   }
 
-  private void read(BufferedReader bufferedReader, List geoms) 
+  private void read(BufferedReader bufferedReader, List<Geometry> geoms)
       throws IOException, ParseException {
     while (!isAtEndOfFile(bufferedReader) && !isAtLimit(geoms)) {
       Geometry g = wktReader.read(bufferedReader);
@@ -163,17 +160,16 @@ public class WKTFileReader
     }
   }
 
-	private boolean isAtLimit(List geoms)
+	private boolean isAtLimit(List<? extends Geometry> geoms)
 	{
 		if (limit < 0) return false;
-		if (geoms.size() < limit) return false;
-		return true;
-	}
- 
+        return geoms.size() >= limit;
+    }
+
   /**
 	 * Tests if reader is at EOF, and skips any leading whitespace
 	 */
-  private boolean isAtEndOfFile(BufferedReader bufferedReader) throws IOException {
+  private static boolean isAtEndOfFile(BufferedReader bufferedReader) throws IOException {
     // skip whitespace
     int ch;
     do {

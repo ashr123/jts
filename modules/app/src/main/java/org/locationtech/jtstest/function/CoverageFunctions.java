@@ -25,8 +25,11 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jtstest.geomfunction.Metadata;
 
 public class CoverageFunctions {
-  
-  public static Geometry validatePolygon(Geometry geom, Geometry adjacentPolys) {
+
+    private CoverageFunctions() {
+    }
+
+    public static Geometry validatePolygon(Geometry geom, Geometry adjacentPolys) {
     return CoveragePolygonValidator.validate(geom, toGeometryArray(adjacentPolys));
   }
   

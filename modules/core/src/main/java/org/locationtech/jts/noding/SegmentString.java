@@ -27,21 +27,21 @@ public interface SegmentString
    *
    * @return the user-defined data
    */
-  public Object getData();
+  Object getData();
 
   /**
    * Sets the user-defined data for this segment string.
    *
    * @param data an Object containing user-defined data
    */
-  public void setData(Object data);
+  void setData(Object data);
 
   /**
    * Gets the number of coordinates in this segment string.
    * 
    * @return the number of coordinates
    */
-  public int size();
+  int size();
   
   /**
    * Gets the segment string coordinate at a given index.
@@ -49,21 +49,21 @@ public interface SegmentString
    * @param i the coordinate index
    * @return the coordinate at the index
    */
-  public Coordinate getCoordinate(int i);
+  Coordinate getCoordinate(int i);
   
   /**
    * Gets the coordinates in this segment string.
    * 
    * @return the coordinates as an array
    */
-  public Coordinate[] getCoordinates();
+  Coordinate[] getCoordinates();
   
   /**
    * Tests if a segment string is a closed ring.
    * 
    * @return true if the segment string is closed
    */
-  public boolean isClosed();
+  boolean isClosed();
   
   /**
    * Gets the previous vertex in a ring from a vertex index.
@@ -74,7 +74,7 @@ public interface SegmentString
    * 
    * @see #isClosed
    */
-  public default Coordinate prevInRing(int index) {
+  default Coordinate prevInRing(int index) {
     int prevIndex = index - 1;
     if (prevIndex < 0) {
       prevIndex = size() - 2;
@@ -91,7 +91,7 @@ public interface SegmentString
    * 
    * @see #isClosed
    */
-  public default Coordinate nextInRing(int index) {
+  default Coordinate nextInRing(int index) {
     int nextIndex = index + 1;
     if (nextIndex > size() - 1) {
       nextIndex = 1;

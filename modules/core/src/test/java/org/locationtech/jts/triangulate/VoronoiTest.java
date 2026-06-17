@@ -14,7 +14,6 @@ package org.locationtech.jts.triangulate;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.TopologyException;
-import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.math.DD;
 
 import junit.textui.TestRunner;
@@ -26,15 +25,13 @@ import test.jts.GeometryTestCase;
  */
 public class VoronoiTest extends GeometryTestCase {
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(VoronoiTest.class);
   }
 
   public VoronoiTest(String name) { super(name); }
 
-  public void testSimple()
-  throws ParseException
-  {
+  public void testSimple() {
     String wkt = "MULTIPOINT ((10 10), (20 70), (60 30), (80 70))";
     String expected = "GEOMETRYCOLLECTION (POLYGON ((-82.19544457292888 56.1992407621548, -82.19544457292888 162.19544457292886, 50 162.19544457292886, 50 60, 27.857142857142858 37.857142857142854, -82.19544457292888 56.1992407621548)), POLYGON ((-82.19544457292888 -82.19544457292888, -82.19544457292888 56.1992407621548, 27.857142857142858 37.857142857142854, 75.87817782917156 -82.19544457292888, -82.19544457292888 -82.19544457292888)), POLYGON ((172.19544457292886 -1.0977222864644354, 172.19544457292886 -82.19544457292888, 75.87817782917156 -82.19544457292888, 27.857142857142858 37.857142857142854, 50 60, 172.19544457292886 -1.0977222864644354)), POLYGON ((50 162.19544457292886, 172.19544457292886 162.19544457292886, 172.19544457292886 -1.0977222864644354, 50 60, 50 162.19544457292886)))";
     checkVoronoi(wkt, expected);
@@ -114,7 +111,7 @@ public class VoronoiTest extends GeometryTestCase {
     checkVoronoiValid(sites);
   }
     
-  void checkVoronoiValid(Geometry sites) {
+  static void checkVoronoiValid(Geometry sites) {
 
     Geometry result = null;
     try {
@@ -130,8 +127,7 @@ public class VoronoiTest extends GeometryTestCase {
   private static Geometry computeVoronoi(Geometry sites) {
     VoronoiDiagramBuilder builder = new VoronoiDiagramBuilder();
     builder.setSites(sites);
-    Geometry result = builder.getDiagram(sites.getFactory());
-    return result;
+      return builder.getDiagram(sites.getFactory());
   }
   
   private Geometry createCircularPoints(int nPts)

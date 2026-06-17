@@ -23,29 +23,30 @@ import org.locationtech.jts.geom.util.GeometryMapper;
 
 
 public class TriangleFunctions {
-  
-  public static Geometry centroid(Geometry g)
+
+    private TriangleFunctions() {
+    }
+
+    public static Geometry centroid(Geometry g)
   {
-    return GeometryMapper.map(g, 
-        new GeometryMapper.MapOp() {
-      public Geometry map(Geometry g) {
-        Coordinate[] pts = trianglePts(g);
-        Coordinate cc = Triangle.centroid(pts[0], pts[1], pts[2]);
-        GeometryFactory geomFact = FunctionsUtil.getFactoryOrDefault(g);
-        return geomFact.createPoint(cc);
-      }});
+    return GeometryMapper.map(g,
+            g1 -> {
+              Coordinate[] pts = trianglePts(g1);
+              Coordinate cc = Triangle.centroid(pts[0], pts[1], pts[2]);
+              GeometryFactory geomFact = FunctionsUtil.getFactoryOrDefault(g1);
+              return geomFact.createPoint(cc);
+            });
   }
   
   public static Geometry circumcentre(Geometry g)
   {
-    return GeometryMapper.map(g, 
-        new GeometryMapper.MapOp() {
-      public Geometry map(Geometry g) {
-        Coordinate[] pts = trianglePts(g);
-        Coordinate cc = Triangle.circumcentre(pts[0], pts[1], pts[2]);
-        GeometryFactory geomFact = FunctionsUtil.getFactoryOrDefault(g);
-        return geomFact.createPoint(cc);
-      }});
+    return GeometryMapper.map(g,
+            g1 -> {
+              Coordinate[] pts = trianglePts(g1);
+              Coordinate cc = Triangle.circumcentre(pts[0], pts[1], pts[2]);
+              GeometryFactory geomFact = FunctionsUtil.getFactoryOrDefault(g1);
+              return geomFact.createPoint(cc);
+            });
   }
   
   public static double circumradius(Geometry g)
@@ -65,14 +66,13 @@ public class TriangleFunctions {
   
   public static Geometry circumcentreDD(Geometry g)
   {
-    return GeometryMapper.map(g, 
-        new GeometryMapper.MapOp() {
-      public Geometry map(Geometry g) {
-        Coordinate[] pts = trianglePts(g);
-        Coordinate cc = Triangle.circumcentreDD(pts[0], pts[1], pts[2]);
-        GeometryFactory geomFact = FunctionsUtil.getFactoryOrDefault(g);
-        return geomFact.createPoint(cc);
-      }});
+    return GeometryMapper.map(g,
+            g1 -> {
+              Coordinate[] pts = trianglePts(g1);
+              Coordinate cc = Triangle.circumcentreDD(pts[0], pts[1], pts[2]);
+              GeometryFactory geomFact = FunctionsUtil.getFactoryOrDefault(g1);
+              return geomFact.createPoint(cc);
+            });
   }
   
   public static Geometry perpendicularBisectors(Geometry g)
@@ -92,14 +92,13 @@ public class TriangleFunctions {
   
   public static Geometry incentre(Geometry g)
   {
-    return GeometryMapper.map(g, 
-        new GeometryMapper.MapOp() {
-      public Geometry map(Geometry g) {
-        Coordinate[] pts = trianglePts(g);
-        Coordinate cc = Triangle.inCentre(pts[0], pts[1], pts[2]);
-        GeometryFactory geomFact = FunctionsUtil.getFactoryOrDefault(g);
-        return geomFact.createPoint(cc);
-      }});
+    return GeometryMapper.map(g,
+            g1 -> {
+              Coordinate[] pts = trianglePts(g1);
+              Coordinate cc = Triangle.inCentre(pts[0], pts[1], pts[2]);
+              GeometryFactory geomFact = FunctionsUtil.getFactoryOrDefault(g1);
+              return geomFact.createPoint(cc);
+            });
   }
   
   public static Geometry angleBisectors(Geometry g)

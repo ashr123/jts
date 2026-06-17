@@ -13,7 +13,6 @@ package org.locationtech.jts.operation.linemerge;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.ParseException;
@@ -29,7 +28,7 @@ import junit.framework.TestCase;
  * @version 1.7
  */
 public class LineMergerTest extends TestCase {
-  private static WKTReader reader = new WKTReader();
+  private static final WKTReader reader = new WKTReader();
 
   public LineMergerTest(String name) {
     super(name);
@@ -81,7 +80,7 @@ public class LineMergerTest extends TestCase {
   }    
   
 
-  private void doTest(String[] inputWKT, String[] expectedOutputWKT) {
+  private static void doTest(String[] inputWKT, String[] expectedOutputWKT) {
     doTest(inputWKT, expectedOutputWKT, true);
   }
   
@@ -91,40 +90,38 @@ public class LineMergerTest extends TestCase {
     compare(toGeometries(expectedOutputWKT), lineMerger.getMergedLineStrings(), compareDirections);
   }
 
-  public static void compare(Collection expectedGeometries,
-    Collection actualGeometries, boolean compareDirections) {
+  public static void compare(Collection<Geometry> expectedGeometries,
+    Collection<? extends Geometry> actualGeometries, boolean compareDirections) {
     assertEquals("Geometry count, " + actualGeometries,
       expectedGeometries.size(), actualGeometries.size());
-    for (Iterator i = expectedGeometries.iterator(); i.hasNext();) {
-      Geometry expectedGeometry = (Geometry) i.next();
-      assertTrue("Not found: " + expectedGeometry + ", " + actualGeometries,
-        contains(actualGeometries, expectedGeometry, compareDirections));
-    }
+      for (Geometry expectedGeometry : expectedGeometries) {
+          assertTrue("Not found: " + expectedGeometry + ", " + actualGeometries,
+                  contains(actualGeometries, expectedGeometry, compareDirections));
+      }
   }
 
-  private static boolean contains(Collection geometries, Geometry g, boolean exact) {
-    for (Iterator i = geometries.iterator(); i.hasNext();) {
-      Geometry element = (Geometry) i.next();
-      if (exact && element.equalsExact(g)) {
-        return true;
+  private static boolean contains(Collection<? extends Geometry> geometries, Geometry g, boolean exact) {
+      for (Geometry element : geometries) {
+          if (exact && element.equalsExact(g)) {
+              return true;
+          }
+          if (!exact && element.equalsTopo(g)) {
+              return true;
+          }
       }
-      if (!exact && element.equalsTopo(g)) {
-        return true;
-      }      
-    }
 
     return false;
   }
 
-  public static Collection toGeometries(String[] inputWKT) {
-    ArrayList geometries = new ArrayList();
-    for (int i = 0; i < inputWKT.length; i++) {
-      try {
-        geometries.add(reader.read(inputWKT[i]));
-      } catch (ParseException e) {
-        Assert.shouldNeverReachHere();
+  public static Collection<Geometry> toGeometries(String[] inputWKT) {
+    ArrayList<Geometry> geometries = new ArrayList<>();
+      for (String s : inputWKT) {
+          try {
+              geometries.add(reader.read(s));
+          } catch (ParseException e) {
+              Assert.shouldNeverReachHere();
+          }
       }
-    }
 
     return geometries;
   }

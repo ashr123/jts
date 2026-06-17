@@ -20,8 +20,10 @@ import org.locationtech.jts.geom.Lineal;
 import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Puntal;
+import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.index.strtree.ItemBoundable;
 import org.locationtech.jts.index.strtree.ItemDistance;
+import org.locationtech.jts.index.strtree.ItemPair;
 import org.locationtech.jts.index.strtree.STRtree;
 import org.locationtech.jts.operation.distance.FacetSequence;
 import org.locationtech.jts.operation.distance.FacetSequenceTreeBuilder;
@@ -131,7 +133,7 @@ public class MinimumClearance
     return rp.getLine();
   }
   
-  private Geometry inputGeom;
+  private final Geometry inputGeom;
   private double minClearance;
   private Coordinate[] minClearancePts;
   
@@ -196,13 +198,13 @@ public class MinimumClearance
       return;
     }
     
-    STRtree geomTree = FacetSequenceTreeBuilder.build(inputGeom);
-    
-    Object[] nearest = geomTree.nearestNeighbour(new MinClearanceDistance());
+    STRtree<FacetSequence> geomTree = FacetSequenceTreeBuilder.build(inputGeom);
+
+    ItemPair<FacetSequence> nearest = geomTree.nearestNeighbour(new MinClearanceDistance());
     MinClearanceDistance mcd = new MinClearanceDistance();
     minClearance = mcd.distance(
-        (FacetSequence) nearest[0],
-        (FacetSequence) nearest[1]);
+        nearest.getItem0(),
+        nearest.getItem1());
     minClearancePts = mcd.getCoordinates();
   }
   
@@ -226,19 +228,19 @@ public class MinimumClearance
    *
    */
   private static class MinClearanceDistance
-  implements ItemDistance
+  implements ItemDistance<FacetSequence>
   {
     private double minDist = Double.MAX_VALUE;
-    private Coordinate[] minPts = new Coordinate[2];
+    private final Coordinate[] minPts = new Coordinate[2];
     
     public Coordinate[] getCoordinates()
     {
       return minPts;
     }
     
-    public double distance(ItemBoundable b1, ItemBoundable b2) {
-      FacetSequence fs1 = (FacetSequence) b1.getItem();
-      FacetSequence fs2 = (FacetSequence) b2.getItem();
+    public double distance(ItemBoundable<Envelope, FacetSequence> b1, ItemBoundable<Envelope, FacetSequence> b2) {
+      FacetSequence fs1 = b1.getItem();
+      FacetSequence fs2 = b2.getItem();
       minDist = Double.MAX_VALUE;
       return distance(fs1, fs2);
     }
@@ -311,5 +313,3 @@ public class MinimumClearance
   
     
   }
-  
-

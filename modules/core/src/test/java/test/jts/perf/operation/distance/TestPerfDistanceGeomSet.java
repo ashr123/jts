@@ -14,7 +14,6 @@ package test.jts.perf.operation.distance;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.util.SineStarFactory;
 import org.locationtech.jts.util.Stopwatch;
 
@@ -73,7 +72,7 @@ public class TestPerfDistanceGeomSet
     }
   }
   
-  double size = 100;
+  static final double size = 100;
   double separationDist = size * 2;
   
   public void test(int num)
@@ -102,20 +101,20 @@ public class TestPerfDistanceGeomSet
     }
   }
 
-  void testAll(Geometry[] geom)
+  static void testAll(Geometry[] geom)
   {
-    for (int i = 0; i < geom.length; i++ ) {
-      for (int j = 0; j < geom.length; j++ ) {
-       double dist = geom[i].distance(geom[j]);
+      for (Geometry value : geom) {
+          for (Geometry geometry : geom) {
+              double dist = value.distance(geometry);
 //      double dist = SortedBoundsFacetDistance.distance(g1, g2);
 //      double dist = BranchAndBoundFacetDistance.distance(geom[i], geom[j]);
 //      double dist = CachedBABDistance.getDistance(geom[i], geom[j]);
-        
+
+          }
       }
-    }
   }
   
-  Geometry[] createRandomCircles(int nPts)
+  static Geometry[] createRandomCircles(int nPts)
   {
     Geometry[] geoms = new Geometry[NUM_GEOM];
     for (int i = 0; i < NUM_GEOM; i++) {
@@ -124,7 +123,7 @@ public class TestPerfDistanceGeomSet
     return geoms;
   }
     
-  Geometry[] createRandomCircles(int numGeom, int nPtsMin, int nPtsMax)
+  static Geometry[] createRandomCircles(int numGeom, int nPtsMin, int nPtsMax)
   {
     int nPtsRange = nPtsMax - nPtsMin + 1;
     Geometry[] geoms = new Geometry[numGeom];
@@ -135,25 +134,22 @@ public class TestPerfDistanceGeomSet
     return geoms;
   }
     
-  Geometry createCircleRandomLocation(int nPts)  
+  static Geometry createCircleRandomLocation(int nPts)
   {
     SineStarFactory gsf = new SineStarFactory();
     gsf.setCentre(randomLocation());
     gsf.setSize(GEOM_SIZE);
     gsf.setNumPoints(nPts);
+
+      //    Geometry g = gsf.createSineStar();
     
-    Polygon g = gsf.createCircle();
-//    Geometry g = gsf.createSineStar();
-    
-    return g;
+    return gsf.createCircle();
   }
   
-  Coordinate randomLocation()
+  static Coordinate randomLocation()
   {
     double x = Math.random() * MAX_X;
     double y = Math.random() * MAX_X;
     return new Coordinate(x, y);
   }
 }
-  
-  

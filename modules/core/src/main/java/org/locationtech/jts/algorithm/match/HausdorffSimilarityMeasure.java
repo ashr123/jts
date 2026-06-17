@@ -60,10 +60,9 @@ public class HausdorffSimilarityMeasure
 		double envSize = diagonalSize(env);
 
     // normalize so that more similarity produces a measure closer to 1
-		double measure = 1 - distance / envSize;
 
-		//System.out.println("Hausdorff distance = " + distance + ", measure = " + measure);
-		return measure;
+        //System.out.println("Hausdorff distance = " + distance + ", measure = " + measure);
+		return 1 - distance / envSize;
 	}
 
 	public static double diagonalSize(Envelope env)

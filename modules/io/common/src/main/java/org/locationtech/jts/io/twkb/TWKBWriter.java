@@ -194,8 +194,8 @@ public class TWKBWriter {
         }
     }
 
-    private TWKBHeader prepareHeader(Geometry geometry, TWKBHeader params,
-        boolean forcePreserveHeaderDimensions) {
+    private static TWKBHeader prepareHeader(Geometry geometry, TWKBHeader params,
+                                            boolean forcePreserveHeaderDimensions) {
 
         final boolean isEmpty = geometry.isEmpty();
         final GeometryType geometryType = GeometryType.valueOf(geometry.getClass());
@@ -245,7 +245,7 @@ public class TWKBWriter {
         }
     }
 
-    private void writePoint(Point geom, DataOutput out, TWKBHeader header)
+    private static void writePoint(Point geom, DataOutput out, TWKBHeader header)
         throws IOException {
         assert !geom.isEmpty();
         CoordinateSequence seq = geom.getCoordinateSequence();
@@ -255,8 +255,8 @@ public class TWKBWriter {
         }
     }
 
-    private void writeCoordinateSequence(CoordinateSequence coordinateSequence,
-        DataOutput out, TWKBHeader header, long[] prev, int minNPoints) throws IOException {
+    private static void writeCoordinateSequence(CoordinateSequence coordinateSequence,
+                                                DataOutput out, TWKBHeader header, long[] prev, int minNPoints) throws IOException {
 
         final int dimensions = header.getDimensions();
         long[] delta = new long[dimensions];
@@ -291,24 +291,24 @@ public class TWKBWriter {
         out.write(bufferedOut.content());
     }
 
-    private long writeOrdinate(double ordinate, long previousOrdinateValue, int precision, DataOutput out) throws IOException {
+    private static long writeOrdinate(double ordinate, long previousOrdinateValue, int precision, DataOutput out) throws IOException {
         long preciseOrdinate = makePrecise(ordinate, precision);
         long delta = preciseOrdinate - previousOrdinateValue;
         writeSignedVarLong(delta, out);
         return preciseOrdinate;
     }
 
-    private long makePrecise(double value, int precision) {
+    private static long makePrecise(double value, int precision) {
         return Math.round(value * Math.pow(10, precision));
     }
 
-    private void writeLineString(LineString geom, DataOutput out, TWKBHeader header,
-        long[] prev) throws IOException {
+    private static void writeLineString(LineString geom, DataOutput out, TWKBHeader header,
+                                        long[] prev) throws IOException {
         writeCoordinateSequence(geom.getCoordinateSequence(), out, header, prev, 3);
     }
 
-    private void writePolygon(Polygon geom, DataOutput out, TWKBHeader header,
-        long[] prev) throws IOException {
+    private static void writePolygon(Polygon geom, DataOutput out, TWKBHeader header,
+                                     long[] prev) throws IOException {
         if (geom.isEmpty()) {
             writeUnsignedVarInt(0, out);
             return;
@@ -322,8 +322,8 @@ public class TWKBWriter {
         }
     }
 
-    private void writeLinearRing(LinearRing geom, DataOutput out, TWKBHeader header,
-        long[] prev) throws IOException {
+    private static void writeLinearRing(LinearRing geom, DataOutput out, TWKBHeader header,
+                                        long[] prev) throws IOException {
         if (geom.isEmpty()) {
             writeUnsignedVarInt(0, out);
             return;
@@ -331,7 +331,7 @@ public class TWKBWriter {
         writeCoordinateSequence(geom.getCoordinateSequence(), out, header, prev, 3);
     }
 
-    private void writeMultiPoint(MultiPoint geom, DataOutput out, TWKBHeader header)
+    private static void writeMultiPoint(MultiPoint geom, DataOutput out, TWKBHeader header)
         throws IOException {
         assert !geom.isEmpty();
 
@@ -340,7 +340,7 @@ public class TWKBWriter {
         writeCoordinateSequence(seq, out, header, new long[header.getDimensions()], 2);
     }
 
-    private void writeMultiLineString(MultiLineString geom, DataOutput out, TWKBHeader header) throws IOException {
+    private static void writeMultiLineString(MultiLineString geom, DataOutput out, TWKBHeader header) throws IOException {
         final int size = writeNumGeometries(geom, out);
         long[] prev = new long[header.getDimensions()];
         for (int i = 0; i < size; i++) {
@@ -348,7 +348,7 @@ public class TWKBWriter {
         }
     }
 
-    private void writeMultiPolygon(MultiPolygon geom, DataOutput out, TWKBHeader header) throws IOException {
+    private static void writeMultiPolygon(MultiPolygon geom, DataOutput out, TWKBHeader header) throws IOException {
         final int size = writeNumGeometries(geom, out);
         long[] prev = new long[header.getDimensions()];
         for (int i = 0; i < size; i++) {
@@ -365,14 +365,14 @@ public class TWKBWriter {
         }
     }
 
-    private int writeNumGeometries(GeometryCollection geom, DataOutput out)
+    private static int writeNumGeometries(GeometryCollection geom, DataOutput out)
         throws IOException {
         int size = geom.getNumGeometries();
         writeUnsignedVarInt(size, out);
         return size;
     }
 
-    private void writeBbox(Geometry geom, DataOutput out, TWKBHeader header)
+    private static void writeBbox(Geometry geom, DataOutput out, TWKBHeader header)
         throws IOException {
         final int dimensions = header.getDimensions();
         final double[] boundsCoordinates = computeEnvelope(geom, dimensions);

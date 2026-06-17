@@ -105,7 +105,7 @@ public class MultiPoint
    *@return    the <code>n</code>th <code>Coordinate</code>
    */
   protected Coordinate getCoordinate(int n) {
-    return ((Point) geometries[n]).getCoordinate();
+    return geometries[n].getCoordinate();
   }
   
   protected MultiPoint copyInternal() {
@@ -121,4 +121,3 @@ public class MultiPoint
   }
 
 }
-
