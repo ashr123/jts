@@ -19,6 +19,8 @@ import org.locationtech.jts.operation.overlay.validate.OverlayResultValidator;
 import org.locationtech.jtstest.testrunner.GeometryResult;
 import org.locationtech.jtstest.testrunner.Result;
 
+import java.util.List;
+
 
 /**
  * A {@link GeometryOperation} which validates the result of overlay operations.
@@ -40,14 +42,20 @@ public class OverlayValidatedGeometryOperation
 {
   public static int overlayOpCode(String methodName)
   {
-    if (methodName.equals("intersection")) return OverlayOp.INTERSECTION;
-    if (methodName.equals("union")) return OverlayOp.UNION;
-    if (methodName.equals("difference")) return OverlayOp.DIFFERENCE;
-    if (methodName.equals("symDifference")) return OverlayOp.SYMDIFFERENCE;
-    return -1;
+      switch (methodName) {
+          case "intersection":
+              return OverlayOp.INTERSECTION;
+          case "union":
+              return OverlayOp.UNION;
+          case "difference":
+              return OverlayOp.DIFFERENCE;
+          case "symDifference":
+              return OverlayOp.SYMDIFFERENCE;
+      }
+      return -1;
   }
 
-  private boolean returnEmptyGC = true;
+  private static final boolean returnEmptyGC = true;
   
   private GeometryMethodOperation chainOp = new GeometryMethodOperation();
 
@@ -56,7 +64,7 @@ public class OverlayValidatedGeometryOperation
   	
   }
   
-  public Class getReturnType(String opName)
+  public Class<?> getReturnType(String opName)
   {
   	return chainOp.getReturnType(opName);
   }
@@ -82,16 +90,16 @@ public class OverlayValidatedGeometryOperation
    * @throws Exception
    * @see GeometryOperation#invoke
    */
-	public Result invoke(String opName, Geometry geometry, Object[] args)
+	public Result invoke(String opName, Geometry geometry, List<Object> args)
 	  throws Exception
 	{
 	  int opCode = overlayOpCode(opName);
-	  
+
 	  // if not an overlay op, do the default
 	  if (opCode < 0) {
 	    return chainOp.invoke(opName, geometry, args);
-	  } 
-	  return invokeValidatedOverlayOp(opCode, geometry, args);    
+	  }
+	  return invokeValidatedOverlayOp(opCode, geometry, args);
 	}
 
   /**
@@ -102,13 +110,10 @@ public class OverlayValidatedGeometryOperation
    * @param g0
    * @param args
    * @return the result
-   * @throws Exception
    */
-  public Result invokeValidatedOverlayOp(int opCode, Geometry g0, Object[] args)
-  	throws Exception
-  {
+  public static Result invokeValidatedOverlayOp(int opCode, Geometry g0, List<Object> args) {
 	  Geometry result = null;
-	  Geometry g1 = (Geometry) args[0];
+	  Geometry g1 = (Geometry) args.get(0);
 
 	  result = invokeGeometryOverlayMethod(opCode, g0, g1);
 	  
@@ -127,7 +132,7 @@ public class OverlayValidatedGeometryOperation
     return new GeometryResult(result);
   }
   
-  private void validate(int opCode, Geometry g0, Geometry g1, Geometry result)
+  private static void validate(int opCode, Geometry g0, Geometry g1, Geometry result)
   {
 	  OverlayResultValidator validator = new OverlayResultValidator(g0, g1, result);
 	  // check if computed result is valid
@@ -140,7 +145,7 @@ public class OverlayValidatedGeometryOperation
   
   private static final double AREA_DIFF_TOL = 5.0;
   
-  private void areaValidate(Geometry g0, Geometry g1)
+  private static void areaValidate(Geometry g0, Geometry g1)
   {
   	double areaDiff = areaDiff(g0, g1);
 //  	System.out.println("Area diff = " + areaDiff);
@@ -158,7 +163,7 @@ public class OverlayValidatedGeometryOperation
   	return areaA - areaAdiffB - areaAintB;
   }
   
-  private void reportError(String msg)
+  private static void reportError(String msg)
   {
 //  	System.out.println(msg);
     throw new RuntimeException(msg);

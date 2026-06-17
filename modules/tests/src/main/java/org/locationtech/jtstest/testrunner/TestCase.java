@@ -33,10 +33,10 @@ public class TestCase implements Runnable {
   private String description;
   private Geometry a;
   private Geometry b;
-  private List<Test> tests = new ArrayList<Test>();
-  private TestRun testRun;
-  private int caseIndex;
-  private int lineNumber;
+  private final List<Test> tests = new ArrayList<>();
+  private final TestRun testRun;
+  private final int caseIndex;
+  private final int lineNumber;
   private File aWktFile;
   private File bWktFile;
   private boolean isRun = false;
@@ -131,22 +131,21 @@ public class TestCase implements Runnable {
 
   public String toXml() {
     WKTWriter writer = new WKTWriter();
-    String xml = "";
-    xml += "<case>" + StringUtil.newLine;
-    if (description != null && description.length() > 0) {
-      xml += "  <desc>" + StringUtil.escapeHTML(description) + "</desc>" +
-          StringUtil.newLine;
+    StringBuilder xml = new StringBuilder();
+    xml.append("<case>").append(StringUtil.newLine);
+    if (description != null && !description.isEmpty()) {
+      xml.append("  <desc>").append(StringUtil.escapeHTML(description)).append("</desc>").append(StringUtil.newLine);
     }
-    xml += xml("a", a, aWktFile, writer) + StringUtil.newLine;
-    xml += xml("b", b, bWktFile, writer);
+    xml.append(xml("a", a, aWktFile, writer)).append(StringUtil.newLine);
+    xml.append(xml("b", b, bWktFile, writer));
     for (Test test : tests ) {
-      xml += test.toXml();
+      xml.append(test.toXml());
     }
-    xml += "</case>" + StringUtil.newLine;
-    return xml;
+    xml.append("</case>").append(StringUtil.newLine);
+    return xml.toString();
   }
 
-  private String xml(String id, Geometry g, File wktFile, WKTWriter writer) {
+  private static String xml(String id, Geometry g, File wktFile, WKTWriter writer) {
     if (g == null) {
       return "";
     }
@@ -160,5 +159,3 @@ public class TestCase implements Runnable {
     return xml;
   }
 }
-
-

@@ -11,6 +11,8 @@
  */
 package org.locationtech.jtstest.geomop;
 
+import java.util.List;
+
 import org.locationtech.jts.geom.Geometry;
 
 /**
@@ -45,14 +47,14 @@ public interface GeometryFunction
 	 * 
 	 * @return the types
 	 */
-	Class[] getParameterTypes();
+	Class<?>[] getParameterTypes();
 	
 	/**
 	 * Gets the return type of this function
 	 * 
 	 * @return the type of the value returned by this function
 	 */
-	Class getReturnType();
+	Class<?> getReturnType();
 		
 	/**
 	 * Invokes this function.
@@ -64,7 +66,7 @@ public interface GeometryFunction
 	 * @return the value computed by the function
 	 * 
 	 */
-	Object invoke(Geometry geom, Object[] args);
+	Object invoke(Geometry geom, List<Object> args);
 	
 	/**
 	 * Two functions are the same if they have the 
@@ -75,6 +77,6 @@ public interface GeometryFunction
 	 */
 	boolean equals(Object obj);
 
-  public abstract boolean isBinary();
+  boolean isBinary();
 	
 }

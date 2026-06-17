@@ -12,6 +12,8 @@
 
 package org.locationtech.jtstest.testrunner;
 
+import java.util.List;
+
 import org.locationtech.jts.geom.Geometry;
 
 /**
@@ -37,7 +39,7 @@ public interface ResultMatcher
 	 * @param tolerance the tolerance for the test
 	 * @return true if the actual and expected results match
 	 */
-	boolean isMatch(Geometry geom, String opName, Object[] args, 
+	boolean isMatch(Geometry geom, String opName, List<Object> args,
 			Result actualResult, Result expectedResult,
 			double tolerance);
 }

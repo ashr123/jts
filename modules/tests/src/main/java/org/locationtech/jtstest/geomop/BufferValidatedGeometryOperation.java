@@ -11,6 +11,8 @@
  */
 package org.locationtech.jtstest.geomop;
 
+import java.util.List;
+
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.WKTWriter;
@@ -37,21 +39,20 @@ public class BufferValidatedGeometryOperation
 implements GeometryOperation
 {
 
-  private boolean returnEmptyGC = false;
+  private static final boolean returnEmptyGC = false;
   
   private GeometryMethodOperation chainOp = new GeometryMethodOperation();
 
   private int argCount = 0;
   private double distance;
   private int quadSegments;
-  private int endCapStyle;
-  
-  public BufferValidatedGeometryOperation()
+
+    public BufferValidatedGeometryOperation()
   {
   	
   }
   
-  public Class getReturnType(String opName)
+  public Class<?> getReturnType(String opName)
   {
   	return chainOp.getReturnType(opName);
   }
@@ -77,28 +78,29 @@ implements GeometryOperation
    * @throws Exception
    * @see GeometryOperation#invoke
    */
-	public Result invoke(String opName, Geometry geometry, Object[] args)
+	public Result invoke(String opName, Geometry geometry, List<Object> args)
 	  throws Exception
-	{	  
-		boolean isBufferOp = opName.equalsIgnoreCase("buffer");
+	{
+		boolean isBufferOp = "buffer".equalsIgnoreCase(opName);
 	  // if not a buffer op, do the default
 	  if (! isBufferOp) {
 	    return chainOp.invoke(opName, geometry, args);
-	  } 
+	  }
 	  parseArgs(args);
-	  return invokeBufferOpValidated(geometry, args);    
+	  return invokeBufferOpValidated(geometry, args);
 	}
 
-	private void parseArgs(Object[] args)
+	private void parseArgs(List<Object> args)
 	{
-		argCount = args.length;
-		distance = Double.parseDouble((String) args[0]);
-		if (argCount >= 2) 
-			quadSegments = Integer.parseInt((String) args[1]);
-		if (argCount >= 3)
-			endCapStyle = Integer.parseInt((String) args[2]);
+		argCount = args.size();
+		distance = Double.parseDouble((String) args.get(0));
+		if (argCount >= 2)
+			quadSegments = Integer.parseInt((String) args.get(1));
+        int endCapStyle;
+        if (argCount >= 3)
+			endCapStyle = Integer.parseInt((String) args.get(2));
 	}
-	private Result invokeBufferOpValidated(Geometry geometry, Object[] args)
+	private Result invokeBufferOpValidated(Geometry geometry, List<Object> args)
 	{
 	  Geometry result = null;
 
@@ -145,11 +147,10 @@ implements GeometryOperation
 	
 	private boolean isEmptyBufferExpected(Geometry geom)
 	{
-		boolean isNegativeBufferOfNonAreal = geom.getDimension() < 2 && distance <= 0.0;
-		return isNegativeBufferOfNonAreal;
+        return geom.getDimension() < 2 && distance <= 0.0;
 	}
 	
-	private void checkEmpty(Geometry geom)
+	private static void checkEmpty(Geometry geom)
 	{
 		if (geom.isEmpty()) {
 			return;
@@ -181,7 +182,7 @@ implements GeometryOperation
 		}
  	}
 	
-	private void checkDistance(Geometry geom, double distance, Geometry buffer)
+	private static void checkDistance(Geometry geom, double distance, Geometry buffer)
 	{
 		BufferResultValidator bufValidator = new BufferResultValidator(geom, distance, buffer);
 		if (! bufValidator.isValid()) {
@@ -191,7 +192,7 @@ implements GeometryOperation
 		}
 	}
 	
-  private void reportError(String msg, Coordinate loc)
+  private static void reportError(String msg, Coordinate loc)
   {
   	String locStr = "";
   	if (loc != null) {

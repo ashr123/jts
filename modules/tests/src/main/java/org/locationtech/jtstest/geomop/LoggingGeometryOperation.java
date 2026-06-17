@@ -11,6 +11,8 @@
  */
 package org.locationtech.jtstest.geomop;
 
+import java.util.List;
+
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jtstest.testrunner.Result;
 
@@ -34,7 +36,7 @@ public class LoggingGeometryOperation
 		
 	}
 	
-  public Class getReturnType(String opName)
+  public Class<?> getReturnType(String opName)
   {
   	return GeometryMethodOperation.getGeometryReturnType(opName);
   }
@@ -44,13 +46,13 @@ public class LoggingGeometryOperation
 		this.geomOp = geomOp;
 	}
 	
-  public Result invoke(String opName, Geometry geometry, Object[] args)
+  public Result invoke(String opName, Geometry geometry, List<Object> args)
   	throws Exception
   {
   	System.out.println("Operation <" + opName + ">");
   	System.out.println("Geometry: " + geometry);
-  	for (int i = 0; i < args.length; i++) {
-  		System.out.println("Arg[" + i + "]: " + args[i]);
+  	for (int i = 0; i < args.size(); i++) {
+  		System.out.println("Arg[" + i + "]: " + args.get(i));
   	}
   	Result result = geomOp.invoke(opName, geometry, args);
   	System.out.println("Result==> " + result.toFormattedString());

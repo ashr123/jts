@@ -17,10 +17,10 @@ package org.locationtech.jtstest.testrunner;
  * @version 1.7
  */
 public class DoubleResult implements Result {
-  private double value;
+  private final double value;
 
   public DoubleResult(Double value) {
-    this.value = value.doubleValue();
+    this.value = value;
   }
 
   public boolean equals(Result other, double tolerance) {
@@ -45,4 +45,3 @@ public class DoubleResult implements Result {
     return Double.toString(value);
   }
 }
-

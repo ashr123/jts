@@ -11,11 +11,13 @@
  */
 package org.locationtech.jtstest.geomop;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.util.Assert;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -36,13 +38,13 @@ public class StaticMethodGeometryFunction
 	{
 		Assert.isTrue(Geometry.class.isAssignableFrom((method.getParameterTypes())[0]));
 		
-		Class clz = method.getDeclaringClass();
-		
+		Class<?> clz = method.getDeclaringClass();
+
 		String funcName = method.getName();
 		String description = "dummy";
 		String[] paramNames = new String[] { };
-		Class[] paramTypes = extractParamTypes(method);
-		Class returnType = method.getReturnType();
+		Class<?>[] paramTypes = extractParamTypes(method);
+		Class<?> returnType = method.getReturnType();
 		
 		return new StaticMethodGeometryFunction(funcName, 
 				description,
@@ -51,59 +53,55 @@ public class StaticMethodGeometryFunction
 	}
 	
 	
-	private static Class[] extractParamTypes(Method method)
+	private static Class<?>[] extractParamTypes(Method method)
 	{
-		Class[] methodParamTypes = method.getParameterTypes();
-		Class[] types = new Class[methodParamTypes.length - 1];
-		for (int i = 1; i < methodParamTypes.length; i++)
-			types[i-1] = methodParamTypes[i];
+		Class<?>[] methodParamTypes = method.getParameterTypes();
+		Class<?>[] types = new Class<?>[methodParamTypes.length - 1];
+        System.arraycopy(methodParamTypes, 1, types, 0, methodParamTypes.length - 1);
 		return types;
 	}
 
-  private Method method;
+  private final Method method;
 
 	public StaticMethodGeometryFunction(
 			String name, 
 			String description,
-			String[] parameterNames, 
-			Class[] parameterTypes, 
-			Class returnType,
+			String[] parameterNames,
+			Class<?>[] parameterTypes,
+			Class<?> returnType,
 			Method method)
 	{
 		super(name, description, parameterNames, parameterTypes, returnType);
     this.method = method;
 	}
 	
-  public Object invoke(Geometry g, Object[] arg) 
+  public Object invoke(Geometry g, List<Object> arg)
   {
     return invoke(method, null, createFullArgs(g, arg));
   }
 
   /**
-   * Creates an arg array which includes the target geometry as the first argument
-   * 
+   * Creates an arg list which includes the target geometry as the first argument
+   *
    * @param g
    * @param arg
    * @return
    */
-  private static Object[] createFullArgs(Geometry g, Object[] arg)
+  private static List<Object> createFullArgs(Geometry g, List<Object> arg)
   {
-  	int fullArgLen = 1;
-  	if (arg != null) 
-  		fullArgLen = arg.length + 1;
-  	Object[] fullArg = new Object[fullArgLen];
-  	fullArg[0] = g;
-  	for (int i = 1; i < fullArgLen; i++) {
-  		fullArg[i] = arg[i-1];
+  	List<Object> fullArg = new ArrayList<>();
+  	fullArg.add(g);
+  	if (arg != null) {
+  		fullArg.addAll(arg);
   	}
   	return fullArg;
   }
-  
-  public static Object invoke(Method method, Object target, Object[] args)
+
+  public static Object invoke(Method method, Object target, List<Object> args)
   {
     Object result;
     try {
-      result = method.invoke(target, args);
+      result = method.invoke(target, args.toArray(new Object[0]));
     }
     catch (InvocationTargetException ex) {
       Throwable t = ex.getCause();
@@ -121,16 +119,15 @@ public class StaticMethodGeometryFunction
   private static String invocationErrMsg(InvocationTargetException ex)
   {
     Throwable targetEx = ex.getTargetException();
-    String msg = getClassname(targetEx.getClass())
-    + ": " +
-    targetEx.getMessage();
-    return msg;
+      return getClassname(targetEx.getClass())
+      + ": " +
+      targetEx.getMessage();
   }
   
-  public static String getClassname(Class javaClass)
+  public static String getClassname(Class<?> javaClass)
   {
     String jClassName = javaClass.getName();
     int lastDotPos = jClassName.lastIndexOf(".");
-    return jClassName.substring(lastDotPos + 1, jClassName.length());
+    return jClassName.substring(lastDotPos + 1);
   }
 }

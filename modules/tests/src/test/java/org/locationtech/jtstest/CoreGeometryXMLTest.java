@@ -50,9 +50,9 @@ public class CoreGeometryXMLTest extends TestCase {
 //        testFiles("../core/src/test/resources/testxml/stmlf");
 //    }
 
-    private void testFiles(String... directoryName) {
+    private static void testFiles(String... directoryName) {
         TestEngine engine = new TestEngine();
-        List<File> testFiles = new ArrayList<File>();
+        List<File> testFiles = new ArrayList<>();
         for (String dirName : directoryName) {
           testFiles.addAll( filenames(new File(dirName)) );
         }
@@ -63,15 +63,10 @@ public class CoreGeometryXMLTest extends TestCase {
         System.out.println(reportWriter.writeReport(engine));
         
         boolean failures = engine.getParseExceptionCount() + engine.getFailedCount() + engine.getExceptionCount() > 0;
-        assertEquals(failures, false);
+        assertFalse(failures);
     }
 
-    static FilenameFilter XML_FILTER = new FilenameFilter() {
-      @Override
-      public boolean accept(File dir, String name) {
-        return name.endsWith(".xml");
-      }
-    };
+    static final FilenameFilter XML_FILTER = (dir, name) -> name.endsWith(".xml");
     
     private static List<File> filenames(File directory) {
         Assert.isTrue(directory.isDirectory());

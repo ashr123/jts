@@ -11,6 +11,8 @@
  */
 package org.locationtech.jtstest.testrunner;
 
+import java.util.List;
+
 import org.locationtech.jts.geom.Geometry;
 
 /**
@@ -28,7 +30,7 @@ public class NullResultMatcher
 	 * 
 	 * @return true always
 	 */
-	public boolean isMatch(Geometry geom, String opName, Object[] args, 
+	public boolean isMatch(Geometry geom, String opName, List<Object> args,
 			Result actualResult, Result expectedResult,
 			double tolerance)
 	{

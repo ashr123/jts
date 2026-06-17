@@ -26,13 +26,13 @@ import org.locationtech.jts.io.WKTReader;
 
 public class TestRunBuilder 
 {
-  private static GeometryFactory geomFact = new GeometryFactory();
+  private static final GeometryFactory geomFact = new GeometryFactory();
   
   private Geometry a = null;
   private Geometry b = null;
   private String description = "";
   private String operation  = "no-op";
-  private List<String> args = new ArrayList<String>();
+  private List<String> args = new ArrayList<>();
   private File aFile = null;
   private File bFile = null;
   
@@ -77,7 +77,7 @@ public class TestRunBuilder
   }
 
   
-  private Geometry readFile(String filename) throws IOException, ParseException {
+  private static Geometry readFile(String filename) throws IOException, ParseException {
     if (filename.toLowerCase().endsWith(".wkt")) {
       return readWKTFile(filename);
     }
@@ -87,22 +87,22 @@ public class TestRunBuilder
     throw new IllegalArgumentException("unrecognized file type: " + filename);
   }
 
-  private Geometry readWKTFile(String filename) throws IOException, ParseException {
+  private static Geometry readWKTFile(String filename) throws IOException, ParseException {
     WKTReader wktReader = new WKTReader();
     WKTFileReader wktFileReader = new WKTFileReader(filename, wktReader);
     List<Geometry> geoms = wktFileReader.read();
     return createGeometry(geoms);
   }
 
-  private Geometry readWKBFile(String filename) throws IOException, ParseException {
+  private static Geometry readWKBFile(String filename) throws IOException, ParseException {
     WKBReader wkbReader = new WKBReader();
     WKBHexFileReader wkbFileReader = new WKBHexFileReader(filename, wkbReader);
-    List geoms = wkbFileReader.read();
+    List<Geometry> geoms = wkbFileReader.read();
     return createGeometry(geoms);
   }
   
-  private Geometry createGeometry(List<Geometry> geoms) {
-    if (geoms.size() == 0) {
+  private static Geometry createGeometry(List<Geometry> geoms) {
+    if (geoms.isEmpty()) {
       return null;
     }
     else if (geoms.size() == 1) {

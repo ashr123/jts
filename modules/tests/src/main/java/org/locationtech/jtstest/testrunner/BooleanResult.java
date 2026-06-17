@@ -16,7 +16,7 @@ package org.locationtech.jtstest.testrunner;
  * @version 1.7
  */
 public class BooleanResult implements Result {
-    private boolean result;
+    private final boolean result;
 
     public BooleanResult(boolean result) {
         this.result = result;
@@ -42,6 +42,6 @@ public class BooleanResult implements Result {
     }
 
     public String toShortString() {
-        return result ? "true" : "false";
+        return Boolean.toString(result);
     }
 }

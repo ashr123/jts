@@ -11,6 +11,8 @@
  */
 package org.locationtech.jtstest.geomop;
 
+import java.util.List;
+
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jtstest.testrunner.BooleanResult;
 import org.locationtech.jtstest.testrunner.DoubleResult;
@@ -35,8 +37,7 @@ public class GeometryFunctionOperation
 {
 
   private GeometryFunctionRegistry registry = null;
-  private GeometryOperation defaultOp = new GeometryMethodOperation();
-  private ArgumentConverter argConverter = new ArgumentConverter();
+  private final GeometryOperation defaultOp = new GeometryMethodOperation();
 
   public GeometryFunctionOperation() {
   }
@@ -45,7 +46,7 @@ public class GeometryFunctionOperation
   	this.registry = registry;
   }
 
-  public Class getReturnType(String opName)
+  public Class<?> getReturnType(String opName)
   {
   	GeometryFunction func = registry.find(opName);
   	if (func == null)
@@ -53,19 +54,19 @@ public class GeometryFunctionOperation
   	return func.getReturnType();
   }
   
-  public Result invoke(String opName, Geometry geometry, Object[] args)
+  public Result invoke(String opName, Geometry geometry, List<Object> args)
       throws Exception
   {
-  	GeometryFunction func = registry.find(opName, args.length);
+  	GeometryFunction func = registry.find(opName, args.size());
   	if (func == null)
       return defaultOp.invoke(opName, geometry, args);
-  	
+
     return invoke(func, geometry, args);
   }
 
-  private Result invoke(GeometryFunction func, Geometry geometry, Object[] args)
+  private static Result invoke(GeometryFunction func, Geometry geometry, List<Object> args)
       throws Exception {
-    Object[] actualArgs = argConverter.convert(func.getParameterTypes(), args);
+    List<Object> actualArgs = ArgumentConverter.convert(func.getParameterTypes(), args);
 
     if (func.getReturnType() == boolean.class) {
       return new BooleanResult((Boolean) func.invoke(geometry, actualArgs));

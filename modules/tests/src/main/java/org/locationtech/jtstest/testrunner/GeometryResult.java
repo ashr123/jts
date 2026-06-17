@@ -18,7 +18,7 @@ import org.locationtech.jts.io.WKTWriter;
  * @version 1.7
  */
 public class GeometryResult implements Result {
-  private Geometry geometry;
+  private final Geometry geometry;
 
   public GeometryResult(Geometry geometry) {
     this.geometry = geometry;
@@ -39,8 +39,7 @@ public class GeometryResult implements Result {
     Geometry otherGeometryClone =(Geometry) otherGeometry.clone();
     thisGeometryClone.normalize();
     otherGeometryClone.normalize();
-    boolean isEqual = thisGeometryClone.equalsExact(otherGeometryClone, tolerance);
-    return isEqual;
+      return thisGeometryClone.equalsExact(otherGeometryClone, tolerance);
   }
 
   public String toLongString() {
@@ -56,4 +55,3 @@ public class GeometryResult implements Result {
     return geometry.getClass().getName();
   }
 }
-

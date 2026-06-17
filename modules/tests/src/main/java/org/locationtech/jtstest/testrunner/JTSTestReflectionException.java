@@ -12,6 +12,8 @@
 
 package org.locationtech.jtstest.testrunner;
 
+import java.util.List;
+
 /**
  * An Exception which indicates a problem during reflection
  *
@@ -24,21 +26,21 @@ public class JTSTestReflectionException
   public JTSTestReflectionException(String message) {
     super(message);
   }
-  
-  public JTSTestReflectionException(String opName, Object[] args) {
+
+  public JTSTestReflectionException(String opName, List<Object> args) {
     super(createMessage(opName, args));
   }
-  
-  private static String createMessage(String opName, Object[] args) {
-		String msg = "Could not find Geometry method: " + opName + "(";
-		for (int j = 0; j < args.length; j++) {
+
+  private static String createMessage(String opName, List<Object> args) {
+		StringBuilder msg = new StringBuilder("Could not find Geometry method: " + opName + "(");
+		for (int j = 0; j < args.size(); j++) {
 			if (j > 0) {
-				msg += ", ";
+				msg.append(", ");
 			}
-			msg += args[j].getClass().getName();
+			msg.append(args.get(j).getClass().getName());
 		}
-		msg += ")";
-		return msg;
+		msg.append(")");
+		return msg.toString();
 	}
 
 }

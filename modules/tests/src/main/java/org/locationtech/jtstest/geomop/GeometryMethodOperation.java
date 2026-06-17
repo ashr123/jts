@@ -13,6 +13,8 @@ package org.locationtech.jtstest.geomop;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jtstest.testrunner.BooleanResult;
@@ -54,158 +56,156 @@ public class GeometryMethodOperation
 	}
 
 
-  public static Class getGeometryReturnType(String functionName) {
+  public static Class<?> getGeometryReturnType(String functionName) {
 		Method[] methods = Geometry.class.getMethods();
-		for (int i = 0; i < methods.length; i++) {
-			if (methods[i].getName().equalsIgnoreCase(functionName)) {
-				Class returnClass = methods[i].getReturnType();
-				/**
-				 * Filter out only acceptable classes. (For instance, don't accept the
-				 * relate()=>IntersectionMatrix method)
-				 */
-				if (returnClass == boolean.class
-						|| Geometry.class.isAssignableFrom(returnClass)
-						|| returnClass == double.class || returnClass == int.class) {
-					return returnClass;
-				}
-			}
-		}
+      /**
+       * Filter out only acceptable classes. (For instance, don't accept the
+       * relate()=>IntersectionMatrix method)
+       */
+      for (Method method : methods) {
+          if (method.getName().equalsIgnoreCase(functionName)) {
+              Class<?> returnClass = method.getReturnType();
+              /**
+               * Filter out only acceptable classes. (For instance, don't accept the
+               * relate()=>IntersectionMatrix method)
+               */
+              if (returnClass == boolean.class
+                      || Geometry.class.isAssignableFrom(returnClass)
+                      || returnClass == double.class || returnClass == int.class) {
+                  return returnClass;
+              }
+          }
+      }
 		return null;
 	}
 
-  private Method[] geometryMethods = Geometry.class.getMethods();
+  private final Method[] geometryMethods = Geometry.class.getMethods();
 
   public GeometryMethodOperation() {
   }
 
-  public Class getReturnType(String opName)
+  public Class<?> getReturnType(String opName)
   {
   	return getGeometryReturnType(opName);
   }
   
-  public Result invoke(String opName, Geometry geometry, Object[] args)
+  public Result invoke(String opName, Geometry geometry, List<Object> args)
       throws Exception
   {
-    Object[] actualArgs = new Object[args.length];
+    List<Object> actualArgs = new ArrayList<>();
     Method geomMethod = getGeometryMethod(opName, args, actualArgs);
     if (geomMethod == null)
       throw new JTSTestReflectionException(opName, args);
     return invokeMethod(geomMethod, geometry, actualArgs);
   }
 
-  private Method getGeometryMethod(String opName, Object[] args, Object[] actualArgs)
+  private Method getGeometryMethod(String opName, List<Object> args, List<Object> actualArgs)
   {
     // could index methods by name for efficiency...
-    for (int i = 0; i < geometryMethods.length; i++) {
-      if (! geometryMethods[i].getName().equalsIgnoreCase(opName)) {
-        continue;
+      for (Method geometryMethod : geometryMethods) {
+          if (!geometryMethod.getName().equalsIgnoreCase(opName)) {
+              continue;
+          }
+          if (convertArgs(geometryMethod.getParameterTypes(), args, actualArgs)) {
+              return geometryMethod;
+          }
       }
-      if (convertArgs(geometryMethods[i].getParameterTypes(), args, actualArgs)) {
-        return geometryMethods[i];
-      }
-    }
     return null;
   }
 
-  private static int nonNullItemCount(Object[] obj)
+  private static int nonNullItemCount(List<Object> obj)
   {
     int count = 0;
-    for (int i = 0; i < obj.length; i++) {
-      if (obj[i] != null)
-        count++;
-    }
+      for (Object o : obj) {
+          if (o != null)
+              count++;
+      }
     return count;
   }
 
-  private Object[] convArg = new Object[1];
+  private static final Object INCOMPATIBLE = new Object();
 
-  private boolean convertArgs(Class[] parameterTypes, Object[] args, Object[] actualArgs)
+  private static boolean convertArgs(Class<?>[] parameterTypes, List<Object> args, List<Object> actualArgs)
   {
     if (parameterTypes.length != nonNullItemCount(args))
       return false;
 
-    for (int i = 0; i < args.length; i++ ) {
-      boolean isCompatible = convertArg(parameterTypes[i], args[i], convArg);
-      if (! isCompatible)
+    actualArgs.clear();
+    for (int i = 0; i < args.size(); i++ ) {
+      Object converted = convertArg(parameterTypes[i], args.get(i));
+      if (converted == INCOMPATIBLE)
         return false;
-      actualArgs[i] = convArg[0];
+      actualArgs.add(converted);
     }
     return true;
   }
 
-  private boolean convertArg(Class destClass, Object srcValue, Object[] convArg)
+  private static Object convertArg(Class<?> destClass, Object srcValue)
   {
-    convArg[0] = null;
     if (srcValue instanceof String) {
-      return convertArgFromString(destClass, (String) srcValue, convArg);
+      return convertArgFromString(destClass, (String) srcValue);
     }
     if (destClass.isAssignableFrom(srcValue.getClass())) {
-      convArg[0] = srcValue;
-      return true;
+      return srcValue;
     }
-    return false;
+    return INCOMPATIBLE;
   }
 
-  private boolean convertArgFromString(Class destClass, String srcStr, Object[] convArg)
+  private static Object convertArgFromString(Class<?> destClass, String srcStr)
   {
-    convArg[0] = null;
     if (destClass == Boolean.class || destClass == boolean.class) {
-      if (srcStr.equals("true")) {
-        convArg[0] = Boolean.TRUE;
-        return true;
+      if ("true".equals(srcStr)) {
+        return Boolean.TRUE;
       }
-      else if (srcStr.equals("false")) {
-        convArg[0] =  Boolean.FALSE;
-        return true;
+      else if ("false".equals(srcStr)) {
+        return Boolean.FALSE;
       }
-      return false;
+      return INCOMPATIBLE;
     }
     if (destClass == Integer.class || destClass == int.class) {
       // try as an int
       try {
-        convArg[0] = new Integer(srcStr);
-        return true;
+        return new Integer(srcStr);
       }
       catch (NumberFormatException e) {
         // eat this exception
       }
-      return false;
+      return INCOMPATIBLE;
     }
 
     if (destClass == Double.class || destClass == double.class) {
       // try as an int
       try {
-        convArg[0] = Double.valueOf(srcStr);
-        return true;
+        return Double.valueOf(srcStr);
       }
       catch (NumberFormatException e) {
         // eat this exception
       }
-      return false;
+      return INCOMPATIBLE;
     }
     if (destClass == String.class) {
-      convArg[0] = srcStr;
-      return true;
+      return srcStr;
     }
-    return false;
+    return INCOMPATIBLE;
   }
 
 
-  private Result invokeMethod(Method method, Geometry geometry, Object[] args)
+  private static Result invokeMethod(Method method, Geometry geometry, List<Object> args)
       throws Exception
   {
+    Object[] methodArgs = args.toArray(new Object[0]);
     try {
       if (method.getReturnType() == boolean.class) {
-        return new BooleanResult((Boolean) method.invoke(geometry, args));
+        return new BooleanResult((Boolean) method.invoke(geometry, methodArgs));
       }
       if (Geometry.class.isAssignableFrom(method.getReturnType())) {
-        return new GeometryResult((Geometry) method.invoke(geometry, args));
+        return new GeometryResult((Geometry) method.invoke(geometry, methodArgs));
       }
       if (method.getReturnType() == double.class) {
-        return new DoubleResult((Double) method.invoke(geometry, args));
+        return new DoubleResult((Double) method.invoke(geometry, methodArgs));
       }
       if (method.getReturnType() == int.class) {
-        return new IntegerResult((Integer) method.invoke(geometry, args));
+        return new IntegerResult((Integer) method.invoke(geometry, methodArgs));
       }
     }
     catch (InvocationTargetException e) {

@@ -12,9 +12,9 @@
 package org.locationtech.jtstest.testrunner;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -90,8 +90,8 @@ public class JTSTestRunnerCmd {
   
   
 
-  private static GeometryFunctionRegistry funcRegistry = new GeometryFunctionRegistry(TestCaseGeometryFunctions.class);
-  private static GeometryOperation defaultOp = new GeometryFunctionOperation(funcRegistry);
+  private static final GeometryFunctionRegistry funcRegistry = new GeometryFunctionRegistry(TestCaseGeometryFunctions.class);
+  private static final GeometryOperation defaultOp = new GeometryFunctionOperation(funcRegistry);
   private static GeometryOperation geometryOp = defaultOp;
 
   public static GeometryOperation getGeometryOperation() {
@@ -107,8 +107,8 @@ public class JTSTestRunnerCmd {
     return geometryOp != defaultOp;
   }
 
-  private static ResultMatcher defaultResultMatcher = new EqualityResultMatcher();
-  private static ResultMatcher resultMatcher = defaultResultMatcher;
+  private static final ResultMatcher defaultResultMatcher = new EqualityResultMatcher();
+  private static final ResultMatcher resultMatcher = defaultResultMatcher;
 
   public static ResultMatcher getResultMatcher() {
     return resultMatcher;
@@ -123,13 +123,13 @@ public class JTSTestRunnerCmd {
     return resultMatcher != defaultResultMatcher;
   }
 
-  private TestEngine engine = new TestEngine();
+  private final TestEngine engine = new TestEngine();
 
   public JTSTestRunnerCmd() {
 
   }
 
-  private void run(TestRunnerOptions options) throws FileNotFoundException, IOException, ParseException, org.locationtech.jts.io.ParseException {
+  private void run(TestRunnerOptions options) throws IOException, org.locationtech.jts.io.ParseException {
     List<File> files = FilesUtil.toFile(options.filenames);
     
     if (options.testCaseIndex >= 0) {
@@ -148,7 +148,7 @@ public class JTSTestRunnerCmd {
     }
   }
 
-  private TestRun createTestRun(TestRunnerOptions options) throws IOException, ParseException, org.locationtech.jts.io.ParseException {
+  private static TestRun createTestRun(TestRunnerOptions options) throws IOException, org.locationtech.jts.io.ParseException {
     TestRunBuilder trb = new TestRunBuilder();
     trb.setOperation(options.operation);
     trb.readGeometryAFromFile(options.geomAFilename);
@@ -159,15 +159,15 @@ public class JTSTestRunnerCmd {
     return trb.build();
   }
   
-  private void runOperation(TestRunnerOptions options) throws IOException, ParseException, org.locationtech.jts.io.ParseException {
+  private static void runOperation(TestRunnerOptions options) throws IOException, org.locationtech.jts.io.ParseException {
     TestRun testRun = createTestRun(options);
     Stopwatch sw = new Stopwatch();
     testRun.run();
     System.out.println("Run time: " + sw.getTimeString());
   }
 
-  private List<String> getArguments(TestRunnerOptions options) {
-    List<String> args = new ArrayList<String>();
+  private static List<String> getArguments(TestRunnerOptions options) {
+    List<String> args = new ArrayList<>();
     if (options.arg1 != null) {
       args.add(options.arg1);
     }
@@ -210,7 +210,7 @@ public class JTSTestRunnerCmd {
     }
   }
 
-  private static TestRunnerOptions readOptions(String[] args) throws ParseException, FileNotFoundException, IOException, ClassNotFoundException {
+  private static TestRunnerOptions readOptions(String[] args) throws ParseException, IOException, ClassNotFoundException {
     CommandLine commandLine = createCommandLine();
     commandLine.parse(args);
     
@@ -258,8 +258,8 @@ public class JTSTestRunnerCmd {
     System.out.println("Using Geometry Operation: " + geomOpClassname);
   }
   
-  private static List<String> extractTestFilenames(CommandLine commandLine) throws FileNotFoundException, IOException {
-    List<String> testFiles = new ArrayList<String>();
+  private static List<String> extractTestFilenames(CommandLine commandLine) throws IOException {
+    List<String> testFiles = new ArrayList<>();
     
     if (commandLine.hasOption(OptionSpec.OPTION_FREE_ARGS)) {
       testFiles.addAll(FilesUtil.expand(cmdOptionArgList(commandLine, OptionSpec.OPTION_FREE_ARGS), FILENAME_EXTENSION));
@@ -272,7 +272,7 @@ public class JTSTestRunnerCmd {
     if (commandLine.hasOption(OPT_PROPERTIES)) {
       Properties properties = new Properties();
       File file = new File(commandLine.getOption(OPT_PROPERTIES).getArg(0));
-      properties.load(new FileInputStream(commandLine.getOption(OPT_PROPERTIES).getArg(0)));
+      properties.load(Files.newInputStream(Paths.get(commandLine.getOption(OPT_PROPERTIES).getArg(0))));
       String testFilesString = properties.getProperty(PROPERTY_TESTFILES);
       if (testFilesString != null) {
         testFiles.addAll(StringUtil.fromCommaDelimitedString(testFilesString));
@@ -281,7 +281,7 @@ public class JTSTestRunnerCmd {
     return testFiles;
   }
   
-  private static CommandLine createCommandLine() throws ParseException {
+  private static CommandLine createCommandLine() {
     CommandLine commandLine = new CommandLine('-');
     OptionSpec os;
 
@@ -315,7 +315,7 @@ public class JTSTestRunnerCmd {
 
   public static List<String> cmdOptionArgList(CommandLine commandLine, String optionName) {
     Option option = commandLine.getOption(optionName);
-    ArrayList<String> arguments = new ArrayList<String>();
+    ArrayList<String> arguments = new ArrayList<>();
     for (int i = 0; i < option.getNumArgs(); i++) {
       arguments.add(option.getArg(i));
     }

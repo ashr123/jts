@@ -11,6 +11,8 @@
  */
 package org.locationtech.jtstest.geomop;
 
+import java.util.List;
+
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jtstest.testrunner.Result;
 
@@ -35,7 +37,7 @@ public interface GeometryOperation
 	 * @param opName the name of the operation
 	 * @return the class of the return type of the specified operation
 	 */
-  public Class getReturnType(String opName);
+    Class<?> getReturnType(String opName);
 
   /**
    * Invokes an operation on a {@link Geometry}.
@@ -46,6 +48,6 @@ public interface GeometryOperation
    * @return the result of the operation
    * @throws Exception if some error was encountered trying to find or process the operation
    */
-  Result invoke(String opName, Geometry geometry, Object[] args)
+  Result invoke(String opName, Geometry geometry, List<Object> args)
       throws Exception;
 }
