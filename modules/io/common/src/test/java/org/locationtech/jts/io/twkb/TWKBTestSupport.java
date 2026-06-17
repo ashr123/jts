@@ -249,7 +249,7 @@ public class TWKBTestSupport extends ExternalResource {
         }
     }
 
-    public String toHexString(byte[] bytes) {
+    public static String toHexString(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes) {
             sb.append(String.format("%02x", b));

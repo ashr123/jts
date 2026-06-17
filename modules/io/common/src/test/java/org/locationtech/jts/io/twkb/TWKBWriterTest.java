@@ -14,14 +14,9 @@ package org.locationtech.jts.io.twkb;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutput;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.locationtech.jts.geom.Geometry;
@@ -31,10 +26,10 @@ import org.locationtech.jts.io.twkb.TWKBTestSupport.TWKBTestData;
 
 public class TWKBWriterTest {
 
-    public @Rule TWKBTestSupport testSupport = new TWKBTestSupport();
+    public final @Rule TWKBTestSupport testSupport = new TWKBTestSupport();
 
-    private TWKBWriter writer = new TWKBWriter();
-    private TWKBReader reader = new TWKBReader();
+    private final TWKBWriter writer = new TWKBWriter();
+    private final TWKBReader reader = new TWKBReader();
 
     public @Test void testEmptyGeometries() throws ParseException {
         check("POINT EMPTY", -1, 0, 0, false, false, "1110");
@@ -228,14 +223,13 @@ public class TWKBWriterTest {
 
         boolean isEqualHex = Arrays.equals(twkb, written);
 
-        String expected = expectedTWKB;
-        String actual = testSupport.toHexString(written);
+        String actual = TWKBTestSupport.toHexString(written);
 
         if (!isEqualHex) {
             log("precision[xy: %d, z: %d, m: %d], include size: %s, include bbox: %s", xyprecision,
                     zprecision, mprecision, includeSize, includeBbox);
             log("input   : %s", inputWKT);
-            log("expected: %s", expected);
+            log("expected: %s", expectedTWKB);
             log("encoded : %s", actual);
             log("decoded encoded : %s", reader.read(written));
             log("----------");
@@ -246,11 +240,11 @@ public class TWKBWriterTest {
                     xyprecision, zprecision, mprecision, includeSize, includeBbox);
             log("\tST_AsTWKB(:'g'::Geometry, %d, %d, %d, %s, %s) AS expected_twkb;", xyprecision,
                     zprecision, mprecision, includeSize, includeBbox);
-            assertEquals(expected, actual);
+            assertEquals(expectedTWKB, actual);
         }
     }
 
-    private void log(String fmt, Object... args) {
+    private static void log(String fmt, Object... args) {
         System.err.printf(fmt + "\n", args);
     }
 }

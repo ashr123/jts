@@ -40,7 +40,7 @@ public class VarintTest {
         checkSignedVarInt(-1001);
     }
 
-    private void checkSignedVarInt(final int value) throws IOException {
+    private static void checkSignedVarInt(final int value) throws IOException {
         ByteArrayDataOutput out = newDataOutput();
         writeSignedVarInt(value, out);
         int read = readSignedVarInt(newDataInput(out.toByteArray()));
@@ -53,7 +53,7 @@ public class VarintTest {
         checkUnsignedVarInt(1001);
     }
 
-    private void checkUnsignedVarInt(final int value) throws IOException {
+    private static void checkUnsignedVarInt(final int value) throws IOException {
         ByteArrayDataOutput out = newDataOutput();
         writeUnsignedVarInt(value, out);
         int read = readUnsignedVarInt(newDataInput(out.toByteArray()));
@@ -68,7 +68,7 @@ public class VarintTest {
         checkSignedVarLong(-1001);
     }
 
-    private void checkSignedVarLong(final long value) throws IOException {
+    private static void checkSignedVarLong(final long value) throws IOException {
         ByteArrayDataOutput out = newDataOutput();
         writeSignedVarLong(value, out);
         long read = readSignedVarLong(newDataInput(out.toByteArray()));
@@ -81,14 +81,14 @@ public class VarintTest {
         checkUnsignedVarLong(1001);
     }
 
-    private void checkUnsignedVarLong(final long value) throws IOException {
+    private static void checkUnsignedVarLong(final long value) throws IOException {
         ByteArrayDataOutput out = newDataOutput();
         writeUnsignedVarLong(value, out);
         long read = readUnsignedVarLong(newDataInput(out.toByteArray()));
         assertEquals(value, read);
     }
 
-    private DataInput newDataInput(byte[] buffer) {
+    private static DataInput newDataInput(byte[] buffer) {
         return new DataInputStream(new ByteArrayInputStream(buffer));
     }
 
@@ -102,7 +102,7 @@ public class VarintTest {
         }
     }
 
-    private ByteArrayDataOutput newDataOutput() {
+    private static ByteArrayDataOutput newDataOutput() {
         return new ByteArrayDataOutput(new ByteArrayOutputStream());
     }
 }

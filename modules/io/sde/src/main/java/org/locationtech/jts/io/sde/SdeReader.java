@@ -123,7 +123,7 @@ public class SdeReader
   private Point readPoint(SeShape shape)
   throws SeException
   {
-  	java.util.List list = shape.getAllPoints(SeShape.TURN_RIGHT, false);  // get points and offsets
+  	java.util.List<?> list = shape.getAllPoints(SeShape.TURN_RIGHT, false);  // get points and offsets
   	SDEPoint[] sePts = (SDEPoint[]) list.get(0);
   	return geometryFactory.createPoint(toCoordinates(sePts, 0, 1));
   }
@@ -131,7 +131,7 @@ public class SdeReader
   private MultiPoint readMultiPoint(SeShape shape)
   throws SeException
   {
-  	java.util.List list = shape.getAllPoints(SeShape.TURN_RIGHT, false);  // get points and offsets
+  	java.util.List<?> list = shape.getAllPoints(SeShape.TURN_RIGHT, false);  // get points and offsets
   	SDEPoint[] sePts = (SDEPoint[]) list.get(0);
   	return geometryFactory.createMultiPoint(toCoordinates(sePts, 0, sePts.length));
   }
@@ -139,7 +139,7 @@ public class SdeReader
   private LineString readLine(SeShape shape)
   throws SeException
   {
-  	java.util.List list = shape.getAllPoints(SeShape.TURN_RIGHT, false);  // get points and offsets
+  	java.util.List<?> list = shape.getAllPoints(SeShape.TURN_RIGHT, false);  // get points and offsets
   	SDEPoint[] sePts = (SDEPoint[]) list.get(0);
   	return geometryFactory.createLineString(toCoordinates(sePts, 0, sePts.length));
   }
@@ -147,7 +147,7 @@ public class SdeReader
   private MultiLineString readMultiLine(SeShape shape)
   throws SeException
   {
-  	java.util.List list = shape.getAllPoints(SeShape.TURN_RIGHT, false);  // get points and offsets
+  	java.util.List<?> list = shape.getAllPoints(SeShape.TURN_RIGHT, false);  // get points and offsets
   	SDEPoint[] sePts = (SDEPoint[]) list.get(0);
   	int[] partOffset = (int[]) list.get(1);
   	
@@ -164,7 +164,7 @@ public class SdeReader
   private Polygon readPolygon(SeShape shape)
   throws SeException
   {
-  	java.util.List list = shape.getAllPoints(SeShape.TURN_RIGHT, true);  // get points and offsets
+  	java.util.List<?> list = shape.getAllPoints(SeShape.TURN_RIGHT, true);  // get points and offsets
   	SDEPoint[] sePts = (SDEPoint[]) list.get(0);
   	// a polygon has only one part
   	int[] subPartOffset = (int[]) list.get(2);
@@ -202,7 +202,7 @@ public class SdeReader
   private MultiPolygon readMultiPolygon(SeShape shape)
   throws SeException
   {
-  	java.util.List list = shape.getAllPoints(SeShape.TURN_RIGHT, true);  // get points and offsets
+  	java.util.List<?> list = shape.getAllPoints(SeShape.TURN_RIGHT, true);  // get points and offsets
   	SDEPoint[] sePts = (SDEPoint[]) list.get(0);
   	int[] partOffset = (int[]) list.get(1);
   	int[] subPartOffset = (int[]) list.get(2);

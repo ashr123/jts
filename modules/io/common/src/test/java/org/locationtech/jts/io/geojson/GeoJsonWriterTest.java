@@ -27,82 +27,82 @@ public class GeoJsonWriterTest extends GeometryTestCase {
   }
 
   @Override
-  public void setUp() throws Exception {
+  public void setUp() {
     this.geoJsonWriter = new GeoJsonWriter();
   }
 
-  public void testCRS() throws ParseException {
+  public void testCRS() {
     runTest("POINT (1 2)", 1234,
         "{'type':'Point','coordinates':[1,2],'crs':{'type':'name','properties':{'name':'EPSG:1234'}}}"
         );
   }
 
-  public void testPoint() throws ParseException {
+  public void testPoint() {
     runTest("POINT (1 2)",
         "{'type':'Point','coordinates':[1,2]}"
         );
   }
 
-  public void testPointEmpty() throws ParseException {
+  public void testPointEmpty() {
     runTest("POINT EMPTY",
         "{'type':'Point','coordinates':[]}"
     );
   }
 
-  public void testLineString() throws ParseException {
+  public void testLineString() {
     runTest("LINESTRING (1 2, 10 20, 100 200)",
         "{'type':'LineString','coordinates':[[1,2],[10,20],[100,200]]}");
   }
 
-  public void testLineStringEmpty() throws ParseException {
+  public void testLineStringEmpty() {
     runTest("LINESTRING EMPTY",
         "{'type':'LineString','coordinates':[]}"
     );
   }
 
-  public void testPolygon() throws ParseException {
+  public void testPolygon() {
     runTest("POLYGON ((0 0, 100 0, 100 100, 0 100, 0 0))",
         "{'type':'Polygon','coordinates':[[[0.0,0.0],[100,0.0],[100,100],[0.0,100],[0.0,0.0]]]}");
   }
 
-  public void testPolygonEmpty() throws ParseException {
+  public void testPolygonEmpty() {
     runTest("POLYGON EMPTY",
         "{'type':'Polygon','coordinates':[]}"
     );
   }
 
-  public void testPolygonWithHole() throws ParseException {
+  public void testPolygonWithHole() {
     runTest("POLYGON ((0 0, 100 0, 100 100, 0 100, 0 0), (1 1, 1 10, 10 10, 10 1, 1 1) )",
         "{'type':'Polygon','coordinates':[[[0.0,0.0],[100,0.0],[100,100],[0.0,100],[0.0,0.0]],[[1,1],[1,10],[10,10],[10,1],[1,1]]]}");
   }
 
-  public void testPolygonRightHandRule() throws ParseException {
+  public void testPolygonRightHandRule() {
     runTest("POLYGON ((0 0, 0 100, 100 100, 100 0, 0 0))", true,
             "{'type':'Polygon','coordinates':[[[0.0,0.0],[100,0.0],[100,100],[0.0,100],[0.0,0.0]]]}");
   }
 
-  public void testPolygonWithHoleRightHandRule() throws ParseException {
+  public void testPolygonWithHoleRightHandRule() {
     runTest("POLYGON ((0 0, 0 100, 100 100, 100 0, 0 0), (1 1, 10 1, 10 10, 1 10, 1 1) )", true,
             "{'type':'Polygon','coordinates':[[[0.0,0.0],[100,0.0],[100,100],[0.0,100],[0.0,0.0]],[[1,1],[1,10],[10,10],[10,1],[1,1]]]}");
   }
 
-  public void testMultiPoint() throws ParseException {
+  public void testMultiPoint() {
     runTest("MULTIPOINT ((0 0), (1 4), (100 200))",
         "{'type':'MultiPoint','coordinates':[[0.0,0.0],[1,4],[100,200]]}");
   }
 
-  public void testMultiLineString() throws ParseException {
+  public void testMultiLineString() {
     runTest("MULTILINESTRING ((0 0, 1 10), (10 10, 20 30), (123 123, 456 789))",
         "{'type':'MultiLineString','coordinates':[[[0.0,0.0],[1,10]],[[10,10],[20,30]],[[123,123],[456,789]]]}");
   }
 
-  public void testMultiPolygon() throws ParseException {
+  public void testMultiPolygon() {
     runTest("MULTIPOLYGON ( ((0 0, 100 0, 100 100, 0 100, 0 0), (1 1, 1 10, 10 10, 10 1, 1 1) ), ((200 200, 200 250, 250 250, 250 200, 200 200)) )",
         "{'type':'MultiPolygon','coordinates':[[[[0.0,0.0],[100,0.0],[100,100],[0.0,100],[0.0,0.0]],[[1,1],[1,10],[10,10],[10,1],[1,1]]],[[[200,200],[200,250],[250,250],[250,200],[200,200]]]]}"
         );
   }
 
-  public void testGeometryCollection() throws ParseException {
+  public void testGeometryCollection() {
     runTest("GEOMETRYCOLLECTION ( POINT ( 1 1), LINESTRING (0 0, 10 10), POLYGON ((0 0, 100 0, 100 100, 0 100, 0 0)) )",
         "{'type':'GeometryCollection','geometries':[{'type':'Point','coordinates':[1,1]},{'type':'LineString','coordinates':[[0.0,0.0],[10,10]]},{'type':'Polygon','coordinates':[[[0.0,0.0],[100,0.0],[100,100],[0.0,100],[0.0,0.0]]]}]}"
         );
@@ -110,23 +110,23 @@ public class GeoJsonWriterTest extends GeometryTestCase {
 
   // empty atomic geometries are not supported in GeoJSON
   
-  public void testMultiPointEmpty() throws ParseException {
+  public void testMultiPointEmpty() {
     runTest("MULTIPOINT EMPTY", "{'type':'MultiPoint','coordinates':[]}");
   }
 
-  public void testMultiLineStringEmpty() throws ParseException {
+  public void testMultiLineStringEmpty() {
     runTest("MULTILINESTRING EMPTY","{'type':'MultiLineString','coordinates':[]}");
   }
 
-  public void testMultiPolygonEmpty() throws ParseException {
+  public void testMultiPolygonEmpty() {
     runTest("MULTIPOLYGON EMPTY","{'type':'MultiPolygon','coordinates':[]}");
   }
 
-  public void testGeometryCollectionEmpty() throws ParseException {
+  public void testGeometryCollectionEmpty() {
     runTest("GEOMETRYCOLLECTION EMPTY","{'type':'GeometryCollection','geometries':[]}");
   }
 
-  private void runTest(String wkt) throws ParseException {
+  private void runTest(String wkt) {
     Geometry expected = read(wkt);
     geoJsonWriter.setEncodeCRS(false);
     String json = this.geoJsonWriter.write(expected);
@@ -134,19 +134,19 @@ public class GeoJsonWriterTest extends GeometryTestCase {
     //checkEqual(result, expected);
   }
  
-  private void runTest(String wkt, String expectedGeojson) throws ParseException {
+  private void runTest(String wkt, String expectedGeojson) {
     runTest(wkt, 0, false, false, expectedGeojson);
   }
 
-  private void runTest(String wkt, int srid, String expectedGeojson) throws ParseException {
+  private void runTest(String wkt, int srid, String expectedGeojson) {
     runTest(wkt, srid, true, false, expectedGeojson);
   }
 
-  private void runTest(String wkt, boolean enforceRHR, String expectedGeojson) throws ParseException {
+  private void runTest(String wkt, boolean enforceRHR, String expectedGeojson) {
     runTest(wkt, 0, false, enforceRHR, expectedGeojson);
   }
 
-  private void runTest(String wkt, int srid, boolean encodeCRS, boolean enforceRHR, String expectedGeojson) throws ParseException {
+  private void runTest(String wkt, int srid, boolean encodeCRS, boolean enforceRHR, String expectedGeojson) {
     Geometry geom = read(wkt);
     geom.setSRID(srid);
     geoJsonWriter.setEncodeCRS(encodeCRS);

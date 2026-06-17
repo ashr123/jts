@@ -190,7 +190,7 @@ final class Varint {
         return value | (b << i);
     }
 
-    public static int readUnsignedVarInt(byte[] from) throws IOException {
+    public static int readUnsignedVarInt(byte[] from) {
         if (from.length < 5) {
             throw new IllegalArgumentException(
                     "buff should have at least 5 free slots to fit the biggest possible value representation");
