@@ -25,12 +25,15 @@ import org.locationtech.jtstest.geomfunction.Metadata;
 
 
 public class BufferByUnionFunctions {
-	
-	public static Geometry componentBuffers(Geometry g, double distance)	
+
+    private BufferByUnionFunctions() {
+    }
+
+    public static Geometry componentBuffers(Geometry g, double distance)
 	{		
-		List bufs = new ArrayList();
-		for (Iterator it = new GeometryCollectionIterator(g); it.hasNext(); ) {
-			Geometry comp = (Geometry) it.next();
+		List<Geometry> bufs = new ArrayList<>();
+		for (Iterator<Geometry> it = new GeometryCollectionIterator(g); it.hasNext(); ) {
+			Geometry comp = it.next();
 			if (comp instanceof GeometryCollection) continue;
 			bufs.add(comp.buffer(distance));
 		}
@@ -83,7 +86,6 @@ public class BufferByUnionFunctions {
       throw new IllegalArgumentException("Section Size must be specified as an input parameter");
     Geometry segs = LineHandlingFunctions.extractChains(g, maxChainSize);
     double posDist = Math.abs(distance);
-    Geometry segBuf = componentBuffers(segs, posDist);
-    return segBuf;
+      return componentBuffers(segs, posDist);
   }
 }

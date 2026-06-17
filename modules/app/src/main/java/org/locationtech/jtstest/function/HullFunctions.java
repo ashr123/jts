@@ -17,7 +17,10 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jtstest.geomfunction.Metadata;
 
 public class HullFunctions {
-  public static Geometry convexHull(Geometry g) {      return g.convexHull();  }
+    private HullFunctions() {
+    }
+
+    public static Geometry convexHull(Geometry g) {      return g.convexHull();  }
  
   public static Geometry concaveHullPoints(Geometry geom, 
       @Metadata(title="Max Edge Length")

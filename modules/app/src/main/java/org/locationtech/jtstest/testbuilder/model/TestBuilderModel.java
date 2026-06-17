@@ -12,14 +12,6 @@
 
 package org.locationtech.jtstest.testbuilder.model;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
@@ -42,19 +34,25 @@ import org.locationtech.jtstest.util.StringUtil;
 import org.locationtech.jtstest.util.io.IOUtil;
 import org.locationtech.jtstest.util.io.MultiFormatReader;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 
 public class TestBuilderModel 
 {
   private PrecisionModel precisionModel = new PrecisionModel();
   private GeometryFactory geometryFactory = null;
-	private GeometryEditModel geomEditModel;
+	private final GeometryEditModel geomEditModel;
 	
-  private LayerList layerList = LayerList.createFixed();
-  private LayerList layerListTop = new LayerList();
-  private LayerList layerListBase = new LayerList();
-  private Layer layerSelect = new Layer(AppStrings.LYR_LABEL_SELECTION, false);
+  private final LayerList layerList = LayerList.createFixed();
+  private final LayerList layerListTop = new LayerList();
+  private final LayerList layerListBase = new LayerList();
+  private final Layer layerSelect = new Layer(AppStrings.LYR_LABEL_SELECTION, false);
   
-  private WKTWriter writer = new WKTWriter();
+  private final WKTWriter writer = new WKTWriter();
   private Object currResult = null;
   private String opName = "";
 
@@ -96,14 +94,13 @@ public class TestBuilderModel
   public LayerList getLayers() { return layerList; }
   public LayerList getLayersTop() { return layerListTop; }
   public LayerList getLayersBase() { return layerListBase; }
-  public LayerList getLayersAll() { 
-    LayerList layers = LayerList.create(
-        layerListTop,
-        layerList,
-        getLayersFloating(),
-        layerListBase
-        );
-    return layers;
+  public LayerList getLayersAll() {
+      return LayerList.create(
+          layerListTop,
+          layerList,
+          getLayersFloating(),
+          layerListBase
+          );
   }
   public Layer getLayerSelect() {
     return layerSelect;
@@ -117,14 +114,14 @@ public class TestBuilderModel
   }
 
   public List<Layer> getLayersLegend() {
-    List<Layer> layers = new ArrayList<Layer>();
+    List<Layer> layers = new ArrayList<>();
     addLegendLayers(layerList, layers);
     addLegendLayers(layerListTop, layers);
     addLegendLayers(layerListBase, layers);
     return layers;
   }
   
-  private void addLegendLayers(LayerList layerList, List<Layer> layers) {
+  private static void addLegendLayers(LayerList layerList, List<Layer> layers) {
     for (int i = 0; i < layerList.size(); i++) {
       if (layerList.getLayer(i).hasGeometry() 
           && layerList.getLayer(i).isEnabled())
@@ -143,7 +140,7 @@ public class TestBuilderModel
     return ind;
   }
 
-  private Layer createIndicatorLayer() {
+  private static Layer createIndicatorLayer() {
     Layer ind = new Layer(AppStrings.LYR_INDICATORS,
         new ListGeometryContainer(),
         new BasicStyle(AppConstants.INDICATOR_LINE_CLR, 
@@ -217,7 +214,7 @@ public class TestBuilderModel
   throws Exception
   {
     Geometry g = null;
-    if (geomStr.length() > 0) {
+    if (!geomStr.isEmpty()) {
       try {
         MultiFormatReader reader = new MultiFormatReader(geomFact);
         g = reader.read(geomStr);
@@ -244,13 +241,13 @@ public class TestBuilderModel
     
     // read geom A
     Geometry g0 = null;
-    if (wktA.length() > 0) {
+    if (!wktA.isEmpty()) {
       g0 = reader.read(wktA);
     }
     
     // read geom B
     Geometry g1 = null;
-    if (wktB.length() > 0) {
+    if (!wktB.isEmpty()) {
       g1 = reader.read(wktB);
     }
     
@@ -262,11 +259,7 @@ public class TestBuilderModel
   
   //=============================================================
   
-  private CaseList caseList = new CaseList(new CaseList.CaseFactory() {
-    public TestCaseEdit create() {
-      return new TestCaseEdit(precisionModel);
-    }
-  });
+  private final CaseList caseList = new CaseList(() -> new TestCaseEdit(precisionModel));
 
   public CaseList cases() {
     return caseList;
@@ -280,7 +273,7 @@ public class TestBuilderModel
   public int getCasesSize() {
     return caseList.getSize();
   }
-  public List getCases() {
+  public List<Testable> getCases() {
     return caseList.getCases();
   }
   public TestCaseList getTestCaseList() {
@@ -305,8 +298,8 @@ public class TestBuilderModel
       precisionModel = a.getTestRunnerTestCase().getTestRun().getPrecisionModel();
     }
     if (getCases().size() == 1
-         && ((Testable) getCases().get(0)).getGeometry(0) == null
-         && ((Testable) getCases().get(0)).getGeometry(1) == null) {
+         && getCases().get(0).getGeometry(0) == null
+         && getCases().get(0).getGeometry(1) == null) {
       loadTestCaseList(testCaseList, precisionModel);
     }
     else {
@@ -328,40 +321,34 @@ public class TestBuilderModel
 
   public void loadEditList(TestCaseList tcl) throws ParseException {
     TestCaseList newTcl = new TestCaseList();
-    for (Iterator i = tcl.getList().iterator(); i.hasNext();) {
-      Testable tc = (Testable) i.next();
-
-      if (tc instanceof TestCaseEdit) {
-        newTcl.add((TestCaseEdit) tc);
-      } else {
-        newTcl.add(new TestCaseEdit(tc));
+      for (Testable tc : tcl.getList()) {
+          if (tc instanceof TestCaseEdit) {
+              newTcl.add(tc);
+          } else {
+              newTcl.add(new TestCaseEdit(tc));
+          }
       }
-    }
     caseList.init(newTcl);
   }
 
   private TestCaseList createTestCaseList(File[] filesAndDirectories) {
     TestCaseList testCaseList = new TestCaseList();
-    for (int i = 0; i < filesAndDirectories.length; i++) {
-      File fileOrDirectory = filesAndDirectories[i];
-      if (fileOrDirectory.isFile()) {
-        testCaseList.add(createTestCaseList(fileOrDirectory));
+      for (File fileOrDirectory : filesAndDirectories) {
+          if (fileOrDirectory.isFile()) {
+              testCaseList.add(createTestCaseList(fileOrDirectory));
+          } else if (fileOrDirectory.isDirectory()) {
+              testCaseList.add(createTestCaseListFromDirectory(fileOrDirectory));
+          }
       }
-      else if (fileOrDirectory.isDirectory()) {
-        testCaseList.add(createTestCaseListFromDirectory(fileOrDirectory));
-      }
-    }
     return testCaseList;
   }
 
   private TestCaseList createTestCaseListFromDirectory(File directory) {
     Assert.isTrue(directory.isDirectory());
     TestCaseList testCaseList = new TestCaseList();
-    List files = Arrays.asList(directory.listFiles());
-    for (Iterator i = files.iterator(); i.hasNext(); ) {
-      File file = (File) i.next();
-      testCaseList.add(createTestCaseList(file));
-    }
+      for (File file : directory.listFiles()) {
+          testCaseList.add(createTestCaseList(file));
+      }
     return testCaseList;
   }
 
@@ -375,28 +362,27 @@ public class TestBuilderModel
     if (hasParseErrors()) {
       return tcl;
     }
-    for (Iterator i = testRun.getTestCases().iterator(); i.hasNext(); ) {
-      org.locationtech.jtstest.testrunner.TestCase testCase = (org.locationtech.jtstest.testrunner.TestCase) i.next();
-      tcl.add(new TestRunnerTestCaseAdapter(testCase));
-    }
+      for (org.locationtech.jtstest.testrunner.TestCase testCase : testRun.getTestCases()) {
+          tcl.add(new TestRunnerTestCaseAdapter(testCase));
+      }
     return tcl;
   }
 
-  private List parseErrors = null;
+  private List<String> parseErrors = null;
 
   /**
-   * 
+   *
    * @return empy list if no errors
    */
-  public List getParsingProblems()
+  public List<String> getParsingProblems()
   {
-    return parseErrors; 
+    return parseErrors;
   }
   
   public boolean hasParseErrors()
   {
     if (parseErrors == null) return false;
-    return parseErrors.size() > 0;
+    return !parseErrors.isEmpty();
   }
  
   public void setResult(Object result)
@@ -431,8 +417,8 @@ public class TestBuilderModel
     SwingUtil.copyToClipboard(currResult, isFormatted);
   }
 
-  private ArrayList wktABeforePMChange = new ArrayList();
-  private ArrayList wktBBeforePMChange = new ArrayList();
+  private final ArrayList<String> wktABeforePMChange = new ArrayList<>();
+  private final ArrayList<String> wktBBeforePMChange = new ArrayList<>();
 
   public void changePrecisionModel(PrecisionModel precisionModel)
   throws ParseException
@@ -445,21 +431,20 @@ public class TestBuilderModel
   private void saveWKTBeforePMChange() {
     wktABeforePMChange.clear();
     wktBBeforePMChange.clear();
-    for (Iterator i = getCases().iterator(); i.hasNext(); ) {
-      Testable testable = (Testable) i.next();
-      Geometry a = testable.getGeometry(0);
-      Geometry b = testable.getGeometry(1);
-      wktABeforePMChange.add(a != null ? a.toText() : null);
-      wktBBeforePMChange.add(b != null ? b.toText() : null);
-    }
+      for (Testable testable : getCases()) {
+          Geometry a = testable.getGeometry(0);
+          Geometry b = testable.getGeometry(1);
+          wktABeforePMChange.add(a != null ? a.toText() : null);
+          wktBBeforePMChange.add(b != null ? b.toText() : null);
+      }
   }
 
   private void loadWKTAfterPMChange() throws ParseException {
     WKTReader reader = new WKTReader(new GeometryFactory(getPrecisionModel(), 0));
     for (int i = 0; i < getCases().size(); i++) {
-      Testable testable = (Testable) getCases().get(i);
-      String wktA = (String) wktABeforePMChange.get(i);
-      String wktB = (String) wktBBeforePMChange.get(i);
+      Testable testable = getCases().get(i);
+      String wktA = wktABeforePMChange.get(i);
+      String wktB = wktBBeforePMChange.get(i);
       testable.setGeometry(0, wktA != null ? reader.read(wktA) : null);
       testable.setGeometry(1, wktB != null ? reader.read(wktB) : null);
     }
@@ -472,13 +457,13 @@ public class TestBuilderModel
    */
   public static class CaseList {
     
-    public static interface CaseFactory {
+    public interface CaseFactory {
       TestCaseEdit create();
     }
 
     private TestCaseList tcList = new TestCaseList();
     private int tcIndex = -1;
-    private CaseFactory caseFactory;
+    private final CaseFactory caseFactory;
   
     public CaseList(CaseFactory caseFactory) {
       this.caseFactory = caseFactory;
@@ -500,7 +485,7 @@ public class TestBuilderModel
       }
     }
   
-    public List getCases() {
+    public List<Testable> getCases() {
       return Collections.unmodifiableList(tcList.getList());
     }
   
@@ -519,7 +504,7 @@ public class TestBuilderModel
     }
     
     public Testable getCurrentTestable() {
-      return (TestCaseEdit) tcList.get(tcIndex);
+      return tcList.get(tcIndex);
     }
   
     public int getCurrentTestIndex()
@@ -641,5 +626,3 @@ public class TestBuilderModel
   }
 
 }
-
-

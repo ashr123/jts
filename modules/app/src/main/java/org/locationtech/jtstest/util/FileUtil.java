@@ -15,7 +15,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -33,7 +32,10 @@ public class FileUtil
 {
   public static final String EXTENSION_SEPARATOR = ".";
 
-  public static String name(String path)
+    private FileUtil() {
+    }
+
+    public static String name(String path)
   {
     File file = new File(path);
     return file.getName();
@@ -44,7 +46,7 @@ public class FileUtil
     String name = name(path);
     int extIndex = name.lastIndexOf(EXTENSION_SEPARATOR.charAt(0));
     if (extIndex < 0) return "";
-    return name.substring(extIndex, name.length());
+    return name.substring(extIndex);
   }
 
     /**
@@ -53,8 +55,8 @@ public class FileUtil
     public static void deleteFiles(String directoryName) {
         File dir = new File(directoryName);
         File[] files = dir.listFiles();
-        for (int i = 0; i < files.length; i++) {
-            files[i].delete();
+        for (File file : files) {
+            file.delete();
         }
     }
 
@@ -69,8 +71,8 @@ public class FileUtil
     /**
      * Returns a List of the String's in the text file, one per line.
      */
-    public static List getContents(String textFileName) throws FileNotFoundException, IOException {
-        List contents = new Vector();
+    public static List<String> getContents(String textFileName) throws IOException {
+        List<String> contents = new Vector<>();
         FileReader fileReader = new FileReader(textFileName);
         try(BufferedReader bufferedReader = new BufferedReader(fileReader)){
             String line = bufferedReader.readLine();
@@ -98,16 +100,15 @@ public class FileUtil
   	throws IOException 
   	{
 		String thisLine;
-		StringBuffer strb = new StringBuffer("");
+		StringBuilder strb = new StringBuilder();
 
 		try(FileInputStream fin = new FileInputStream(file)){
             BufferedReader br = new BufferedReader(new InputStreamReader(fin));
             while ((thisLine = br.readLine()) != null) {
-        		strb.append(thisLine + "\r\n");
+        		strb.append(thisLine).append("\r\n");
     		}
         }
-		String result = strb.toString();
-		return result;
+        return strb.toString();
 	}
 
     /**

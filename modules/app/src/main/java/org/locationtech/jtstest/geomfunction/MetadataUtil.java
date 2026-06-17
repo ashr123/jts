@@ -15,36 +15,39 @@ import java.lang.annotation.Annotation;
 
 public class MetadataUtil {
 
-  public static String name(Annotation[] anno) {
-    for (int i = 0; i < anno.length; i++) {
-      if (anno[i] instanceof Metadata) {
-        Metadata doc = (Metadata) anno[i];
-        if (doc != null)
-          return doc.name();
-      }
+    private MetadataUtil() {
     }
+
+    public static String name(Annotation[] anno) {
+      for (Annotation annotation : anno) {
+          if (annotation instanceof Metadata) {
+              Metadata doc = (Metadata) annotation;
+              if (doc != null)
+                  return doc.name();
+          }
+      }
     return null;
   }
 
   public static String title(Annotation[] anno) {
-    for (int i = 0; i < anno.length; i++) {
-      if (anno[i] instanceof Metadata) {
-        Metadata doc = (Metadata) anno[i];
-        if (doc != null)
-          return doc.title();
+      for (Annotation annotation : anno) {
+          if (annotation instanceof Metadata) {
+              Metadata doc = (Metadata) annotation;
+              if (doc != null)
+                  return doc.title();
+          }
       }
-    }
     return null;
   }
 
   public static boolean isRequired(Annotation[] anno) {
-    for (int i = 0; i < anno.length; i++) {
-      if (anno[i] instanceof Metadata) {
-        Metadata doc = (Metadata) anno[i];
-        if (doc != null)
-          return doc.isRequired();
+      for (Annotation annotation : anno) {
+          if (annotation instanceof Metadata) {
+              Metadata doc = (Metadata) annotation;
+              if (doc != null)
+                  return doc.isRequired();
+          }
       }
-    }
     return true;
   }
 

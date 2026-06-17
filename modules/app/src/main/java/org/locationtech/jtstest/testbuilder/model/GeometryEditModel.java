@@ -12,10 +12,6 @@
 
 package org.locationtech.jtstest.testbuilder.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateArrays;
 import org.locationtech.jts.geom.Envelope;
@@ -31,6 +27,10 @@ import org.locationtech.jtstest.testbuilder.geom.GeometryPointLocater;
 import org.locationtech.jtstest.testbuilder.geom.GeometryUtil;
 import org.locationtech.jtstest.testbuilder.geom.GeometryVertexMover;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+
 
 /**
  * Holds the current {@link TestCaseEdit}.
@@ -40,7 +40,7 @@ import org.locationtech.jtstest.testbuilder.geom.GeometryVertexMover;
  */
 public class GeometryEditModel 
 {
-  private static WKTWriter wktWriter = new WKTWriter();
+  private static final WKTWriter wktWriter = new WKTWriter();
 
   private boolean readOnly = true;
 
@@ -50,9 +50,9 @@ public class GeometryEditModel
 
   private TestCaseEdit testCase;
   
-  private transient Vector geometryListeners;
+  private transient Vector<GeometryListener> geometryListeners;
 
-  private UndoBuffer[] undoBuffers = new UndoBuffer[] { new UndoBuffer(), new UndoBuffer() };
+  private final UndoBuffer[] undoBuffers = new UndoBuffer[] { new UndoBuffer(), new UndoBuffer() };
 
   public GeometryEditModel()
   {
@@ -142,8 +142,7 @@ public class GeometryEditModel
   public static String getText(Geometry geom, int textType) {
     switch (textType) {
       case GeometryType.WELLKNOWNTEXT:
-        String wkt = wktWriter.writeFormatted(geom);
-        return wkt;
+          return wktWriter.writeFormatted(geom);
     }
     Assert.shouldNeverReachHere();
     return "";
@@ -246,8 +245,8 @@ public class GeometryEditModel
      * Undo transactions are captured whenever the geometry
      * is modified.  So the current geometry
      * may be on the stack, in which case it needs to be discarded. 
-     */;
-     undoBuf.pop(getGeometry());
+     */
+      undoBuf.pop(getGeometry());
     if (undoBuf.isEmpty()) return;
     
     Geometry geom = undoBuf.peek();
@@ -261,10 +260,10 @@ public class GeometryEditModel
    * 
    * @param coordList
    */
-  public void addComponent(List coordList)
+  public void addComponent(List<Coordinate> coordList)
   {
     GeometryCombiner creator = new GeometryCombiner(JTSTestBuilder.getGeometryFactory());
-    
+
     Geometry newGeom = null;
     switch(getGeometryType()) {
     case GeometryType.POLYGON:
@@ -272,26 +271,25 @@ public class GeometryEditModel
       break;
     case GeometryType.LINESTRING:
       Coordinate[] pts = CoordinateArrays.toCoordinateArray(coordList);
-      newGeom = creator.addLineString(getGeometry(), pts);      
+      newGeom = creator.addLineString(getGeometry(), pts);
       break;
     case GeometryType.POINT:
-      newGeom = creator.addPoint(getGeometry(), (Coordinate) coordList.get(0));      
+      newGeom = creator.addPoint(getGeometry(), coordList.get(0));
       break;
     }
     setGeometry(newGeom);
   }
-  
-  private static Coordinate[] getRing(List coordList)
+
+  private static Coordinate[] getRing(List<Coordinate> coordList)
   {
-    List closedPts = coordList;
-    Coordinate p0 = (Coordinate) coordList.get(0);
-    Coordinate pn = (Coordinate) coordList.get(coordList.size() - 1);
+    List<Coordinate> closedPts = coordList;
+    Coordinate p0 = coordList.get(0);
+    Coordinate pn = coordList.get(coordList.size() - 1);
     if (! p0.equals2D(pn)) {
-      closedPts = new ArrayList(coordList);
-      closedPts.add(p0.clone()); 
+      closedPts = new ArrayList<>(coordList);
+      closedPts.add((Coordinate) p0.clone());
     }
-    Coordinate[] pts = CoordinateArrays.toCoordinateArray(closedPts);
-    return pts;
+      return CoordinateArrays.toCoordinateArray(closedPts);
   }
   
   public Coordinate[] findAdjacentVertices(Coordinate vertex)
@@ -367,15 +365,15 @@ public class GeometryEditModel
   
   public synchronized void removeGeometryListener(GeometryListener l) {
     if (geometryListeners != null && geometryListeners.contains(l)) {
-      Vector v = (Vector) geometryListeners.clone();
+      Vector<GeometryListener> v = (Vector<GeometryListener>) geometryListeners.clone();
       v.removeElement(l);
       geometryListeners = v;
     }
   }
 
   public synchronized void addGeometryListener(GeometryListener l) {
-    Vector v = geometryListeners == null ? new Vector(2)
-        : (Vector) geometryListeners.clone();
+    Vector<GeometryListener> v = geometryListeners == null ? new Vector<>(2)
+        : (Vector<GeometryListener>) geometryListeners.clone();
     if (!v.contains(l)) {
       v.addElement(l);
       geometryListeners = v;
@@ -384,10 +382,10 @@ public class GeometryEditModel
 
   public void fireGeometryChanged(GeometryEvent e) {
     if (geometryListeners != null) {
-      Vector listeners = geometryListeners;
+      Vector<GeometryListener> listeners = geometryListeners;
       int count = listeners.size();
       for (int i = 0; i < count; i++) {
-        ((GeometryListener) listeners.elementAt(i)).geometryChanged(e);
+        listeners.elementAt(i).geometryChanged(e);
       }
     }
   }

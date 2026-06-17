@@ -22,7 +22,10 @@ import org.locationtech.jts.math.MathUtil;
 public class AWTUtil 
 {
 
-  public static Point2D subtract(Point2D a, Point2D b) {
+    private AWTUtil() {
+    }
+
+    public static Point2D subtract(Point2D a, Point2D b) {
     return new Point2D.Double(a.getX() - b.getX(), a.getY() - b.getY());
   }
 

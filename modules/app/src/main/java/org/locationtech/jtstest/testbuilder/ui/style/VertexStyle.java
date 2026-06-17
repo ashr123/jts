@@ -42,8 +42,8 @@ public class VertexStyle  implements Style
   
   
   // reuse point objects to avoid creation overhead
-  private Point2D pM = new Point2D.Double();
-  private Point2D pV = new Point2D.Double();
+  private final Point2D pM = new Point2D.Double();
+  private final Point2D pV = new Point2D.Double();
 
   public VertexStyle(Color color) {
     this.color = color;
@@ -85,33 +85,33 @@ public class VertexStyle  implements Style
     g.setStroke(stroke);
     
     Coordinate[] coordinates = geom.getCoordinates();
-    
-    for (int i = 0; i < coordinates.length; i++) {
-        if (! viewport.containsInModel(coordinates[i])) {
-            //Otherwise get "sun.dc.pr.PRException: endPath: bad path" exception 
-            continue;
-        }       
-        pM.setLocation(coordinates[i].x, coordinates[i].y);
-        viewport.toView(pM, pV);
-      	//shape.setLocation((int) (pV.getX() - sizeOver2), (int) (pV.getY() - sizeOver2));
-        //g.fill(shape);
-        int x = (int) (pV.getX() - sizeOver2);
-        int y = (int) (pV.getY() - sizeOver2);
-        switch (symbol) {
-        case SYM_SQUARE_SOLID: 
-          g.fillRect(x, y, size, size);
-          break;
-        case SYM_SQUARE_HOLLOW: 
-          g.drawRect(x, y, size, size);
-          break;
-        case SYM_CIRCLE_SOLID:
-          g.fillOval(x, y, size, size);
-          break;
-        case SYM_CIRCLE_HOLLOW:
-          g.drawOval(x, y, size, size);
-          break;
-        }
-    }
+
+      for (Coordinate coordinate : coordinates) {
+          if (!viewport.containsInModel(coordinate)) {
+              //Otherwise get "sun.dc.pr.PRException: endPath: bad path" exception
+              continue;
+          }
+          pM.setLocation(coordinate.x, coordinate.y);
+          viewport.toView(pM, pV);
+          //shape.setLocation((int) (pV.getX() - sizeOver2), (int) (pV.getY() - sizeOver2));
+          //g.fill(shape);
+          int x = (int) (pV.getX() - sizeOver2);
+          int y = (int) (pV.getY() - sizeOver2);
+          switch (symbol) {
+              case SYM_SQUARE_SOLID:
+                  g.fillRect(x, y, size, size);
+                  break;
+              case SYM_SQUARE_HOLLOW:
+                  g.drawRect(x, y, size, size);
+                  break;
+              case SYM_CIRCLE_SOLID:
+                  g.fillOval(x, y, size, size);
+                  break;
+              case SYM_CIRCLE_HOLLOW:
+                  g.drawOval(x, y, size, size);
+                  break;
+          }
+      }
   }
   
 }

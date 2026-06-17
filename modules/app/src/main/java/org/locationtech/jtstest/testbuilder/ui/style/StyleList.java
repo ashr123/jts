@@ -14,7 +14,6 @@ package org.locationtech.jtstest.testbuilder.ui.style;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.geom.Geometry;
@@ -30,16 +29,15 @@ import org.locationtech.jtstest.testbuilder.ui.Viewport;
  */
 public class StyleList implements Style
 {
-	private List styleList = new ArrayList();
-	
+	private final List<StyleEntry> styleList = new ArrayList<>();
+
   public void paint(Geometry geom, Viewport viewport, Graphics2D g)
   	throws Exception
   {
-  	for (Iterator i = styleList.iterator(); i.hasNext(); ) {
-  		StyleEntry styleEntry = (StyleEntry) i.next();
-  		if (styleEntry.isFullyEnabled())
-  			styleEntry.getStyle().paint(geom, viewport, g);
-  	}
+      for (StyleEntry styleEntry : styleList) {
+          if (styleEntry.isFullyEnabled())
+              styleEntry.getStyle().paint(geom, viewport, g);
+      }
   }
 
   public void add(Style style)
@@ -68,13 +66,13 @@ public class StyleList implements Style
   {
   	int index = getEntryIndex(style);
   	if (index < 0) return null;
-  	return (StyleEntry) styleList.get(index);
+  	return styleList.get(index);
   }
   
   private int getEntryIndex(Style style)
   {
   	for (int i = 0; i < styleList.size(); i++) {
-  		StyleEntry entry = (StyleEntry) styleList.get(i);
+  		StyleEntry entry = styleList.get(i);
   		if (entry.getStyle() == style)
   			return i;
   	}
@@ -90,7 +88,7 @@ public class StyleList implements Style
 
 class StyleEntry
 {
-	private Style style;
+	private final Style style;
 	private boolean isEnabled = true;
 	private StyleList.StyleFilter filter = null;
 	

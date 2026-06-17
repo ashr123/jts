@@ -13,6 +13,7 @@
 package org.locationtech.jtstest.testbuilder.io.shapefile;
 
 import java.io.BufferedInputStream;
+import java.io.Closeable;
 import java.io.DataInputStream;
 import java.io.IOException;
 
@@ -20,9 +21,9 @@ import java.io.IOException;
  *  A class that gives most of the functionality of DataInputStream, but is endian aware.
  *  Uses a real java.io.DataInputStream to actually do the writing.
  */
-public class EndianDataInputStream {
-    private java.io.DataInputStream inputStream;
-    private byte[] workSpace = new byte[8]; //chars are 16 bits, so we always quash the 1st 8 bits
+public class EndianDataInputStream implements Closeable {
+    private final java.io.DataInputStream inputStream;
+    private final byte[] workSpace = new byte[8]; //chars are 16 bits, so we always quash the 1st 8 bits
 
     /** Creates new EndianDataInputStream */
     public EndianDataInputStream(java.io.InputStream in) {

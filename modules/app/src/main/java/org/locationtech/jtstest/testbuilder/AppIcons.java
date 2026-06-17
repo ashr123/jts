@@ -54,8 +54,11 @@ public class AppIcons {
   public final static ImageIcon ICON_POINT_B 	= load("Icon_Point_B.png");
   public final static ImageIcon ICON_POLYGON 	= load("Icon_Polygon.png");
   public final static ImageIcon ICON_POLYGON_B 	= load("Icon_Polygon_B.png");
-  
-  public static ImageIcon load(String filename) {
+
+    private AppIcons() {
+    }
+
+    public static ImageIcon load(String filename) {
     return new ImageIcon(AppIcons.class.getResource(filename));
   }
 }

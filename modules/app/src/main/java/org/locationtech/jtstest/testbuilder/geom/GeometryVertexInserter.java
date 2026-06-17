@@ -19,10 +19,13 @@ import org.locationtech.jts.geom.util.GeometryEditor;
 
 public class GeometryVertexInserter 
 {
-  public static Geometry insert(Geometry geom, 
-      LineString line, 
-      int segIndex,
-      Coordinate newVertex)
+    private GeometryVertexInserter() {
+    }
+
+    public static Geometry insert(Geometry geom,
+                                  LineString line,
+                                  int segIndex,
+                                  Coordinate newVertex)
   {
     GeometryEditor editor = new GeometryEditor();
     editor.setCopyUserData(true);
@@ -32,9 +35,9 @@ public class GeometryVertexInserter
   private static class InsertVertexOperation
     extends GeometryEditor.CoordinateOperation
   {
-    private LineString line;
-    private int segIndex;
-    private Coordinate newVertex;
+    private final LineString line;
+    private final int segIndex;
+    private final Coordinate newVertex;
     
     public InsertVertexOperation(LineString line, int segIndex, Coordinate newVertex)
     {

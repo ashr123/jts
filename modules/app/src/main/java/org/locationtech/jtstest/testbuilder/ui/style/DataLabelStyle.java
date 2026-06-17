@@ -76,19 +76,19 @@ public class DataLabelStyle implements Style
     }
   }
   
-  private void paintLabelPolygon(String label, Geometry geom, Viewport viewport, Graphics2D g2d) {
+  private static void paintLabelPolygon(String label, Geometry geom, Viewport viewport, Graphics2D g2d) {
     Coordinate origin = ConstrainedInteriorPoint.getCoordinate((Polygon) geom, viewport.getModelEnv());
     Point2D vp = viewport.toView(new Point2D.Double(origin.x, origin.y));
     GraphicsUtil.drawStringAlignCenter(g2d, label, (int) vp.getX(), (int) vp.getY()); 
   }
 
-  private void paintLabel(String label, Geometry geom, Viewport viewport, Graphics2D g2d) {
+  private static void paintLabel(String label, Geometry geom, Viewport viewport, Graphics2D g2d) {
     Coordinate origin = geom.getInteriorPoint().getCoordinate();
     Point2D vp = viewport.toView(new Point2D.Double(origin.x, origin.y));
     GraphicsUtil.drawStringAlignCenter(g2d, label, (int) vp.getX(), (int) vp.getY()); 
   }
 
-  private void paintLabelLine(String label, Geometry line, Viewport viewport, Graphics2D g2d) {
+  private static void paintLabelLine(String label, Geometry line, Viewport viewport, Graphics2D g2d) {
     LineSegment baseline = LineLabelBaseline.getBaseline((LineString) line, viewport.getModelEnv());
     if (baseline == null) return;
     

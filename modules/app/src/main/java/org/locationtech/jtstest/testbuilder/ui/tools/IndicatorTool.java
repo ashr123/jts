@@ -27,7 +27,7 @@ import org.locationtech.jtstest.testbuilder.AppConstants;
 
 public abstract class IndicatorTool extends BasicTool
 {
-  private Color bandColor = AppConstants.BAND_CLR;
+  private static final Color bandColor = AppConstants.BAND_CLR;
   
   private Point mousePoint;
   private Shape lastShapeDrawn;
@@ -93,13 +93,13 @@ public abstract class IndicatorTool extends BasicTool
     setIndicatorVisible(false);
   }
 
-  private void redrawShape(Graphics2D graphics) throws Exception {
+  private void redrawShape(Graphics2D graphics) {
     clearShape(graphics);
     drawShapeXOR(graphics);
     setIndicatorVisible(true);
   }
 
-  private void drawShapeXOR(Graphics2D g) throws Exception {
+  private void drawShapeXOR(Graphics2D g) {
     Shape newShape = getShape();
     String label = getLabel();
     drawShapeXOR(g, newShape, label, mousePoint);

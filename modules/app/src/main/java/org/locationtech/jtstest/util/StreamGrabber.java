@@ -17,8 +17,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class StreamGrabber implements Runnable {
-  private InputStream inputStream;
-  StringBuilder output = new StringBuilder();
+  private final InputStream inputStream;
+  final StringBuilder output = new StringBuilder();
 
   public StreamGrabber(InputStream inputStream) {
       this.inputStream = inputStream;
@@ -36,7 +36,7 @@ public class StreamGrabber implements Runnable {
     String line;
     try {
       while ((line = reader.readLine()) != null) {
-        output.append(line + "\n");
+        output.append(line).append("\n");
       }
     } catch (IOException e) {
       // TODO Auto-generated catch block

@@ -34,11 +34,11 @@ public class GridElement {
   private static final int MIN_VIEW_GRID_SIZE = 5;
 
 
-  private Viewport viewport;
+  private final Viewport viewport;
 
-  private DrawingGrid grid;
+  private final DrawingGrid grid;
   
-  private NumberFormat gridSizeFormat;
+  private final NumberFormat gridSizeFormat;
 
 
   public GridElement(Viewport viewport, DrawingGrid grid) {
@@ -57,7 +57,6 @@ public class GridElement {
     }
     // guards against crazy data causing problems
     catch (ArithmeticException ex) {
-      return;
     }
   }
 
@@ -67,7 +66,6 @@ public class GridElement {
     }
     // guards against crazy data causing problems
     catch (ArithmeticException ex) {
-      return;
     }
   }
 
@@ -345,9 +343,9 @@ public class GridElement {
     
     // scale bar is 10 units long
     int scaleMag = gridMagModel + 1;
-    double scaleSize = Math.pow(10, scaleMag);;
-    
-  	int viewHeight = (int) viewport.getHeightInView();
+    double scaleSize = Math.pow(10, scaleMag);
+
+      int viewHeight = (int) viewport.getHeightInView();
   	//int viewWidth = (int) viewport.getWidthInView();
   	 
     ///---- draw label

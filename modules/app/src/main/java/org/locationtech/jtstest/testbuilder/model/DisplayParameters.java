@@ -20,7 +20,10 @@ public class DisplayParameters {
   protected static boolean isMagnifyingTopology = false;
   protected static double topologyStretchSize = AppConstants.TOPO_STRETCH_VIEW_DIST;
 
-  public static boolean isShowingGrid() {
+    private DisplayParameters() {
+    }
+
+    public static boolean isShowingGrid() {
     return showingGrid;
   }
 
@@ -44,7 +47,7 @@ public class DisplayParameters {
     return topologyStretchSize;
   }
 
-  public static int MAX_DISPLAY_POINTS = 2000;
+  public static final int MAX_DISPLAY_POINTS = 2000;
 
 
 

@@ -38,8 +38,11 @@ import org.locationtech.jts.geom.util.GeometryEditor;
  */
 public class GeometryPartDeleter 
 {
-  public static Geometry deleteComponentsAndVertices(Geometry geom, 
-      Envelope env)
+    private GeometryPartDeleter() {
+    }
+
+    public static Geometry deleteComponentsAndVertices(Geometry geom,
+                                                       Envelope env)
   {
     return deleteComponentsAndVertices(geom, env, false);
   }
@@ -55,10 +58,9 @@ public class GeometryPartDeleter
     
     // otherwise, try and edit vertices
     Geometry gVert = deleteVertices(geom, env);
-    if (gVert != geom) return gVert;
+      return gVert;
 
     // no edits - return original
-    return geom;
   }
   
   public static Geometry deleteComponents(Geometry geom, Envelope env, boolean deleteIntersecting)
@@ -82,9 +84,9 @@ public class GeometryPartDeleter
   private static class BoxDeleteComponentOperation
     implements GeometryEditor.GeometryEditorOperation
   {
-    private Envelope env;
+    private final Envelope env;
     private boolean isEdited = false;
-    private boolean deleteIntersecting;
+    private final boolean deleteIntersecting;
     private PreparedGeometry envPrepGeom;
     
     public BoxDeleteComponentOperation(Envelope env)
@@ -135,7 +137,7 @@ public class GeometryPartDeleter
   private static class BoxDeleteVertexOperation
     extends GeometryEditor.CoordinateOperation
   {
-    private Envelope env;
+    private final Envelope env;
     private boolean isEdited = false;
     
     public BoxDeleteVertexOperation(Envelope env)
@@ -158,11 +160,11 @@ public class GeometryPartDeleter
       
       Coordinate[] newPts = new Coordinate[coords.length];
       int newIndex = 0;
-      for (int i = 0; i < coords.length; i++) {
-        if (! env.contains(coords[i])) {
-          newPts[newIndex++] = coords[i];
+        for (Coordinate coord : coords) {
+            if (!env.contains(coord)) {
+                newPts[newIndex++] = coord;
+            }
         }
-      }
       Coordinate[] nonNullPts = CoordinateArrays.removeNull(newPts);
       Coordinate[] finalPts = nonNullPts;
       
@@ -186,11 +188,11 @@ public class GeometryPartDeleter
     
     private boolean hasVertexInBox(Coordinate[] coords)
     {
-      for (int i = 0; i < coords.length; i++) {
-        if (env.contains(coords[i])) {
-          return true;
+        for (Coordinate coord : coords) {
+            if (env.contains(coord)) {
+                return true;
+            }
         }
-      }
       return false;
     }
   }

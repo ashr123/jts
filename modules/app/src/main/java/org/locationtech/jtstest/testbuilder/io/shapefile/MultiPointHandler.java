@@ -39,8 +39,8 @@ import org.locationtech.jts.geom.PrecisionModel;
  */
 public class MultiPointHandler  implements ShapeHandler  {
     int myShapeType= -1;
-    private PrecisionModel precisionModel = new PrecisionModel();
-    private GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
+    private final PrecisionModel precisionModel = new PrecisionModel();
+    private final GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
     
     /** Creates new MultiPointHandler */
     public MultiPointHandler() {
@@ -55,7 +55,7 @@ public class MultiPointHandler  implements ShapeHandler  {
         myShapeType = type;
     }
     
-    public Geometry read(EndianDataInputStream file,GeometryFactory geometryFactory,int contentLength) throws IOException,InvalidShapefileException{
+    public Geometry read(EndianDataInputStream file,GeometryFactory geometryFactory,int contentLength) throws IOException,InvalidShapefileException {
         //file.setLittleEndianMode(true);
 	
 		int actualReadWords = 0; //actual number of words read (word = 16bits)
@@ -141,42 +141,9 @@ public class MultiPointHandler  implements ShapeHandler  {
         return geometryFactory.createMultiPointFromCoords(coords);
     }
     
-    double[] zMinMax(Geometry g)
+    static double[] zMinMax(Geometry g)
     {
-        double zmin,zmax;
-        boolean validZFound = false;
-        Coordinate[] cs = g.getCoordinates();
-        double[] result = new double[2];
-        
-        zmin = Double.NaN;
-        zmax = Double.NaN;
-        double z;
-        
-        for (int t=0;t<cs.length; t++)
-        {
-            z= cs[t].getZ();
-            if (!(Double.isNaN( z ) ))
-            {
-                if (validZFound)
-                {
-                    if (z < zmin)
-                        zmin = z;
-                    if (z > zmax)
-                        zmax = z;
-                }
-                else
-                {
-                    validZFound = true;
-                    zmin =  z ;
-                    zmax =  z ;
-                }
-            }
-           
-        }
-        
-        result[0] = (zmin);
-        result[1] = (zmax);
-        return result;
+        return MultiLineHandler.zMinMax(g);
         
     }
     

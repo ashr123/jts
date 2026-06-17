@@ -37,8 +37,11 @@ public class CreateShapeFunctions {
 
   
 	private static final int DEFAULT_POINTSIZE = 100;
-	
-        public static Geometry fontGlyphSerif(Geometry g, String text)
+
+    private CreateShapeFunctions() {
+    }
+
+    public static Geometry fontGlyphSerif(Geometry g, String text)
         {
                 return fontGlyph(g, text, new Font(FontGlyphReader.FONT_SERIF, Font.PLAIN, DEFAULT_POINTSIZE));
         }
@@ -101,7 +104,7 @@ public class CreateShapeFunctions {
     double cellSizeX = env.getWidth() / nCellsOnSideX;
     double cellSizeY = env.getHeight() / nCellsOnSideY;
     
-    List geoms = new ArrayList(); 
+    List<Geometry> geoms = new ArrayList<>();
 
     for (int i = 0; i < nCellsOnSideX; i++) {
       for (int j = 0; j < nCellsOnSideY; j++) {
@@ -264,7 +267,7 @@ public class CreateShapeFunctions {
     Coordinate[] pts = ptsGeom.getCoordinates();
     Coordinate centre = centrePt.getCoordinate();
     
-    List<OrderedPoint> orderedPts = new ArrayList<OrderedPoint>();
+    List<OrderedPoint> orderedPts = new ArrayList<>();
     for (Coordinate p : pts) {
       double ang = Angle.angle(centre, p);
       orderedPts.add(new OrderedPoint(p, ang));
@@ -281,19 +284,18 @@ public class CreateShapeFunctions {
     return ptsGeom.getFactory().createPolygon(ring);
   }
   
-  private static class OrderedPoint implements Comparable {
-    Coordinate pt;
-    double index;
-    
+  private static class OrderedPoint implements Comparable<OrderedPoint> {
+    final Coordinate pt;
+    final double index;
+
     public OrderedPoint(Coordinate p, double index) {
       this.pt = p;
       this.index = index;
     }
-    
+
     @Override
-    public int compareTo(Object o) {
-      OrderedPoint other = (OrderedPoint) o;
-      return Double.compare(index,  other.index);
+    public int compareTo(OrderedPoint o) {
+      return Double.compare(index,  o.index);
     }
   }
   
@@ -402,7 +404,7 @@ public class CreateShapeFunctions {
     Coordinate[] pts = g.getCoordinates();
     int n = pts.length - 1;
     
-    List<Geometry> chords = new ArrayList<Geometry>();
+    List<Geometry> chords = new ArrayList<>();
     
     for (int i = 0; i < n; i++) {
       for (int j = i + 2; j < n; j++) {

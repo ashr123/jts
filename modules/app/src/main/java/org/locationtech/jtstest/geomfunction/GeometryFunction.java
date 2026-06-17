@@ -11,6 +11,8 @@
  */
 package org.locationtech.jtstest.geomfunction;
 
+import java.util.List;
+
 import org.locationtech.jts.geom.Geometry;
 
 /**
@@ -84,7 +86,7 @@ public interface GeometryFunction
 	 * @return the value computed by the function
 	 * 
 	 */
-	Object invoke(Geometry geom, Object[] args);
+	Object invoke(Geometry geom, List<Object> args);
 	
 	/**
 	 * Two functions are the same if they have the 

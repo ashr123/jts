@@ -12,8 +12,6 @@
 
 package org.locationtech.jtstest.function;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -26,13 +24,16 @@ import org.locationtech.jts.shape.fractal.MortonCode;
 
 public class SortingFunctions
 {
-  public static Geometry sortByLength(Geometry g) {
+    private SortingFunctions() {
+    }
+
+    public static Geometry sortByLength(Geometry g) {
     List<Geometry> geoms = components(g);
     // annotate geometries with length
     for (Geometry geom : geoms) {
       geom.setUserData(geom.getLength());
     }
-    Collections.sort(geoms, new UserDataDoubleComparator());
+    geoms.sort(new UserDataDoubleComparator());
     return g.getFactory().buildGeometry(geoms);
   }
   
@@ -43,7 +44,7 @@ public class SortingFunctions
     for (Geometry geom : geoms) {
       geom.setUserData(geom.getArea());
     }
-    Collections.sort(geoms, new UserDataDoubleComparator());
+    geoms.sort(new UserDataDoubleComparator());
     return g.getFactory().buildGeometry(geoms);
   }
   
@@ -54,7 +55,7 @@ public class SortingFunctions
     for (Geometry geom : geoms) {
       geom.setUserData(geom.getEnvelopeInternal().getMinX());
     }
-    Collections.sort(geoms, new UserDataDoubleComparator());
+    geoms.sort(new UserDataDoubleComparator());
     return g.getFactory().buildGeometry(geoms);
   }
   
@@ -65,17 +66,13 @@ public class SortingFunctions
     for (Geometry geom : geoms) {
       geom.setUserData(geom.getEnvelopeInternal().getMinY());
     }
-    Collections.sort(geoms, new UserDataDoubleComparator());
+    geoms.sort(new UserDataDoubleComparator());
     return g.getFactory().buildGeometry(geoms);
   }
   
   private static List<Geometry> components(Geometry g)
   {
-    List<Geometry> comp = new ArrayList<Geometry>();
-    for (int i = 0; i < g.getNumGeometries(); i++) {
-      comp.add(g.getGeometryN(i));
-    }
-    return comp;
+      return FunctionsUtil.elements(g);
   }
   
   public static Geometry sortByHilbertCode(Geometry g)
@@ -97,7 +94,7 @@ public class SortingFunctions
       geom.setUserData(code);
     }
     
-    Collections.sort(geoms, new UserDataIntComparator());
+    geoms.sort(new UserDataIntComparator());
     
     return g.getFactory().buildGeometry(geoms);
   }
@@ -121,7 +118,7 @@ public class SortingFunctions
       geom.setUserData(code);
     }
     
-    Collections.sort(geoms, new UserDataIntComparator());
+    geoms.sort(new UserDataIntComparator());
     
     return g.getFactory().buildGeometry(geoms);
   }

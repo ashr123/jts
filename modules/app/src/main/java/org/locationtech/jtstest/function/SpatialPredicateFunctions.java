@@ -15,7 +15,6 @@ import org.locationtech.jts.algorithm.BoundaryNodeRule;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.operation.relate.RelateOp;
 import org.locationtech.jts.operation.relateng.IntersectionMatrixPattern;
-import org.locationtech.jts.operation.relateng.RelateNG;
 
 /**
  * Implementations for spatial predicate functions.
@@ -25,7 +24,10 @@ import org.locationtech.jts.operation.relateng.RelateNG;
  */
 public class SpatialPredicateFunctions {
 
-  public static boolean intersects(Geometry a, Geometry b) {    return a.intersects(b);    }
+    private SpatialPredicateFunctions() {
+    }
+
+    public static boolean intersects(Geometry a, Geometry b) {    return a.intersects(b);    }
   public static boolean crosses(Geometry a, Geometry b) {    return a.crosses(b);    }
   public static boolean disjoint(Geometry a, Geometry b) {    return a.disjoint(b);    }
   public static boolean equals(Geometry a, Geometry b) {    return a.equals(b);    }

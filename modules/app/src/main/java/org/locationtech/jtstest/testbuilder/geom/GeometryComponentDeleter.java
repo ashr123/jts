@@ -25,7 +25,10 @@ import org.locationtech.jts.geom.util.GeometryEditor;
 public class GeometryComponentDeleter 
 {
 
-  public static Geometry deleteComponent(Geometry geom, Geometry component)
+    private GeometryComponentDeleter() {
+    }
+
+    public static Geometry deleteComponent(Geometry geom, Geometry component)
   {
     GeometryEditor editor = new GeometryEditor();
     DeleteComponentOperation compOp = new DeleteComponentOperation(component);
@@ -37,7 +40,7 @@ public class GeometryComponentDeleter
   private static class DeleteComponentOperation
     implements GeometryEditor.GeometryEditorOperation
   {
-    private Geometry component;
+    private final Geometry component;
     private boolean isEdited = false;
     
     public DeleteComponentOperation(Geometry component)

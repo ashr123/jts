@@ -73,27 +73,27 @@ public class GeometryEditPanel extends JPanel
 {	
   private TestBuilderModel tbModel;
   
-  private DrawingGrid grid = new DrawingGrid();
-  private GridElement gridElement;
-  private LegendElement legendElement;
-  private TitleElement titleElement;
+  private final DrawingGrid grid = new DrawingGrid();
+  private final GridElement gridElement;
+  private final LegendElement legendElement;
+  private final TitleElement titleElement;
 
-  boolean stateAddingPoints = false;
+  static final boolean stateAddingPoints = false;
 
   Coordinate markPoint;
   Point2D lastPt = new Point2D.Double();
 
   private Tool currentTool = null;  //PolygonTool.getInstance();
 
-  private Viewport viewport = new Viewport(this);
+  private final Viewport viewport = new Viewport(this);
 
-  private RenderManager renderMgr;
+  private final RenderManager renderMgr;
   //private OperationMonitorManager opMonitor;
   
   //----------------------------------------
-  BorderLayout borderLayout1 = new BorderLayout();
+  final BorderLayout borderLayout1 = new BorderLayout();
   
-  GeometryPopupMenu menu = new GeometryPopupMenu();
+  final GeometryPopupMenu menu = new GeometryPopupMenu();
 
   private ViewStyle viewStyle;
 
@@ -112,7 +112,7 @@ public class GeometryEditPanel extends JPanel
     //opMonitor = new OperationMonitorManager(this, viewport);
   }
 
-  void initUI() throws Exception {
+  void initUI() {
     this.addComponentListener(new java.awt.event.ComponentAdapter() {
 
       public void componentResized(ComponentEvent e) {
@@ -232,7 +232,7 @@ public class GeometryEditPanel extends JPanel
     markPoint = pt;
   }
 
-  public boolean isAddingPoints() {
+  public static boolean isAddingPoints() {
     return stateAddingPoints;
   }
 
@@ -287,33 +287,32 @@ public class GeometryEditPanel extends JPanel
     g.drawRect(0,0,width - 1, height - 1);
   }
   
-  private static int VERTEX_SIZE = AppConstants.VERTEX_SIZE + 1;
-  private static double VERTEX_SIZE_OVER_2 = VERTEX_SIZE / 2;
+  private static final int VERTEX_SIZE = AppConstants.VERTEX_SIZE + 1;
+  private static final double VERTEX_SIZE_OVER_2 = VERTEX_SIZE / 2;
   
-  private static int INNER_SIZE = VERTEX_SIZE  - 2;
-  private static double INNER_SIZE_OVER_2 = INNER_SIZE / 2;
+  private static final int INNER_SIZE = VERTEX_SIZE  - 2;
+  private static final double INNER_SIZE_OVER_2 = INNER_SIZE / 2;
   
-  private void drawHighlightedVertices(Graphics2D g, List coords, Color clr) {
+  private void drawHighlightedVertices(Graphics2D g, List<? extends Coordinate> coords, Color clr) {
     Rectangle2D rect = new Rectangle2D.Double();
-    for (int i = 0; i < coords.size(); i++) {
-      Coordinate pt = (Coordinate) coords.get(i);
-      Point2D p = viewport.toView(pt);
-      rect.setFrame(
-          p.getX() - VERTEX_SIZE_OVER_2,
-          p.getY() - VERTEX_SIZE_OVER_2, 
-          VERTEX_SIZE, 
-          VERTEX_SIZE);
-      g.setColor(clr);
-      g.fill(rect);
-      Rectangle2D rectInner = new Rectangle2D.Double(
-          p.getX() - INNER_SIZE_OVER_2,
-          p.getY() - INNER_SIZE_OVER_2, 
-          INNER_SIZE, 
-          INNER_SIZE);
-      g.setColor(AppConstants.VERTEX_HIGHLIGHT_CLR);
-      g.fill(rectInner);
+      for (Coordinate pt : coords) {
+          Point2D p = viewport.toView(pt);
+          rect.setFrame(
+                  p.getX() - VERTEX_SIZE_OVER_2,
+                  p.getY() - VERTEX_SIZE_OVER_2,
+                  VERTEX_SIZE,
+                  VERTEX_SIZE);
+          g.setColor(clr);
+          g.fill(rect);
+          Rectangle2D rectInner = new Rectangle2D.Double(
+                  p.getX() - INNER_SIZE_OVER_2,
+                  p.getY() - INNER_SIZE_OVER_2,
+                  INNER_SIZE,
+                  INNER_SIZE);
+          g.setColor(AppConstants.VERTEX_HIGHLIGHT_CLR);
+          g.fill(rectInner);
 
-    }
+      }
   }
   
   private void drawHighlightedVertex(Graphics2D g, Coordinate pt, Color clr) {
@@ -335,7 +334,7 @@ public class GeometryEditPanel extends JPanel
     g.fill(rectInner);
   }
   
-  private static double VERTEX_SHADOW_SIZE_OVER_2 = AppConstants.VERTEX_SHADOW_SIZE / 2;
+  private static final double VERTEX_SHADOW_SIZE_OVER_2 = AppConstants.VERTEX_SHADOW_SIZE / 2;
 
   private void drawVertexShadow(Graphics2D g, Coordinate pt, Color clr) {
     Ellipse2D rect = new Ellipse2D.Double();
@@ -385,14 +384,13 @@ public class GeometryEditPanel extends JPanel
     int boxMinX = centreX - boxWidth/2;
     int boxMaxX = centreX + boxWidth/2;
     int boxMinY = bottom - boxHgt;
-    int boxMaxY = bottom;
-    
-    int[] xpts = new int[] { 
+
+      int[] xpts = new int[] {
         boxMinX, centreX - arrowWidth/2, (int) markX, centreX + arrowWidth/2,
         boxMaxX, boxMaxX,   boxMinX };
     int[] ypts = new int[] {  
         boxMinY, boxMinY, (int) (markY + arrowOffset), boxMinY,
-        boxMinY, boxMaxY, boxMaxY };
+        boxMinY, bottom, bottom};
     
     Polygon poly = new Polygon(xpts, ypts, xpts.length);
     
@@ -404,7 +402,7 @@ public class GeometryEditPanel extends JPanel
 
     // draw mark point label
     g.setColor(Color.BLACK);
-    g.drawString(markLabel, centreX - strWidth/2, boxMaxY - labelOffsetY);
+    g.drawString(markLabel, centreX - strWidth/2, bottom - labelOffsetY);
 
   }
 
@@ -424,8 +422,8 @@ public class GeometryEditPanel extends JPanel
     		(float) viewWidth, (float) viewHeight));
     
     Area maskHole = new Area(new Rectangle2D.Float(
-    		(float) maskWidth, 
-    		(float) maskWidth, 
+            maskWidth,
+            maskWidth,
     		((float) viewWidth) - 2 * maskWidth, 
     		((float) viewHeight) - 2 * maskWidth));
     
@@ -729,14 +727,13 @@ public class GeometryEditPanel extends JPanel
         // respect layer visibility
         if (! layerList.getLayer(i).isEnabled()) continue;
         
-        List stretchedVerts = stretchView.getStretchedVertices(i);
+        List<Coordinate> stretchedVerts = stretchView.getStretchedVertices(i);
         if (stretchedVerts == null) continue;
-        for (int j = 0; j < stretchedVerts.size(); j++) {
-          Coordinate p = (Coordinate) stretchedVerts.get(j);
-          drawHighlightedVertex(g, p, 
-            i == 0 ? AppColors.GEOM_A_HIGHLIGHT_CLR :
-              AppColors.GEOM_B_HIGHLIGHT_CLR);
-        } 
+          for (Coordinate p : stretchedVerts) {
+              drawHighlightedVertex(g, p,
+                      i == 0 ? AppColors.GEOM_A_HIGHLIGHT_CLR :
+                              AppColors.GEOM_B_HIGHLIGHT_CLR);
+          }
       }
     }
     
@@ -744,12 +741,11 @@ public class GeometryEditPanel extends JPanel
     {
       if (stretchView == null) return;
       for (int i = 0; i < 2; i++) {
-        List stretchedVerts = stretchView.getStretchedVertices(i);
+        List<Coordinate> stretchedVerts = stretchView.getStretchedVertices(i);
         if (stretchedVerts == null) continue;
-        for (int j = 0; j < stretchedVerts.size(); j++) {
-          Coordinate p = (Coordinate) stretchedVerts.get(j);
-          drawVertexShadow(g, p, AppConstants.VERTEX_SHADOW_CLR);
-        }
+          for (Coordinate p : stretchedVerts) {
+              drawVertexShadow(g, p, AppConstants.VERTEX_SHADOW_CLR);
+          }
       }
     }
     
@@ -769,12 +765,11 @@ public class GeometryEditPanel extends JPanel
   
       // highlight mag vertices
       for (int i = 0; i < 2; i++) {
-        List stretchedVerts = stretchView.getStretchedVertices(i);
+        List<Coordinate> stretchedVerts = stretchView.getStretchedVertices(i);
         if (stretchedVerts == null) continue;
-        for (int j = 0; j < stretchedVerts.size(); j++) {
-          Coordinate p = (Coordinate) stretchedVerts.get(j);
-          drawVertexShadow(g, p, Color.WHITE);
-        }
+          for (Coordinate p : stretchedVerts) {
+              drawVertexShadow(g, p, Color.WHITE);
+          }
       }
     }
     
@@ -810,5 +805,3 @@ public class GeometryEditPanel extends JPanel
 
 
 }
-
-

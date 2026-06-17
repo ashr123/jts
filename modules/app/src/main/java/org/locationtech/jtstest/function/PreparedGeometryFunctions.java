@@ -23,9 +23,12 @@ import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
  */
 public class PreparedGeometryFunctions 
 {
-  private static PreparedGeometry createPG(Geometry g)
+    private PreparedGeometryFunctions() {
+    }
+
+    private static PreparedGeometry createPG(Geometry g)
   {
-    return (new PreparedGeometryFactory()).create(g);
+    return PreparedGeometryFactory.create(g);
   }
   
   public static boolean preparedIntersects(Geometry g1, Geometry g2)

@@ -24,7 +24,10 @@ import org.locationtech.jts.util.GeometricShapeFactory;
 
 public class JTSFunctions 
 {
-  public static String jtsVersion(Geometry g)
+    private JTSFunctions() {
+    }
+
+    public static String jtsVersion(Geometry g)
   {
     return JTSVersion.CURRENT_VERSION.toString();
   }
@@ -126,7 +129,7 @@ public class JTSFunctions
     gsf2.setCentre(new Coordinate(centreX, S_RADIUS));
     gsf2.setSize(2 * S_RADIUS);
     gsf2.setNumPoints(10);
-    LineString arcBottom = (LineString) gsf2.createArc(1.5 * Math.PI, Math.PI).reverse();
+    LineString arcBottom = gsf2.createArc(1.5 * Math.PI, Math.PI).reverse();
     
     CoordinateList coordList = new CoordinateList();
     coordList.add(top, false);

@@ -26,8 +26,11 @@ public class Palette {
   
   private static final float BRIGHT_RANGE = 0.1f;
   private static final float SAT_RANGE = 0.2f;
-  
-  public static HSBPalette customPalette(int paletteType, Color clrBase, int numHues) {
+
+    private Palette() {
+    }
+
+    public static HSBPalette customPalette(int paletteType, Color clrBase, int numHues) {
     
     float sat = ColorUtil.getSaturation(clrBase);
     float bright = ColorUtil.getBrightness(clrBase);
@@ -54,8 +57,7 @@ public class Palette {
 
   public static Color paletteColor(int i, HSBPalette pal, Color clrBase) {
     int alpha = clrBase.getAlpha();
-    Color clr = pal.color(i, alpha);
-    return clr;
+      return pal.color(i, alpha);
   }
 
 }

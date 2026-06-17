@@ -30,9 +30,9 @@ import org.locationtech.jtstest.util.ClassUtil;
  */
 public class RepeaterGeometryFunction implements GeometryFunction {
 
-  private GeometryFunction fun;
-  private int count;
-  private boolean hasRepeatableArg;
+  private final GeometryFunction fun;
+  private final int count;
+  private final boolean hasRepeatableArg;
 
   public RepeaterGeometryFunction(GeometryFunction fun, int count) {
     this.fun = fun;
@@ -80,17 +80,17 @@ public class RepeaterGeometryFunction implements GeometryFunction {
     return fun.isRequiredB();
   }
   
-  public Object invoke(Geometry geom, Object[] args) {
-    
+  public Object invoke(Geometry geom, List<Object> args) {
+
     if (! isRepeatable(fun)) {
       throw new IllegalArgumentException("Cannot repeat function whose argumnent is not a double");
     }
-    
+
     //TODO: handle repeating methods with integer arg
     int repeatArgIndex = repeatableArgIndex(fun);
     double argStart = 0;
-    if (repeatArgIndex < args.length)
-      argStart = ClassUtil.toDouble(args[repeatArgIndex]);
+    if (repeatArgIndex < args.size())
+      argStart = ClassUtil.toDouble(args.get(repeatArgIndex));
     return invokeRepeated(geom, args, argStart);
   }
 
@@ -104,9 +104,7 @@ public class RepeaterGeometryFunction implements GeometryFunction {
     if (paramType.length < repeatArgIndex + 1) return true;
     
     Class<?> type = paramType[repeatArgIndex];
-    if (! ClassUtil.isDouble(type)) return false;
-    
-    return true;
+      return ClassUtil.isDouble(type);
   }
 
   public static boolean hasRepeatableArg(GeometryFunction fun) {
@@ -121,8 +119,8 @@ public class RepeaterGeometryFunction implements GeometryFunction {
     return 0;
   }
   
-  private Object invokeRepeated(Geometry geom, Object[] args, double argStart) {
-    List<Geometry> results = new ArrayList<Geometry>();
+  private Object invokeRepeated(Geometry geom, List<Object> args, double argStart) {
+    List<Geometry> results = new ArrayList<>();
     int repeatArgIndex = repeatableArgIndex(fun);
     for (int i = 1; i <= count; i++) {
       double val = argStart * i;
@@ -137,11 +135,11 @@ public class RepeaterGeometryFunction implements GeometryFunction {
     return geom.getFactory().buildGeometry(results);
   }
 
-  private Object[] copyArgs(Object[] args, int replaceIndex, double val) {
-    Object[] newArgs = args.clone();
+  private static List<Object> copyArgs(List<Object> args, int replaceIndex, double val) {
+    List<Object> newArgs = new ArrayList<>(args);
     // only copy arg if there is a repeatable arg
-    if (newArgs.length > replaceIndex)
-      newArgs[replaceIndex] = val;
+    if (newArgs.size() > replaceIndex)
+      newArgs.set(replaceIndex, val);
     return newArgs;
   }
 

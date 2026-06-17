@@ -19,7 +19,7 @@ import java.awt.geom.Point2D;
  */
 public class DrawingGrid 
 {
-	public static int DEFAULT_GRID_SIZE = 10;
+	public static final int DEFAULT_GRID_SIZE = 10;
 
 	public static final int GRID_MAJOR_FACTOR = 1;
 	

@@ -12,7 +12,6 @@
 package org.locationtech.jtstest.function;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.geom.Coordinate;
@@ -21,7 +20,6 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.util.GeometryMapper;
-import org.locationtech.jts.geom.util.GeometryMapper.MapOp;
 import org.locationtech.jts.geom.util.LinearComponentExtracter;
 import org.locationtech.jts.noding.SegmentString;
 import org.locationtech.jts.operation.buffer.BufferCurveSetBuilder;
@@ -36,9 +34,12 @@ import org.locationtech.jtstest.geomfunction.Metadata;
 
 public class BufferFunctions {
 	
-	public static String bufferDescription = "Buffers a geometry by a distance";
-	
-	@Metadata(description="Buffer a geometry by a distance")
+	public static final String bufferDescription = "Buffers a geometry by a distance";
+
+    private BufferFunctions() {
+    }
+
+    @Metadata(description="Buffer a geometry by a distance")
   public static Geometry buffer(Geometry g, double distance)    {   return g.buffer(distance);  }
 
 	public static Geometry bufferWithParams(Geometry g, 
@@ -53,13 +54,13 @@ public class BufferFunctions {
 			Double mitreLimit)	
 	{
 	    double dist = 0;
-	    if (distance != null) dist = distance.doubleValue();
+	    if (distance != null) dist = distance;
 	    
 	    BufferParameters bufParams = new BufferParameters();
-	    if (quadrantSegments != null)	bufParams.setQuadrantSegments(quadrantSegments.intValue());
-	    if (capStyle != null)	bufParams.setEndCapStyle(capStyle.intValue());
-	    if (joinStyle != null) 	bufParams.setJoinStyle(joinStyle.intValue());
-	    if (mitreLimit != null) 	bufParams.setMitreLimit(mitreLimit.doubleValue());
+	    if (quadrantSegments != null)	bufParams.setQuadrantSegments(quadrantSegments);
+	    if (capStyle != null)	bufParams.setEndCapStyle(capStyle);
+	    if (joinStyle != null) 	bufParams.setJoinStyle(joinStyle);
+	    if (mitreLimit != null) 	bufParams.setMitreLimit(mitreLimit);
 	    
 	    return BufferOp.bufferOp(g, dist, bufParams);
 	}
@@ -69,10 +70,10 @@ public class BufferFunctions {
 			Double simplifyFactor)	
 	{
 	    double dist = 0;
-	    if (distance != null) dist = distance.doubleValue();
+	    if (distance != null) dist = distance;
 	    
 	    BufferParameters bufParams = new BufferParameters();
-	    if (simplifyFactor != null)	bufParams.setSimplifyFactor(simplifyFactor.doubleValue());
+	    if (simplifyFactor != null)	bufParams.setSimplifyFactor(simplifyFactor);
 	    
 	    return BufferOp.bufferOp(g, dist, bufParams);
 	}
@@ -94,13 +95,13 @@ public class BufferFunctions {
       Double mitreLimit)  	
 	{
     double dist = 0;
-    if (distance != null) dist = distance.doubleValue();
+    if (distance != null) dist = distance;
     
     BufferParameters bufParams = new BufferParameters();
-    if (quadrantSegments != null)	bufParams.setQuadrantSegments(quadrantSegments.intValue());
-    if (capStyle != null)	bufParams.setEndCapStyle(capStyle.intValue());
-    if (joinStyle != null) 	bufParams.setJoinStyle(joinStyle.intValue());
-    if (mitreLimit != null) 	bufParams.setMitreLimit(mitreLimit.doubleValue());
+    if (quadrantSegments != null)	bufParams.setQuadrantSegments(quadrantSegments);
+    if (capStyle != null)	bufParams.setEndCapStyle(capStyle);
+    if (joinStyle != null) 	bufParams.setJoinStyle(joinStyle);
+    if (mitreLimit != null) 	bufParams.setMitreLimit(mitreLimit);
     
     return buildCurveSet(g, dist, bufParams);
 	}
@@ -111,16 +112,14 @@ public class BufferFunctions {
     BufferCurveSetBuilder ocsb = new BufferCurveSetBuilder(g, dist, 
         g.getFactory().getPrecisionModel(),
         bufParams);
-    List curves = ocsb.getCurves();
-    
-    List lines = new ArrayList();
-    for (Iterator i = curves.iterator(); i.hasNext(); ) {
-    	SegmentString ss = (SegmentString) i.next();
-    	Coordinate[] pts = ss.getCoordinates();
-    	lines.add(g.getFactory().createLineString(pts));
-    }
-    Geometry curve = g.getFactory().buildGeometry(lines);
-    return curve;
+    List<SegmentString> curves = ocsb.getCurves();
+
+    List<LineString> lines = new ArrayList<>();
+      for (SegmentString ss : curves) {
+          Coordinate[] pts = ss.getCoordinates();
+          lines.add(g.getFactory().createLineString(pts));
+      }
+      return g.getFactory().buildGeometry(lines);
   }
 
 	public static Geometry bufferLineSimplifier(Geometry g, double distance)	
@@ -130,17 +129,15 @@ public class BufferFunctions {
 
   private static Geometry buildBufferLineSimplifiedSet(Geometry g, double distance)
   {
-    List simpLines = new ArrayList();
+    List<LineString> simpLines = new ArrayList<>();
 
-    List lines = new ArrayList();
+    List<LineString> lines = new ArrayList<>();
     LinearComponentExtracter.getLines(g, lines);
-    for (Iterator i = lines.iterator(); i.hasNext(); ) {
-    	LineString line = (LineString) i.next();
-    	Coordinate[] pts = line.getCoordinates();
-    	simpLines.add(g.getFactory().createLineString(BufferInputLineSimplifier.simplify(pts, distance)));
-    }
-    Geometry simpGeom = g.getFactory().buildGeometry(simpLines);
-    return simpGeom;
+      for (LineString line : lines) {
+          Coordinate[] pts = line.getCoordinates();
+          simpLines.add(g.getFactory().createLineString(BufferInputLineSimplifier.simplify(pts, distance)));
+      }
+      return g.getFactory().buildGeometry(simpLines);
   }
 
   public static Geometry bufferValidated(Geometry g, double distance)
@@ -167,8 +164,7 @@ public class BufferFunctions {
         geom.getFactory().getPrecisionModel(), bufParam
         );
     Coordinate[] pts = ocb.getLineCurve(geom.getCoordinates(), distance);
-    Geometry curve = geom.getFactory().createLineString(pts);
-    return curve;
+      return geom.getFactory().createLineString(pts);
   }
   
   public static Geometry singleSidedBuffer(Geometry geom, double distance) {
@@ -179,14 +175,7 @@ public class BufferFunctions {
   
   public static Geometry bufferEach(Geometry g, final double distance)
   {
-    return GeometryMapper.map(g, new MapOp() {
-
-      public Geometry map(Geometry g)
-      {
-        return g.buffer(distance);
-      }
-      
-    });
+    return GeometryMapper.map(g, g1 -> g1.buffer(distance));
   }
 
   public static Geometry bufferAndInverse(Geometry g, double distance) {

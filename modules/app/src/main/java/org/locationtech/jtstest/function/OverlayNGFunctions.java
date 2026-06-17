@@ -24,8 +24,11 @@ import org.locationtech.jts.operation.union.UnionStrategy;
 import org.locationtech.jtstest.geomfunction.Metadata;
 
 public class OverlayNGFunctions {
-  
-  public static Geometry difference(Geometry a, Geometry b) {
+
+    private OverlayNGFunctions() {
+    }
+
+    public static Geometry difference(Geometry a, Geometry b) {
     return OverlayNG.overlay(a, b, DIFFERENCE );
   }
 

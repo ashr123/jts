@@ -50,7 +50,7 @@ public class TintBandStyle implements Style
     GeometryPainter.paint(band, viewport, g2d, null, TINT_BAND_SHADE);
   }
   
-  private Geometry computeBand(Polygon poly, double dist) {
+  private static Geometry computeBand(Polygon poly, double dist) {
     try {
       Geometry insideBuffer = poly.buffer(-dist);
       return OverlayNGRobust.overlay(poly, insideBuffer, OverlayNG.DIFFERENCE);

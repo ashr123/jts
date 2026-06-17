@@ -100,6 +100,6 @@ public class AppStrings {
   public static final String TIP_SELECT_ELEMENTS = "Select Elements";
 
 
-
-
+    private AppStrings() {
+    }
 }

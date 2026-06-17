@@ -22,7 +22,10 @@ import org.locationtech.jts.operation.distance.IndexedFacetDistance;
 import org.locationtech.jtstest.geomfunction.Metadata;
 
 public class DistanceFunctions {
-  public static double distance(Geometry a, Geometry b) {
+    private DistanceFunctions() {
+    }
+
+    public static double distance(Geometry a, Geometry b) {
     return a.distance(b);
   }
 

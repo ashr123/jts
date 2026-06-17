@@ -24,7 +24,6 @@ import org.locationtech.jtstest.command.Option;
 import org.locationtech.jtstest.command.OptionSpec;
 import org.locationtech.jtstest.command.ParseException;
 import org.locationtech.jtstest.geomfunction.GeometryFunctionRegistry;
-import org.locationtech.jtstest.testbuilder.controller.JTSTestBuilderController;
 import org.locationtech.jtstest.testbuilder.model.TestBuilderModel;
 
 
@@ -45,15 +44,10 @@ import org.locationtech.jtstest.testbuilder.model.TestBuilderModel;
 public class JTSTestBuilder
 {
   private static final String PROP_SWING_DEFAULTLAF = "swing.defaultlaf";
-
-  private static final JTSTestBuilderController CONTROLLER = new JTSTestBuilderController();
   
   public static JTSTestBuilder instance()
   {
   	return app;
-  }
-  public static JTSTestBuilderController controller() {
-    return CONTROLLER;
   }
   public static JTSTestBuilderFrame frame() {
     return JTSTestBuilderFrame.instance();
@@ -61,7 +55,7 @@ public class JTSTestBuilder
   
   public static TestBuilderModel model() { return instance().tbModel; }
 
-  private static GeometryFunctionRegistry funcRegistry = GeometryFunctionRegistry.createTestBuilderRegistry();
+  private static final GeometryFunctionRegistry funcRegistry = GeometryFunctionRegistry.createTestBuilderRegistry();
   private static CommandLine commandLine = createCmdLine();
   public static JTSTestBuilder app;
 
@@ -85,15 +79,15 @@ public class JTSTestBuilder
     return model().getGeometryFactory();
   }
   
-  private TestBuilderModel tbModel = new TestBuilderModel();
+  private final TestBuilderModel tbModel = new TestBuilderModel();
   
-  boolean packFrame = false;
+  static final boolean packFrame = false;
 
   /**Construct the application*/
   public JTSTestBuilder() {
   }
   
-  private void initFrame()
+  private static void initFrame()
   {
     JTSTestBuilderFrame frame = new JTSTestBuilderFrame();
     frame.setModel(model());
@@ -128,7 +122,7 @@ public class JTSTestBuilder
     	readArgs(args);
     	setLookAndFeel();
       app = new JTSTestBuilder();
-      app.initFrame();
+      JTSTestBuilder.initFrame();
       
     } catch (Exception e) {
       e.printStackTrace();
@@ -149,19 +143,16 @@ public class JTSTestBuilder
     /**
      * Invoke on Swing thread to pass Java security requirements
      */
-    javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
-      public void run()
-      {
-        try {
-          String laf = System.getProperty(PROP_SWING_DEFAULTLAF);
-          if (laf == null) {
-            laf = UIManager.getSystemLookAndFeelClassName();
-          }
-          javax.swing.UIManager.setLookAndFeel(laf);
+    javax.swing.SwingUtilities.invokeAndWait((Runnable) () -> {
+      try {
+        String laf = System.getProperty(PROP_SWING_DEFAULTLAF);
+        if (laf == null) {
+          laf = UIManager.getSystemLookAndFeelClassName();
         }
-        catch (Exception e) {
-          e.printStackTrace();
-        }
+        UIManager.setLookAndFeel(laf);
+      }
+      catch (Exception e) {
+        e.printStackTrace();
       }
     });
   }
@@ -172,8 +163,7 @@ public class JTSTestBuilder
     return commandLine;
   }
   
-  private static void readArgs(String[] args) throws ParseException,
-			ClassNotFoundException {
+  private static void readArgs(String[] args) throws ParseException {
 		commandLine.parse(args);
 
 		if (commandLine.hasOption(CommandOptions.GEOMFUNC)) {

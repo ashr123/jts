@@ -28,12 +28,12 @@ import org.locationtech.jtstest.testbuilder.ui.SwingWorker;
 
 public class RenderManager 
 {
-	private GeometryEditPanel panel;
+	private final GeometryEditPanel panel;
   private RendererSwingWorker worker = null;
 	private Image image = null;
 	private boolean isDirty = true;
 	
-	private Timer repaintTimer = new Timer(100, new ActionListener() 
+	private final Timer repaintTimer = new Timer(100, new ActionListener()
 	{
 		public void actionPerformed(ActionEvent e) {
 			if (worker.isRendering()) {
@@ -94,7 +94,7 @@ public class RenderManager
 		image = createPanelImage(panel);
 	}
 	
-  private Image createPanelImage(JPanel panel) {
+  private static Image createPanelImage(JPanel panel) {
     return new BufferedImage(panel.getWidth(), panel.getHeight(),
         BufferedImage.TYPE_INT_ARGB);
   }
@@ -128,7 +128,7 @@ class RendererSwingWorker extends SwingWorker
 {
 	private Image image = null;
 
-  private Renderer renderer;
+  private final Renderer renderer;
 	private boolean isRendering = true;
 	
 	public RendererSwingWorker(Renderer renderable, Image image)

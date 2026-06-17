@@ -30,7 +30,10 @@ import org.locationtech.jtstest.geomfunction.Metadata;
 
 public class CreateRandomShapeFunctions {
 
-  public static Geometry randomPointsInGrid(Geometry g, int nPts) {
+    private CreateRandomShapeFunctions() {
+    }
+
+    public static Geometry randomPointsInGrid(Geometry g, int nPts) {
   	RandomPointsInGridBuilder shapeBuilder = new RandomPointsInGridBuilder(FunctionsUtil.getFactoryOrDefault(g));
   	shapeBuilder.setExtent(FunctionsUtil.getEnvelopeOrDefault(g));
   	shapeBuilder.setNumPoints(nPts);
@@ -76,7 +79,7 @@ public class CreateRandomShapeFunctions {
     Coordinate tri1 = gpts[1];
     Coordinate tri2 = gpts[2];
     
-    List pts = new ArrayList();
+    List<Geometry> pts = new ArrayList<>();
 
     for (int i = 0; i < nPts; i++) {
       pts.add(geomFact.createPoint(randomPointInTriangle(tri0, tri1, tri2)));
@@ -112,7 +115,7 @@ public class CreateRandomShapeFunctions {
     double centreX = env.getMinX() + xLen/2;
     double centreY = env.getMinY() + yLen/2;
     
-    List pts = new ArrayList();
+    List<Geometry> pts = new ArrayList<>();
 
     for (int i = 0; i < nPts; i++) {
       double rand = Math.random();
@@ -229,7 +232,7 @@ public class CreateRandomShapeFunctions {
     double xLen = env.getWidth();
     double yLen = env.getHeight();
 
-    List lines = new ArrayList();
+    List<Geometry> lines = new ArrayList<>();
 
     for (int i = 0; i < nPts; i++) {
       double x0 = env.getMinX() + xLen * Math.random();
@@ -251,7 +254,7 @@ public class CreateRandomShapeFunctions {
     double xLen = env.getWidth() / nCell;
     double yLen = env.getHeight() / nCell;
 
-    List lines = new ArrayList();
+    List<Geometry> lines = new ArrayList<>();
 
     for (int i = 0; i < nCell; i++) {
       for (int j = 0; j < nCell; j++) {
@@ -272,7 +275,7 @@ public class CreateRandomShapeFunctions {
     double xLen = env.getWidth();
     double yLen = env.getHeight();
 
-    List lines = new ArrayList();
+    List<Geometry> lines = new ArrayList<>();
 
     for (int i = 0; i < nPts; i++) {
       double x0 = env.getMinX() + xLen * Math.random();
@@ -382,7 +385,7 @@ public class CreateRandomShapeFunctions {
     int side = (int) Math.max(env.getHeight(), env.getWidth());
     Coordinate centre = env.centre();
     
-    List<Geometry> tiles = new ArrayList<Geometry>();
+    List<Geometry> tiles = new ArrayList<>();
     for (int i = 0; i < nSide; i++) {
       for (int j = 0; j < nSide; j++) {
         

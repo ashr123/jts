@@ -19,9 +19,9 @@ import org.locationtech.jts.geom.GeometryFactory;
 
 public class SpreaderGeometryFunction implements GeometryFunction {
 
-  private GeometryFunction fun;
-  private boolean isEachA;
-  private boolean isEachB;
+  private final GeometryFunction fun;
+  private final boolean isEachA;
+  private final boolean isEachB;
 
   public SpreaderGeometryFunction(GeometryFunction fun, boolean eachA, boolean eachB) {
     this.fun = fun;
@@ -66,8 +66,8 @@ public class SpreaderGeometryFunction implements GeometryFunction {
   public boolean isRequiredB() {
     return fun.isRequiredB();
   }
-  public Object invoke(Geometry geom, Object[] args) {
-    List<Geometry> result = new ArrayList<Geometry>();
+  public Object invoke(Geometry geom, List<Object> args) {
+    List<Geometry> result = new ArrayList<>();
     if (isEachA) {
       invokeEachA(geom, args, result);
     }
@@ -77,7 +77,7 @@ public class SpreaderGeometryFunction implements GeometryFunction {
     return createResult(result, geom.getFactory());
   }
   
-  private Object createResult(List<Geometry> result, GeometryFactory geometryFactory) {
+  private static Object createResult(List<Geometry> result, GeometryFactory geometryFactory) {
     if (result.size() == 1) {
       return result.get(0);
     }
@@ -85,7 +85,7 @@ public class SpreaderGeometryFunction implements GeometryFunction {
     return geometryFactory.createGeometryCollection(resultGeoms);
   }
 
-  private void invokeEachA(Geometry geom, Object[] args, List<Geometry> result) {
+  private void invokeEachA(Geometry geom, List<Object> args, List<Geometry> result) {
     int nElt = geom.getNumGeometries();
     for (int i = 0; i < nElt; i++) {
       Geometry geomN = geom.getGeometryN(i);
@@ -93,7 +93,7 @@ public class SpreaderGeometryFunction implements GeometryFunction {
     }
   }
 
-  private void invokeB(Geometry geom, Object[] args, List<Geometry> result) {
+  private void invokeB(Geometry geom, List<Object> args, List<Geometry> result) {
     if (hasBGeom(args) && isEachB) {
       invokeEachB(geom, args, result);
       return;
@@ -101,23 +101,23 @@ public class SpreaderGeometryFunction implements GeometryFunction {
     invokeFun(geom, args, result);
   }
 
-  private static boolean hasBGeom(Object[] args) {
-    if (args.length <= 0) return false;
-    return args[0] instanceof Geometry;
+  private static boolean hasBGeom(List<Object> args) {
+    if (args.isEmpty()) return false;
+    return args.get(0) instanceof Geometry;
   }
 
-  private void invokeEachB(Geometry geom, Object[] args, List<Geometry> result) {
-    Object[] argsCopy = args.clone();
-    Geometry geomB = (Geometry) args[0];
+  private void invokeEachB(Geometry geom, List<Object> args, List<Geometry> result) {
+    List<Object> argsCopy = new ArrayList<>(args);
+    Geometry geomB = (Geometry) args.get(0);
     int nElt = geomB.getNumGeometries();
     for (int i = 0; i < nElt; i++) {
       Geometry geomBN = geomB.getGeometryN(i);
-      argsCopy[0] = geomBN;
+      argsCopy.set(0, geomBN);
       invokeFun(geom, argsCopy, result);
     }
   }
 
-  private void invokeFun(Geometry geom, Object[] args, List<Geometry> result) {
+  private void invokeFun(Geometry geom, List<Object> args, List<Geometry> result) {
     Geometry resultGeom = (Geometry) fun.invoke(geom, args);
     // don't keep null / empty geoms
     if (resultGeom == null || resultGeom.isEmpty()) return;
@@ -126,7 +126,7 @@ public class SpreaderGeometryFunction implements GeometryFunction {
   }
 
   /*
-  public Object OLDinvoke(Geometry geom, Object[] args) {
+  public Object OLDinvoke(Geometry geom, List<Object> args) {
     return GeometryMapper.map(geom, new MapOp() {
       public Geometry map(Geometry g)
       {

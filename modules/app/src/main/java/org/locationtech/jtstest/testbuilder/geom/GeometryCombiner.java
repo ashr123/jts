@@ -29,7 +29,7 @@ import org.locationtech.jts.geom.Polygonal;
 
 public class GeometryCombiner 
 {
-  private GeometryFactory geomFactory;
+  private final GeometryFactory geomFactory;
   
   public GeometryCombiner(GeometryFactory geomFactory) {
     this.geomFactory = geomFactory;
@@ -94,11 +94,11 @@ public class GeometryCombiner
   
   public Geometry combine(Geometry orig, Geometry geom)
   {
-    List origList = extractElements(orig, true);
-    List geomList = extractElements(geom, true);
+    List<Geometry> origList = extractElements(orig, true);
+    List<Geometry> geomList = extractElements(geom, true);
     origList.addAll(geomList);
     
-    if (origList.size() == 0) {
+    if (origList.isEmpty()) {
       // return a clone of the orig geometry
       return (Geometry) orig.clone();
     }
@@ -106,9 +106,9 @@ public class GeometryCombiner
     return geomFactory.buildGeometry(origList);
   }
   
-  public static List extractElements(Geometry geom, boolean skipEmpty)
+  public static List<Geometry> extractElements(Geometry geom, boolean skipEmpty)
   {
-    List elem = new ArrayList();
+    List<Geometry> elem = new ArrayList<>();
     if (geom == null)
       return elem;
     
@@ -123,7 +123,7 @@ public class GeometryCombiner
   
   public static Geometry replace(Geometry parent, Geometry original, Geometry replacement)
   {
-    List elem = extractElements(parent, false);
+    List<Geometry> elem = extractElements(parent, false);
     Collections.replaceAll(elem, original, replacement);
     return parent.getFactory().buildGeometry(elem);
   }

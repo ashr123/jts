@@ -34,7 +34,7 @@ public class SVGTestWriter {
   }
 
 
-    private SVGWriter svgWriter = new SVGWriter();
+    private final SVGWriter svgWriter = new SVGWriter();
 
     public SVGTestWriter() {}
 
@@ -58,12 +58,12 @@ public class SVGTestWriter {
         
         text.append("<?xml version='1.0' standalone='no'?>\n");
         text.append("<!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'>\n");
-        text.append("<svg " + wh + " viewBox='" + viewBox + "'  version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>\n");
+        text.append("<svg ").append(wh).append(" viewBox='").append(viewBox).append("'  version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>\n");
         String nameStr =name == null ? "" : name;
         String descStr = description == null ? "" : description;
         //text.append("          \"" + name + "\",\n");
-        text.append("  <desc>" + descStr + "</desc>\n");
-        text.append("  <g transform='" + trans + "'>\n\n");
+        text.append("  <desc>").append(descStr).append("</desc>\n");
+        text.append("  <g transform='").append(trans).append("'>\n\n");
 
         writeGeometryElement(ga, "#bbbbff", "#0000ff", text);
         writeGeometryElement(gb, "#ffbbbb", "#ff0000", text);

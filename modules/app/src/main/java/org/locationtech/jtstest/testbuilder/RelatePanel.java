@@ -37,77 +37,77 @@ import org.locationtech.jtstest.testbuilder.model.TestCaseEdit;
  */
 public class RelatePanel extends JPanel {
   TestCaseEdit testCase;
-  StringBuffer buf = new StringBuffer("X");
+  final StringBuffer buf = new StringBuffer("X");
   // buffer to turn chars into strings
   //-------------------------------------
   Border border1;
   Border border2;
-  JPanel jPanel2 = new JPanel();
-  JLabel lblCrosses = new JLabel();
-  JLabel equalsAB = new JLabel();
-  JLabel lblWithin = new JLabel();
-  JLabel containsBA = new JLabel();
-  JLabel lblTouches = new JLabel();
-  JLabel containsAB = new JLabel();
-  GridBagLayout gridBagLayout1 = new GridBagLayout();
-  JLabel equalsBA = new JLabel();
-  JLabel lblPredBA = new JLabel();
-  JLabel lblPredAB = new JLabel();
-  JPanel predicates = new JPanel();
-  JLabel lblIntersects = new JLabel();
-  JLabel lblDisjoint = new JLabel();
-  JLabel lblOverlaps = new JLabel();
-  JLabel lblEquals = new JLabel();
-  JLabel lblContains = new JLabel();
-  JLabel disjointAB = new JLabel();
-  JLabel disjointBA = new JLabel();
-  JLabel intersectsAB = new JLabel();
-  JLabel intersectsBA = new JLabel();
-  JLabel touchesAB = new JLabel();
-  JLabel touchesBA = new JLabel();
-  JLabel crossesAB = new JLabel();
-  JLabel crossesBA = new JLabel();
-  JLabel withinAB = new JLabel();
-  JLabel withinBA = new JLabel();
-  JLabel overlapsAB = new JLabel();
-  JLabel overlapsBA = new JLabel();
-  GridBagLayout gridBagLayout3 = new GridBagLayout();
-  JPanel jPanel3 = new JPanel();
-  JLabel relateIE = new JLabel();
-  JLabel relateIB = new JLabel();
-  GridBagLayout gridBagLayout2 = new GridBagLayout();
-  JPanel jPanel1 = new JPanel();
-  JLabel jLabel14 = new JLabel();
-  JLabel jLabel13 = new JLabel();
-  JLabel jLabel12 = new JLabel();
-  JLabel jLabel11 = new JLabel();
-  JLabel jLabel10 = new JLabel();
-  JTextField txtAB = new JTextField();
-  JLabel jLabel23 = new JLabel();
-  JLabel relateBI = new JLabel();
-  JLabel jLabel22 = new JLabel();
-  JLabel relateEI = new JLabel();
-  JLabel jLabel21 = new JLabel();
-  JLabel jLabel20 = new JLabel();
-  JLabel relateBE = new JLabel();
-  JLabel relateEE = new JLabel();
-  JTextField txtBA = new JTextField();
-  JLabel relateBB = new JLabel();
-  JLabel jLabel9 = new JLabel();
-  JLabel relateEB = new JLabel();
-  JLabel jLabel8 = new JLabel();
-  JLabel jLabel7 = new JLabel();
-  JLabel relateII = new JLabel();
+  final JPanel jPanel2 = new JPanel();
+  final JLabel lblCrosses = new JLabel();
+  final JLabel equalsAB = new JLabel();
+  final JLabel lblWithin = new JLabel();
+  final JLabel containsBA = new JLabel();
+  final JLabel lblTouches = new JLabel();
+  final JLabel containsAB = new JLabel();
+  final GridBagLayout gridBagLayout1 = new GridBagLayout();
+  final JLabel equalsBA = new JLabel();
+  final JLabel lblPredBA = new JLabel();
+  final JLabel lblPredAB = new JLabel();
+  final JPanel predicates = new JPanel();
+  final JLabel lblIntersects = new JLabel();
+  final JLabel lblDisjoint = new JLabel();
+  final JLabel lblOverlaps = new JLabel();
+  final JLabel lblEquals = new JLabel();
+  final JLabel lblContains = new JLabel();
+  final JLabel disjointAB = new JLabel();
+  final JLabel disjointBA = new JLabel();
+  final JLabel intersectsAB = new JLabel();
+  final JLabel intersectsBA = new JLabel();
+  final JLabel touchesAB = new JLabel();
+  final JLabel touchesBA = new JLabel();
+  final JLabel crossesAB = new JLabel();
+  final JLabel crossesBA = new JLabel();
+  final JLabel withinAB = new JLabel();
+  final JLabel withinBA = new JLabel();
+  final JLabel overlapsAB = new JLabel();
+  final JLabel overlapsBA = new JLabel();
+  final GridBagLayout gridBagLayout3 = new GridBagLayout();
+  final JPanel jPanel3 = new JPanel();
+  final JLabel relateIE = new JLabel();
+  final JLabel relateIB = new JLabel();
+  final GridBagLayout gridBagLayout2 = new GridBagLayout();
+  final JPanel jPanel1 = new JPanel();
+  final JLabel jLabel14 = new JLabel();
+  final JLabel jLabel13 = new JLabel();
+  final JLabel jLabel12 = new JLabel();
+  final JLabel jLabel11 = new JLabel();
+  final JLabel jLabel10 = new JLabel();
+  final JTextField txtAB = new JTextField();
+  final JLabel jLabel23 = new JLabel();
+  final JLabel relateBI = new JLabel();
+  final JLabel jLabel22 = new JLabel();
+  final JLabel relateEI = new JLabel();
+  final JLabel jLabel21 = new JLabel();
+  final JLabel jLabel20 = new JLabel();
+  final JLabel relateBE = new JLabel();
+  final JLabel relateEE = new JLabel();
+  final JTextField txtBA = new JTextField();
+  final JLabel relateBB = new JLabel();
+  final JLabel jLabel9 = new JLabel();
+  final JLabel relateEB = new JLabel();
+  final JLabel jLabel8 = new JLabel();
+  final JLabel jLabel7 = new JLabel();
+  final JLabel relateII = new JLabel();
   TitledBorder titledBorder1;
-  JLabel tickCrossLabel = new JLabel();
-  GridBagLayout gridBagLayout4 = new GridBagLayout();
-  JPanel matrixPanel = new JPanel();
-  GridBagLayout gridBagLayout5 = new GridBagLayout();
+  final JLabel tickCrossLabel = new JLabel();
+  final GridBagLayout gridBagLayout4 = new GridBagLayout();
+  final JPanel matrixPanel = new JPanel();
+  final GridBagLayout gridBagLayout5 = new GridBagLayout();
   Border border3;
   private final ImageIcon tickIcon = new ImageIcon(this.getClass().getResource("tickShaded.gif"));
   private final ImageIcon crossIcon = new ImageIcon(this.getClass().getResource("crossShaded.gif"));
   private final ImageIcon clearIcon = new ImageIcon(this.getClass().getResource("clear.gif"));
-  private DocumentListener expectedImDocumentListener =
+  private final DocumentListener expectedImDocumentListener =
     new DocumentListener() {
 
       public void insertUpdate(DocumentEvent e) {
@@ -122,12 +122,12 @@ public class RelatePanel extends JPanel {
         expectedIntersectionMatrixChanged();
       }
     };
-  private JLabel coversAB = new JLabel();
-  private JLabel coversBA = new JLabel();
-  private JLabel lblCoveredBy = new JLabel();
-  private JLabel lblCovers = new JLabel();
-  private JLabel coveredByAB = new JLabel();
-  private JLabel coveredByBA = new JLabel();
+  private final JLabel coversAB = new JLabel();
+  private final JLabel coversBA = new JLabel();
+  private final JLabel lblCoveredBy = new JLabel();
+  private final JLabel lblCovers = new JLabel();
+  private final JLabel coveredByAB = new JLabel();
+  private final JLabel coveredByBA = new JLabel();
 
   public RelatePanel() {
     try {
@@ -232,17 +232,17 @@ public class RelatePanel extends JPanel {
     lbl.setText(buf.toString());
   }
 
-  private static Color CLR_TRUE = Color.GREEN.darker().darker();
-  private static Color CLR_FALSE = Color.RED.darker();
+  private static final Color CLR_TRUE = Color.GREEN.darker().darker();
+  private static final Color CLR_FALSE = Color.RED.darker();
   
-  void setPredicate(JLabel lbl, boolean b) {
+  static void setPredicate(JLabel lbl, boolean b) {
     String val = b ? "T" : "F";
     lbl.setText(val);
     lbl.setForeground(b ? CLR_TRUE : CLR_FALSE );
     lbl.setBackground(Color.WHITE);
   }
 
-  void jbInit() throws Exception {
+  void jbInit() {
     border1 = new TitledBorder(BorderFactory.createLineBorder(Color.gray, 1),
         "Binary Predicates");
     border2 = new TitledBorder(BorderFactory.createLineBorder(Color.gray, 1),
@@ -465,7 +465,7 @@ public class RelatePanel extends JPanel {
         new Insets(0, 0, 0, 0), 0, 0));
   }
   
-  private void setDivider(JLabel lbl) {
+  private static void setDivider(JLabel lbl) {
     lbl.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.GRAY));
   }
 
@@ -478,5 +478,3 @@ public class RelatePanel extends JPanel {
     */
   }
 }
-
-

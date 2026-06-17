@@ -35,7 +35,7 @@ public class StretchedVertex
 {
 	// TODO: also provide information about the segments around the facet the vertex is near to, to allow smarter adjustment 
 	
-	private Coordinate vertexPt;
+	private final Coordinate vertexPt;
 	private Coordinate nearPt = null;
   private Coordinate[] nearPts = null;
   private int nearIndex = -1;
@@ -119,8 +119,7 @@ public class StretchedVertex
 		// TODO: make this robust!
 		double len = seg.getLength();
 		double frac = (dist + len) / len;
-		Coordinate strPt = seg.pointAlong(frac);
-		return strPt;
+        return seg.pointAlong(frac);
 	}
 	
 	private Coordinate displaceFromSeg(LineSegment nearSeg, double dist)
@@ -236,7 +235,7 @@ public class StretchedVertex
     return cornerDisplacement.translate(vertexPt);
   }
 
-  private boolean isInsideCorner(Coordinate queryPt, Coordinate base, Coordinate p1, Coordinate p2)
+  private static boolean isInsideCorner(Coordinate queryPt, Coordinate base, Coordinate p1, Coordinate p2)
   {
       return Orientation.index(base, p1, queryPt) == Orientation.CLOCKWISE
               && Orientation.index(base, p2, queryPt) == Orientation.COUNTERCLOCKWISE;
@@ -248,9 +247,7 @@ public class StretchedVertex
   {
   	double dist = Distance.pointToSegment(p, p1, p2);
   	double len = p1.distance(p2);
-  	if (dist/len < POINT_LINE_FLATNESS_RATIO)
-  		return true;
-  	return false;
+      return dist / len < POINT_LINE_FLATNESS_RATIO;
   }
   
   /**
@@ -323,8 +320,7 @@ public class StretchedVertex
   {
   	Vector2D u1 = Vector2D.create(p0, p1).normalize();
   	Vector2D u2 = Vector2D.create(p0, p2).normalize();
-  	Vector2D offset = u1.add(u2).normalize();
-    return offset;
+      return u1.add(u2).normalize();
   }
   
   private Coordinate displaceFromFlatCorner(Coordinate nearPt, Coordinate p1, Coordinate p2, double dist)

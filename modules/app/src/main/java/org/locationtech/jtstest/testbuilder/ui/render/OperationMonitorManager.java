@@ -14,8 +14,6 @@ package org.locationtech.jtstest.testbuilder.ui.render;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -27,35 +25,25 @@ import org.locationtech.jtstest.testbuilder.ui.Viewport;
 
 public class OperationMonitorManager 
 {
-  public static Geometry indicator = null; 
+  public static final Geometry indicator = new GeometryFactory()
+          .createLineString(new Coordinate[]{
+                  new Coordinate(0, 0), new Coordinate(100, 10)
+          });
   
-  // testing only
-  static {
-    GeometryFactory geomFact = new GeometryFactory();
-    indicator = geomFact.createLineString(new Coordinate[]{
-      new Coordinate(0,0), new Coordinate(100, 10)
-    });
-  }
-  
-  private JPanel panel;
-  private Viewport viewport;
-  
-  private Timer repaintTimer = new Timer(50, new ActionListener() 
-      {
-        public void actionPerformed(ActionEvent e) {
-          if (indicator != null) {
-            paint();
-            return;
-          }
-        }
-      });
+  private final JPanel panel;
+  private final Viewport viewport;
 
-  public OperationMonitorManager(JPanel panel, Viewport viewport)
+    public OperationMonitorManager(JPanel panel, Viewport viewport)
   {
     this.panel = panel;
     this.viewport = viewport;
     // start with a short time cycle to give better appearance
-    repaintTimer.setInitialDelay(1000);
+      Timer repaintTimer = new Timer(50, e -> {
+          if (indicator != null) {
+              paint();
+          }
+      });
+      repaintTimer.setInitialDelay(1000);
     repaintTimer.start();
   }
 

@@ -37,18 +37,18 @@ import org.locationtech.jtstest.testbuilder.geom.GeometryUtil;
 
 public class GeometryTreeModel implements TreeModel
 {
-  public static Comparator<GeometricObjectNode> SORT_AREA_ASC = new AreaComparator(false);
-  public static Comparator<GeometricObjectNode> SORT_AREA_DESC = new AreaComparator(true);
-  public static Comparator<GeometricObjectNode> SORT_LEN_ASC = new LengthComparator(false);
-  public static Comparator<GeometricObjectNode> SORT_LEN_DESC = new LengthComparator(true);
-  public static Comparator<GeometricObjectNode> SORT_NUMPTS_ASC = new NumPointsComparator(false);
-  public static Comparator<GeometricObjectNode> SORT_NUMPTS_DESC = new NumPointsComparator(true);
+  public static final Comparator<GeometricObjectNode> SORT_AREA_ASC = new AreaComparator(false);
+  public static final Comparator<GeometricObjectNode> SORT_AREA_DESC = new AreaComparator(true);
+  public static final Comparator<GeometricObjectNode> SORT_LEN_ASC = new LengthComparator(false);
+  public static final Comparator<GeometricObjectNode> SORT_LEN_DESC = new LengthComparator(true);
+  public static final Comparator<GeometricObjectNode> SORT_NUMPTS_ASC = new NumPointsComparator(false);
+  public static final Comparator<GeometricObjectNode> SORT_NUMPTS_DESC = new NumPointsComparator(true);
   
-  private Vector<TreeModelListener> treeModelListeners = new Vector<TreeModelListener>();
+  private final Vector<TreeModelListener> treeModelListeners = new Vector<>();
 
-  private GeometricObjectNode rootGeom;
+  private final GeometricObjectNode rootGeom;
 
-  public GeometryTreeModel(Geometry geom, int source, Comparator comp)
+  public GeometryTreeModel(Geometry geom, int source, Comparator<GeometricObjectNode> comp)
   {
     rootGeom = GeometryNode.create(geom, new GeometryContext(source, comp));
   }
@@ -127,7 +127,7 @@ public class GeometryTreeModel implements TreeModel
   
   public static class AreaComparator implements Comparator<GeometricObjectNode> {
 
-    private int dirFactor;
+    private final int dirFactor;
 
     public AreaComparator(boolean direction) {
       this.dirFactor = direction ? 1 : -1;
@@ -142,7 +142,7 @@ public class GeometryTreeModel implements TreeModel
   }
   public static class LengthComparator implements Comparator<GeometricObjectNode> {
 
-    private int dirFactor;
+    private final int dirFactor;
 
     public LengthComparator(boolean direction) {
       this.dirFactor = direction ? 1 : -1;
@@ -157,7 +157,7 @@ public class GeometryTreeModel implements TreeModel
   }
   public static class NumPointsComparator implements Comparator<GeometricObjectNode> {
 
-    private int dirFactor;
+    private final int dirFactor;
 
     public NumPointsComparator(boolean direction) {
       this.dirFactor = direction ? 1 : -1;
@@ -186,9 +186,9 @@ abstract class GeometricObjectNode
 
   protected int index = -1;
 
-  protected String text = "";;
+  protected String text = "";
 
-  public GeometricObjectNode(String text)
+    public GeometricObjectNode(String text)
   {
     this.text = text;
   }
@@ -222,18 +222,18 @@ abstract class GeometricObjectNode
 
 class GeometryContext {
   int source = 0;
-  private Comparator comp;
-  
+  private Comparator<GeometricObjectNode> comp;
+
   GeometryContext(int source) {
     this.source = source;
   }
 
-  public GeometryContext(int source, Comparator comp) {
+  public GeometryContext(int source, Comparator<GeometricObjectNode> comp) {
     this.source = source;
     this.comp = comp;
   }
-  
-  public Comparator getComparator() {
+
+  public Comparator<GeometricObjectNode> getComparator() {
     return comp;
   }
 
@@ -259,7 +259,7 @@ abstract class GeometryNode extends GeometricObjectNode
     return null;
   }
 
-  protected GeometryContext context;
+  protected final GeometryContext context;
   private boolean isLeaf;
   protected List<GeometricObjectNode> children = null;
 
@@ -280,8 +280,8 @@ abstract class GeometryNode extends GeometricObjectNode
   private static String geometryText(Geometry geom, int size, String tag)
   {
     StringBuilder buf = new StringBuilder();
-    if (tag != null && tag.length() > 0) {
-      buf.append(tag + " : ");
+    if (tag != null && !tag.isEmpty()) {
+      buf.append(tag).append(" : ");
     }
     buf.append(geom.getGeometryType());
     if (geom.isEmpty()) {
@@ -289,11 +289,11 @@ abstract class GeometryNode extends GeometricObjectNode
     }
     else {
       if (size > 0) {
-        buf.append(" " + sizeString(size));
+        buf.append(" ").append(sizeString(size));
       }
     }
     String metrics = GeometryUtil.metricsSummary(geom);
-    if (metrics.length() > 0) {
+    if (!metrics.isEmpty()) {
       buf.append("  -  ");
     }
     buf.append( metrics );
@@ -344,7 +344,7 @@ abstract class GeometryNode extends GeometricObjectNode
     if (children != null)
       return;
 
-    children = new ArrayList<GeometricObjectNode>();
+    children = new ArrayList<>();
     fillChildren();
   }
 
@@ -354,7 +354,7 @@ abstract class GeometryNode extends GeometricObjectNode
 
 class PolygonNode extends GeometryNode
 {
-  Polygon poly;
+  final Polygon poly;
 
   PolygonNode(Polygon poly, GeometryContext context)
   {
@@ -375,13 +375,13 @@ class PolygonNode extends GeometryNode
   protected void fillChildren()
   {
     for (int i = 0; i < poly.getNumInteriorRing(); i++) {
-      children.add(new LinearRingNode((LinearRing) poly.getInteriorRingN(i),
+      children.add(new LinearRingNode(poly.getInteriorRingN(i),
           "Hole " + i, context));
     }
     if (context.isSorted()) {
       children.sort(context.getComparator());
     }
-    children.add(0, new LinearRingNode((LinearRing) poly.getExteriorRing(),
+    children.add(0, new LinearRingNode(poly.getExteriorRing(),
         "Shell", context));
   }
 
@@ -389,7 +389,7 @@ class PolygonNode extends GeometryNode
 
 class LineStringNode extends GeometryNode
 {
-  private LineString line;
+  private final LineString line;
 
   public LineStringNode(LineString line, GeometryContext context)
   {
@@ -450,7 +450,7 @@ class LinearRingNode extends LineStringNode
 
 class PointNode extends GeometryNode
 {
-  Point pt;
+  final Point pt;
 
   public PointNode(Point p, GeometryContext context)
   {
@@ -476,7 +476,7 @@ class PointNode extends GeometryNode
 
 class GeometryCollectionNode extends GeometryNode
 {
-  GeometryCollection coll;
+  final GeometryCollection coll;
 
   GeometryCollectionNode(GeometryCollection coll, GeometryContext context)
   {
@@ -528,7 +528,7 @@ class CoordinateNode extends GeometricObjectNode
     return new CoordinateNode(p, i, distPrev);
   }
 
-  private static DecimalFormat fmt = new DecimalFormat("0.#################", new DecimalFormatSymbols());
+  private static final DecimalFormat fmt = new DecimalFormat("0.#################", new DecimalFormatSymbols());
   
   private static String label(Coordinate coord, int i, double distPrev)
   {
@@ -540,7 +540,7 @@ class CoordinateNode extends GeometricObjectNode
   }
   
 
-  Coordinate coord;
+  final Coordinate coord;
 
   public CoordinateNode(Coordinate coord)
   {
@@ -588,4 +588,3 @@ class CoordinateNode extends GeometricObjectNode
     throw new IllegalStateException("should not be here");
   }
 }
-

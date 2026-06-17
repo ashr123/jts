@@ -15,13 +15,15 @@ package org.locationtech.jtstest.function;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.linearref.LengthIndexedLine;
 import org.locationtech.jtstest.geomfunction.Metadata;
 
 public class LinearReferencingFunctions
 {
-  public static Geometry extractPoint(Geometry g, double index)
+    private LinearReferencingFunctions() {
+    }
+
+    public static Geometry extractPoint(Geometry g, double index)
   {
     LengthIndexedLine ll = new LengthIndexedLine(g);
     Coordinate p = ll.extractPoint(index);
@@ -61,16 +63,15 @@ public class LinearReferencingFunctions
   private static Geometry projectOnLine(Geometry line, Geometry geom) {
     Coordinate[] bPts = geom.getCoordinates();
     
-    LengthIndexedLine aLR = new LengthIndexedLine((LineString) line);
+    LengthIndexedLine aLR = new LengthIndexedLine(line);
     
     double locStart = -1.0;
     double locEnd = -1.0;
-    for (int i = 0; i < bPts.length; i++) {
-      Coordinate maskPt = bPts[i];
-      double loc = aLR.indexOf(maskPt);
-      if (locStart < 0 || loc < locStart) locStart = loc;
-      if (loc < 0 || loc > locEnd) locEnd = loc;
-    }
+      for (Coordinate maskPt : bPts) {
+          double loc = aLR.indexOf(maskPt);
+          if (locStart < 0 || loc < locStart) locStart = loc;
+          if (loc < 0 || loc > locEnd) locEnd = loc;
+      }
     
     return aLR.extractLine(locStart, locEnd);
   }

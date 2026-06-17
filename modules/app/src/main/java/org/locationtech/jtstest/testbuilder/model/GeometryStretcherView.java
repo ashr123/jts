@@ -14,6 +14,7 @@ package org.locationtech.jtstest.testbuilder.model;
 
 import java.util.List;
 
+import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jtstest.testbuilder.topostretch.TopologyStretcher;
@@ -38,9 +39,9 @@ public class GeometryStretcherView
    */
   public static final  double NEARNESS_TOL_IN_VIEW = 2;
   
-	private GeometryEditModel geomModel;
+	private final GeometryEditModel geomModel;
 	private Geometry[] stretchGeom = new Geometry[2];
-	private List[] stretchCoords;
+	private List<Coordinate>[] stretchCoords;
   private boolean isViewPerformant = true;
   private Envelope maskEnv = null;
 	private double stretchSize = 5.0;
@@ -90,7 +91,7 @@ public class GeometryStretcherView
 		return stretchGeom[index];
 	}
 	
-	public List getStretchedVertices(int index)
+	public List<Coordinate> getStretchedVertices(int index)
 	{
 		updateCache();
 		return stretchCoords[index];
@@ -130,7 +131,7 @@ public class GeometryStretcherView
 	
 	private class StretchedGeometryContainer implements GeometryContainer
 	{
-	  private int index;
+	  private final int index;
 	  
 	  public StretchedGeometryContainer(int index) 
 	  {

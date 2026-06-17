@@ -26,8 +26,11 @@ import org.locationtech.jtstest.util.io.WKBDumper;
  *
  */
 public class WKBDump {
-  
-  public static void main(String[] args)
+
+    private WKBDump() {
+    }
+
+    public static void main(String[] args)
   { 
     String hex = null;
     if (args.length >= 1) {
@@ -36,9 +39,9 @@ public class WKBDump {
     
     if (hex != null) {
       byte[] wkb = WKBReader.hexToBytes(hex);
-      PrintWriter writer = new PrintWriter(System.out);
-      WKBDumper.dump(wkb, writer);
-      writer.close();
+      try (PrintWriter writer = new PrintWriter(System.out)) {
+        WKBDumper.dump(wkb, writer);
+      }
     }
   }
 }

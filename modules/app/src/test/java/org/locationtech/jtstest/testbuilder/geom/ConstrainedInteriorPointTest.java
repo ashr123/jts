@@ -38,11 +38,11 @@ public class ConstrainedInteriorPointTest extends TestCase {
         new Coordinate(250, 150));
   }
 
-  private void checkPoint(String wkt, Coordinate ptExpected) {
+  private static void checkPoint(String wkt, Coordinate ptExpected) {
     checkPoint(wkt, null, ptExpected);
   }
   
-  private void checkPoint(String wkt, String wktCon, Coordinate ptExpected) {
+  private static void checkPoint(String wkt, String wktCon, Coordinate ptExpected) {
     Geometry poly = TestUtil.readWKT(wkt);
     Coordinate ptActual = null;
     if (wktCon != null) {

@@ -26,11 +26,11 @@ import org.locationtech.jts.geom.PrecisionModel;
  * @version 1.7
  */
 public class PrecisionModelDialog extends JDialog {
-  JPanel panel1 = new JPanel();
-  BorderLayout borderLayout1 = new BorderLayout();
-  PrecisionModelPanel precisionModelPanel = new PrecisionModelPanel();
-  JPanel jPanel1 = new JPanel();
-  JButton okButton = new JButton();
+  final JPanel panel1 = new JPanel();
+  final BorderLayout borderLayout1 = new BorderLayout();
+  final PrecisionModelPanel precisionModelPanel = new PrecisionModelPanel();
+  final JPanel jPanel1 = new JPanel();
+  final JButton okButton = new JButton();
 
   public PrecisionModelDialog(Frame frame, String title, boolean modal) {
     super(frame, title, modal);
@@ -46,14 +46,10 @@ public class PrecisionModelDialog extends JDialog {
   public PrecisionModelDialog() {
     this(null, "", false);
   }
-  void jbInit() throws Exception {
+  void jbInit() {
     panel1.setLayout(borderLayout1);
     okButton.setText("OK");
-    okButton.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        okButton_actionPerformed(e);
-      }
-    });
+    okButton.addActionListener(this::okButton_actionPerformed);
     getContentPane().add(panel1);
     panel1.add(precisionModelPanel, BorderLayout.CENTER);
     panel1.add(jPanel1, BorderLayout.SOUTH);

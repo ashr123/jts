@@ -33,16 +33,15 @@ import org.locationtech.jts.geom.PrecisionModel;
  * @version 1.7
  */
 public class PrecisionModelPanel extends JPanel {
-private PrecisionModel precisionModel;
-//============================================
-  JLabel jLabel1 = new JLabel();
-  JTextField txtScale = new JTextField();
-  GridBagLayout gridBagLayout1 = new GridBagLayout();
-  JLabel jLabel4 = new JLabel();
-  JRadioButton rbFixed = new JRadioButton();
-  JRadioButton rbFloating = new JRadioButton();
-  ButtonGroup btnGrpmodelType = new ButtonGroup();
-  private JRadioButton rbFloatingSingle = new JRadioButton();
+    //============================================
+final JLabel jLabel1 = new JLabel();
+  final JTextField txtScale = new JTextField();
+  final GridBagLayout gridBagLayout1 = new GridBagLayout();
+  final JLabel jLabel4 = new JLabel();
+  final JRadioButton rbFixed = new JRadioButton();
+  final JRadioButton rbFloating = new JRadioButton();
+  final ButtonGroup btnGrpmodelType = new ButtonGroup();
+  private final JRadioButton rbFloatingSingle = new JRadioButton();
 
   public PrecisionModelPanel() {
     try {
@@ -52,7 +51,7 @@ private PrecisionModel precisionModel;
       ex.printStackTrace();
     }
   }
-  void jbInit() throws Exception {
+  void jbInit() {
     jLabel1.setToolTipText("");
     jLabel1.setText("Scale");
     this.setLayout(gridBagLayout1);
@@ -69,23 +68,11 @@ private PrecisionModel precisionModel;
     rbFixed.setToolTipText(" * <li>FLOATING - represents full double precision floating point.\n" +
     " * This is the default precision model used in JTS\n");
     rbFixed.setText("Fixed");
-    rbFixed.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        rbFixed_actionPerformed(e);
-      }
-    });
+    rbFixed.addActionListener(this::rbFixed_actionPerformed);
     rbFloating.setText("Floating (Double)");
     rbFloating.setToolTipText("");
-    rbFloating.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        rbFloating_actionPerformed(e);
-      }
-    });
-    rbFloatingSingle.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        rbFloatingSingle_actionPerformed(e);
-      }
-    });
+    rbFloating.addActionListener(this::rbFloating_actionPerformed);
+    rbFloatingSingle.addActionListener(this::rbFloatingSingle_actionPerformed);
     rbFloatingSingle.setToolTipText("");
     rbFloatingSingle.setText("Floating (Single)");
     this.add(jLabel1,        new GridBagConstraints(0, 4, 1, 1, 0.2, 0.0
@@ -107,8 +94,7 @@ private PrecisionModel precisionModel;
 
   public void setPrecisionModel(PrecisionModel precisionModel)
   {
-    this.precisionModel = precisionModel;
-    Object modelType = precisionModel.getType();
+      Object modelType = precisionModel.getType();
     rbFixed.setSelected(modelType == PrecisionModel.FIXED);
     rbFloating.setSelected(modelType == PrecisionModel.FLOATING);
     rbFloatingSingle.setSelected(modelType == PrecisionModel.FLOATING_SINGLE);

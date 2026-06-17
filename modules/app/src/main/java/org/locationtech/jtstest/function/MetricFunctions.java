@@ -22,8 +22,11 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jtstest.geomfunction.Metadata;
 
 public class MetricFunctions {
-  
-  /**
+
+    private MetricFunctions() {
+    }
+
+    /**
    * Returns a line graph of segment lengths.
    * Graph is scaled to maximum segment length.
    * 
@@ -38,7 +41,7 @@ public class MetricFunctions {
     if (numSamples < 1)
       numSamples = 1;
     
-    List<Double> segLen = new ArrayList<Double>();
+    List<Double> segLen = new ArrayList<>();
     CoordinateSequenceFilter segLenFilter = new CoordinateSequenceFilter() {
 
       @Override

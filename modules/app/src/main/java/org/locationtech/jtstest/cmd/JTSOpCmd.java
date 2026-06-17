@@ -205,11 +205,9 @@ public class JTSOpCmd {
   
   private void printFunctions() {
     //TODO: include any loaded functions
-    DoubleKeyMap funcMap = funcRegistry.getCategorizedGeometryFunctions();
-    @SuppressWarnings("unchecked")
+    DoubleKeyMap<String, String, GeometryFunction> funcMap = funcRegistry.getCategorizedGeometryFunctions();
     Collection<String> categories = funcMap.keySet();
     for (String category : categories) {
-      @SuppressWarnings("unchecked")
       Collection<GeometryFunction> funcs = funcMap.values(category);
       for (GeometryFunction fun : funcs) {
         System.out.println(category + "." + functionDesc(fun));
@@ -224,13 +222,13 @@ public class JTSOpCmd {
     //return geomFun.getName();
   }
 
-  private GeometryFunctionRegistry funcRegistry = GeometryFunctionRegistry.createTestBuilderRegistry();
-  private CommandLine commandLine = createCmdLine();
+  private final GeometryFunctionRegistry funcRegistry = GeometryFunctionRegistry.createTestBuilderRegistry();
+  private final CommandLine commandLine = createCmdLine();
 
   private boolean isHelp = false;
   private boolean isHelpWithFunctions = false;
 
-  private JTSOpRunner opRunner;
+  private final JTSOpRunner opRunner;
 
   public JTSOpCmd() {
     opRunner = new JTSOpRunner();
@@ -264,22 +262,20 @@ public class JTSOpCmd {
   public static boolean isFilename(String arg) {
     if (arg == null) return false;
     if (MultiFormatReader.isWKB(arg)) return false;
-    if (isWKT(arg)) return false;
+      return !isWKT(arg);
     /*
     if (arg.indexOf("/") > 0
         || arg.indexOf("\\") > 0
         || arg.indexOf(":") > 0)
       return true;
       */
-    return true;
   }
 
   private static boolean isWKT(String arg) {
     // TODO: make this smarter?
     boolean hasParen = (arg.indexOf("(") > 0) && arg.indexOf(")") > 0;
     if (hasParen) return true;
-    if (arg.toUpperCase().endsWith(" " + WKTConstants.EMPTY)) return true;
-    return false;
+      return arg.toUpperCase().endsWith(" " + WKTConstants.EMPTY);
   }
   
   void execute(JTSOpRunner.OpParams cmdArgs) {
@@ -291,7 +287,7 @@ public class JTSOpCmd {
     opRunner.execute(cmdArgs);
   }
 
-  JTSOpRunner.OpParams parseArgs(String[] args) throws ParseException, ClassNotFoundException {
+  JTSOpRunner.OpParams parseArgs(String[] args) throws ParseException {
     
     if (args.length == 0) {
       isHelp = true;
@@ -420,7 +416,7 @@ public class JTSOpCmd {
     return cmdArgs;
   }
 
-  private String[] parseOpArg(String arg) {
+  private static String[] parseOpArg(String arg) {
     if (isArgMultiValues(arg)) {
       return parseValues(arg);
     }
@@ -442,20 +438,18 @@ public class JTSOpCmd {
    * @param arg
    * @return
    */
-  private boolean isArgMultiValues(String arg) {
+  private static boolean isArgMultiValues(String arg) {
     
     if (arg.startsWith("(")) return true;
     if (arg.startsWith(MACRO_VAL + "(")) return true;
     
     boolean hasParen = arg.indexOf('(') >= 0;
     boolean hasComma = arg.indexOf(',') >= 0;
-    
-    if (hasComma && ! hasParen) return true;
-    
-    return false;
+
+      return hasComma && !hasParen;
   }
 
-  private String[] parseValues(String valuesExpr) {
+  private static String[] parseValues(String valuesExpr) {
     boolean hasParenL = valuesExpr.indexOf('(') >= 0;
     boolean hasParenR = valuesExpr.indexOf(')') >= 0;
     boolean hasParen = hasParenL || hasParenR;
@@ -467,7 +461,7 @@ public class JTSOpCmd {
     return valuesExpr.split(",");
   }
 
-  private String[] parseMacroArgs(String macroTerm) {
+  private static String[] parseMacroArgs(String macroTerm) {
     int indexLeft = macroTerm.indexOf('(');
     int indexRight = macroTerm.indexOf(')');
     
@@ -480,7 +474,7 @@ public class JTSOpCmd {
     return args.split(",");
   }
   
-  private int parseFilterOp(String opStr) {
+  private static int parseFilterOp(String opStr) {
     if ("eq".equalsIgnoreCase(opStr)) return FilterGeometryFunction.OP_EQ;
     if ("ne".equalsIgnoreCase(opStr)) return FilterGeometryFunction.OP_NE;
     if ("ge".equalsIgnoreCase(opStr)) return FilterGeometryFunction.OP_GE;

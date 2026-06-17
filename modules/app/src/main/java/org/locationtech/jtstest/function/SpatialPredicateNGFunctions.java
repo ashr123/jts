@@ -18,7 +18,10 @@ import org.locationtech.jts.operation.relateng.RelateNG;
 import org.locationtech.jts.operation.relateng.RelatePredicate;
 
 public class SpatialPredicateNGFunctions {
-  public static boolean contains(Geometry a, Geometry b) {    
+    private SpatialPredicateNGFunctions() {
+    }
+
+    public static boolean contains(Geometry a, Geometry b) {
     return RelateNG.relate(a, b, RelatePredicate.contains());    
   }
   public static boolean covers(Geometry a, Geometry b) {    

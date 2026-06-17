@@ -11,21 +11,6 @@
  */
 package org.locationtech.jtstest.testbuilder.io;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import javax.swing.BorderFactory;
-import javax.swing.JFrame;
-
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.util.Assert;
@@ -42,6 +27,21 @@ import org.locationtech.jtstest.testrunner.Test;
 import org.locationtech.jtstest.util.FileUtil;
 import org.locationtech.jtstest.util.StringUtil;
 
+import javax.swing.BorderFactory;
+import javax.swing.JFrame;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 
 /**
  *  An object that creates an .html file describing the test cases. .gif files
@@ -55,16 +55,16 @@ public class HtmlWriter {
   private final static int STACK_TRACE_DEPTH = 1;
 
   private boolean showingABwithSpatialFunction = true;
-  private GeometryEditPanel geometryEditPanel = new GeometryEditPanel();
-  private JFrame frame = new JFrame();
-  private File outputDirectory;
+  private final GeometryEditPanel geometryEditPanel = new GeometryEditPanel();
+    private File outputDirectory;
   private BusyDialog busyDialog = null;
 
   public HtmlWriter() {
     geometryEditPanel.setSize(IMAGE_WIDTH, IMAGE_HEIGHT);
     //geometryEditPanel.setGridEnabled(false);
     geometryEditPanel.setBorder(BorderFactory.createEmptyBorder());
-    frame.getContentPane().add(geometryEditPanel);
+      JFrame frame = new JFrame();
+      frame.getContentPane().add(geometryEditPanel);
   }
 
   public void setShowingABwithSpatialFunction(boolean showingABwithSpatialFunction) {
@@ -76,8 +76,8 @@ public class HtmlWriter {
   }
 
   private static class MapAndList {
-    public Map map;
-    public List list;
+    public Map<String, List<Testable>> map;
+    public List<String> list;
   }
 
   public void write(File outputDirectory, TestCaseList testCaseList, PrecisionModel precisionModel) throws IOException {
@@ -87,29 +87,27 @@ public class HtmlWriter {
     Assert.isTrue(outputDirectory.isDirectory());
     this.outputDirectory = outputDirectory;
     MapAndList runMapAndRuns = runMapAndRuns(testCaseList);
-    Map runMap = runMapAndRuns.map;
-    List runs  = runMapAndRuns.list;
+    Map<String, List<Testable>> runMap = runMapAndRuns.map;
+    List<String> runs  = runMapAndRuns.list;
     createHtmlFile("contents-frame.html", indexHtml(runs, runMap, precisionModel));
     createHtmlFile("index.html", testTopHtml());
     int runSkey = 0;
-    for (Iterator i = runs.iterator(); i.hasNext(); ) {
-      String runDescription = (String) i.next();
-      runSkey++;
-      List testables = (List) runMap.get(runDescription);
-      int caseSkey = 0;
-      for (Iterator m = testables.iterator(); m.hasNext(); ) {
-        Testable testable = (Testable) m.next();
-        caseSkey++;
-        if (busyDialog != null) {
-          busyDialog.setDescription("Saving .html and .gif files: " + caseSkey
-               + " of " + testCaseList.getList().size() + " tests");
-        }
-        createHtmlFile("Run" + runSkey + AppStrings.LABEL_TEST_CASE + caseSkey + ".html", html(testable, runSkey, caseSkey));
+      for (String runDescription : runs) {
+          runSkey++;
+          List<Testable> testables = runMap.get(runDescription);
+          int caseSkey = 0;
+          for (Testable testable : testables) {
+              caseSkey++;
+              if (busyDialog != null) {
+                  busyDialog.setDescription("Saving .html and .gif files: " + caseSkey
+                          + " of " + testCaseList.getList().size() + " tests");
+              }
+              createHtmlFile("Run" + runSkey + AppStrings.LABEL_TEST_CASE + caseSkey + ".html", html(testable, runSkey, caseSkey));
+          }
       }
-    }
   }
 
-  private String html(Testable testable, int runSkey, int caseSkey) throws IOException {
+  private String html(Testable testable, int runSkey, int caseSkey) {
     TestCaseEdit testCaseEdit = (TestCaseEdit) testable;
     String html =
         "<HTML>" + StringUtil.newLine
@@ -126,23 +124,22 @@ public class HtmlWriter {
     return html;
   }
 
-  private String deleteLastTag(String html) {
+  private static String deleteLastTag(String html) {
     if (html.lastIndexOf("<") == -1) {
       return html;
     }
     return html.substring(0, html.lastIndexOf("<"));
   }
 
-  private String deleteFirstTag(String html) {
+  private static String deleteFirstTag(String html) {
     if (html.lastIndexOf(">") == -1) {
       return html;
     }
     return html.substring(html.indexOf(">") + 1);
   }
 
-  private String htmlForTests(TestCaseEdit testCaseEdit, int runSkey, int caseSkey) throws IOException {
-    String html = htmlForBinaryPredicates(testCaseEdit, caseSkey);
-    return html;
+  private static String htmlForTests(TestCaseEdit testCaseEdit, int runSkey, int caseSkey) {
+      return htmlForBinaryPredicates(testCaseEdit, caseSkey);
   }
 
   private String htmlForSpatialFunctionTest(TestCaseEdit testCaseEdit, int runSkey, int caseSkey,
@@ -170,15 +167,13 @@ public class HtmlWriter {
           "\n", "<BR>", true) + "</TD>";
       e.printStackTrace(System.out);
     }
-    String html
-         = "  <TR>" + StringUtil.newLine
-         + "    <TD class=methodTitle>" + geometryOpName + "</TD>" + StringUtil.newLine
-         + actualResultString + StringUtil.newLine
-         + "  </TR>" + StringUtil.newLine;
-    return html;
+      return "  <TR>" + StringUtil.newLine
+      + "    <TD class=methodTitle>" + geometryOpName + "</TD>" + StringUtil.newLine
+      + actualResultString + StringUtil.newLine
+      + "  </TR>" + StringUtil.newLine;
   }
 
-  private String htmlForRelateTest(TestCaseEdit testCaseEdit, int caseSkey) {
+  private static String htmlForRelateTest(TestCaseEdit testCaseEdit, int caseSkey) {
     String actualValue;
     try {
       actualValue = insertParagraphs(testCaseEdit.getGeometry(0).relate(testCaseEdit.getGeometry(1)).toString());
@@ -188,23 +183,21 @@ public class HtmlWriter {
           "\n", "<BR>", true);
       e.printStackTrace(System.out);
     }
-    String html
-         = "  <TR>" + StringUtil.newLine
-         + "    <TD class=methodTitle rowspan=9>relate</TD>" + StringUtil.newLine
-         + "    <TD rowspan=9>" + actualValue + "</TD>" + StringUtil.newLine
-         + "  </TR>" + StringUtil.newLine;
-    return html;
+      return "  <TR>" + StringUtil.newLine
+      + "    <TD class=methodTitle rowspan=9>relate</TD>" + StringUtil.newLine
+      + "    <TD rowspan=9>" + actualValue + "</TD>" + StringUtil.newLine
+      + "  </TR>" + StringUtil.newLine;
   }
 
-  private String insertParagraphs(String intersectionMatrix) {
-    StringBuffer buffer = new StringBuffer(intersectionMatrix);
+  private static String insertParagraphs(String intersectionMatrix) {
+    StringBuilder buffer = new StringBuilder(intersectionMatrix);
     buffer.insert(6, "<BR>");
     buffer.insert(3, "<BR>");
     return buffer.toString();
   }
 
-  private String htmlForPredicateTest(TestCaseEdit testCaseEdit, int caseSkey,
-      String opName, String first, String second) {
+  private static String htmlForPredicateTest(TestCaseEdit testCaseEdit, int caseSkey,
+                                             String opName, String first, String second) {
     String actualResultString;
     try {
       actualResultString = actualResult(testCaseEdit, opName, first, second).toString();
@@ -214,63 +207,60 @@ public class HtmlWriter {
           "\n", "<BR>", true);
       e.printStackTrace(System.out);
     }
-    String html
-         = "  <TR>" + StringUtil.newLine
-         + "    <TD class=methodTitle>" + opName + "</TD>" + StringUtil.newLine
-         + "    <TD class=resultFalse>" + actualResultString + "</TD>" + StringUtil.newLine
-         + "  </TR>" + StringUtil.newLine;
-    return html;
+      return "  <TR>" + StringUtil.newLine
+      + "    <TD class=methodTitle>" + opName + "</TD>" + StringUtil.newLine
+      + "    <TD class=resultFalse>" + actualResultString + "</TD>" + StringUtil.newLine
+      + "  </TR>" + StringUtil.newLine;
   }
 
-  private Object actualResult(TestCaseEdit testCaseEdit, String opName, String first,
-      String second) throws Exception {
+  private static Object actualResult(TestCaseEdit testCaseEdit, String opName, String first,
+                                     String second) throws Exception {
     try {
-      Assert.isTrue((first.equalsIgnoreCase("A")) || (first.equalsIgnoreCase("B")));
-      Class geometryClass = Class.forName("com.vividsolutions.jts.geom.Geometry");
-      Geometry source = testCaseEdit.getGeometry(first.equalsIgnoreCase("A") ? 0 : 1);
-      Object[] target;
-      Class[] targetClasses;
+      Assert.isTrue(("A".equalsIgnoreCase(first)) || ("B".equalsIgnoreCase(first)));
+      Class<?> geometryClass = Class.forName("com.vividsolutions.jts.geom.Geometry");
+      Geometry source = testCaseEdit.getGeometry("A".equalsIgnoreCase(first) ? 0 : 1);
+      List<Object> target;
+      Class<?>[] targetClasses;
       if (second == null) {
-        target = new Object[]{};
-        targetClasses = new Class[]{};
+        target = new ArrayList<>();
+        targetClasses = new Class<?>[]{};
       }
       else {
-        target = new Object[]{
-            testCaseEdit.getGeometry(second.equalsIgnoreCase("A") ? 0 : 1)
-            };
-        targetClasses = new Class[]{
+        target = Collections.singletonList(
+                testCaseEdit.getGeometry("A".equalsIgnoreCase(second) ? 0 : 1)
+        );
+        targetClasses = new Class<?>[]{
             geometryClass
             };
       }
       Method op = geometryClass.getMethod(opName, targetClasses);
-      return op.invoke(source, target);
+      return op.invoke(source, target.toArray(new Object[0]));
     }
     catch (InvocationTargetException e) {
       throw (Exception) e.getTargetException();
     }
   }
 
-  private BooleanResult expectedPredicateResult(TestCaseEdit testCaseEdit,
-      String opName, String first, String second) {
+  private static BooleanResult expectedPredicateResult(TestCaseEdit testCaseEdit,
+                                                       String opName, String first, String second) {
     if (!(testCaseEdit.getTestable() instanceof TestRunnerTestCaseAdapter)) {
       return null;
     }
     TestRunnerTestCaseAdapter adapter = (TestRunnerTestCaseAdapter) testCaseEdit.getTestable();
     org.locationtech.jtstest.testrunner.TestCase trTestCase = adapter.getTestRunnerTestCase();
-    for (Iterator i = trTestCase.getTests().iterator(); i.hasNext(); ) {
-      Test test = (Test) i.next();
-      if (test.getOperation().equalsIgnoreCase(opName)
-           && test.getGeometryIndex().equalsIgnoreCase(first)
-           && (test.getArgumentCount() == 0
-           || ((test.getArgument(0) != null && test.getArgument(0).equalsIgnoreCase(second))
-           || (test.getArgument(0) == null && second.equalsIgnoreCase("null"))))) {
-        return (BooleanResult) test.getExpectedResult();
+      for (Test test : trTestCase.getTests()) {
+          if (test.getOperation().equalsIgnoreCase(opName)
+                  && test.getGeometryIndex().equalsIgnoreCase(first)
+                  && (test.getArgumentCount() == 0
+                  || ((test.getArgument(0) != null && test.getArgument(0).equalsIgnoreCase(second))
+                  || (test.getArgument(0) == null && "null".equalsIgnoreCase(second))))) {
+              return (BooleanResult) test.getExpectedResult();
+          }
       }
-    }
     return null;
   }
 
-  private String htmlForAB(TestCaseEdit testCaseEdit, int runSkey, int caseSkey) throws IOException {
+  private String htmlForAB(TestCaseEdit testCaseEdit, int runSkey, int caseSkey) {
     String wktHtml
          = "<span class=wktA>"
          + (testCaseEdit.getGeometry(0) == null ? " " : testCaseEdit.getGeometry(0).toText())
@@ -290,11 +280,11 @@ public class HtmlWriter {
     return html;
   }
 
-  private String htmlImageTextTable(String imageFilename, String text, int border) {
+  private static String htmlImageTextTable(String imageFilename, String text, int border) {
     return htmlImageHtmlTextTable(imageFilename, StringUtil.escapeHTML(text), border);
   }
 
-  private String htmlImageHtmlTextTable(String imageFilename, String html, int border) {
+  private static String htmlImageHtmlTextTable(String imageFilename, String html, int border) {
     return
         "    <TD>" + StringUtil.newLine
          + "      <IMG BORDER=\"1\" SRC=\"" + imageFilename + "\" WIDTH=" + IMAGE_WIDTH + " HEIGHT=" + IMAGE_HEIGHT + ">" + StringUtil.newLine
@@ -304,13 +294,13 @@ public class HtmlWriter {
          + "    </TD>" + StringUtil.newLine;
   }
 
-  private String testName(Testable testable, int caseSkey) {
+  private static String testName(Testable testable, int caseSkey) {
     String name = testable.getName();
-    if ((name == null || name.length() == 0) && testable instanceof TestCaseEdit) {
-      name = ((TestCaseEdit) testable).getDescription();
+    if ((name == null || name.isEmpty()) && testable instanceof TestCaseEdit) {
+      name = testable.getDescription();
     }
     String testTag = AppStrings.LABEL_TEST_CASE + " ";
-    if (name == null || name.length() == 0) {
+    if (name == null || name.isEmpty()) {
       name = testTag + caseSkey;
     }
     else {
@@ -319,11 +309,11 @@ public class HtmlWriter {
     return name;
   }
 
-  private String runName(String runDescription, int runSkey) {
+  private static String runName(String runDescription, int runSkey) {
     return "Run " + runSkey + ": " + runDescription;
   }
 
-  private String htmlTitle(PrecisionModel precisionModel) {
+  private static String htmlTitle(PrecisionModel precisionModel) {
     String html = "Precision Model: scale=" + precisionModel.getScale()         
          + StringUtil.newLine;
     html = "<div class='precisionModel'>" + html + "</div>";
@@ -332,7 +322,7 @@ public class HtmlWriter {
 
   private void createGifFile(String filenameNoPath, Geometry a, Geometry b,
       Geometry spatialFunction, boolean showingAB,
-      int imageWidth, int imageHeight) throws FileNotFoundException, IOException {
+      int imageWidth, int imageHeight) {
     createGifFile(filenameNoPath, a, b, spatialFunction, showingAB, imageWidth, imageHeight, false);
   }
 
@@ -353,8 +343,7 @@ public class HtmlWriter {
       Geometry b,
       Geometry result,
       boolean showingAB,
-      int imageWidth, int imageHeight, boolean zoomToFullExtent) throws FileNotFoundException,
-      IOException {
+      int imageWidth, int imageHeight, boolean zoomToFullExtent) {
   	TestBuilderModel tbModel = new TestBuilderModel();
     TestCaseEdit tc = new TestCaseEdit(new Geometry[]{ a, b });
     tc.setResult(result);
@@ -386,115 +375,96 @@ public class HtmlWriter {
     FileUtil.setContents(pathname, html);
   }
 
-  private MapAndList runMapAndRuns(TestCaseList testCaseList) {
-    Map runMap = new TreeMap();
-    List runs = new ArrayList();
-    for (Iterator i = testCaseList.getList().iterator(); i.hasNext(); ) {
-      TestCaseEdit testCaseEdit = (TestCaseEdit) i.next();
-      Testable testable = testCaseEdit.getTestable();
-      if (testable instanceof TestRunnerTestCaseAdapter) {
-        org.locationtech.jtstest.testrunner.TestCase testRunnerTestCase = ((TestRunnerTestCaseAdapter) testable).getTestRunnerTestCase();
-        String runDescription = testRunnerTestCase.getTestRun().getTestFile().getName();
-        runDescription = runDescription.indexOf(".") > -1 ? runDescription.substring(0, runDescription.indexOf(".")) : runDescription;
-        addToListMapAndList(runDescription, testCaseEdit, runMap, runs);
+  private static MapAndList runMapAndRuns(TestCaseList testCaseList) {
+    Map<String, List<Testable>> runMap = new TreeMap<>();
+    List<String> runs = new ArrayList<>();
+      for (Testable o : testCaseList.getList()) {
+          TestCaseEdit testCaseEdit = (TestCaseEdit) o;
+          Testable testable = testCaseEdit.getTestable();
+          if (testable instanceof TestRunnerTestCaseAdapter) {
+              org.locationtech.jtstest.testrunner.TestCase testRunnerTestCase = ((TestRunnerTestCaseAdapter) testable).getTestRunnerTestCase();
+              String runDescription = testRunnerTestCase.getTestRun().getTestFile().getName();
+              runDescription = runDescription.contains(".") ? runDescription.substring(0, runDescription.indexOf(".")) : runDescription;
+              addToListMapAndList(runDescription, testCaseEdit, runMap, runs);
+          } else {
+              addToListMapAndList("Other", testCaseEdit, runMap, runs);
+          }
       }
-      else {
-        addToListMapAndList("Other", testCaseEdit, runMap, runs);
-      }
-    }
     MapAndList runMapAndRuns = new MapAndList();
     runMapAndRuns.map = runMap;
     runMapAndRuns.list = runs;
     return runMapAndRuns;
   }
 
-  private void addToListMapAndList(String key, Object valueItem, Map stringToList, List keyList) {
+  private static void addToListMapAndList(String key, Testable valueItem, Map<String, List<Testable>> stringToList, List<String> keyList) {
     if (stringToList.containsKey(key)) {
-      List value = (List) stringToList.get(key);
+      List<Testable> value = stringToList.get(key);
       value.add(valueItem);
     }
     else {
-      List value = new ArrayList();
+      List<Testable> value = new ArrayList<>();
       value.add(valueItem);
       stringToList.put(key, value);
       keyList.add(key);
     }
   }
 
-  private String indexHtml(List runs, Map runMap, PrecisionModel precisionModel) {
-    String html
-         = "<HTML>" + StringUtil.newLine
-         + "<HEAD>" + StringUtil.newLine
-         + "<TITLE>JTS Test Suite Index</TITLE>" + StringUtil.newLine
-         + "<link REL='STYLESHEET' HREF='../jts.css' TYPE='Text/css'>" + StringUtil.newLine
-         + "<script LANGUAGE=\"JavaScript\">" + StringUtil.newLine
-         + "  function LoadDetailFrame() {" + StringUtil.newLine
-         + "        testNumber = document.main_form.test_combo.selectedIndex;" + StringUtil.newLine
-         + "        testHtmlFile = document.main_form.test_combo.options[testNumber].value;" + StringUtil.newLine
-         + "        parent.detail.location.href=testHtmlFile;" + StringUtil.newLine
-         + "        document.main_form.test_combo.blur();" + StringUtil.newLine
-         + "  }" + StringUtil.newLine
-         + "  function onRunChange() {" + StringUtil.newLine
-         + "        selectedIndex = document.main_form.run_combo.selectedIndex;" + StringUtil.newLine
-         + "        selectedCode  = document.main_form.run_combo.options[selectedIndex].value;" + StringUtil.newLine;
+  private static String indexHtml(List<String> runs, Map<String, List<Testable>> runMap, PrecisionModel precisionModel) {
+    StringBuilder html
+         = new StringBuilder("<HTML>" + StringUtil.newLine
+            + "<HEAD>" + StringUtil.newLine
+            + "<TITLE>JTS Test Suite Index</TITLE>" + StringUtil.newLine
+            + "<link REL='STYLESHEET' HREF='../jts.css' TYPE='Text/css'>" + StringUtil.newLine
+            + "<script LANGUAGE=\"JavaScript\">" + StringUtil.newLine
+            + "  function LoadDetailFrame() {" + StringUtil.newLine
+            + "        testNumber = document.main_form.test_combo.selectedIndex;" + StringUtil.newLine
+            + "        testHtmlFile = document.main_form.test_combo.options[testNumber].value;" + StringUtil.newLine
+            + "        parent.detail.location.href=testHtmlFile;" + StringUtil.newLine
+            + "        document.main_form.test_combo.blur();" + StringUtil.newLine
+            + "  }" + StringUtil.newLine
+            + "  function onRunChange() {" + StringUtil.newLine
+            + "        selectedIndex = document.main_form.run_combo.selectedIndex;" + StringUtil.newLine
+            + "        selectedCode  = document.main_form.run_combo.options[selectedIndex].value;" + StringUtil.newLine);
     int runSkey = 0;
-    for (Iterator i = runs.iterator(); i.hasNext(); ) {
-      String runDescription = (String) i.next();
-      runSkey++;
-      html += "        if (selectedCode == 'Run" + runSkey + "') {" + StringUtil.newLine;
-      List testables = (List) runMap.get(runDescription);
-      int caseSkey = 0;
-      for (Iterator m = testables.iterator(); m.hasNext(); ) {
-        Testable testable = (Testable) m.next();
-        caseSkey++;
-        html += "              document.main_form.test_combo.length = " + caseSkey + ";" + StringUtil.newLine;
-        html += "              document.main_form.test_combo.options[" + (caseSkey - 1) + "].text  = \"" + StringUtil.escapeHTML(testName(testable, caseSkey)) + "\";" + StringUtil.newLine;
-        html += "              document.main_form.test_combo.options[" + (caseSkey - 1) + "].value  = 'Run" + runSkey + "Case" + caseSkey + ".html';" + StringUtil.newLine;
+      for (String runDescription : runs) {
+          runSkey++;
+          html.append("        if (selectedCode == 'Run").append(runSkey).append("') {").append(StringUtil.newLine);
+          List<Testable> testables = runMap.get(runDescription);
+          int caseSkey = 0;
+          for (Testable testable : testables) {
+              caseSkey++;
+              html.append("              document.main_form.test_combo.length = ").append(caseSkey).append(";").append(StringUtil.newLine);
+              html.append("              document.main_form.test_combo.options[").append(caseSkey - 1).append("].text  = \"").append(StringUtil.escapeHTML(testName(testable, caseSkey))).append("\";").append(StringUtil.newLine);
+              html.append("              document.main_form.test_combo.options[").append(caseSkey - 1).append("].value  = 'Run").append(runSkey).append("Case").append(caseSkey).append(".html';").append(StringUtil.newLine);
+          }
+          html.append("        LoadDetailFrame();");
+          html.append("  }");
       }
-      html += "        LoadDetailFrame();";
-      html += "  }";
-    }
-    html += "  }" + StringUtil.newLine
-         + "</script>" + StringUtil.newLine
-         + "</HEAD>" + StringUtil.newLine
-         + "<BODY>" + StringUtil.newLine
-         + "<h1>JTS Validation Suite</h1>" + StringUtil.newLine
-         + htmlTitle(precisionModel)
-         + "<p>" + StringUtil.newLine
-         + "<FORM id=\"main_form\" name=\"main_form\">" + StringUtil.newLine;
+    html.append("  }").append(StringUtil.newLine).append("</script>").append(StringUtil.newLine).append("</HEAD>").append(StringUtil.newLine).append("<BODY>").append(StringUtil.newLine).append("<h1>JTS Validation Suite</h1>").append(StringUtil.newLine).append(htmlTitle(precisionModel)).append("<p>").append(StringUtil.newLine).append("<FORM id=\"main_form\" name=\"main_form\">").append(StringUtil.newLine);
 
-    html += "<select id=run_combo name=run_combo size='1' style='width:30%' onChange='onRunChange()'>" + StringUtil.newLine;
+    html.append("<select id=run_combo name=run_combo size='1' style='width:30%' onChange='onRunChange()'>").append(StringUtil.newLine);
     runSkey = 0;
-    for (Iterator j = runs.iterator(); j.hasNext(); ) {
-      String runDescription = (String) j.next();
-      runSkey++;
-      html += "<OPTION VALUE='Run" + runSkey + "'>"
-           + StringUtil.escapeHTML(runName(runDescription, runSkey))
-           + "</OPTION>" + StringUtil.newLine;
-    }
-    html += "</select>" + StringUtil.newLine;
+      for (String runDescription : runs) {
+          runSkey++;
+          html.append("<OPTION VALUE='Run").append(runSkey).append("'>").append(StringUtil.escapeHTML(runName(runDescription, runSkey))).append("</OPTION>").append(StringUtil.newLine);
+      }
+    html.append("</select>").append(StringUtil.newLine);
 
-    html += "<select id=test_combo name=test_combo size='1' style='width:60%' onChange='LoadDetailFrame()'>" + StringUtil.newLine;
-    String runDescription = (String) runs.iterator().next();
-    List testables = (List) runMap.get(runDescription);
+    html.append("<select id=test_combo name=test_combo size='1' style='width:60%' onChange='LoadDetailFrame()'>").append(StringUtil.newLine);
+    String runDescription = runs.iterator().next();
+    List<Testable> testables = runMap.get(runDescription);
     int caseSkey = 0;
-    for (Iterator m = testables.iterator(); m.hasNext(); ) {
-      Testable testable = (Testable) m.next();
-      caseSkey++;
-      html += "<OPTION VALUE='Run1Case" + caseSkey + ".html'>"
-           + StringUtil.escapeHTML(testName(testable, caseSkey))
-           + "</OPTION>" + StringUtil.newLine;
-    }
-    html += "</select>" + StringUtil.newLine;
+      for (Testable testable : testables) {
+          caseSkey++;
+          html.append("<OPTION VALUE='Run1Case").append(caseSkey).append(".html'>").append(StringUtil.escapeHTML(testName(testable, caseSkey))).append("</OPTION>").append(StringUtil.newLine);
+      }
+    html.append("</select>").append(StringUtil.newLine);
 
-    html += "</FORM>" + StringUtil.newLine
-         + "</BODY>" + StringUtil.newLine
-         + "</HTML>" + StringUtil.newLine
-         + "" + StringUtil.newLine;
-    return html;
+    html.append("</FORM>").append(StringUtil.newLine).append("</BODY>").append(StringUtil.newLine).append("</HTML>").append(StringUtil.newLine).append(StringUtil.newLine);
+    return html.toString();
   }
 
-  private String testTopHtml() {
+  private static String testTopHtml() {
     return
         "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Frameset//EN\"\"http://www.w3.org/TR/REC-html40/frameset.dtd\">" + StringUtil.newLine
          + "<HTML>" + StringUtil.newLine
@@ -510,14 +480,14 @@ public class HtmlWriter {
          + "<NOFRAMES>" + StringUtil.newLine
          + "<H2>" + StringUtil.newLine
          + "Frame Alert</H2>" + StringUtil.newLine
-         + "" + StringUtil.newLine
+         + StringUtil.newLine
          + "<P>" + StringUtil.newLine
          + "This site is designed to be viewed using frames. " + StringUtil.newLine
          + "If you see this message, you are using a non-frame-capable web client." + StringUtil.newLine
          + "</HTML>" + StringUtil.newLine;
   }
 
-  private String htmlForBinaryPredicates(TestCaseEdit testCaseEdit, int caseSkey) {
+  private static String htmlForBinaryPredicates(TestCaseEdit testCaseEdit, int caseSkey) {
     String html = "";
     if (testCaseEdit.getGeometry(1) != null) {
       html += htmlForRelateTest(testCaseEdit, caseSkey);
@@ -540,4 +510,3 @@ public class HtmlWriter {
 
 
 }
-

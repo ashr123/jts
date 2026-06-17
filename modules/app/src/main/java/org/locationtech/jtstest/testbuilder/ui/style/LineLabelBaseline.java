@@ -32,8 +32,8 @@ public class LineLabelBaseline {
     return labeller.getBaseline();
   }
 
-  private Envelope constraintEnv;
-  private LineString line;
+  private final Envelope constraintEnv;
+  private final LineString line;
   
   public LineLabelBaseline(LineString line, Envelope constraintEnv) {
     this.line = line;
@@ -65,14 +65,13 @@ public class LineLabelBaseline {
     return new LineSegment(clip0, clip1);
   }
 
-  private boolean isOnBoundary(Envelope env, Coordinate p0, Coordinate p1) {
+  private static boolean isOnBoundary(Envelope env, Coordinate p0, Coordinate p1) {
     if (p0.x == p1.x) {
       if (p0.x == env.getMinX() || p0.x == env.getMaxX())
         return true;
     }
     if (p0.y == p1.y) {
-      if (p0.y == env.getMinY() || p0.x == env.getMaxY())
-        return true;
+        return p0.y == env.getMinY() || p0.x == env.getMaxY();
     }
     return false;
   }

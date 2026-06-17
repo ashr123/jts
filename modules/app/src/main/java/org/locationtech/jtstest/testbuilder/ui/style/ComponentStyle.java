@@ -22,9 +22,7 @@ import org.locationtech.jtstest.testbuilder.ui.Viewport;
 public abstract class ComponentStyle
   implements Style
 {
-  public void paint(Geometry geom, Viewport viewport, Graphics2D g) 
-    throws Exception
-  {
+  public void paint(Geometry geom, Viewport viewport, Graphics2D g) {
     // cull non-visible geometries
     if (! viewport.intersectsInModel(geom.getEnvelopeInternal())) 
       return;
@@ -41,7 +39,7 @@ public abstract class ComponentStyle
 
   protected abstract void paintComponent(Geometry geom,
       Viewport viewport, Graphics2D graphics)
-  throws Exception;
+          ;
 
 
 }

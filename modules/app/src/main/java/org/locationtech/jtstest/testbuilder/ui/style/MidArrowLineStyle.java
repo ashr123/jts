@@ -15,7 +15,6 @@ package org.locationtech.jtstest.testbuilder.ui.style;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
-import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 
 import org.locationtech.jtstest.testbuilder.ui.Viewport;
@@ -33,15 +32,12 @@ public class MidArrowLineStyle
     this.color = color;
   }
 
-  protected void paint(int index, Point2D p0, Point2D p1, int lineType, Viewport vp, Graphics2D gr)
-  throws Exception
-  {
+  protected void paint(int index, Point2D p0, Point2D p1, int lineType, Viewport vp, Graphics2D gr) {
   	paintMidpointArrow(p0, p1, vp, gr);
   }
 
   protected void paintMidpointArrow(Point2D p0, Point2D p1, Viewport viewport,
-      Graphics2D graphics) throws NoninvertibleTransformException 
-  {
+      Graphics2D graphics) {
     // can't compute valid arrow for zero-length segments
     if (p0.equals(p1)) {
       return;

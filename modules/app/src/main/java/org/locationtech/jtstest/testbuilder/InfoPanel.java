@@ -29,11 +29,11 @@ extends JPanel
 {
 	TestBuilderModel tbModel = null;
 	
-	JScrollPane jScrollPane1 = new JScrollPane();
-	JTextArea txtInfo = new JTextArea();
-  BorderLayout tabPanelLayout = new BorderLayout();
+	final JScrollPane jScrollPane1 = new JScrollPane();
+	final JTextArea txtInfo = new JTextArea();
+  final BorderLayout tabPanelLayout = new BorderLayout();
   
-  StringBuffer text = new StringBuffer();
+  final StringBuffer text = new StringBuffer();
 	
 	public InfoPanel() {
 		try {
@@ -43,7 +43,7 @@ extends JPanel
 		}
 	}
 	
-  void jbInit() throws Exception {
+  void jbInit() {
     
     this.setLayout(tabPanelLayout);
 
@@ -71,13 +71,13 @@ extends JPanel
   
   public void setInfo(String s)
   {
-    if (s == null || s.length() == 0) s = "";
+    if (s == null || s.isEmpty()) s = "";
     txtInfo.setText(s);
   }
 
   public void addInfo(String s)
   {
-    if (s == null || s.length() == 0) return;
+    if (s == null || s.isEmpty()) return;
     
     if (text.length() != 0) {
       text.append("\n");

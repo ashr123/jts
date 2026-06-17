@@ -29,9 +29,9 @@ import org.locationtech.jtstest.util.HSBPalette;
 
 public class LayerRenderer implements Renderer
 {
-  private Layer layer;
-	private GeometryContainer geomCont;
-	private Viewport viewport;
+  private final Layer layer;
+	private final GeometryContainer geomCont;
+	private final Viewport viewport;
 	private boolean isCancelled = false;
 
 	public LayerRenderer(Layer layer, Viewport viewport)
@@ -67,8 +67,7 @@ public class LayerRenderer implements Renderer
     if (geomCont == null) {
     	return null;
     }
-    Geometry geom = geomCont.getGeometry();
-    return geom;
+      return geomCont.getGeometry();
   }
   
   private void render(Graphics2D g, Viewport viewport, Geometry geometry, Layer layer)

@@ -4,7 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.locationtech.jts.geom.Geometry;
@@ -15,9 +15,8 @@ import org.locationtech.jts.io.WKBReader;
 import junit.framework.TestCase;
 
 public class JTSOpCmdTest extends TestCase {
-  private boolean isVerbose = true;
 
-  public JTSOpCmdTest(String Name_) {
+    public JTSOpCmdTest(String Name_) {
     super(Name_);
   }
 
@@ -171,8 +170,8 @@ public class JTSOpCmdTest extends TestCase {
         "Buffer.buffer", "val(1,2,3,4)" ), 
         null, null );
     List<Geometry> results = cmd.getResultGeometry();
-    assertTrue("Not enough results for arg values",  results.size() == 4 );
-    assertEquals("Incorrect summary value for arg values",  computeArea(results), 93.6, 1);
+      assertEquals("Not enough results for arg values", 4, results.size());
+    assertEquals("Incorrect summary value for arg values", 93.6, computeArea(results), 1);
   }
 
   public void testOpBufferMultiArgParen() {
@@ -182,8 +181,8 @@ public class JTSOpCmdTest extends TestCase {
         "Buffer.buffer", "(1,2,3,4)" ), 
         null, null );
     List<Geometry> results = cmd.getResultGeometry();
-    assertTrue("Not enough results for arg values",  results.size() == 4 );
-    assertEquals("Incorrect summary value for arg values",  computeArea(results), 93.6, 1);
+      assertEquals("Not enough results for arg values", 4, results.size());
+    assertEquals("Incorrect summary value for arg values", 93.6, computeArea(results), 1);
   }
 
   public void testOpBufferMultiArgNoParen() {
@@ -193,8 +192,8 @@ public class JTSOpCmdTest extends TestCase {
         "Buffer.buffer", "1,2,3,4" ), 
         null, null );
     List<Geometry> results = cmd.getResultGeometry();
-    assertTrue("Not enough results for arg values",  results.size() == 4 );
-    assertEquals("Incorrect summary value for arg values",  computeArea(results), 93.6, 1);
+      assertEquals("Not enough results for arg values", 4, results.size());
+    assertEquals("Incorrect summary value for arg values", 93.6, computeArea(results), 1);
   }
 
   //----------------------------------------------------------------
@@ -206,7 +205,7 @@ public class JTSOpCmdTest extends TestCase {
         "-where", "eq", "1",
         "isValid" ) );
     List<Geometry> results = cmd.getResultGeometry();
-    assertTrue("Not enough results for arg values",  results.size() == 1 );
+      assertEquals("Not enough results for arg values", 1, results.size());
   }
 
   public void testWhereInvalid() {
@@ -216,7 +215,7 @@ public class JTSOpCmdTest extends TestCase {
         "-where","eq", "0",
         "isValid" ) );
     List<Geometry> results = cmd.getResultGeometry();
-    assertTrue("Not enough results for arg values",  results.size() == 1 );
+      assertEquals("Not enough results for arg values", 1, results.size());
   }
 
   public void testWhereLength() {
@@ -232,7 +231,7 @@ public class JTSOpCmdTest extends TestCase {
             "LINESTRING ( 0 1, 0 4)"
             ) );
     List<Geometry> results = cmd.getResultGeometry();
-    assertTrue("Not enough results for arg values",  results.size() == 2 );
+      assertEquals("Not enough results for arg values", 2, results.size());
   }
 
   //----------------------------------------------------------------
@@ -280,14 +279,14 @@ public class JTSOpCmdTest extends TestCase {
     String[] output = cmd.getOutputLines();
     for (String out : output) {
       Geometry outGeom = readWKB(out);
-      assertEquals("Incorrect SRID in WKB",  outGeom.getSRID(), 4326);
+      assertEquals("Incorrect SRID in WKB", 4326, outGeom.getSRID());
     }
   }
 
 
   //----------------------------------------------------------------
 
-  private Geometry readWKB(String wkbHex) throws ParseException {
+  private static Geometry readWKB(String wkbHex) throws ParseException {
     byte[] wkb = WKBReader.hexToBytes(wkbHex);
     WKBReader rdr = new WKBReader();
     return rdr.read(wkb);
@@ -302,7 +301,7 @@ public class JTSOpCmdTest extends TestCase {
         "Overlay.union" ), 
         null, null );
     List<Geometry> results = cmd.getResultGeometry();
-    assertEquals("Not enough results for explode",  results.size(), 4 );
+    assertEquals("Not enough results for explode", 4, results.size());
   }
 
   public void testLiteralEmptyLinestring() {
@@ -312,7 +311,7 @@ public class JTSOpCmdTest extends TestCase {
         "Construction.boundary" ), 
         null, null );
     List<Geometry> results = cmd.getResultGeometry();
-    assertEquals("Too many results for operation",  results.size(), 1 );
+    assertEquals("Too many results for operation", 1, results.size());
     assertTrue("Expected empty result",  results.get(0).isEmpty() );
   }
 
@@ -323,7 +322,7 @@ public class JTSOpCmdTest extends TestCase {
         "Construction.boundary" ), 
         null, null );
     List<Geometry> results = cmd.getResultGeometry();
-    assertEquals("Too many results for operation",  results.size(), 1 );
+    assertEquals("Too many results for operation", 1, results.size());
     assertTrue("Expected empty result",  results.get(0).isEmpty() );
   }
 
@@ -378,13 +377,12 @@ public class JTSOpCmdTest extends TestCase {
         JTSOpRunner.ERR_PARSE_GEOM );
   }
   
-  private String[] args(String ... args) {
+  private static String[] args(String... args) {
     return args;
   }
 
   private static InputStream stdin(String data) {
-    InputStream instr = new ByteArrayInputStream(data.getBytes(Charset.forName("UTF-8")));
-    return instr;
+      return new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
   }
   
   private static InputStream stdin(String... dataArr) {
@@ -401,20 +399,20 @@ public class JTSOpCmdTest extends TestCase {
     }
   }
   
-  public void runCmd(String[] args, String expected)
+  public static void runCmd(String[] args, String expected)
   {    
     runCmd(args, null, expected);
   }
 
-  private JTSOpCmd runCmd(String[] args, InputStream stdin) {
+  private static JTSOpCmd runCmd(String[] args, InputStream stdin) {
     return runCmd(args, stdin, null);
   }
   
-  private JTSOpCmd runCmd(String[] args) {
+  private static JTSOpCmd runCmd(String[] args) {
     return runCmd(args, null, null);
   }
   
-  private JTSOpCmd runCmd(String[] args, InputStream stdin, String expected) {
+  private static JTSOpCmd runCmd(String[] args, InputStream stdin, String expected) {
     JTSOpCmd cmd = new JTSOpCmd();
     cmd.captureOutput();
     cmd.captureResult();
@@ -429,15 +427,15 @@ public class JTSOpCmdTest extends TestCase {
     return cmd;
   }
   
-  public void runCmdError(String[] args) {
+  public static void runCmdError(String[] args) {
     runCmdError(args, null);
   }
 
-  public void runCmdError(String[] args, String expected) {
+  public static void runCmdError(String[] args, String expected) {
     runCmdError(args, null, expected);
   }
 
-  public void runCmdError(String[] args, InputStream stdin, String expected)
+  public static void runCmdError(String[] args, InputStream stdin, String expected)
   {    
     JTSOpCmd cmd = new JTSOpCmd();
     if (stdin != null) cmd.replaceStdIn(stdin);
@@ -452,14 +450,15 @@ public class JTSOpCmdTest extends TestCase {
     catch (Exception e) {
       e.printStackTrace();
     }
-    assertTrue("Expected error but command completed successfully", false);
+      fail("Expected error but command completed successfully");
   }
 
-  private void checkExpected(String actual, String expected) {
+  private static void checkExpected(String actual, String expected) {
     if (expected == null) return;
     
     boolean found = actual.contains(expected);
-    if (isVerbose  && ! found) {
+      boolean isVerbose = true;
+      if (isVerbose && ! found) {
       System.out.println("Expected: " + expected);
       System.out.println("Actual: " + actual);
     }

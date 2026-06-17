@@ -45,8 +45,7 @@ public class StyleSwatchList extends JList<StyleSwatchList.StyleSwatch> {
     for (BasicStyle style : styles) {
       listModel.addElement(new StyleSwatch(style));
     }
-    StyleSwatchList ssList = new StyleSwatchList(listModel);
-    return ssList;
+      return new StyleSwatchList(listModel);
   }
 
   public StyleSwatchList(ListModel<StyleSwatch> model) {
@@ -83,7 +82,7 @@ public class StyleSwatchList extends JList<StyleSwatchList.StyleSwatch> {
    * remains a static nested class.
    */
   protected static class StyleSwatch extends JPanel {
-    private BasicStyle style;
+    private final BasicStyle style;
     // private String name; // Identifier for the panel
 
     public StyleSwatch(BasicStyle style) {
@@ -109,17 +108,15 @@ public class StyleSwatchList extends JList<StyleSwatchList.StyleSwatch> {
 
       int rectMargin = 3;
       int borderThickness = 2;
-      int rectX = rectMargin;
-      int rectY = rectMargin;
-      int rectWidth = getWidth() - 2 * rectMargin;
+        int rectWidth = getWidth() - 2 * rectMargin;
       int rectHeight = getHeight() - 2 * rectMargin;
 
       g2d.setColor(style.getFillColor());
-      g2d.fillRect(rectX, rectY, rectWidth, rectHeight);
+      g2d.fillRect(rectMargin, rectMargin, rectWidth, rectHeight);
 
       g2d.setColor(style.getLineColor());
       g2d.setStroke(new BasicStroke(borderThickness));
-      g2d.drawRect(rectX, rectY, rectWidth, rectHeight);
+      g2d.drawRect(rectMargin, rectMargin, rectWidth, rectHeight);
 
       /*
        * if (name != null && !name.isEmpty()) { FontMetrics fm = g2d.getFontMetrics();

@@ -86,7 +86,7 @@ public class CommandRunner {
     return stderr;
   }
   
-  private String[] cmdArray(String cmd) {
+  private static String[] cmdArray(String cmd) {
     boolean isWindows = System.getProperty("os.name")
         .toLowerCase().startsWith("windows");
     // -- Linux --

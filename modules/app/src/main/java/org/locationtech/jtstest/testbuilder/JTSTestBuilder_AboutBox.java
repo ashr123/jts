@@ -34,25 +34,25 @@ import org.locationtech.jts.JTSVersion;
  * @version 1.7
  */
 public class JTSTestBuilder_AboutBox extends JDialog implements ActionListener {
-    JPanel panel1 = new JPanel();
-    JPanel panel2 = new JPanel();
-    JPanel insetsPanel1 = new JPanel();
-    JPanel insetsPanel2 = new JPanel();
-    JPanel insetsPanel3 = new JPanel();
-    JButton button1 = new JButton();
-    JLabel imageLabel = new JLabel();
-    JLabel label1 = new JLabel();
-    JLabel label2 = new JLabel();
-    JLabel label3 = new JLabel();
-    JLabel label4 = new JLabel();
-    JLabel labelJTS = new JLabel();
-    BorderLayout borderLayout1 = new BorderLayout();
-    BorderLayout borderLayout2 = new BorderLayout();
-    FlowLayout flowLayout1 = new FlowLayout();
-    GridLayout gridLayout1 = new GridLayout();
+    final JPanel panel1 = new JPanel();
+    final JPanel panel2 = new JPanel();
+    final JPanel insetsPanel1 = new JPanel();
+    final JPanel insetsPanel2 = new JPanel();
+    final JPanel insetsPanel3 = new JPanel();
+    final JButton button1 = new JButton();
+    final JLabel imageLabel = new JLabel();
+    final JLabel label1 = new JLabel();
+    final JLabel label2 = new JLabel();
+    final JLabel label3 = new JLabel();
+    final JLabel label4 = new JLabel();
+    final JLabel labelJTS = new JLabel();
+    final BorderLayout borderLayout1 = new BorderLayout();
+    final BorderLayout borderLayout2 = new BorderLayout();
+    final FlowLayout flowLayout1 = new FlowLayout();
+    final GridLayout gridLayout1 = new GridLayout();
     String product = "";
-    String version = "JTS Version " + JTSVersion.CURRENT_VERSION.toString();
-    String copyright = "";
+    static final String version = "JTS Version " + JTSVersion.CURRENT_VERSION;
+    static final String copyright = "";
     String comments = "";
 
     public JTSTestBuilder_AboutBox(Frame parent) {
@@ -67,7 +67,7 @@ public class JTSTestBuilder_AboutBox extends JDialog implements ActionListener {
     }
 
     /**Component initialization*/
-    private void jbInit() throws Exception {
+    private void jbInit() {
         //imageLabel.setIcon(new ImageIcon(JTSTestFrame_AboutBox.class.getResource("[Your Image]")));
         this.setTitle("About");
         setResizable(false);

@@ -11,20 +11,22 @@
  */
 package org.locationtech.jtstest.geomfunction;
 
+import java.util.List;
+
 import org.locationtech.jts.geom.Geometry;
 
 public class FilterGeometryFunction implements GeometryFunction {
   
-  public static int OP_EQ = 1;
-  public static int OP_NE = 2;
-  public static int OP_GE = 3;
-  public static int OP_GT = 4;
-  public static int OP_LE = 5;
-  public static int OP_LT = 6;
+  public static final int OP_EQ = 1;
+  public static final int OP_NE = 2;
+  public static final int OP_GE = 3;
+  public static final int OP_GT = 4;
+  public static final int OP_LE = 5;
+  public static final int OP_LT = 6;
   
-  private GeometryFunction fun;
-  private double filterVal;
-  private int filterOp;
+  private final GeometryFunction fun;
+  private final double filterVal;
+  private final int filterOp;
   
   public FilterGeometryFunction(GeometryFunction fun, double filterVal) {
     this.fun = fun;
@@ -54,11 +56,11 @@ public class FilterGeometryFunction implements GeometryFunction {
     return fun.getParameterNames();
   }
 
-  public Class[] getParameterTypes() {
+  public Class<?>[] getParameterTypes() {
     return fun.getParameterTypes();
   }
 
-  public Class getReturnType() {
+  public Class<?> getReturnType() {
     return Geometry.class;
   }
 
@@ -75,14 +77,14 @@ public class FilterGeometryFunction implements GeometryFunction {
   }
 
   @Override
-  public Object invoke(Geometry geom, Object[] args) {
+  public Object invoke(Geometry geom, List<Object> args) {
     Object result = fun.invoke(geom, args);
     double val = toDouble(result);
     if (isMatch(val)) return geom;
     return null;
   }
 
-  private double toDouble(Object result) {
+  private static double toDouble(Object result) {
     if (result instanceof Boolean) return ((Boolean) result) ? 1 : 0;
     if (result instanceof Number) 
       return ((Number) result).doubleValue();

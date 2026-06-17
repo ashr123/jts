@@ -12,6 +12,33 @@
 
 package org.locationtech.jtstest.testbuilder.ui.dnd;
 
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.WindowConstants;
+import javax.swing.border.Border;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.Iterator;
+import java.util.List;
+import java.util.TooManyListenersException;
+
 /**
  * This class makes it easy to drag and drop files from the operating
  * system to a Java program. Any <tt>java.awt.Component</tt> can be
@@ -52,19 +79,19 @@ package org.locationtech.jtstest.testbuilder.ui.dnd;
  */
 public class FileDrop
 {
-    private transient javax.swing.border.Border normalBorder;
-    private transient java.awt.dnd.DropTargetListener dropListener;
+    private transient Border normalBorder;
+    private transient DropTargetListener dropListener;
     
     
     /** Discover if the running JVM is modern enough to have drag and drop. */
     private static Boolean supportsDnD;
     
     // Default border color
-    private static java.awt.Color defaultBorderColor = new java.awt.Color( 0f, 0f, 1f, 0.25f );
+    private static final Color defaultBorderColor = new Color( 0f, 0f, 1f, 0.25f );
     
     /**
      * Constructs a {@link FileDrop} with a default light-blue border
-     * and, if <var>c</var> is a {@link java.awt.Container}, recursively
+     * and, if <var>c</var> is a {@link Container}, recursively
      * sets all elements contained within as drop targets, though only
      * the top level container will change borders.
      *
@@ -73,11 +100,11 @@ public class FileDrop
      * @since 1.0
      */
     public FileDrop(
-    final java.awt.Component c,
+    final Component c,
     final Listener listener )
     {   this( null,  // Logging stream
               c,     // Drop target
-              javax.swing.BorderFactory.createMatteBorder( 2, 2, 2, 2, defaultBorderColor ), // Drag border
+              BorderFactory.createMatteBorder( 2, 2, 2, 2, defaultBorderColor ), // Drag border
               true, // Recursive
               listener );
     }   // end constructor
@@ -96,12 +123,12 @@ public class FileDrop
      * @since 1.0
      */
     public FileDrop(
-    final java.awt.Component c,
+    final Component c,
     final boolean recursive,
     final Listener listener )
     {   this( null,  // Logging stream
               c,     // Drop target
-              javax.swing.BorderFactory.createMatteBorder( 2, 2, 2, 2, defaultBorderColor ), // Drag border
+              BorderFactory.createMatteBorder( 2, 2, 2, 2, defaultBorderColor ), // Drag border
               recursive, // Recursive
               listener );
     }   // end constructor
@@ -120,12 +147,12 @@ public class FileDrop
      * @since 1.0
      */
     public FileDrop(
-    final java.io.PrintStream out,
-    final java.awt.Component c,
+    final PrintStream out,
+    final Component c,
     final Listener listener )
     {   this( out,  // Logging stream
               c,    // Drop target
-              javax.swing.BorderFactory.createMatteBorder( 2, 2, 2, 2, defaultBorderColor ), 
+              BorderFactory.createMatteBorder( 2, 2, 2, 2, defaultBorderColor ),
               false, // Recursive
               listener );
     }   // end constructor
@@ -149,13 +176,13 @@ public class FileDrop
      * @since 1.0
      */
     public FileDrop(
-    final java.io.PrintStream out,
-    final java.awt.Component c,
+    final PrintStream out,
+    final Component c,
     final boolean recursive,
     final Listener listener)
     {   this( out,  // Logging stream
               c,    // Drop target
-              javax.swing.BorderFactory.createMatteBorder( 2, 2, 2, 2, defaultBorderColor ), // Drag border
+              BorderFactory.createMatteBorder( 2, 2, 2, 2, defaultBorderColor ), // Drag border
               recursive, // Recursive
               listener );
     }   // end constructor
@@ -172,8 +199,8 @@ public class FileDrop
      * @since 1.0
      */
     public FileDrop(
-    final java.awt.Component c,
-    final javax.swing.border.Border dragBorder,
+    final Component c,
+    final Border dragBorder,
     final Listener listener) 
     {   this(
             null,   // Logging stream
@@ -198,8 +225,8 @@ public class FileDrop
      * @since 1.0
      */
     public FileDrop(
-    final java.awt.Component c,
-    final javax.swing.border.Border dragBorder,
+    final Component c,
+    final Border dragBorder,
     final boolean recursive,
     final Listener listener) 
     {   this(
@@ -226,9 +253,9 @@ public class FileDrop
      * @since 1.0
      */
     public FileDrop(
-    final java.io.PrintStream out,
-    final java.awt.Component c,
-    final javax.swing.border.Border dragBorder,
+    final PrintStream out,
+    final Component c,
+    final Border dragBorder,
     final Listener listener) 
     {   this(
             out,    // Logging stream
@@ -257,25 +284,25 @@ public class FileDrop
      * @since 1.0
      */
     public FileDrop(
-    final java.io.PrintStream out,
-    final java.awt.Component c,
-    final javax.swing.border.Border dragBorder,
+    final PrintStream out,
+    final Component c,
+    final Border dragBorder,
     final boolean recursive,
     final Listener listener) 
     {   
         
         if( supportsDnD() )
         {   // Make a drop listener
-            dropListener = new java.awt.dnd.DropTargetListener()
-            {	public void dragEnter( java.awt.dnd.DropTargetDragEvent evt )
+            dropListener = new DropTargetListener()
+            {	public void dragEnter( DropTargetDragEvent evt )
                 {	log( out, "FileDrop: dragEnter event." );
 
                     // Is this an acceptable drag event?
                     if( isDragOk( out, evt ) )
                     {
                         // If it's a Swing component, set its border
-                        if( c instanceof javax.swing.JComponent )
-                        {   javax.swing.JComponent jc = (javax.swing.JComponent) c;
+                        if( c instanceof JComponent )
+                        {   JComponent jc = (JComponent) c;
                             normalBorder = jc.getBorder();
                             log( out, "FileDrop: normal border saved." );
                             jc.setBorder( dragBorder );
@@ -284,7 +311,7 @@ public class FileDrop
 
                         // Acknowledge that it's okay to enter
                         //evt.acceptDrag( java.awt.dnd.DnDConstants.ACTION_COPY_OR_MOVE );
-                        evt.acceptDrag( java.awt.dnd.DnDConstants.ACTION_COPY );
+                        evt.acceptDrag( DnDConstants.ACTION_COPY );
                         log( out, "FileDrop: event accepted." );
                     }   // end if: drag ok
                     else 
@@ -294,38 +321,36 @@ public class FileDrop
                     }   // end else: drag not ok
                 }   // end dragEnter
 
-                public void dragOver( java.awt.dnd.DropTargetDragEvent evt ) 
+                public void dragOver( DropTargetDragEvent evt )
                 {   // This is called continually as long as the mouse is
                     // over the drag target.
                 }   // end dragOver
 
-                public void drop( java.awt.dnd.DropTargetDropEvent evt )
+                public void drop( DropTargetDropEvent evt )
                 {   log( out, "FileDrop: drop event." );
                     try
                     {   // Get whatever was dropped
-                        java.awt.datatransfer.Transferable tr = evt.getTransferable();
+                        Transferable tr = evt.getTransferable();
 
                         // Is it a file list?
-                        if (tr.isDataFlavorSupported (java.awt.datatransfer.DataFlavor.javaFileListFlavor))
+                        if (tr.isDataFlavorSupported (DataFlavor.javaFileListFlavor))
                         {
                             // Say we'll take it.
                             //evt.acceptDrop ( java.awt.dnd.DnDConstants.ACTION_COPY_OR_MOVE );
-                            evt.acceptDrop ( java.awt.dnd.DnDConstants.ACTION_COPY );
+                            evt.acceptDrop ( DnDConstants.ACTION_COPY );
                             log( out, "FileDrop: file list accepted." );
 
                             // Get a useful list
-                            java.util.List fileList = (java.util.List) 
-                                tr.getTransferData(java.awt.datatransfer.DataFlavor.javaFileListFlavor);
-                            java.util.Iterator iterator = fileList.iterator();
+                            List<File> fileList = (List<File>) tr.getTransferData(DataFlavor.javaFileListFlavor);
+                            Iterator<File> iterator = fileList.iterator();
 
                             // Convert list to array
-                            java.io.File[] filesTemp = new java.io.File[ fileList.size() ];
+                            File[] filesTemp = new File[ fileList.size() ];
                             fileList.toArray( filesTemp );
-                            final java.io.File[] files = filesTemp;
 
                             // Alert listener to drop.
                             if( listener != null )
-                                listener.filesDropped( files );
+                                listener.filesDropped(filesTemp);
 
                             // Mark that drop is completed.
                             evt.getDropTargetContext().dropComplete(true);
@@ -336,12 +361,12 @@ public class FileDrop
                             evt.rejectDrop();
                         }   // end else: not a file list
                     }   // end try
-                    catch ( java.io.IOException io) 
+                    catch ( IOException io)
                     {   log( out, "FileDrop: IOException - abort:" );
                         io.printStackTrace( out );
                         evt.rejectDrop();
                     }   // end catch IOException
-                    catch (java.awt.datatransfer.UnsupportedFlavorException ufe) 
+                    catch (UnsupportedFlavorException ufe)
                     {   log( out, "FileDrop: UnsupportedFlavorException - abort:" );
                         ufe.printStackTrace( out );
                         evt.rejectDrop();
@@ -349,30 +374,30 @@ public class FileDrop
                     finally
                     {
                         // If it's a Swing component, reset its border
-                        if( c instanceof javax.swing.JComponent )
-                        {   javax.swing.JComponent jc = (javax.swing.JComponent) c;
+                        if( c instanceof JComponent )
+                        {   JComponent jc = (JComponent) c;
                             jc.setBorder( normalBorder );
                             log( out, "FileDrop: normal border restored." );
                         }   // end if: JComponent
                     }   // end finally
                 }   // end drop
 
-                public void dragExit( java.awt.dnd.DropTargetEvent evt ) 
+                public void dragExit( DropTargetEvent evt )
                 {   log( out, "FileDrop: dragExit event." );
                     // If it's a Swing component, reset its border
-                    if( c instanceof javax.swing.JComponent )
-                    {   javax.swing.JComponent jc = (javax.swing.JComponent) c;
+                    if( c instanceof JComponent )
+                    {   JComponent jc = (JComponent) c;
                         jc.setBorder( normalBorder );
                         log( out, "FileDrop: normal border restored." );
                     }   // end if: JComponent
                 }   // end dragExit
 
-                public void dropActionChanged( java.awt.dnd.DropTargetDragEvent evt ) 
+                public void dropActionChanged( DropTargetDragEvent evt )
                 {   log( out, "FileDrop: dropActionChanged event." );
                     // Is this an acceptable drag event?
                     if( isDragOk( out, evt ) )
                     {   //evt.acceptDrag( java.awt.dnd.DnDConstants.ACTION_COPY_OR_MOVE );
-                        evt.acceptDrag( java.awt.dnd.DnDConstants.ACTION_COPY );
+                        evt.acceptDrag( DnDConstants.ACTION_COPY );
                         log( out, "FileDrop: event accepted." );
                     }   // end if: drag ok
                     else 
@@ -397,79 +422,76 @@ public class FileDrop
         {   
             boolean support = false;
             try
-            {   Class arbitraryDndClass = Class.forName( "java.awt.dnd.DnDConstants" );
+            {   Class<?> arbitraryDndClass = Class.forName( "java.awt.dnd.DnDConstants" );
                 support = true;
             }   // end try
             catch( Exception e )
             {   support = false;
             }   // end catch
-            supportsDnD = Boolean.valueOf( support );
+            supportsDnD = support;
         }   // end if: first time through
-        return supportsDnD.booleanValue();
+        return supportsDnD;
     }   // end supportsDnD
     
     
     
     
     
-    private void makeDropTarget( final java.io.PrintStream out, final java.awt.Component c, boolean recursive )
+    private void makeDropTarget( final PrintStream out, final Component c, boolean recursive )
     {
         // Make drop target
-        final java.awt.dnd.DropTarget dt = new java.awt.dnd.DropTarget();
+        final DropTarget dt = new DropTarget();
         try
         {   dt.addDropTargetListener( dropListener );
         }   // end try
-        catch( java.util.TooManyListenersException e )
+        catch( TooManyListenersException e )
         {   e.printStackTrace();
             log(out, "FileDrop: Drop will not work due to previous error. Do you have another listener attached?" );
         }   // end catch
         
         // Listen for hierarchy changes and remove the drop target when the parent gets cleared out.
-        c.addHierarchyListener( new java.awt.event.HierarchyListener()
-        {   public void hierarchyChanged( java.awt.event.HierarchyEvent evt )
-            {   log( out, "FileDrop: Hierarchy changed." );
-                java.awt.Component parent = c.getParent();
-                if( parent == null )
-                {   c.setDropTarget( null );
-                    log( out, "FileDrop: Drop target cleared from component." );
-                }   // end if: null parent
-                else
-                {   new java.awt.dnd.DropTarget(c, dropListener);
-                    log( out, "FileDrop: Drop target added to component." );
-                }   // end else: parent not null
-            }   // end hierarchyChanged
+        // end hierarchyChanged
+        c.addHierarchyListener(evt -> {   log( out, "FileDrop: Hierarchy changed." );
+            Component parent = c.getParent();
+            if( parent == null )
+            {   c.setDropTarget( null );
+                log( out, "FileDrop: Drop target cleared from component." );
+            }   // end if: null parent
+            else
+            {   new DropTarget(c, dropListener);
+                log( out, "FileDrop: Drop target added to component." );
+            }   // end else: parent not null
         }); // end hierarchy listener
         if( c.getParent() != null )
-            new java.awt.dnd.DropTarget(c, dropListener);
+            new DropTarget(c, dropListener);
         
-        if( recursive && (c instanceof java.awt.Container ) )
+        if( recursive && (c instanceof Container ) )
         {   
             // Get the container
-            java.awt.Container cont = (java.awt.Container) c;
+            Container cont = (Container) c;
             
             // Get it's components
-            java.awt.Component[] comps = cont.getComponents();
+            Component[] comps = cont.getComponents();
             
             // Set it's components as listeners also
-            for( int i = 0; i < comps.length; i++ )
-                makeDropTarget( out, comps[i], recursive );
+            for (Component comp : comps) makeDropTarget(out, comp, recursive);
         }   // end if: recursively set components as listener
     }   // end dropListener
     
     
     
     /** Determine if the dragged data is a file list. */
-    private boolean isDragOk( final java.io.PrintStream out, final java.awt.dnd.DropTargetDragEvent evt )
+    private static boolean isDragOk(final PrintStream out, final DropTargetDragEvent evt)
     {   boolean ok = false;
         
         // Get data flavors being dragged
-        java.awt.datatransfer.DataFlavor[] flavors = evt.getCurrentDataFlavors();
+        DataFlavor[] flavors = evt.getCurrentDataFlavors();
         
         // See if any of the flavors are a file list
         int i = 0;
         while( !ok && i < flavors.length )
         {   // Is the flavor a file list?
-            if( flavors[i].equals( java.awt.datatransfer.DataFlavor.javaFileListFlavor ) )
+            if( flavors[i].equals( DataFlavor.javaFileListFlavor ) )
                 ok = true;            
             i++;
         }   // end while: through flavors
@@ -487,7 +509,7 @@ public class FileDrop
     
     
     /** Outputs <tt>message</tt> to <tt>out</tt> if it's not null. */
-    private static void log( java.io.PrintStream out, String message )
+    private static void log( PrintStream out, String message )
     {   // Log message if requested
         if( out != null )
             out.println( message );
@@ -501,12 +523,12 @@ public class FileDrop
      * from the all children. You should call this if you add and remove
      * components after you've set up the drag-and-drop.
      * This will recursively unregister all components contained within
-     * <var>c</var> if <var>c</var> is a {@link java.awt.Container}.
+     * <var>c</var> if <var>c</var> is a {@link Container}.
      *
      * @param c The component to unregister as a drop target
      * @since 1.0
      */
-    public static boolean remove( java.awt.Component c)
+    public static boolean remove( Component c)
     {   return remove( null, c, true );
     }   // end remove
     
@@ -517,20 +539,19 @@ public class FileDrop
      * from the all children. You should call this if you add and remove
      * components after you've set up the drag-and-drop.
      *
-     * @param out Optional {@link java.io.PrintStream} for logging drag and drop messages
+     * @param out Optional {@link PrintStream} for logging drag and drop messages
      * @param c The component to unregister
      * @param recursive Recursively unregister components within a container
      * @since 1.0
      */
-    public static boolean remove( java.io.PrintStream out, java.awt.Component c, boolean recursive )
+    public static boolean remove( PrintStream out, Component c, boolean recursive )
     {   // Make sure we support dnd.
         if( supportsDnD() )
         {   log( out, "FileDrop: Removing drag-and-drop hooks." );
             c.setDropTarget( null );
-            if( recursive && ( c instanceof java.awt.Container ) )
-            {   java.awt.Component[] comps = ((java.awt.Container)c).getComponents();
-                for( int i = 0; i < comps.length; i++ )
-                    remove( out, comps[i], recursive );
+            if( recursive && ( c instanceof Container ) )
+            {   Component[] comps = ((Container)c).getComponents();
+                for (Component comp : comps) remove(out, comp, recursive);
                 return true;
             }   // end if: recursive
             else return false;
@@ -546,26 +567,26 @@ public class FileDrop
     /** Runs a sample program that shows dropped files */
     public static void main( String[] args )
     {
-        javax.swing.JFrame frame = new javax.swing.JFrame( "FileDrop" );
+        JFrame frame = new JFrame( "FileDrop" );
         //javax.swing.border.TitledBorder dragBorder = new javax.swing.border.TitledBorder( "Drop 'em" );
-        final javax.swing.JTextArea text = new javax.swing.JTextArea();
+        final JTextArea text = new JTextArea();
         frame.getContentPane().add( 
-            new javax.swing.JScrollPane( text ), 
-            java.awt.BorderLayout.CENTER );
-        
-        new FileDrop( System.out, text, /*dragBorder,*/ new FileDrop.Listener()
-        {   public void filesDropped( java.io.File[] files )
-            {   for( int i = 0; i < files.length; i++ )
-                {   try
-                    {   text.append( files[i].getCanonicalPath() + "\n" );
-                    }   // end try
-                    catch( java.io.IOException e ) {}
-                }   // end for: through each dropped file
-            }   // end filesDropped
+            new JScrollPane( text ),
+            BorderLayout.CENTER );
+
+        // end filesDropped
+        new FileDrop( System.out, text, /*dragBorder,*/ files -> {
+            for (File file : files) {
+                try {
+                    text.append(file.getCanonicalPath() + "\n");
+                }   // end try
+                catch (IOException e) {
+                }
+            }   // end for: through each dropped file
         }); // end FileDrop.Listener
 
         frame.setBounds( 100, 100, 300, 400 );
-        frame.setDefaultCloseOperation( frame.EXIT_ON_CLOSE );
+        frame.setDefaultCloseOperation( WindowConstants.EXIT_ON_CLOSE );
         frame.show();
     }   // end main
 
@@ -599,7 +620,7 @@ public class FileDrop
          * @param files An array of <tt>File</tt>s that were dropped.
          * @since 1.0
          */
-        public abstract void filesDropped( java.io.File[] files );
+        void filesDropped(File[] files);
     }   // end inner-interface Listener
     
 }   // end class FileDrop

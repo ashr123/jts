@@ -39,31 +39,31 @@ import org.locationtech.jtstest.testbuilder.model.TestCaseEdit;
 public class TestCaseTextDialog extends JDialog {
     private TestCaseEdit test;
     //----------------------------------
-    JPanel dialogPanel = new JPanel();
-    BorderLayout borderLayout1 = new BorderLayout();
-    JScrollPane jScrollPane1 = new JScrollPane();
-    JTextArea txtGeomView = new JTextArea();
-    JPanel jPanel1 = new JPanel();
-    JPanel cmdButtonPanel = new JPanel();
-    BorderLayout borderLayout2 = new BorderLayout();
-    BorderLayout borderLayout3 = new BorderLayout();
-    JButton btnCopy = new JButton();
-    JButton btnOk = new JButton();
-    JPanel textFormatPanel = new JPanel();
-    JPanel allOptionsPanel = new JPanel();
-    JPanel functionsPanel = new JPanel();
+    final JPanel dialogPanel = new JPanel();
+    final BorderLayout borderLayout1 = new BorderLayout();
+    final JScrollPane jScrollPane1 = new JScrollPane();
+    final JTextArea txtGeomView = new JTextArea();
+    final JPanel jPanel1 = new JPanel();
+    final JPanel cmdButtonPanel = new JPanel();
+    final BorderLayout borderLayout2 = new BorderLayout();
+    final BorderLayout borderLayout3 = new BorderLayout();
+    final JButton btnCopy = new JButton();
+    final JButton btnOk = new JButton();
+    final JPanel textFormatPanel = new JPanel();
+    final JPanel allOptionsPanel = new JPanel();
+    final JPanel functionsPanel = new JPanel();
     BoxLayout boxLayout1 = new BoxLayout(functionsPanel, BoxLayout.Y_AXIS);
-    ButtonGroup textFormatGroup = new ButtonGroup();
+    final ButtonGroup textFormatGroup = new ButtonGroup();
     
-    JRadioButton rbSVG = new JRadioButton();
-    JRadioButton rbXML = new JRadioButton();
-    JRadioButton rbXMLWKB = new JRadioButton();
-    JRadioButton rbTestCaseJava = new JRadioButton();
-    JRadioButton rbJTSJava = new JRadioButton();
-    JRadioButton rbWKB = new JRadioButton();
-    JRadioButton rbWKT = new JRadioButton();
-    JRadioButton rbWKTFormatted = new JRadioButton();
-    JRadioButton rbGML = new JRadioButton();
+    final JRadioButton rbSVG = new JRadioButton();
+    final JRadioButton rbXML = new JRadioButton();
+    final JRadioButton rbXMLWKB = new JRadioButton();
+    final JRadioButton rbTestCaseJava = new JRadioButton();
+    final JRadioButton rbJTSJava = new JRadioButton();
+    final JRadioButton rbWKB = new JRadioButton();
+    final JRadioButton rbWKT = new JRadioButton();
+    final JRadioButton rbWKTFormatted = new JRadioButton();
+    final JRadioButton rbGML = new JRadioButton();
     
     JCheckBox intersectsCB = new JCheckBox();
 
@@ -81,87 +81,43 @@ public class TestCaseTextDialog extends JDialog {
         this(null, "", false);
     }
 
-    void jbInit() throws Exception {
+    void jbInit() {
         dialogPanel.setLayout(borderLayout1);
         jScrollPane1.setPreferredSize(new Dimension(500, 300));
         txtGeomView.setLineWrap(true);
         jPanel1.setLayout(borderLayout2);
         btnCopy.setEnabled(true);
         btnCopy.setText("Copy");
-        btnCopy.addActionListener(new java.awt.event.ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                btnSelect_actionPerformed(e);
-            }
-        });
+        btnCopy.addActionListener(this::btnSelect_actionPerformed);
         btnOk.setToolTipText("");
         btnOk.setText("Close");
-        btnOk.addActionListener(new java.awt.event.ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                btnOk_actionPerformed(e);
-            }
-        });
+        btnOk.addActionListener(this::btnOk_actionPerformed);
         rbXML.setText("Test XML");
         rbXML.setToolTipText("");
-        rbXML.addActionListener(new java.awt.event.ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                rbXML_actionPerformed(e);
-            }
-        });
+        rbXML.addActionListener(this::rbXML_actionPerformed);
         rbXMLWKB.setText("Test XML - WKB");
         rbXMLWKB.setToolTipText("");
-        rbXMLWKB.addActionListener(new java.awt.event.ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                rbXMLWKB_actionPerformed(e);
-            }
-        });
+        rbXMLWKB.addActionListener(this::rbXMLWKB_actionPerformed);
         rbSVG.setText("SVG");
         rbSVG.setToolTipText("");
-        rbSVG.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                rbSVG_actionPerformed(e);
-            }
-        });
+        rbSVG.addActionListener(this::rbSVG_actionPerformed);
         
         rbTestCaseJava.setText("TestCase Java");
         rbTestCaseJava.setToolTipText("");
-        rbTestCaseJava.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                rbTestCaseJava_actionPerformed(e);
-            }
-        });
+        rbTestCaseJava.addActionListener(this::rbTestCaseJava_actionPerformed);
         rbJTSJava.setEnabled(false);
         rbJTSJava.setText("JTS Java ");
         
         rbWKT.setText("WKT");
-        rbWKT.addActionListener(new java.awt.event.ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-              rbWKT_actionPerformed(e);
-          }
-      });
+        rbWKT.addActionListener(this::rbWKT_actionPerformed);
         
         rbWKTFormatted.setText("WKT-Formatted");
-        rbWKTFormatted.addActionListener(new java.awt.event.ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-              rbWKTFormatted_actionPerformed(e);
-          }
-      });
+        rbWKTFormatted.addActionListener(this::rbWKTFormatted_actionPerformed);
         
         rbWKB.setText("WKB");
-        rbWKB.addActionListener(new java.awt.event.ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-              rbWKB_actionPerformed(e);
-          }
-      });
+        rbWKB.addActionListener(this::rbWKB_actionPerformed);
         rbGML.setText("GML");
-        rbGML.addActionListener(new java.awt.event.ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-              rbGML_actionPerformed(e);
-          }
-      });
+        rbGML.addActionListener(this::rbGML_actionPerformed);
         getContentPane().add(dialogPanel);
         dialogPanel.add(jScrollPane1, BorderLayout.CENTER);
         dialogPanel.add(jPanel1, BorderLayout.SOUTH);
@@ -270,7 +226,7 @@ public class TestCaseTextDialog extends JDialog {
   
   private void writeViewGeometry(String tag, String str)
   {
-  	if (str == null || str.length() <= 0) return;
+  	if (str == null || str.isEmpty()) return;
 		txtGeomView.append(tag + ":\n\n");
 		txtGeomView.append(str);
 		txtGeomView.append("\n\n");

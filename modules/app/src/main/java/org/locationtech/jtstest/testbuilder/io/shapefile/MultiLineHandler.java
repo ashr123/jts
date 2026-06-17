@@ -34,8 +34,8 @@ import org.locationtech.jts.geom.PrecisionModel;
 public class MultiLineHandler implements ShapeHandler {
 
     int myShapeType = -1;
-    private PrecisionModel precisionModel = new PrecisionModel();
-    private GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
+    private final PrecisionModel precisionModel = new PrecisionModel();
+    private final GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
 
      
     public MultiLineHandler()
@@ -96,7 +96,7 @@ public class MultiLineHandler implements ShapeHandler {
 			actualReadWords += 2;
         }
         
-        LineString lines[] = new LineString[numParts];
+        LineString[] lines = new LineString[numParts];
         Coordinate[] coords = new Coordinate[numPoints];
         
         for (int t =0;t<numPoints; t++)
@@ -168,7 +168,7 @@ public class MultiLineHandler implements ShapeHandler {
                 finish=partOffsets[part+1];
             }
             length = finish-start;
-            Coordinate points[] = new Coordinate[length];
+            Coordinate[] points = new Coordinate[length];
             for(int i=0;i<length;i++){
                 points[i]=coords[offset];
                 offset++;
@@ -217,7 +217,7 @@ public class MultiLineHandler implements ShapeHandler {
     }
     
     
-    double[] zMinMax(Geometry g)
+    static double[] zMinMax(Geometry g)
     {
         double zmin,zmax;
         boolean validZFound = false;
@@ -227,27 +227,22 @@ public class MultiLineHandler implements ShapeHandler {
         zmin = Double.NaN;
         zmax = Double.NaN;
         double z;
-        
-        for (int t=0;t<cs.length; t++)
-        {
-            z= cs[t].getZ() ;
-            if (!(Double.isNaN( z ) ))
-            {
-                if (validZFound)
-                {
+
+        for (Coordinate c : cs) {
+            z = c.getZ();
+            if (!(Double.isNaN(z))) {
+                if (validZFound) {
                     if (z < zmin)
                         zmin = z;
                     if (z > zmax)
                         zmax = z;
-                }
-                else
-                {
+                } else {
                     validZFound = true;
-                    zmin =  z ;
-                    zmax =  z ;
+                    zmin = z;
+                    zmax = z;
                 }
             }
-           
+
         }
         
         result[0] = (zmin);

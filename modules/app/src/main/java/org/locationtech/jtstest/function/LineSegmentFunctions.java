@@ -21,7 +21,10 @@ import org.locationtech.jts.geom.LineSegment;
 
 public class LineSegmentFunctions
 {
-  public static boolean intersects(Geometry g1, Geometry g2)
+    private LineSegmentFunctions() {
+    }
+
+    public static boolean intersects(Geometry g1, Geometry g2)
   {
     Coordinate[] pt1 = g1.getCoordinates();
     Coordinate[] pt2 = g2.getCoordinates();

@@ -37,17 +37,17 @@ import org.locationtech.jtstest.test.TestCaseList;
 public class LoadTestCasesDialog extends JDialog {
     TestCaseList testCaseList; // if non-null, the instance created by this dialog
     //==============================
-    JPanel panel1 = new JPanel();
-    BorderLayout borderLayout1 = new BorderLayout();
-    JPanel jPanel1 = new JPanel();
-    JButton btnCancel = new JButton();
-    JButton btnOk = new JButton();
-    JPanel jPanel2 = new JPanel();
-    JTextField txtClassname = new JTextField();
-    GridBagLayout gridBagLayout1 = new GridBagLayout();
-    JLabel jLabel1 = new JLabel();
-    JLabel jLabel2 = new JLabel();
-    JLabel jLabel3 = new JLabel();
+    final JPanel panel1 = new JPanel();
+    final BorderLayout borderLayout1 = new BorderLayout();
+    final JPanel jPanel1 = new JPanel();
+    final JButton btnCancel = new JButton();
+    final JButton btnOk = new JButton();
+    final JPanel jPanel2 = new JPanel();
+    final JTextField txtClassname = new JTextField();
+    final GridBagLayout gridBagLayout1 = new GridBagLayout();
+    final JLabel jLabel1 = new JLabel();
+    final JLabel jLabel2 = new JLabel();
+    final JLabel jLabel3 = new JLabel();
 
     public LoadTestCasesDialog(Frame frame, String title, boolean modal) {
         super(frame, title, modal);
@@ -63,22 +63,12 @@ public class LoadTestCasesDialog extends JDialog {
         this(null, "", false);
     }
 
-    void jbInit() throws Exception {
+    void jbInit() {
         panel1.setLayout(borderLayout1);
         btnCancel.setText("Cancel");
-        btnCancel.addActionListener(new java.awt.event.ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                btnCancel_actionPerformed(e);
-            }
-        });
+        btnCancel.addActionListener(this::btnCancel_actionPerformed);
         btnOk.setText("Ok");
-        btnOk.addActionListener(new java.awt.event.ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                btnOk_actionPerformed(e);
-            }
-        });
+        btnOk.addActionListener(this::btnOk_actionPerformed);
         jPanel2.setLayout(gridBagLayout1);
         jLabel1.setToolTipText("");
         jLabel1.setText("Class name");
@@ -158,7 +148,7 @@ public class LoadTestCasesDialog extends JDialog {
         testCaseList = null;
         String errMsg = null;
         try {
-            Class cls = Class.forName(txtClassname.getText());
+            Class<?> cls = Class.forName(txtClassname.getText());
             testCaseList = (TestCaseList) cls.newInstance();
         } catch (ClassNotFoundException ex) {
             errMsg = "This class cannot be found.  Check that it is on your CLASSPATH";

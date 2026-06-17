@@ -47,16 +47,16 @@ public class BusyDialog extends JDialog {
 
     public interface Executable {
 
-        public void execute() throws Exception;
+        void execute();
     }
     ////////////////////////////////////////////////////////////////////////////////
     private Executable executable;
     private Thread thread = null;
     private String description;
-    private ImageIcon icon = new ImageIcon(this.getClass().getResource("Hourglass.gif"));
+    private final ImageIcon icon = new ImageIcon(this.getClass().getResource("Hourglass.gif"));
     private Exception exception = null;
     private String stackTrace = null;
-    private javax.swing.Timer timer = new javax.swing.Timer(250, new ActionListener() {
+    private final javax.swing.Timer timer = new javax.swing.Timer(250, new ActionListener() {
 
         public void actionPerformed(ActionEvent evt) {
             label.setText(description);
@@ -66,8 +66,8 @@ public class BusyDialog extends JDialog {
             }
         }
     });
-    JLabel label = new JLabel();
-    GridBagLayout gridBagLayout1 = new GridBagLayout();
+    final JLabel label = new JLabel();
+    final GridBagLayout gridBagLayout1 = new GridBagLayout();
 
     /**
      * Creates a BusyDialog
@@ -82,7 +82,7 @@ public class BusyDialog extends JDialog {
         }
     }
 
-    private void jbInit() throws Exception {
+    private void jbInit() {
         label.setText("Please wait . . .");
         label.setMaximumSize(new Dimension(400, 40));
         label.setMinimumSize(new Dimension(400, 40));
@@ -134,15 +134,12 @@ public class BusyDialog extends JDialog {
 
     void this_windowOpened(WindowEvent e) {
         label.setText(description);
-        Runnable runnable = new Runnable() {
-
-            public void run() {
-                try {
-                    executable.execute();
-                } catch (Exception e) {
-                    exception = e;
-                    stackTrace = StringUtil.getStackTrace(e);
-                }
+        Runnable runnable = () -> {
+            try {
+                executable.execute();
+            } catch (Exception e1) {
+                exception = e1;
+                stackTrace = StringUtil.getStackTrace(e1);
             }
         };
         thread = new Thread(runnable);

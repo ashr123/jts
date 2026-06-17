@@ -11,10 +11,11 @@
  */
 package org.locationtech.jtstest.testbuilder;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.util.Iterator;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jtstest.test.Testable;
+import org.locationtech.jtstest.testbuilder.model.TestCaseEdit;
+
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -22,14 +23,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jtstest.test.Testable;
-import org.locationtech.jtstest.testbuilder.model.TestCaseEdit;
-
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 
 
 /**
@@ -37,12 +33,12 @@ import org.locationtech.jtstest.testbuilder.model.TestCaseEdit;
  */
 public class TestListPanel extends JPanel {
     BorderLayout borderLayout1 = new BorderLayout();
-    private DefaultListModel listModel = new DefaultListModel();
-    JScrollPane jScrollPane1 = new JScrollPane();
-    JList list = new JList(listModel);
-    BorderLayout borderLayout2 = new BorderLayout();
+    private final DefaultListModel<Testable> listModel = new DefaultListModel<>();
+    final JScrollPane jScrollPane1 = new JScrollPane();
+    final JList<Testable> list = new JList<>(listModel);
+    final BorderLayout borderLayout2 = new BorderLayout();
 
-    private class TestListCellRenderer extends JLabel implements ListCellRenderer {
+    private static class TestListCellRenderer extends JLabel implements ListCellRenderer<Testable> {
       
         private static final String INDEX_SEP = " - ";
         private static final String GEOM_SEP = " / ";
@@ -57,13 +53,12 @@ public class TestListPanel extends JPanel {
          */
         
         public Component getListCellRendererComponent(
-            JList list,
-            Object value,
+            JList<? extends Testable> list,
+            Testable value,
             int index,
             boolean isSelected,
             boolean cellHasFocus) {
-            Testable testCase = (Testable) value;
-            setText(testName(testCase));
+            setText(testName(value));
             setOpaque(true);
             if (isSelected) {
                 setBackground(list.getSelectionBackground());
@@ -77,33 +72,33 @@ public class TestListPanel extends JPanel {
             return this;
         }
         
-        private String testName(Testable testCase)
+        private static String testName(Testable testCase)
         {
           String name = testCase.getName();
-          if ((name == null || name.length() == 0) && testCase instanceof TestCaseEdit) {
-              name = ((TestCaseEdit) testCase).getDescription();
+          if ((name == null || name.isEmpty()) && testCase instanceof TestCaseEdit) {
+              name = testCase.getDescription();
           }
-          if (name == null || name.length() == 0) {
+          if (name == null || name.isEmpty()) {
               name = "";
           }
           int testSkey = 1 + JTSTestBuilderFrame.instance().getModel().getCases().indexOf(testCase);
           String nameFinal = "# " + testSkey + INDEX_SEP + testCaseSignatureHTML(testCase);
-          if (name != "")
+          if (!name.isEmpty())
           	nameFinal = nameFinal + DESC_SEP + name;
           return "<html>" + nameFinal + "<html>";
         }
         
-        private String testCaseSignatureHTML(Testable testCase)
+        private static String testCaseSignatureHTML(Testable testCase)
         {
           String sig0 = geometrySignature(testCase.getGeometry(0));
           String sig1 = geometrySignature(testCase.getGeometry(1));
-          Object sep = sig0.length() > 0 && sig1.length() > 0 ? GEOM_SEP : "";
+          Object sep = !sig0.isEmpty() && !sig1.isEmpty() ? GEOM_SEP : "";
         	return "<font color='blue'>" + sig0 + "</font>" 
         	      + sep
         	      + "<font color='red'>" + sig1 + "</font>";
         }
         
-        private String geometrySignature(Geometry geom)
+        private static String geometrySignature(Geometry geom)
         {
           // visual indication of null geometry
         	if (geom == null) 
@@ -134,7 +129,7 @@ public class TestListPanel extends JPanel {
         registerListSelectionListener();
     }
 
-    private void jbInit() throws Exception {
+    private void jbInit() {
         setSize(200, 250);
         setLayout(borderLayout2);
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -144,24 +139,18 @@ public class TestListPanel extends JPanel {
     }
 
     private void registerListSelectionListener() {
-        list.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-
-            public void valueChanged(ListSelectionEvent e) {
-                if (list.getSelectedValue() == null)
-                    return;
-                JTSTestBuilderFrame.instance().setCurrentTestCase(
-                    (TestCaseEdit) list.getSelectedValue());
-            }
+        list.getSelectionModel().addListSelectionListener(e -> {
+            if (list.getSelectedValue() == null)
+                return;
+            JTSTestBuilderFrame.instance().setCurrentTestCase(
+                (TestCaseEdit) list.getSelectedValue());
         });
     }
 
     public void populateList() {
         listModel.clear();
-        for (Iterator i = JTSTestBuilderFrame.instance().getModel().getCases().iterator();
-            i.hasNext();
-            ) {
-            Testable testCase = (Testable) i.next();
-            listModel.addElement(testCase);
+        for (Testable o : JTSTestBuilderFrame.instance().getModel().getCases()) {
+            listModel.addElement(o);
         }
     }
 }

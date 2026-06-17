@@ -82,7 +82,7 @@ public class BasicStyle implements Style
     );
   }
 
-  private float[] createDashes(float width) {
+  private static float[] createDashes(float width) {
     float dashSize = 5;
     float len = 2 * dashSize * width;
     float dashFrac = 0.5f;

@@ -33,9 +33,9 @@ extends JPanel
 {
 	TestBuilderModel tbModel = null;
 	
-	JScrollPane jScrollPane1 = new JScrollPane();
-	JTextArea txtStats = new JTextArea();
-  BorderLayout tabPanelLayout = new BorderLayout();
+	final JScrollPane jScrollPane1 = new JScrollPane();
+	final JTextArea txtStats = new JTextArea();
+  final BorderLayout tabPanelLayout = new BorderLayout();
 	
 	public StatsPanel() {
 		try {
@@ -45,7 +45,7 @@ extends JPanel
 		}
 	}
 	
-  void jbInit() throws Exception {
+  void jbInit() {
     
     this.setLayout(tabPanelLayout);
 
@@ -76,21 +76,21 @@ extends JPanel
     setString(buf.toString());
   }
   
-  private void writeGeomStats(LayerList lyrList, StringBuffer buf) {
+  private static void writeGeomStats(LayerList lyrList, StringBuffer buf) {
     for (int i = 0; i < lyrList.size(); i++) {
       Layer lyr = lyrList.getLayer(i);
       writeGeomStats(lyr.getName(), lyr.getGeometry(), buf);
     }
   }
 
-  private void writeGeomStats(String label,
-      Geometry g, StringBuffer buf)
+  private static void writeGeomStats(String label,
+                                     Geometry g, StringBuffer buf)
   {
     if (g == null) return;
-    buf.append(label + " : ");
+    buf.append(label).append(" : ");
     buf.append(GeometryUtil.structureSummary(g));
     buf.append("\n");
-    buf.append("    " + GeometryUtil.metricsSummary(g));
+    buf.append("    ").append(GeometryUtil.metricsSummary(g));
     buf.append("\n");
   }
   

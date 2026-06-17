@@ -26,7 +26,7 @@ import org.locationtech.jts.util.Assert;
  */
 public class TestCase implements Testable {
   private PrecisionModel pm = new PrecisionModel();
-  private WKTWriter wktWriter = new WKTWriter();
+  private final WKTWriter wktWriter = new WKTWriter();
   protected String name, description, expectedIM;
   protected boolean isRun = false;
   protected boolean failed = false;
@@ -40,7 +40,7 @@ public class TestCase implements Testable {
   private Geometry expectedSymDifference = null;
   //private Geometry expectedCentroid = null;
   private IntersectionMatrix im;
-  private Geometry[] geom = new Geometry[2];
+  private final Geometry[] geom = new Geometry[2];
   private String wkta;
   private String wktb;
 
@@ -257,7 +257,7 @@ public class TestCase implements Testable {
         im = relate(geom[0], geom[1]);
       }
       if (im != null) {
-        String msg = " expected " + expectedIM + ", found " + im.toString();
+        String msg = " expected " + expectedIM + ", found " + im;
         assertTrue(im.matches(expectedIM), msg);
       }
     }
@@ -323,7 +323,7 @@ public class TestCase implements Testable {
     this.expectedSymDifference = expectedSymDifference;
   }
 
-  IntersectionMatrix relate(Geometry a, Geometry b) {
+  static IntersectionMatrix relate(Geometry a, Geometry b) {
     return a.relate(b);
   }
 
@@ -356,4 +356,3 @@ public class TestCase implements Testable {
   }
 
 }
-

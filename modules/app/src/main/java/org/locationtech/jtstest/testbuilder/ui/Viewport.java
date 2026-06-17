@@ -36,11 +36,11 @@ import org.locationtech.jtstest.testbuilder.GeometryEditPanel;
  */
 public class Viewport implements PointTransformation
 {
-  private static double INITIAL_SCALE = 1.0;
-  private static int INITIAL_ORIGIN_X = -10;
-  private static int INITIAL_ORIGIN_Y = -10;
+  private static final double INITIAL_SCALE = 1.0;
+  private static final int INITIAL_ORIGIN_X = -10;
+  private static final int INITIAL_ORIGIN_Y = -10;
 
-  private GeometryEditPanel panel;
+  private final GeometryEditPanel panel;
   
   /**
    * Origin of view in model space
@@ -58,8 +58,8 @@ public class Viewport implements PointTransformation
   
   private Envelope viewEnvInModel;
   private AffineTransform modelToViewTransform;
-  private java.awt.geom.Point2D.Double srcPt = new java.awt.geom.Point2D.Double(0, 0);
-  private java.awt.geom.Point2D.Double destPt = new java.awt.geom.Point2D.Double(0, 0);
+  private final java.awt.geom.Point2D.Double srcPt = new java.awt.geom.Point2D.Double(0, 0);
+  private final java.awt.geom.Point2D.Double destPt = new java.awt.geom.Point2D.Double(0, 0);
 
   private Dimension viewSize;
 
@@ -132,8 +132,7 @@ public class Viewport implements PointTransformation
    */
   private static double snapScale(double scaleRaw)
   {
-    double scale = snapScaleToSingleDigitPrecision(scaleRaw);
-    return scale;
+      return snapScaleToSingleDigitPrecision(scaleRaw);
   }
   
   private static double snapScaleToSingleDigitPrecision(double scaleRaw)
@@ -143,10 +142,9 @@ public class Viewport implements PointTransformation
     double nearestLowerPow10 = Math.pow(10, pow10);
     
     int scaleDigit = (int) ( (scaleRaw +   + ROUND_ERROR_REMOVAL) / nearestLowerPow10);
-    double scale = scaleDigit * nearestLowerPow10;
-    
-    //System.out.println("requested scale = " + scaleRaw + " scale = " + scale  + "   Pow10 = " + pow10);
-    return scale;
+
+      //System.out.println("requested scale = " + scaleRaw + " scale = " + scale  + "   Pow10 = " + pow10);
+    return scaleDigit * nearestLowerPow10;
   }
   
   /**
@@ -362,8 +360,7 @@ public class Viewport implements PointTransformation
   {
     if (p.getX() < 0 || p.getY() < 0) return false;
     if (p.getX() > viewSize.getWidth()) return false;
-    if (p.getY() > viewSize.getHeight()) return false;
-    return true;
+      return !(p.getY() > viewSize.getHeight());
   }
 
   private static final int MIN_GRID_RESOLUTION_PIXELS = 2;

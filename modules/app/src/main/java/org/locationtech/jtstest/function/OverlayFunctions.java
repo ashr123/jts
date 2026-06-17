@@ -18,7 +18,10 @@ import org.locationtech.jts.geom.Geometry;
 
 
 public class OverlayFunctions {
-	public static Geometry intersection(Geometry a, Geometry b)		{		return a.intersection(b);	}
+    private OverlayFunctions() {
+    }
+
+    public static Geometry intersection(Geometry a, Geometry b)		{		return a.intersection(b);	}
 	public static Geometry union(Geometry a, Geometry b)					{		return a.union(b);	}
 	public static Geometry symDifference(Geometry a, Geometry b)	{		return a.symDifference(b);	}
 	public static Geometry difference(Geometry a, Geometry b)			{		return a.difference(b);	}
@@ -34,7 +37,7 @@ public class OverlayFunctions {
 
   public static Geometry clip(Geometry a, Geometry mask)
   {
-    List geoms = new ArrayList();
+    List<Geometry> geoms = new ArrayList<>();
     for (int i = 0; i < a.getNumGeometries(); i++) {
       Geometry clip = a.getGeometryN(i).intersection(mask);
       geoms.add(clip);

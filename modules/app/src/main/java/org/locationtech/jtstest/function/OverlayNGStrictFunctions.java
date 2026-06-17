@@ -20,8 +20,11 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.operation.overlayng.OverlayNG;
 
 public class OverlayNGStrictFunctions {
-  
-  public static Geometry difference(Geometry a, Geometry b) {
+
+    private OverlayNGStrictFunctions() {
+    }
+
+    public static Geometry difference(Geometry a, Geometry b) {
     return overlay(a, b, DIFFERENCE );
   }
 

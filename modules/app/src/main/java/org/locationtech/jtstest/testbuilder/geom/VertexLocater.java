@@ -28,9 +28,8 @@ public class VertexLocater
     return finder.getVertex(testPt, tolerance);
   }
 
-  private Geometry geom;
-  private Coordinate vertexPt;
-  private int vertexIndex = -1;
+  private final Geometry geom;
+    private int vertexIndex = -1;
   
   public VertexLocater(Geometry geom) {
     this.geom = geom;
@@ -40,14 +39,14 @@ public class VertexLocater
   {
   	NearestVertexFilter filter = new NearestVertexFilter(testPt, tolerance);
     geom.apply(filter);
-    vertexPt = filter.getVertex();
+      Coordinate vertexPt = filter.getVertex();
     vertexIndex = filter.getIndex();
     return vertexPt;
   }
   
   public int getIndex() { return vertexIndex; }
  
-  public List getLocations(Coordinate testPt, double tolerance)
+  public List<Location> getLocations(Coordinate testPt, double tolerance)
   {
   	NearVerticesFilter filter = new NearVerticesFilter(testPt, tolerance);
     geom.apply(filter);
@@ -58,7 +57,7 @@ public class VertexLocater
   static class NearestVertexFilter implements CoordinateSequenceFilter
   {
     private double tolerance = 0.0;
-    private Coordinate basePt;
+    private final Coordinate basePt;
     private Coordinate nearestPt = null;
     private int vertexIndex = -1;
     
@@ -92,8 +91,8 @@ public class VertexLocater
   static class NearVerticesFilter implements CoordinateSequenceFilter
   {
     private double tolerance = 0.0;
-    private Coordinate queryPt;
-    private List locations = new ArrayList();
+    private final Coordinate queryPt;
+    private final List<Location> locations = new ArrayList<>();
     
     public NearVerticesFilter(Coordinate queryPt, double tolerance)
     {
@@ -111,7 +110,7 @@ public class VertexLocater
 
     }
     
-    public List getLocations()
+    public List<Location> getLocations()
     {
     	return locations;
     }
@@ -127,8 +126,8 @@ public class VertexLocater
 
   public static class Location
   {
-  	private Coordinate pt;
-  	private int[] index;
+  	private final Coordinate pt;
+  	private final int[] index;
   	
   	Location(Coordinate pt, int index)
   	{

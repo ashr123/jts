@@ -40,9 +40,9 @@ public class LegendElement {
 
   private static final int DESC_INDENT = 6;
 
-  private Viewport viewport;
-  private Font font = new Font(FontGlyphReader.FONT_SANSERIF, Font.BOLD, DEFAULT_FONT_SIZE);
-  private Font fontDesc = new Font(FontGlyphReader.FONT_SANSERIF, Font.ITALIC, STAT_FONT_SIZE);
+  private final Viewport viewport;
+  private static final Font font = new Font(FontGlyphReader.FONT_SANSERIF, Font.BOLD, DEFAULT_FONT_SIZE);
+  private static final Font fontDesc = new Font(FontGlyphReader.FONT_SANSERIF, Font.ITALIC, STAT_FONT_SIZE);
   private int borderSize = 1;
 
   private boolean isBorderEnabled;
@@ -82,7 +82,7 @@ public class LegendElement {
   }
   public void paint(List<Layer> layerList, Graphics2D g) {
 
-    if (layerList.size() <= 0) return;
+    if (layerList.isEmpty()) return;
     
     g.setFont(font);
     Rectangle box = computeBox(layerList, g);
@@ -133,17 +133,17 @@ public class LegendElement {
       desc += GeometryUtil.structureSummary(layer.getGeometry());
     }
     if (isMetricsEnabled) {
-      if (desc.length() > 0) desc += " / ";
+      if (!desc.isEmpty()) desc += " / ";
       desc += GeometryUtil.metricsSummary(layer.getGeometry());
     }
     return desc;
   }
 
-  private String getName(Layer layer) {
+  private static String getName(Layer layer) {
     return layer.getName();
   }
 
-  private void drawSwatch(Layer layer, int x, int y, Graphics2D g) {
+  private static void drawSwatch(Layer layer, int x, int y, Graphics2D g) {
     Geometry geom = layer.getGeometry();
     switch (geom.getDimension()) {
     case 2:
@@ -158,7 +158,7 @@ public class LegendElement {
     }
   }
   
-  private void drawSwatchBox(Layer layer, int x, int y, Graphics2D g) {
+  private static void drawSwatchBox(Layer layer, int x, int y, Graphics2D g) {
     Rectangle box = new Rectangle(
         x, y,
         SWATCH_SIZE, SWATCH_SIZE);
@@ -189,7 +189,7 @@ public class LegendElement {
     }
   }
 
-  private void drawSwatchLine(Layer layer, int x, int y, Graphics2D g) {
+  private static void drawSwatchLine(Layer layer, int x, int y, Graphics2D g) {
     Line2D line = new Line2D.Float(
         x, y + SWATCH_SIZE,
         x + SWATCH_SIZE, y );
@@ -212,7 +212,7 @@ public class LegendElement {
     g.draw(line);
   }
   
-  private void drawSwatchPoint(Layer layer, int x, int y, Graphics2D g) {
+  private static void drawSwatchPoint(Layer layer, int x, int y, Graphics2D g) {
     int size = layer.getLayerStyle().getVertexSize();
     if (size > SWATCH_SIZE) size = SWATCH_SIZE;
     
@@ -251,11 +251,10 @@ public class LegendElement {
     
     int viewHeight = (int) viewport.getHeightInView();
     int viewWidth = (int) viewport.getWidthInView();
-    Rectangle box = new Rectangle(
-        viewWidth - BOX_OFFSET - width, 
-        viewHeight - BOX_OFFSET - height,
-        width, height);
-    return box;
+      return new Rectangle(
+          viewWidth - BOX_OFFSET - width,
+          viewHeight - BOX_OFFSET - height,
+          width, height);
   }
 
   private int entryWidth(List<Layer> layerList, Graphics2D g2) {

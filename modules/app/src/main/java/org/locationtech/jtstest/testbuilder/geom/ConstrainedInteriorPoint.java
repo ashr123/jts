@@ -38,9 +38,9 @@ public class ConstrainedInteriorPoint {
     return getCoordinate(poly, constraint.getEnvelopeInternal());
   }
   
-  private Polygon poly;
+  private final Polygon poly;
   private double scanY;
-  private List<Double> crossings = new ArrayList<Double>();
+  private final List<Double> crossings = new ArrayList<>();
   private Envelope constraint;
 
   public ConstrainedInteriorPoint(Polygon poly) {
@@ -57,14 +57,13 @@ public class ConstrainedInteriorPoint {
     scanY = findScanY(poly, constraint);
     scan(poly);
     crossings.sort(new DoubleComparator());
-    Coordinate pt = findBestMidpoint();
-    return pt;
+      return findBestMidpoint();
   }
 
   private void scan(Polygon poly) {
-    scanRing((LinearRing) poly.getExteriorRing());
+    scanRing(poly.getExteriorRing());
     for (int i = 0; i < poly.getNumInteriorRing(); i++) {
-      scanRing((LinearRing) poly.getInteriorRingN(i));
+      scanRing(poly.getInteriorRingN(i));
     }
   }
   
@@ -77,7 +76,7 @@ public class ConstrainedInteriorPoint {
     }
   }
   
-  private double findScanY(Polygon poly, Envelope constraint) {
+  private static double findScanY(Polygon poly, Envelope constraint) {
     // TODO: use centroid as better Y?
     Envelope env = poly.getEnvelopeInternal();
     double ymin = env.getMinY();
@@ -162,19 +161,17 @@ public class ConstrainedInteriorPoint {
   
     if (x0 == x1) return x0;
     double m = (p1.getY() - p0.getY()) / (x1 - x0);
-    double x = ((Y - p0.getY()) / m) + x0;
-    return x;
+      return ((Y - p0.getY()) / m) + x0;
   }
 
-  private boolean crosses(Coordinate p0, Coordinate p1, double Y) {
+  private static boolean crosses(Coordinate p0, Coordinate p1, double Y) {
     if (p0.getY() > Y && p1.getY() > Y) return false;
-    if (p0.getY() < Y && p1.getY() < Y) return false;
-    return true;
+      return !(p0.getY() < Y) || !(p1.getY() < Y);
   }
   
   private static class DoubleComparator implements Comparator<Double> {
     public int compare(Double v1, Double v2) {
-        return v1 < v2 ? -1 : v1 > v2 ? +1 : 0;
+        return v1.compareTo(v2);
     }
   }
 }

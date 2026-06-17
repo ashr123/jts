@@ -21,12 +21,15 @@ import org.locationtech.jtstest.geomfunction.Metadata;
 
 public class AffineTransformationFunctions 
 {
-  @Metadata(description="Transforms a geometry using 1, 2 or 3 control vectors")
+    private AffineTransformationFunctions() {
+    }
+
+    @Metadata(description="Transforms a geometry using 1, 2 or 3 control vectors")
 	public static Geometry transformByVectors(Geometry g, Geometry control)
 	{
 		int nControl = control.getNumGeometries();
-		Coordinate src[] = new Coordinate[nControl];
-		Coordinate dest[] = new Coordinate[nControl];
+		Coordinate[] src = new Coordinate[nControl];
+		Coordinate[] dest = new Coordinate[nControl];
 		for (int i = 0; i < nControl; i++) {
 			Geometry contComp = control.getGeometryN(i);
 			Coordinate[] pts = contComp.getCoordinates();
@@ -106,9 +109,7 @@ public class AffineTransformationFunctions
       @Metadata(title="Scale factor")
       double scale)
   {
-    Coordinate centre = envelopeCentre(g);
-    AffineTransformation trans = AffineTransformation.scaleInstance(scale, scale, centre.x, centre.y);
-    return trans.transform(g);    
+      return scaleXY(g, scale, scale);
   }
   
   public static Geometry scaleXY(Geometry g, 

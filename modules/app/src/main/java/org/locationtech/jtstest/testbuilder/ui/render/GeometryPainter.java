@@ -32,10 +32,13 @@ import org.locationtech.jtstest.testbuilder.ui.style.Style;
 
 public class GeometryPainter 
 {
-	private static BasicStroke GEOMETRY_STROKE = new BasicStroke();
-	private static BasicStroke POINT_STROKE = new BasicStroke(AppConstants.POINT_SIZE);
-	
-  public static void paint(Graphics2D g, Viewport viewport, Geometry geometry, Style style)
+	private static final BasicStroke GEOMETRY_STROKE = new BasicStroke();
+	private static final BasicStroke POINT_STROKE = new BasicStroke(AppConstants.POINT_SIZE);
+
+    private GeometryPainter() {
+    }
+
+    public static void paint(Graphics2D g, Viewport viewport, Geometry geometry, Style style)
   throws Exception
   {
     if (geometry == null)
@@ -64,9 +67,7 @@ public class GeometryPainter
   private static void paintGeometryCollection(Graphics2D g, Viewport viewport, 
       GeometryCollection gc,
       Style style
-      ) 
-  throws Exception
-  {
+      ) {
   }
 
   static Viewport viewportCache;
@@ -200,8 +201,7 @@ public class GeometryPainter
     if (stroke == null) 
       return POINT_STROKE;
     BasicStroke bs = (BasicStroke) stroke;
-    BasicStroke ptStroke = new BasicStroke(AppConstants.POINT_SIZE - 1 + bs.getLineWidth());
-    return ptStroke;
+      return new BasicStroke(AppConstants.POINT_SIZE - 1 + bs.getLineWidth());
   }
 
 

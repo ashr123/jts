@@ -47,15 +47,15 @@ public class FacetLocater
 	 */
 	public static List<GeometryLocation> filterVertexLocations(Collection<GeometryLocation> locations)
 	{
-		ArrayList<GeometryLocation> vertexLocs = new ArrayList<GeometryLocation>();
+		ArrayList<GeometryLocation> vertexLocs = new ArrayList<>();
 		for (GeometryLocation loc : locations) {
 			if (loc.isVertex()) vertexLocs.add(loc);
 		}
 		return vertexLocs;
 	}
 	
-  private Geometry parentGeom;
-  private List<GeometryLocation> locations = new ArrayList<GeometryLocation>();
+  private final Geometry parentGeom;
+  private final List<GeometryLocation> locations = new ArrayList<>();
   private Coordinate queryPt;
   private double tolerance = 0.0; 
   
@@ -73,7 +73,7 @@ public class FacetLocater
   
   private void findLocations(Geometry geom, List<GeometryLocation> locations)
   {
-    findLocations(new Stack<Integer>(), parentGeom, locations);
+    findLocations(new Stack<>(), parentGeom, locations);
   }
     
   private void findLocations(Stack<Integer> path, Geometry geom, List<GeometryLocation> locations)
@@ -158,7 +158,7 @@ public class FacetLocater
 		int[] index = new int[path.size()];
 		int i = 0;
 		for (Integer pathIndex : path ) {
-			index[i++] = pathIndex.intValue();
+			index[i++] = pathIndex;
 		}
 		return index;
 	}

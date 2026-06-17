@@ -26,7 +26,10 @@ import org.locationtech.jts.geom.util.GeometryEditor;
 public class GeometryComponentTransformer 
 {
 
-  public static Geometry transform(Geometry geom, AffineTransformation trans)
+    private GeometryComponentTransformer() {
+    }
+
+    public static Geometry transform(Geometry geom, AffineTransformation trans)
   {
     Geometry geomTrans = geom.copy();
     geomTrans.apply(trans);
@@ -45,9 +48,9 @@ public class GeometryComponentTransformer
   private static class TransformOperation
     implements GeometryEditor.GeometryEditorOperation
   {
-    private Geometry component;
+    private final Geometry component;
     private boolean isEdited = false;
-    private AffineTransformation trans;
+    private final AffineTransformation trans;
     
     public TransformOperation(Geometry component, AffineTransformation trans)
     {
@@ -61,9 +64,7 @@ public class GeometryComponentTransformer
     {               
       if (geometry == component) {
           isEdited = true;
-          Geometry compTrans = component.copy();
-          compTrans.apply(trans);
-          return compTrans;
+          return transform(component, trans);
       }
       return geometry;
     }

@@ -51,9 +51,9 @@ extends IndicatorTool
     super(AppCursors.EDIT_VERTEX);
   }
 
-  private Geometry getComponent(Coordinate pt, double tolerance) {
+  private static Geometry getComponent(Coordinate pt, double tolerance) {
     List<GeometryLocation> geoms = geomModel().getElements(pt, tolerance);
-    if (geoms.size() <= 0) return null;
+    if (geoms.isEmpty()) return null;
     return geoms.get(0).getElement();
   }
   

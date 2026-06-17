@@ -35,8 +35,11 @@ import org.locationtech.jts.operation.overlayng.OverlayNG;
 import org.locationtech.jts.operation.overlayng.RingClipper;
 
 public class OverlayNGTestFunctions {
-  
-  static Geometry sameOrEmpty(Geometry a, Geometry b) {
+
+    private OverlayNGTestFunctions() {
+    }
+
+    static Geometry sameOrEmpty(Geometry a, Geometry b) {
     if (a != null) return a;
     // return empty geom of same type
     if (b.getDimension() == 2) {
@@ -154,15 +157,7 @@ public class OverlayNGTestFunctions {
   }
   
   private static Noder createFloatingPrecisionNoder(boolean doValidation) {
-    MCIndexNoder mcNoder = new MCIndexNoder();
-    LineIntersector li = new RobustLineIntersector();
-    mcNoder.setSegmentIntersector(new IntersectionAdder(li));
-    
-    Noder noder = mcNoder;
-    if (doValidation) {
-      noder = new ValidatingNoder( mcNoder);
-    }
-    return noder;
+      return createClassicNoder(doValidation);
   }
   
   public static Geometry unionIntSymDiff(Geometry a, Geometry b, double scaleFactor) {
@@ -173,8 +168,7 @@ public class OverlayNGTestFunctions {
     // op should not matter, since edges are captured pre-result
     Geometry inter = extractPoly( OverlayNG.overlay(a, b, INTERSECTION, pm) );
     Geometry symDiff = extractPoly( OverlayNG.overlay(a, b, SYMDIFFERENCE, pm) );
-    Geometry union = extractPoly( OverlayNG.overlay(inter, symDiff, UNION, pm) );
-    return union;
+      return extractPoly( OverlayNG.overlay(inter, symDiff, UNION, pm) );
   }
 
   public static Geometry unionIntSymDiffOriginal(Geometry a, Geometry b) {
@@ -184,8 +178,7 @@ public class OverlayNGTestFunctions {
     // op should not matter, since edges are captured pre-result
     Geometry inter = extractPoly( a.intersection(b) );
     Geometry symDiff = extractPoly( a.symDifference(b) );
-    Geometry union = extractPoly( inter.union(symDiff) );
-    return union;
+      return extractPoly( inter.union(symDiff) );
   }
 
   public static Geometry unionClassicNoderNoValid(Geometry a, Geometry b) {

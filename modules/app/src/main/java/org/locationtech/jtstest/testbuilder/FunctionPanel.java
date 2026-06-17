@@ -11,12 +11,14 @@
  */
 package org.locationtech.jtstest.testbuilder;
 
+import java.util.List;
+
 import org.locationtech.jtstest.geomfunction.GeometryFunction;
 
 public interface FunctionPanel {
 
   GeometryFunction getFunction();
 
-  Object[] getFunctionParams();
+  List<Object> getFunctionParams();
 
 }

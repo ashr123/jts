@@ -34,7 +34,10 @@ import org.locationtech.jts.precision.MinimumClearance;
  */
 public class TestCaseGeometryFunctions 
 {
-	public static Geometry bufferMitredJoin(Geometry g, double distance)	
+    private TestCaseGeometryFunctions() {
+    }
+
+    public static Geometry bufferMitredJoin(Geometry g, double distance)
 	{
     BufferParameters bufParams = new BufferParameters();
     bufParams.setJoinStyle(BufferParameters.JOIN_MITRE);

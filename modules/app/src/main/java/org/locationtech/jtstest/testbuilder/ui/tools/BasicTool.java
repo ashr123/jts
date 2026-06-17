@@ -102,7 +102,7 @@ public abstract class BasicTool implements Tool
     return panel;
   }
   
-  protected GeometryEditModel geomModel()
+  protected static GeometryEditModel geomModel()
   {
     // this should probably be passed in during setup
     return JTSTestBuilder.model().getGeometryEditModel();
