@@ -76,18 +76,18 @@ public class LinearLocationTest
   public void testIsEndPoint() throws Exception {
     Geometry line = reader.read("LINESTRING (10 0, 20 0)");
 
-      assertFalse((new LinearLocation(0, 0)).isEndpoint(line));
-      assertFalse((new LinearLocation(0, 0.5)).isEndpoint(line));
-      assertFalse((new LinearLocation(0, 0.9999)).isEndpoint(line));
+      assertFalse(new LinearLocation(0, 0).isEndpoint(line));
+      assertFalse(new LinearLocation(0, 0.5).isEndpoint(line));
+      assertFalse(new LinearLocation(0, 0.9999).isEndpoint(line));
     
-    assertTrue( (new LinearLocation(0, 1.0)).isEndpoint(line));
+    assertTrue( new LinearLocation(0, 1.0).isEndpoint(line));
     
-    assertTrue( (new LinearLocation(1, 0.0)).isEndpoint(line)); 
-    assertTrue( (new LinearLocation(1, 0.5)).isEndpoint(line)); 
-    assertTrue( (new LinearLocation(1, 1.0)).isEndpoint(line)); 
-    assertTrue( (new LinearLocation(1, 1.5)).isEndpoint(line)); 
+    assertTrue( new LinearLocation(1, 0.0).isEndpoint(line));
+    assertTrue( new LinearLocation(1, 0.5).isEndpoint(line));
+    assertTrue( new LinearLocation(1, 1.0).isEndpoint(line));
+    assertTrue( new LinearLocation(1, 1.5).isEndpoint(line));
     
-    assertTrue( (new LinearLocation(2, 0.5)).isEndpoint(line));
+    assertTrue( new LinearLocation(2, 0.5).isEndpoint(line));
     
     LinearLocation loc = new LinearLocation(0, 0.0);
     loc.setToEnd(line);
@@ -100,9 +100,9 @@ public class LinearLocationTest
   public void testEndPointLowest() throws Exception {
     Geometry line = reader.read("LINESTRING (10 0, 20 0, 30 10)");
     
-    assertTrue( (new LinearLocation(1, 1.0)).isEndpoint(line));
-    assertTrue( (new LinearLocation(2, 0.0)).isEndpoint(line)); 
-    assertTrue( (new LinearLocation(2, 0.5)).isEndpoint(line));
+    assertTrue( new LinearLocation(1, 1.0).isEndpoint(line));
+    assertTrue( new LinearLocation(2, 0.0).isEndpoint(line));
+    assertTrue( new LinearLocation(2, 0.5).isEndpoint(line));
     
     LinearLocation loc = new LinearLocation(0, 0.0);
     loc.setToEnd(line);
