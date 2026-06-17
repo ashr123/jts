@@ -22,7 +22,7 @@ public class EdgeRayArea {
     return area.getArea();
   }
   
-  private Geometry geom;
+  private final Geometry geom;
 
   public EdgeRayArea(Geometry geom) {
     this.geom = geom;
@@ -38,14 +38,13 @@ public class EdgeRayArea {
     double area = 0;
     for (int i = 1; i < seq.size(); i++) {
       int i0 = i - 1;
-      int i1 = i;
       /*
       area += EdgeRay.areaTermBoth(seq.getX(i0), seq.getY(i0),
           seq.getX(i1), seq.getY(i1));
           */
       area += EdgeRay.areaTerm(seq.getX(i0), seq.getY(i0),
-          seq.getX(i1), seq.getY(i1), isCW);
-      area += EdgeRay.areaTerm(seq.getX(i1), seq.getY(i1),
+          seq.getX(i), seq.getY(i), isCW);
+      area += EdgeRay.areaTerm(seq.getX(i), seq.getY(i),
           seq.getX(i0), seq.getY(i0), ! isCW);
     }
     return area;

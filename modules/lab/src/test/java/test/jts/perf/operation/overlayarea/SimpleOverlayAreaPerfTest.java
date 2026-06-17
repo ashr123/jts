@@ -11,8 +11,6 @@
  */
 package test.jts.perf.operation.overlayarea;
 
-import java.io.IOException;
-
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
@@ -26,7 +24,7 @@ import test.jts.perf.PerformanceTestRunner;
 
 public class SimpleOverlayAreaPerfTest extends PerformanceTestCase
 {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     PerformanceTestRunner.run(SimpleOverlayAreaPerfTest.class);
   }
 
@@ -39,7 +37,7 @@ public class SimpleOverlayAreaPerfTest extends PerformanceTestCase
     setRunIterations(10000);
   }
 
-  public void startRun(int size) throws IOException, ParseException
+  public void startRun(int size) throws ParseException
   {
     WKTReader rdr= new WKTReader();
     quadA = (Polygon) rdr.read("POLYGON ((60 80, 9 45, 52.5 5, 80 45, 60 80))");

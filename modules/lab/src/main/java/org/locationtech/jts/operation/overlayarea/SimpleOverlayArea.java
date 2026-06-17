@@ -43,8 +43,8 @@ public class SimpleOverlayArea {
     return area.getArea();
   }
   
-  private Polygon geomA;
-  private Polygon geomB;
+  private final Polygon geomA;
+  private final Polygon geomB;
 
   public SimpleOverlayArea(Polygon geom0, Polygon geom1) {
     this.geomA = geom0;
@@ -73,11 +73,10 @@ public class SimpleOverlayArea {
 
   private static CoordinateSequence getVertices(Geometry geom) {
     Polygon poly = (Polygon) geom;
-    CoordinateSequence seq = poly.getExteriorRing().getCoordinateSequence();
-    return seq;
+      return poly.getExteriorRing().getCoordinateSequence();
   }
   
-  private double areaForIntersections(CoordinateSequence ringA, boolean isCCWA, CoordinateSequence ringB, boolean isCCWB) {
+  private static double areaForIntersections(CoordinateSequence ringA, boolean isCCWA, CoordinateSequence ringB, boolean isCCWB) {
     //TODO: use fast intersection computation?
     
     // Compute rays for all intersections
@@ -133,7 +132,7 @@ public class SimpleOverlayArea {
     return area;
   }
     
-  private double areaForInteriorVertices(CoordinateSequence ring, boolean isCCW, CoordinateSequence ring2) {
+  private static double areaForInteriorVertices(CoordinateSequence ring, boolean isCCW, CoordinateSequence ring2) {
     double area = 0;
     /**
      * Compute rays originating at vertices inside the resultant

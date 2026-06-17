@@ -74,13 +74,13 @@ public class OverlayArea {
     return geom0.getEnvelopeInternal().intersects(geom1.getEnvelopeInternal());
   }
 
-  private static LineIntersector li = new RobustLineIntersector();
+  private static final LineIntersector li = new RobustLineIntersector();
   
-  private Geometry geom0;
-  private Envelope geomEnv0;
-  private IndexedPointInAreaLocator locator0;
-  private STRtree indexSegs;
-  private KdTree vertexIndex;
+  private final Geometry geom0;
+  private final Envelope geomEnv0;
+  private final IndexedPointInAreaLocator locator0;
+  private final STRtree<LineSegment> indexSegs;
+  private final KdTree vertexIndex;
 
   public OverlayArea(Geometry geom) {
     this.geom0 = geom;
@@ -174,9 +174,8 @@ public class OverlayArea {
     
     // only checking one point, so non-indexed is faster
     SimplePointInAreaLocator locator = new SimplePointInAreaLocator(geom);
-    double area1 = areaForContainedGeom(geom0, geom.getEnvelopeInternal(), locator);
-    // geom0 is either disjoint or contained - either way we are done
-    return area1;
+      // geom0 is either disjoint or contained - either way we are done
+    return areaForContainedGeom(geom0, geom.getEnvelopeInternal(), locator);
   }
 
   /**
@@ -188,7 +187,7 @@ public class OverlayArea {
    * @param locator
    * @return the area of the contained geometry, or 0 if it is disjoint
    */
-  private double areaForContainedGeom(Geometry geom, Envelope env, PointOnGeometryLocator locator) {
+  private static double areaForContainedGeom(Geometry geom, Envelope env, PointOnGeometryLocator locator) {
     Coordinate pt = geom.getCoordinate();
     
     // fast check for disjoint
@@ -229,22 +228,21 @@ public class OverlayArea {
     return area;
   }
 
-  class IntersectionVisitor implements ItemVisitor {
+  static class IntersectionVisitor implements ItemVisitor<LineSegment> {
     double area = 0.0;
-    private Coordinate b0;
-    private Coordinate b1;
-    
+    private final Coordinate b0;
+    private final Coordinate b1;
+
     IntersectionVisitor(Coordinate b0, Coordinate b1) {
       this.b0 = b0;
       this.b1 = b1;
     }
-    
+
     double getArea() {
       return area;
     }
-    
-    public void visitItem(Object item) {
-      LineSegment seg = (LineSegment) item;
+
+    public void visitItem(LineSegment seg) {
       area += areaForIntersection(seg.p0, seg.p1, b0, b1);
     }
   }
@@ -305,7 +303,7 @@ public class OverlayArea {
     return area;
   }
   
-  private double areaForInteriorVerticesIndexed(Geometry geom, KdTree vertexIndex, Envelope env, IndexedPointInAreaLocator locator) {
+  private static double areaForInteriorVerticesIndexed(Geometry geom, KdTree vertexIndex, Envelope env, IndexedPointInAreaLocator locator) {
     /**
      * Compute rays originating at vertices inside the intersection result
      * (i.e. A vertices inside B, and B vertices inside A)
@@ -331,15 +329,14 @@ public class OverlayArea {
   
   private static CoordinateSequence getVertices(Geometry geom) {
     Polygon poly = (Polygon) geom;
-    CoordinateSequence seq = poly.getExteriorRing().getCoordinateSequence();
-    return seq;
+      return poly.getExteriorRing().getCoordinateSequence();
   }
   
-  private static STRtree buildSegmentIndex(Geometry geom) {
+  private static STRtree<LineSegment> buildSegmentIndex(Geometry geom) {
     Coordinate[] coords = geom.getCoordinates();
-    
+
     boolean isCCW = Orientation.isCCW(coords);
-    STRtree index = new STRtree();
+    STRtree<LineSegment> index = new STRtree<>();
     for (int i = 0; i < coords.length - 1; i++) {
       Coordinate a0 = coords[i];
       Coordinate a1 = coords[i+1];

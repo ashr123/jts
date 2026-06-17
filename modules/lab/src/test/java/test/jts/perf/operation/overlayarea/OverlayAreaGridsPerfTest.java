@@ -31,7 +31,7 @@ import test.jts.util.IOUtil;
 
 public class OverlayAreaGridsPerfTest extends PerformanceTestCase
 {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     PerformanceTestRunner.run(OverlayAreaGridsPerfTest.class);
   }
   boolean verbose = true;
@@ -69,7 +69,7 @@ public class OverlayAreaGridsPerfTest extends PerformanceTestCase
     System.out.println(">>> OverlayArea = " + area);
   }
   
-  private void checkOrigArea(Geometry geom0, Geometry geom1) {
+  private static void checkOrigArea(Geometry geom0, Geometry geom1) {
     double intArea = OverlayArea.intersectionArea(geom0, geom1);
     double origArea = geom0.intersection(geom1).getArea();
     if (! isEqual(intArea, origArea, 0.1)) {
@@ -78,7 +78,7 @@ public class OverlayAreaGridsPerfTest extends PerformanceTestCase
     }
   }
 
-  private boolean isEqual(double v1, double v2, double tol) {
+  private static boolean isEqual(double v1, double v2, double tol) {
     if (v1 == v2) return true;
     double diff = Math.abs( (v1 - v2) / (v1 + v2));
     return diff < tol;
@@ -111,8 +111,7 @@ public class OverlayAreaGridsPerfTest extends PerformanceTestCase
     if (! geomPrep.intersects(geom1)) return 0.0;
     if (geomPrep.contains(geom1)) return geom1.getArea();
 
-    double intArea = geom.intersection(geom1).getArea();
-    return intArea;
+      return geom.intersection(geom1).getArea();
   }
   
   public static Geometry createSineStar(int nPts, double offset)
@@ -121,10 +120,8 @@ public class OverlayAreaGridsPerfTest extends PerformanceTestCase
     gsf.setCentre(new Coordinate(0, offset));
     gsf.setSize(100);
     gsf.setNumPoints(nPts);
-    
-    Geometry g = gsf.createSineStar();
-    
-    return g;
+
+      return gsf.createSineStar();
   }
   
   public static Geometry grid(Geometry g, int nCells)
@@ -142,7 +139,7 @@ public class OverlayAreaGridsPerfTest extends PerformanceTestCase
     double cellSizeX = env.getWidth() / nCellsOnSideX;
     double cellSizeY = env.getHeight() / nCellsOnSideY;
     
-    List geoms = new ArrayList(); 
+    List<Geometry> geoms = new ArrayList<>();
 
     for (int i = 0; i < nCellsOnSideX; i++) {
       for (int j = 0; j < nCellsOnSideY; j++) {

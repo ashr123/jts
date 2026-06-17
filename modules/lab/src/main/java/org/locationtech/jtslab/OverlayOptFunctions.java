@@ -24,8 +24,11 @@ import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
  *
  */
 public class OverlayOptFunctions {
-  
-  /**
+
+    private OverlayOptFunctions() {
+    }
+
+    /**
    * Use spatial predicates as a filter
    * in front of intersection.
    * 
@@ -63,7 +66,7 @@ public class OverlayOptFunctions {
   private static PreparedGeometry cacheFetch(Geometry g) {
     if (g != cacheKey) {
       cacheKey = g;
-      cache = (new PreparedGeometryFactory()).create(g);
+      cache = PreparedGeometryFactory.create(g);
     }
     return cache;
   }

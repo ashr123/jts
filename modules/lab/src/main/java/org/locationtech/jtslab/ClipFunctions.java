@@ -17,8 +17,11 @@ import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jtslab.clip.RectangleClipPolygon;
 
 public class ClipFunctions {
-  
-  public static Geometry clipPoly(Geometry geom, Geometry rectangle) {
+
+    private ClipFunctions() {
+    }
+
+    public static Geometry clipPoly(Geometry geom, Geometry rectangle) {
     return RectangleClipPolygon.clip(geom, rectangle);
   }
 

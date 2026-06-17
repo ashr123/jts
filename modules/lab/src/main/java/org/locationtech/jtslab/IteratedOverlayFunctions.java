@@ -25,8 +25,11 @@ import org.locationtech.jts.operation.overlayng.OverlayNG;
 import org.locationtech.jts.operation.overlayng.OverlayNGRobust;
 
 public class IteratedOverlayFunctions {
-  
-  public static Geometry overlayOld(Geometry coll) {
+
+    private IteratedOverlayFunctions() {
+    }
+
+    public static Geometry overlayOld(Geometry coll) {
     return overlay(coll, false, null);
   }
 
@@ -40,7 +43,7 @@ public class IteratedOverlayFunctions {
   }
   
   private static Geometry overlay(Geometry coll, boolean useNG, PrecisionModel pm) {
-    List<Geometry> result = new ArrayList<Geometry>();
+    List<Geometry> result = new ArrayList<>();
     for (int i = 0; i < coll.getNumGeometries(); i++) {
       Geometry inGeom = coll.getGeometryN(i);
       
@@ -76,7 +79,7 @@ public class IteratedOverlayFunctions {
   }
   
   private static Geometry overlayIndexed(Geometry coll, boolean useNG, PrecisionModel pm) {
-    Quadtree tree = new Quadtree();
+    Quadtree<Polygon> tree = new Quadtree<>();
     for (int i = 0; i < coll.getNumGeometries(); i++) {
       
       Geometry inGeom = coll.getGeometryN(i);
@@ -88,7 +91,7 @@ public class IteratedOverlayFunctions {
         List<Polygon> intList = PolygonExtracter.getPolygons( intGeom );
         
         // resultant is overlapped by next input
-        if (! intGeom.isEmpty() && intList.size() > 0) {
+        if (! intGeom.isEmpty() && !intList.isEmpty()) {
           tree.remove(resPoly.getEnvelopeInternal(), resPoly);
           
           for (Polygon intPoly : intList) {
@@ -103,11 +106,11 @@ public class IteratedOverlayFunctions {
       // keep remainder of input
       insertPolys(inGeom, tree);
     }
-    List result = tree.queryAll();
+    List<Polygon> result = tree.queryAll();
     return coll.getFactory().buildGeometry(result);
   }
   
-  private static void insertPolys(Geometry geom, Quadtree tree) {
+  private static void insertPolys(Geometry geom, Quadtree<Polygon> tree) {
     if (geom.isEmpty()) return;
     List<Polygon> polyList = PolygonExtracter.getPolygons( geom );
     for (Polygon poly : polyList) {
@@ -134,12 +137,12 @@ public class IteratedOverlayFunctions {
   }
   
   private static Geometry extractPolygons(Geometry geom) {
-    List polys = PolygonExtracter.getPolygons(geom);
+    List<Polygon> polys = PolygonExtracter.getPolygons(geom);
     return geom.getFactory().buildGeometry(polys);
   }
   
   private static List<Polygon> extractPolygonsNonEmpty(List<Geometry> geoms) {
-    List<Polygon> exPolys = new ArrayList<Polygon>();
+    List<Polygon> exPolys = new ArrayList<>();
     for (Geometry geom : geoms) {
       if (! geom.isEmpty()) {
         if (geom instanceof Polygon) {

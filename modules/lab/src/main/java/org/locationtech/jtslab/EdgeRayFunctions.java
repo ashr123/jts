@@ -16,7 +16,10 @@ import org.locationtech.jtslab.edgeray.EdgeRayArea;
 import org.locationtech.jtslab.edgeray.EdgeRayIntersectionArea;
 
 public class EdgeRayFunctions {
-  public static double area(Geometry g) {
+    private EdgeRayFunctions() {
+    }
+
+    public static double area(Geometry g) {
     return EdgeRayArea.area(g);
   }
   
@@ -29,9 +32,7 @@ public class EdgeRayFunctions {
     double intArea = intersectionArea(geom0, geom1);
     
     double intAreaStd = geom0.intersection(geom1).getArea();
-    
-    double diff = Math.abs(intArea - intAreaStd)/Math.max(intArea, intAreaStd);
-    
-    return diff;
+
+      return Math.abs(intArea - intAreaStd)/Math.max(intArea, intAreaStd);
   }
 }

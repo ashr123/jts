@@ -31,7 +31,10 @@ import org.locationtech.jts.geom.Coordinate;
  */
 class EdgeVector {
 
-  /**
+    private EdgeVector() {
+    }
+
+    /**
    * Computes the partial area term for an edge between two points.
    * 
    * @param p0 the edge start point
@@ -125,10 +128,9 @@ class EdgeVector {
       nx = -uy;
       ny = ux;
     }
-    
-    double area2Term = (vx*ux + vy*uy) * (vx*nx + vy*ny); 
-    //System.out.println(areaTerm);
-    return area2Term;
+
+      //System.out.println(areaTerm);
+    return (vx*ux + vy*uy) * (vx*nx + vy*ny);
   }
 
   

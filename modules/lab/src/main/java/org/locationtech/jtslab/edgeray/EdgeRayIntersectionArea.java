@@ -20,16 +20,16 @@ import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Location;
 import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jtslab.EdgeRayFunctions;
 
 public class EdgeRayIntersectionArea {
   
   public static double area(Geometry geom0, Geometry geom1) {
-    EdgeRayIntersectionArea area = new EdgeRayIntersectionArea(geom0, geom1);
-    return area.getArea();
+      return EdgeRayFunctions.intersectionArea(geom0, geom1);
   }
   
-  private Geometry geomA;
-  private Geometry geomB;
+  private final Geometry geomA;
+  private final Geometry geomB;
   double area = 0;
 
   public EdgeRayIntersectionArea(Geometry geom0, Geometry geom1) {
@@ -127,9 +127,8 @@ public class EdgeRayIntersectionArea {
     }
   }
   
-  private CoordinateSequence getVertices(Geometry geom) {
+  private static CoordinateSequence getVertices(Geometry geom) {
     Polygon poly = (Polygon) geom;
-    CoordinateSequence seq = poly.getExteriorRing().getCoordinateSequence();
-    return seq;
+      return poly.getExteriorRing().getCoordinateSequence();
   }
 }

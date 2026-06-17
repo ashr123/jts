@@ -54,11 +54,11 @@ public class DelaunayMedialAxis {
   }
   */
   
-  private Polygon inputPolygon;
-  private GeometryFactory geomFact;
+  private final Polygon inputPolygon;
+  private final GeometryFactory geomFact;
 
-  private Map<Tri, AxisNode> nodeMap = new HashMap<Tri, AxisNode>();
-  private Deque<AxisNode> nodeQue = new ArrayDeque<AxisNode>();
+  private final Map<Tri, AxisNode> nodeMap = new HashMap<>();
+  private final Deque<AxisNode> nodeQue = new ArrayDeque<>();
 
   public DelaunayMedialAxis(Polygon polygon) {
     this.inputPolygon = polygon;
@@ -75,7 +75,7 @@ public class DelaunayMedialAxis {
   
   private List<LineString> constructLines(List<Tri> tris)
   {
-    List<LineString> lines = new ArrayList<LineString>();
+    List<LineString> lines = new ArrayList<>();
     /**
      * Construct paths from cap tris
      * (tris with two outer sides).
@@ -208,7 +208,7 @@ public class DelaunayMedialAxis {
   private LineString constructPath(Tri triStart, int eStart, 
       Coordinate p0, Coordinate p1)
   {
-    ArrayList<Coordinate> pts = new ArrayList<Coordinate>();
+    ArrayList<Coordinate> pts = new ArrayList<>();
     if (p0 != null) pts.add(p0);
     if (p1 != null) pts.add(p1);
     
@@ -274,16 +274,12 @@ public class DelaunayMedialAxis {
   }
 
   private void addNodePathPoint(Tri tri, int edgeEntry, Coordinate pt) {
-    AxisNode node = nodeMap.get(tri);
-    if (node == null) {
-      node = new AxisNode(tri);
-      nodeMap.put(tri, node);
-    }
-    node.addPathPoint(edgeEntry, pt);
+      AxisNode node = nodeMap.computeIfAbsent(tri, AxisNode::new);
+      node.addPathPoint(edgeEntry, pt);
     nodeQue.add(node);
   }
   
-  private Coordinate exitPointWedge(Tri tri, int eExit) {
+  private static Coordinate exitPointWedge(Tri tri, int eExit) {
     /**
      * Midpoint produces a straighter line in nearly-parallel corridors, 
      * but is more see-sawed elsewhere. 
@@ -309,7 +305,7 @@ public class DelaunayMedialAxis {
    * @param tri2 the second triangle in the tube
    * @return medial axis exit point of tube
    */
-  private Coordinate exitPointTube(Tri tri1, Tri tri2) {
+  private static Coordinate exitPointTube(Tri tri1, Tri tri2) {
     
     int eBdy1 = indexOfNonAdjacent(tri1);
     int eBdy2 = indexOfNonAdjacent(tri2);
@@ -326,8 +322,7 @@ public class DelaunayMedialAxis {
       p10 = tri2.getCoordinate(eBdy2);
       p11 = tri2.getCoordinate(Tri.next(eBdy2));
     }
-    Coordinate axisPoint = medialAxisPoint(p00, p01, p10, p11);
-    return axisPoint;
+      return medialAxisPoint(p00, p01, p10, p11);
   }
 
   private static final double MEDIAL_AXIS_EPS = .01;
@@ -474,7 +469,7 @@ public class DelaunayMedialAxis {
 
 class AxisNode {
   
-  private Tri tri;
+  private final Tri tri;
   /**
    * Axis path points along tri edges
    */
@@ -495,7 +490,7 @@ class AxisNode {
     switch (edgeIndex) {
     case 0: p0 = p; return;
     case 1: p1 = p; return;
-    case 2: p2 = p; return;
+    case 2: p2 = p;
     }
   }
   
