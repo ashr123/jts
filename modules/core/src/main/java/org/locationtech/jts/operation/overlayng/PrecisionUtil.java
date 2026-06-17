@@ -42,9 +42,12 @@ public class PrecisionUtil
    * 
    * This value should be less than the maximum decimal precision of double-precision values (16).
    */
-  public static int MAX_ROBUST_DP_DIGITS = 14;
-  
-  /**
+  public static final int MAX_ROBUST_DP_DIGITS = 14;
+
+    private PrecisionUtil() {
+    }
+
+    /**
    * Determines a precision model to 
    * use for robust overlay operations.
    * The precision scale factor is chosen to maximize 
@@ -109,8 +112,7 @@ public class PrecisionUtil
       double maxBndB = maxBoundMagnitude( b.getEnvelopeInternal());
       maxBnd = Math.max(maxBnd,  maxBndB);
     }
-    double scale = PrecisionUtil.safeScale(maxBnd);
-    return scale;
+      return PrecisionUtil.safeScale(maxBnd);
   }
   
   /**
@@ -156,9 +158,8 @@ public class PrecisionUtil
     // the smallest power of 10 greater than the value
     int magnitude = (int) (Math.log(value) / Math.log(10) + 1.0);
     int precDigits = precisionDigits - magnitude;
-    
-    double scaleFactor = Math.pow(10.0, precDigits);
-    return scaleFactor;
+
+      return Math.pow(10.0, precDigits);
   }
  
   /**
@@ -178,8 +179,7 @@ public class PrecisionUtil
    */
   public static double inherentScale(double value) {
     int numDec = numberOfDecimals(value);
-    double scaleFactor = Math.pow(10.0, numDec);
-    return scaleFactor;
+      return Math.pow(10.0, numDec);
   }
   
   /**
@@ -361,11 +361,8 @@ public class PrecisionUtil
      * Use safe scale if lower, 
      * since it is important to preserve some precision for robustness
      */
-    if (inherentScale <= safeScale ) {
-      return inherentScale;
-    }
+      return Math.min(inherentScale, safeScale);
     //System.out.println("Scale = " + scale);
-    return safeScale;
   }
  
 }
