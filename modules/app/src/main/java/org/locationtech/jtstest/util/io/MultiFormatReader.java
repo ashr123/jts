@@ -43,11 +43,11 @@ public class MultiFormatReader
   }
 
   public static boolean isGML(String str) {
-    return str.indexOf("<") >= 0;
+    return str.contains("<");
   }
 
   public static boolean isGeoJSON(String str) {
-    return str.indexOf("{") >= 0;
+    return str.contains("{");
   }
 
   public static int format(String s) {
@@ -76,13 +76,12 @@ public class MultiFormatReader
   {
     if (Character.isDigit(ch)) return true;
     char chLow = Character.toLowerCase(ch);
-    if (chLow >= 'a' && chLow <= 'f') return true;
-    return false;
+      return chLow >= 'a' && chLow <= 'f';
   }
 
   private static final int MAX_CHARS_TO_CHECK = 6;
 
-  private GeometryFactory geomFactory;
+  private final GeometryFactory geomFactory;
   private boolean isStrict = true;
 
   public MultiFormatReader()
@@ -131,7 +130,7 @@ public class MultiFormatReader
   	throws ParseException
   {
   	try {
-  		return (new GMLReader()).read(str, geomFactory);
+  		return GMLReader.read(str, geomFactory);
   	}
   	catch (Exception ex) {
   		throw new ParseException(ex.getMessage());
