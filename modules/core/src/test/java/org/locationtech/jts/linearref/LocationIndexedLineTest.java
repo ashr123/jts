@@ -29,18 +29,14 @@ public class LocationIndexedLineTest
     super(name);
   }
 
-  public void testMultiLineStringSimple()
-      throws Exception
-  {
+  public void testMultiLineStringSimple() {
     runExtractLine("MULTILINESTRING ((0 0, 10 10), (20 20, 30 30))",
                    new LinearLocation(0, 0, .5),
                    new LinearLocation(1, 0, .5),
         "MULTILINESTRING ((5 5, 10 10), (20 20, 25 25))");
   }
 
-  public void testMultiLineString2()
-      throws Exception
-  {
+  public void testMultiLineString2() {
     runExtractLine("MULTILINESTRING ((0 0, 10 10), (20 20, 30 30))",
                    new LinearLocation(0, 0, 1.0),
                    new LinearLocation(1, 0, .5),
@@ -61,8 +57,7 @@ public class LocationIndexedLineTest
   {
     LocationIndexedLine indexedLine = new LocationIndexedLine(input);
     LinearLocation[] loc = indexedLine.indicesOf(subLine);
-    Geometry result = indexedLine.extractLine(loc[0], loc[1]);
-    return result;
+      return indexedLine.extractLine(loc[0], loc[1]);
   }
 
   protected boolean indexOfAfterCheck(Geometry linearGeom, Coordinate testPt)
@@ -78,9 +73,7 @@ public class LocationIndexedLineTest
     Coordinate pt1 = indexedLine.extractPoint(loc1);
     Coordinate pt2 = indexedLine.extractPoint(loc2);
     if (! pt1.equals2D(testPt)) return false;
-    if (! pt2.equals2D(testPt)) return false;
-    
-    return true;
+      return pt2.equals2D(testPt);
   }
 
   protected boolean indexOfAfterCheck(Geometry linearGeom, Coordinate testPt, Coordinate afterPt)
@@ -90,9 +83,7 @@ public class LocationIndexedLineTest
     // check that computed location is after check location
     LinearLocation afterLoc = indexedLine.indexOf(afterPt);
     LinearLocation testLoc = indexedLine.indexOfAfter(testPt, afterLoc);
-    if (testLoc.compareTo(afterLoc) < 0 ) return false;
-    
-    return true;
+      return testLoc.compareTo(afterLoc) >= 0;
   }
 
   protected Coordinate extractOffsetAt(Geometry linearGeom, Coordinate testPt, double offsetDistance)

@@ -25,7 +25,7 @@ import junit.textui.TestRunner;
 public class DDComputeTest 
   extends TestCase
 {
-	public static void main(String args[]) {
+	public static void main(String[] args) {
         TestRunner.run(DDComputeTest.class);
       }
 
@@ -48,7 +48,7 @@ public class DDComputeTest
 	 * 
 	 * @return an approximation to e
 	 */
-	private DD computeEByTaylorSeries()
+	private static DD computeEByTaylorSeries()
 	{
 		DD s = DD.valueOf(2.0);
 		DD t = DD.valueOf(1.0);
@@ -83,7 +83,7 @@ public class DDComputeTest
    *    
 	 * @return an approximation to Pi
 	 */
-	private DD computePiByMachin()
+	private static DD computePiByMachin()
 	{
 		DD t1 = DD.valueOf(1.0).divide(DD.valueOf(5.0));
 		DD t2 = DD.valueOf(1.0).divide(DD.valueOf(239.0));
@@ -91,9 +91,8 @@ public class DDComputeTest
 		DD pi4 = (DD.valueOf(4.0)
 												.multiply(arctan(t1)))
 												.subtract(arctan(t2));
-		DD pi = DD.valueOf(4.0).multiply(pi4);
-		//System.out.println("Computed value = " + pi);
-		return pi;
+        //System.out.println("Computed value = " + pi);
+		return DD.valueOf(4.0).multiply(pi4);
 	}
 	
 	/**
@@ -104,7 +103,7 @@ public class DDComputeTest
 	 * @param x the argument
 	 * @return an approximation to the arctangent of the input
 	 */
-	private DD arctan(DD x)
+	private static DD arctan(DD x)
 	{
 		DD t = x;
 	  DD t2 = t.sqr();

@@ -73,8 +73,7 @@ class PreparedPolygonContains
 	 */
 	protected boolean fullTopologicalPredicate(Geometry geom)
 	{
-		boolean isContained = prepPoly.getGeometry().contains(geom);
-		return isContained;
+        return prepPoly.getGeometry().contains(geom);
 	}
 	
 }

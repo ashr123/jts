@@ -35,10 +35,10 @@ public class PolygonExtracter
    * @param geom the geometry from which to extract
    * @param list the list to add the extracted elements to
    */
-  public static List getPolygons(Geometry geom, List list)
+  public static List<Polygon> getPolygons(Geometry geom, List<Polygon> list)
   {
   	if (geom instanceof Polygon) {
-  		list.add(geom);
+  		list.add((Polygon) geom);
   	}
   	else if (geom instanceof GeometryCollection) {
   		geom.apply(new PolygonExtracter(list));
@@ -54,23 +54,23 @@ public class PolygonExtracter
    * 
    * @param geom the geometry from which to extract
    */
-  public static List getPolygons(Geometry geom)
+  public static List<Polygon> getPolygons(Geometry geom)
   {
-    return getPolygons(geom, new ArrayList());
+    return getPolygons(geom, new ArrayList<>());
   }
 
-  private List comps;
+  private final List<Polygon> comps;
   /**
    * Constructs a PolygonExtracterFilter with a list in which to store Polygons found.
    */
-  public PolygonExtracter(List comps)
+  public PolygonExtracter(List<Polygon> comps)
   {
     this.comps = comps;
   }
 
   public void filter(Geometry geom)
   {
-    if (geom instanceof Polygon) comps.add(geom);
+    if (geom instanceof Polygon) comps.add((Polygon) geom);
   }
 
 }

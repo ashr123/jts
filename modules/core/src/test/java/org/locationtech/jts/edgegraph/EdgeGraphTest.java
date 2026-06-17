@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.ParseException;
 
 import junit.framework.TestCase;
@@ -25,7 +26,7 @@ import test.jts.util.IOUtil;
 
 public class EdgeGraphTest extends TestCase {
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(EdgeGraphTest.class);
   }
 
@@ -50,19 +51,19 @@ public class EdgeGraphTest extends TestCase {
     checkNextPrev(graph, 1, 0, 0, 0);
     checkNextPrev(graph, 0, 1, 0, 0);
     checkNextPrev(graph, -1, 0, 0, 0);
-    
-    assertTrue( findEdge(graph, 0, 0, 1, 0).degree() == 3 );
+
+      assertEquals(3, findEdge(graph, 0, 0, 1, 0).degree());
   }
 
   public void testRingGraph() throws Exception {
     EdgeGraph graph = build("MULTILINESTRING ((10 10, 10 90), (10 90, 90 90), (90 90, 90 10), (90 10, 10 10))");
     HalfEdge e = findEdge(graph, 10, 10, 10, 90);
     HalfEdge eNext = findEdge(graph, 10, 90, 90, 90);
-    assertTrue(e.next() == eNext);
-    assertTrue(eNext.prev() == e);
+      assertSame(e.next(), eNext);
+      assertSame(eNext.prev(), e);
     
     HalfEdge eSym = findEdge(graph, 10, 90, 10, 10);
-    assertTrue(e.sym() == eSym);
+      assertSame(e.sym(), eSym);
     assertTrue(e.orig().equals2D(new Coordinate(10, 10)));
     assertTrue(e.dest().equals2D(new Coordinate(10, 90)));
 
@@ -96,8 +97,8 @@ public class EdgeGraphTest extends TestCase {
 
   //==================================================
   
-  private void checkEdgeRing(EdgeGraph graph, Coordinate p,
-      Coordinate[] dest) {
+  private static void checkEdgeRing(EdgeGraph graph, Coordinate p,
+                                    Coordinate[] dest) {
     HalfEdge e = graph.findEdge(p, dest[0]);
     HalfEdge onext = e;
     int i = 0;
@@ -108,58 +109,58 @@ public class EdgeGraphTest extends TestCase {
    
   }
 
-  private void checkEdge(EdgeGraph graph, Coordinate p0, Coordinate p1) {
+  private static void checkEdge(EdgeGraph graph, Coordinate p0, Coordinate p1) {
     HalfEdge e = graph.findEdge(p0, p1);
     assertNotNull(e);
   }
 
-  private void checkNodeValid(EdgeGraph graph, Coordinate p0, Coordinate p1) {
+  private static void checkNodeValid(EdgeGraph graph, Coordinate p0, Coordinate p1) {
     HalfEdge e = graph.findEdge(p0, p1);
     boolean isNodeValid = e.isEdgesSorted();
     assertTrue("Found non-sorted edges around node " + e, isNodeValid); 
   }
 
 
-  private void checkNodeValid(HalfEdge e) {
+  private static void checkNodeValid(HalfEdge e) {
     boolean isNodeValid = e.isEdgesSorted();
     assertTrue("Found non-sorted edges around node " + e, isNodeValid); 
   }
   
-  private void checkNextPrev(EdgeGraph graph) {
+  private static void checkNextPrev(EdgeGraph graph) {
     Collection<HalfEdge> edges = graph.getVertexEdges();
     for (HalfEdge e: edges) {
-      assertTrue(e.next().prev() == e);
+        assertSame(e.next().prev(), e);
     }
   }
 
 
  
-  private void checkNext(EdgeGraph graph, double x1, double y1, double x2, double y2, double x3, double y3) {
+  private static void checkNext(EdgeGraph graph, double x1, double y1, double x2, double y2, double x3, double y3) {
     HalfEdge e1 = findEdge(graph, x1, y1, x2, y2);
     HalfEdge e2 = findEdge(graph, x2, y2, x3, y3);
-    assertTrue(e1.next() == e2);
-    assertTrue(e2.prev() == e1);
+      assertSame(e1.next(), e2);
+      assertSame(e2.prev(), e1);
   }
   
-  private void checkNextPrev(EdgeGraph graph, double x1, double y1, double x2, double y2) {
+  private static void checkNextPrev(EdgeGraph graph, double x1, double y1, double x2, double y2) {
     HalfEdge e = findEdge(graph, x1, y1, x2, y2);
-    assertTrue(e.next().prev() == e);
+      assertSame(e.next().prev(), e);
   }
 
-  private HalfEdge findEdge(EdgeGraph graph, double x1, double y1, double x2, double y2) {
+  private static HalfEdge findEdge(EdgeGraph graph, double x1, double y1, double x2, double y2) {
     return graph.findEdge(new Coordinate(x1, y1), new Coordinate(x2, y2));
   }
   
-  private EdgeGraph build(String wkt) throws ParseException {
+  private static EdgeGraph build(String wkt) throws ParseException {
     return build(new String[] { wkt });
   }
 
-  private EdgeGraph build(String[] wkt) throws ParseException {
-    List geoms = IOUtil.readWKT(wkt);
+  private static EdgeGraph build(String[] wkt) throws ParseException {
+    List<Geometry> geoms = IOUtil.readWKT(wkt);
     return EdgeGraphBuilder.build(geoms);
   }
 
-  private HalfEdge addEdge(EdgeGraph graph, double p0x, double p0y, double p1x, double p1y) {
+  private static HalfEdge addEdge(EdgeGraph graph, double p0x, double p0y, double p1x, double p1y) {
     return graph.addEdge(new Coordinate(p0x, p0y), new Coordinate(p1x, p1y));
   }
 

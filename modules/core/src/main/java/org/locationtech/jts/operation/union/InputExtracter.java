@@ -63,9 +63,9 @@ class InputExtracter implements GeometryFilter
   }
   
   private GeometryFactory geomFactory = null;
-  private List<Polygon> polygons = new ArrayList<Polygon>();
-  private List<LineString> lines = new ArrayList<LineString>();
-  private List<Point> points = new ArrayList<Point>();
+  private final List<Polygon> polygons = new ArrayList<>();
+  private final List<LineString> lines = new ArrayList<>();
+  private final List<Point> points = new ArrayList<>();
   
   /**
    * The default dimension for an empty GeometryCollection
@@ -113,7 +113,7 @@ class InputExtracter implements GeometryFilter
    * @param dim the dimension of geometry to return
    * @return a list of the extracted geometries of dimension dim.
    */
-  public List getExtract(int dim) {
+  public List<? extends Geometry> getExtract(int dim) {
     switch (dim) {
     case 0: return points;
     case 1: return lines;

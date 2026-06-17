@@ -61,7 +61,7 @@ public class LineString
    * @throws IllegalArgumentException if too few points are provided
    */
   /** @deprecated Use GeometryFactory instead */
-  public LineString(Coordinate points[], PrecisionModel precisionModel, int SRID)
+  public LineString(Coordinate[] points, PrecisionModel precisionModel, int SRID)
   {
     super(new GeometryFactory(precisionModel, SRID));
     init(getFactory().getCoordinateSequenceFactory().create(points));

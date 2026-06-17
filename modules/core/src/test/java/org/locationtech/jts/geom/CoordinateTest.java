@@ -22,55 +22,55 @@ public class CoordinateTest extends TestCase
     super(name);
   }
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(CoordinateTest.class);
   }
   
   public void testConstructor3D() 
   {
     Coordinate c = new Coordinate(350.2, 4566.8, 5266.3);
-    assertEquals(c.x, 350.2);
-    assertEquals(c.y, 4566.8);
-    assertEquals(c.getZ(), 5266.3);
+    assertEquals(350.2, c.x);
+    assertEquals(4566.8, c.y);
+    assertEquals(5266.3, c.getZ());
   }
   
   public void testConstructor2D() 
   {
     Coordinate c = new Coordinate(350.2, 4566.8);
-    assertEquals(c.x, 350.2);
-    assertEquals(c.y, 4566.8);
-    assertEquals(c.getZ(), Coordinate.NULL_ORDINATE);
+    assertEquals(350.2, c.x);
+    assertEquals(4566.8, c.y);
+    assertEquals(Coordinate.NULL_ORDINATE, c.getZ());
   }
   public void testDefaultConstructor() 
   {
     Coordinate c = new Coordinate();
-    assertEquals(c.x, 0.0);
-    assertEquals(c.y, 0.0);
-    assertEquals(c.getZ(), Coordinate.NULL_ORDINATE);
+    assertEquals(0.0, c.x);
+    assertEquals(0.0, c.y);
+    assertEquals(Coordinate.NULL_ORDINATE, c.getZ());
   }
   public void testCopyConstructor3D() 
   {
     Coordinate orig = new Coordinate(350.2, 4566.8, 5266.3);
     Coordinate c = new Coordinate(orig);
-    assertEquals(c.x, 350.2);
-    assertEquals(c.y, 4566.8);
-    assertEquals(c.getZ(), 5266.3);
+    assertEquals(350.2, c.x);
+    assertEquals(4566.8, c.y);
+    assertEquals(5266.3, c.getZ());
   }
   public void testSetCoordinate() 
   {
     Coordinate orig = new Coordinate(350.2, 4566.8, 5266.3);
     Coordinate c = new Coordinate();
     c.setCoordinate(orig);
-    assertEquals(c.x, 350.2);
-    assertEquals(c.y, 4566.8);
-    assertEquals(c.getZ(), 5266.3);
+    assertEquals(350.2, c.x);
+    assertEquals(4566.8, c.y);
+    assertEquals(5266.3, c.getZ());
   }
   public void testGetOrdinate() 
   {
     Coordinate c = new Coordinate(350.2, 4566.8, 5266.3);
-    assertEquals(c.getOrdinate(Coordinate.X), 350.2);
-    assertEquals(c.getOrdinate(Coordinate.Y), 4566.8);
-    assertEquals(c.getOrdinate(Coordinate.Z), 5266.3);
+    assertEquals(350.2, c.getOrdinate(Coordinate.X));
+    assertEquals(4566.8, c.getOrdinate(Coordinate.Y));
+    assertEquals(5266.3, c.getOrdinate(Coordinate.Z));
   }
   public void testSetOrdinate() 
   {
@@ -78,21 +78,21 @@ public class CoordinateTest extends TestCase
     c.setOrdinate(Coordinate.X, 111);
     c.setOrdinate(Coordinate.Y, 222);
     c.setOrdinate(Coordinate.Z, 333);
-    assertEquals(c.getOrdinate(Coordinate.X), 111.0);
-    assertEquals(c.getOrdinate(Coordinate.Y), 222.0);
-    assertEquals(c.getOrdinate(Coordinate.Z), 333.0);
+    assertEquals(111.0, c.getOrdinate(Coordinate.X));
+    assertEquals(222.0, c.getOrdinate(Coordinate.Y));
+    assertEquals(333.0, c.getOrdinate(Coordinate.Z));
   }
   public void testEquals()
   {
     Coordinate c1 = new Coordinate(1,2,3);
     String s = "Not a coordinate";
-    assertTrue(! c1.equals(s));
+      assertFalse(c1.equals(s));
     
     Coordinate c2 = new Coordinate(1,2,3);
     assertTrue(c1.equals2D(c2));
 
     Coordinate c3 = new Coordinate(1,22,3);
-    assertTrue(! c1.equals2D(c3));
+      assertFalse(c1.equals2D(c3));
   }
   public void testEquals2D()
   {
@@ -101,7 +101,7 @@ public class CoordinateTest extends TestCase
     assertTrue(c1.equals2D(c2));
     
     Coordinate c3 = new Coordinate(1,22,3);
-    assertTrue(! c1.equals2D(c3));
+      assertFalse(c1.equals2D(c3));
   }
   public void testEquals3D()
   {
@@ -110,7 +110,7 @@ public class CoordinateTest extends TestCase
     assertTrue(c1.equals3D(c2));
     
     Coordinate c3 = new Coordinate(1,22,3);
-    assertTrue(! c1.equals3D(c3));
+      assertFalse(c1.equals3D(c3));
   }
   public void testEquals2DWithinTolerance() 
   {
@@ -155,13 +155,13 @@ public class CoordinateTest extends TestCase
     Coordinate coord1 = new Coordinate(0.0, 0.0, 0.0);
     Coordinate coord2 = new Coordinate(100.0, 200.0, 50.0);
     double distance = coord1.distance(coord2);
-    assertEquals(distance, 223.60679774997897, 0.00001);
+    assertEquals(223.60679774997897, distance, 0.00001);
   }
   public void testDistance3D() {
     Coordinate coord1 = new Coordinate(0.0, 0.0, 0.0);
     Coordinate coord2 = new Coordinate(100.0, 200.0, 50.0);
     double distance = coord1.distance3D(coord2);
-    assertEquals(distance, 229.128784747792, 0.000001);
+    assertEquals(229.128784747792, distance, 0.000001);
   }
   public void testCoordinateXY() {
     Coordinate xy = new CoordinateXY();    
@@ -171,12 +171,12 @@ public class CoordinateTest extends TestCase
     xy = new CoordinateXY(1.0,1.0);        // 2D
     Coordinate coord = new Coordinate(xy); // copy
     assertEquals( xy, coord );
-    assertTrue( !xy.equalInZ(coord,0.000001) );    
+      assertFalse(xy.equalInZ(coord, 0.000001));
     
     coord = new Coordinate(1.0,1.0,1.0); // 2.5d
     xy = new CoordinateXY( coord ); // copy
     assertEquals( xy, coord );
-    assertTrue( !xy.equalInZ(coord,0.000001) );        
+      assertFalse(xy.equalInZ(coord, 0.000001));
   }
   public void testCoordinateXYM() {
       Coordinate xym = new CoordinateXYM();
@@ -187,12 +187,12 @@ public class CoordinateTest extends TestCase
       
       Coordinate coord = new Coordinate(xym); // copy
       assertEquals( xym, coord );
-      assertTrue( !xym.equalInZ(coord,0.000001) );
+      assertFalse(xym.equalInZ(coord, 0.000001));
       
       coord = new Coordinate(1.0,1.0,1.0); // 2.5d
       xym = new CoordinateXYM( coord ); // copy
       assertEquals( xym, coord );
-      assertTrue( !xym.equalInZ(coord,0.000001) ); 
+      assertFalse(xym.equalInZ(coord, 0.000001));
   }
   public void testCoordinateXYZM() {
       Coordinate xyzm = new CoordinateXYZM();
@@ -220,7 +220,7 @@ public class CoordinateTest extends TestCase
     doTestCoordinateHash(false, new Coordinate(1, 2), new Coordinate(2, 1));
   }
 
-  private void doTestCoordinateHash(boolean equal, Coordinate a, Coordinate b) {
+  private static void doTestCoordinateHash(boolean equal, Coordinate a, Coordinate b) {
     assertEquals(equal, a.equals(b));
     assertEquals(equal, a.hashCode() == b.hashCode());
   }
@@ -228,7 +228,7 @@ public class CoordinateTest extends TestCase
   /**
    * Confirm the z field is not supported by getZ and setZ.
    */
-  private void checkZUnsupported(Coordinate coord )
+  private static void checkZUnsupported(Coordinate coord)
   {
       try {
           coord.setZ(0.0);
@@ -243,7 +243,7 @@ public class CoordinateTest extends TestCase
   /**
    * Confirm the z field is not supported by getZ and setZ.
    */
-  private void checkMUnsupported(Coordinate coord )
+  private static void checkMUnsupported(Coordinate coord)
   {
       try {
           coord.setM(0.0);

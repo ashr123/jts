@@ -120,17 +120,17 @@ public class WKBReader
 
   private static final String FIELD_NUMELEMS = "numElems";
 
-  private GeometryFactory factory;
-  private CoordinateSequenceFactory csFactory;
-  private PrecisionModel precisionModel;
+  private final GeometryFactory factory;
+  private final CoordinateSequenceFactory csFactory;
+  private final PrecisionModel precisionModel;
   // default dimension - will be set on read
   private int inputDimension = 2;
   /**
    * true if structurally invalid input should be reported rather than repaired.
    * At some point this could be made client-controllable.
    */
-  private boolean isStrict = false;
-  private ByteOrderDataInStream dis = new ByteOrderDataInStream();
+  private static final boolean isStrict = false;
+  private final ByteOrderDataInStream dis = new ByteOrderDataInStream();
   private double[] ordValues;
 
   private int maxNumFieldValue;
@@ -300,7 +300,7 @@ public class WKBReader
    * @param g the geometry to update
    * @return the geometry with an updated SRID value, if required
    */
-  private Geometry setSRID(Geometry g, int SRID)
+  private static Geometry setSRID(Geometry g, int SRID)
   {
     if (SRID != 0)
       g.setSRID(SRID);

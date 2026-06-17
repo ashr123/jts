@@ -12,7 +12,6 @@
 
 package org.locationtech.jts.simplify;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.algorithm.LineIntersector;
@@ -32,10 +31,10 @@ import org.locationtech.jts.geom.LineSegment;
  */
 public class TaggedLineStringSimplifier
 {
-  private LineIntersector li = new RobustLineIntersector();
-  private LineSegmentIndex inputIndex;
-  private LineSegmentIndex outputIndex;
-  private ComponentJumpChecker jumpChecker;
+  private final LineIntersector li = new RobustLineIntersector();
+  private final LineSegmentIndex inputIndex;
+  private final LineSegmentIndex outputIndex;
+  private final ComponentJumpChecker jumpChecker;
   private TaggedLineString line;
   private Coordinate[] linePts;
 
@@ -145,7 +144,7 @@ public class TaggedLineStringSimplifier
     }
   }
 
-  private int findFurthestPoint(Coordinate[] pts, int i, int j, double[] maxDistance)
+  private static int findFurthestPoint(Coordinate[] pts, int i, int j, double[] maxDistance)
   {
     LineSegment seg = new LineSegment();
     seg.p0 = pts[i];
@@ -208,9 +207,7 @@ public class TaggedLineStringSimplifier
       return false;
     if (hasInputIntersection(line, sectionStart, sectionEnd, flatSeg)) 
       return false;
-    if (jumpChecker.hasJump(line, sectionStart, sectionEnd, flatSeg)) 
-      return false;
-    return true;
+      return !jumpChecker.hasJump(line, sectionStart, sectionEnd, flatSeg);
   }
 
   private boolean isTopologyValid(TaggedLineString line, LineSegment seg1, LineSegment seg2,
@@ -223,24 +220,21 @@ public class TaggedLineStringSimplifier
       return false;
     if (hasInputIntersection(flatSeg)) 
       return false;
-    if (jumpChecker.hasJump(line, seg1, seg2, flatSeg)) 
-      return false;
-    return true;
+      return !jumpChecker.hasJump(line, seg1, seg2, flatSeg);
   }
   
-  private boolean isCollinear(Coordinate pt, LineSegment seg) {
+  private static boolean isCollinear(Coordinate pt, LineSegment seg) {
     return Orientation.COLLINEAR == seg.orientationIndex(pt);
   }
 
   private boolean hasOutputIntersection(LineSegment flatSeg)
   {
-    List querySegs = outputIndex.query(flatSeg);
-    for (Iterator i = querySegs.iterator(); i.hasNext(); ) {
-      LineSegment querySeg = (LineSegment) i.next();
-      if (hasInvalidIntersection(querySeg, flatSeg)) {
-          return true;
+    List<LineSegment> querySegs = outputIndex.query(flatSeg);
+      for (LineSegment querySeg : querySegs) {
+          if (hasInvalidIntersection(querySeg, flatSeg)) {
+              return true;
+          }
       }
-    }
     return false;
   }
 
@@ -253,20 +247,24 @@ public class TaggedLineStringSimplifier
                         int excludeStart, int excludeEnd,
                        LineSegment flatSeg)
   {
-    List querySegs = inputIndex.query(flatSeg);
-    for (Iterator i = querySegs.iterator(); i.hasNext(); ) {
-      TaggedLineSegment querySeg = (TaggedLineSegment) i.next();
-      if (hasInvalidIntersection(querySeg, flatSeg)) {
-        /**
-         * Ignore the intersection if the intersecting segment is part of the section being collapsed
-         * to the candidate segment
-         */
-        if (line != null 
-            && isInLineSection(line, excludeStart, excludeEnd, querySeg))
-          continue;
-        return true;
+    List<LineSegment> querySegs = inputIndex.query(flatSeg);
+      /**
+       * Ignore the intersection if the intersecting segment is part of the section being collapsed
+       * to the candidate segment
+       */
+      for (LineSegment seg : querySegs) {
+          TaggedLineSegment querySeg = (TaggedLineSegment) seg;
+          if (hasInvalidIntersection(querySeg, flatSeg)) {
+              /**
+               * Ignore the intersection if the intersecting segment is part of the section being collapsed
+               * to the candidate segment
+               */
+              if (line != null
+                      && isInLineSection(line, excludeStart, excludeEnd, querySeg))
+                  continue;
+              return true;
+          }
       }
-    }
     return false;
   }
 
@@ -293,15 +291,12 @@ public class TaggedLineStringSimplifier
     int segIndex = seg.getIndex();
     if (excludeStart <= excludeEnd) {
       //-- section is contiguous
-      if (segIndex >= excludeStart && segIndex < excludeEnd)
-        return true;
+        return segIndex >= excludeStart && segIndex < excludeEnd;
     }
     else {
       //-- section wraps around the end of a ring
-      if (segIndex >= excludeStart || segIndex <= excludeEnd)
-      return true;
+        return segIndex >= excludeStart || segIndex <= excludeEnd;
     }
-    return false;
   }
 
   private boolean hasInvalidIntersection(LineSegment seg0, LineSegment seg1)

@@ -36,8 +36,8 @@ public class PreparedGeometryThreadSafeTest extends ThreadTestCase
     ThreadTestRunner.run(new PreparedGeometryThreadSafeTest());
   }
 
-  int nPts = 1000;
-  GeometryFactory factory = new GeometryFactory(new PrecisionModel(1.0));
+  static final int nPts = 1000;
+  final GeometryFactory factory = new GeometryFactory(new PrecisionModel(1.0));
   
   protected PreparedGeometry pg;
   protected Geometry g;
@@ -61,23 +61,17 @@ public class PreparedGeometryThreadSafeTest extends ThreadTestCase
     gsf.setNumPoints(nPts);
     gsf.setArmLengthRatio(0.1);
     gsf.setNumArms(20);
-    Geometry poly = gsf.createSineStar();
-    return poly;
+      return gsf.createSineStar();
   }
   
   @Override
   public Runnable getRunnable(final int threadIndex)
   {
-    return new Runnable() {
-
-      public void run()
-      {
-        while (true) {
-          System.out.println(threadIndex);
-          pg.intersects(g);
-        }
+    return () -> {
+      while (true) {
+        System.out.println(threadIndex);
+        pg.intersects(g);
       }
-    
     };
   }
 }

@@ -12,13 +12,13 @@
 package org.locationtech.jts.operation.buffer.validate;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.algorithm.distance.DiscreteHausdorffDistance;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.util.LinearComponentExtracter;
@@ -43,7 +43,7 @@ import org.locationtech.jts.util.Debug;
  */
 public class BufferDistanceValidator 
 {
-  private static boolean VERBOSE = false;
+  private static final boolean VERBOSE = false;
 	/**
 	 * Maximum allowable fraction of buffer distance the 
 	 * actual distance can differ by.
@@ -51,9 +51,9 @@ public class BufferDistanceValidator
 	 */
 	private static final double MAX_DISTANCE_DIFF_FRAC = .012;
 
-  private Geometry input;
-  private double bufDistance;
-  private Geometry result;
+  private final Geometry input;
+  private final double bufDistance;
+  private final Geometry result;
   
   private double minValidDistance;
   private double maxValidDistance;
@@ -151,15 +151,14 @@ public class BufferDistanceValidator
   	checkMaximumDistance(inputCurve, result, maxValidDistance);
   }
   
-  private Geometry getPolygonLines(Geometry g)
+  private static Geometry getPolygonLines(Geometry g)
   {
-  	List lines = new ArrayList();
+  	List<LineString> lines = new ArrayList<>();
   	LinearComponentExtracter lineExtracter = new LinearComponentExtracter(lines);
-  	List polys = PolygonExtracter.getPolygons(g);
-  	for (Iterator i = polys.iterator(); i.hasNext(); ) {
-  		Polygon poly = (Polygon) i.next();
-  		poly.apply(lineExtracter);
-  	}
+  	List<Polygon> polys = PolygonExtracter.getPolygons(g);
+      for (Polygon poly : polys) {
+          poly.apply(lineExtracter);
+      }
   	return g.getFactory().buildGeometry(lines);
   }
   

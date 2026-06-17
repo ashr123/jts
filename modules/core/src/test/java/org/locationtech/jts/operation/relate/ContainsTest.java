@@ -33,8 +33,8 @@ public class ContainsTest
     TestRunner.run(ContainsTest.class);
   }
 
-  private GeometryFactory fact = new GeometryFactory();
-  private WKTReader rdr = new WKTReader(fact);
+  private final GeometryFactory fact = new GeometryFactory();
+  private final WKTReader rdr = new WKTReader(fact);
 
   public ContainsTest(String name)
   {
@@ -57,12 +57,9 @@ public class ContainsTest
    * (The topology of the implicit intersections can still be computed
    * to contribute to the intersection matrix result).
    * This will require a complete reworking of the relate algorithm. 
-   * 
-   * @throws Exception
+   *
    */
-  public void testContainsIncorrect()
-      throws Exception
-  {
+  public void testContainsIncorrect() {
     String a = "LINESTRING (1 0, 0 2, 0 0, 2 2)";
     String b = "LINESTRING (0 0, 2 2)";
     checkContains(a, b);
@@ -75,9 +72,7 @@ public class ContainsTest
    * when using an FP intersection algorithm.
    * This case works when using CGAlgorithmsDD#intersection(Coordinate, Coordinate, Coordinate, Coordinate).
   */
-  public void testContainsGEOS933()
-      throws Exception
-  {
+  public void testContainsGEOS933() {
     String a = "MULTILINESTRING ((0 0, 1 1), (0.5 0.5, 1 0.1, -1 0.1))";
     String b = "LINESTRING (0 0, 1 1)";
     checkContains(a, b);

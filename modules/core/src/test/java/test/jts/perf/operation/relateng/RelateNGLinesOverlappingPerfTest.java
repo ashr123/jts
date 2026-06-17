@@ -11,8 +11,6 @@
  */
 package test.jts.perf.operation.relateng;
 
-import static org.junit.Assert.assertEquals;
-
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -29,22 +27,22 @@ public class RelateNGLinesOverlappingPerfTest
 extends PerformanceTestCase
 {
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     PerformanceTestRunner.run(RelateNGLinesOverlappingPerfTest.class);
   }
   
   private static final int N_ITER = 1;
   
-  static double ORG_X = 100;
-  static double ORG_Y = ORG_X;
-  static double SIZE = 2 * ORG_X;
-  static int N_ARMS = 6;
-  static double ARM_RATIO = 0.3;
+  static final double ORG_X = 100;
+  static final double ORG_Y = ORG_X;
+  static final double SIZE = 2 * ORG_X;
+  static final int N_ARMS = 6;
+  static final double ARM_RATIO = 0.3;
   
-  static int GRID_SIZE = 100;
-  static double GRID_CELL_SIZE = SIZE / GRID_SIZE;
+  static final int GRID_SIZE = 100;
+  static final double GRID_CELL_SIZE = SIZE / GRID_SIZE;
   
-  static int NUM_CASES = GRID_SIZE * GRID_SIZE;
+  static final int NUM_CASES = GRID_SIZE * GRID_SIZE;
   
   private static final int B_SIZE_FACTOR = 20;
   private static final GeometryFactory factory = new GeometryFactory();
@@ -126,7 +124,7 @@ extends PerformanceTestCase
     }
   }  
   
-  private Geometry[] createSineStarGrid(int nGeoms, int npts) {
+  private static Geometry[] createSineStarGrid(int nGeoms, int npts) {
     Geometry[] geoms = new Geometry[ NUM_CASES ];
     int index = 0;
     for (int i = 0; i < GRID_SIZE; i++) {
@@ -140,7 +138,7 @@ extends PerformanceTestCase
     return geoms;
   }
 
-  private Geometry[] createCircleGrid(int nGeoms, int npts) {
+  private static Geometry[] createCircleGrid(int nGeoms, int npts) {
     Geometry[] geoms = new Geometry[ NUM_CASES ];
     int index = 0;
     for (int i = 0; i < GRID_SIZE; i++) {

@@ -108,7 +108,7 @@ public class BufferOp
    * 
    * This value should be less than the decimal precision of double-precision values (16).
    */
-  private static int MAX_PRECISION_DIGITS = 12;
+  private static final int MAX_PRECISION_DIGITS = 12;
 
   /**
    * Compute a scale factor to limit the precision of
@@ -139,15 +139,14 @@ public class BufferOp
                     Math.abs(env.getMinY())
             );
     
-    double expandByDistance = distance > 0.0 ? distance : 0.0;
+    double expandByDistance = Math.max(distance, 0.0);
     double bufEnvMax = envMax + 2 * expandByDistance;
 
     // the smallest power of 10 greater than the buffer envelope
     int bufEnvPrecisionDigits = (int) (Math.log(bufEnvMax) / Math.log(10) + 1.0);
     int minUnitLog10 = maxPrecisionDigits - bufEnvPrecisionDigits;
-    
-    double scaleFactor = Math.pow(10.0, minUnitLog10);
-    return scaleFactor;
+
+      return Math.pow(10.0, minUnitLog10);
   }
 
   /*
@@ -179,10 +178,9 @@ public class BufferOp
   public static Geometry bufferOp(Geometry g, double distance)
   {
     BufferOp gBuf = new BufferOp(g);
-    Geometry geomBuf = gBuf.getResultGeometry(distance);
-//BufferDebug.saveBuffer(geomBuf);
+      //BufferDebug.saveBuffer(geomBuf);
     //BufferDebug.runCount++;
-    return geomBuf;
+    return gBuf.getResultGeometry(distance);
   }
 
   /**
@@ -198,8 +196,7 @@ public class BufferOp
   public static Geometry bufferOp(Geometry g, double distance, BufferParameters params)
   {
     BufferOp bufOp = new BufferOp(g, params);
-    Geometry geomBuf = bufOp.getResultGeometry(distance);
-    return geomBuf;
+      return bufOp.getResultGeometry(distance);
   }
   
   /**
@@ -216,8 +213,7 @@ public class BufferOp
   {
     BufferOp bufOp = new BufferOp(g);
     bufOp.setQuadrantSegments(quadrantSegments);
-    Geometry geomBuf = bufOp.getResultGeometry(distance);
-    return geomBuf;
+      return bufOp.getResultGeometry(distance);
   }
 
   /**
@@ -239,8 +235,7 @@ public class BufferOp
     BufferOp bufOp = new BufferOp(g);
     bufOp.setQuadrantSegments(quadrantSegments);
     bufOp.setEndCapStyle(endCapStyle);
-    Geometry geomBuf = bufOp.getResultGeometry(distance);
-    return geomBuf;
+      return bufOp.getResultGeometry(distance);
   }
 
   /**
@@ -288,7 +283,7 @@ public class BufferOp
     if (poly1.isEmpty()) return poly0;
     if (poly0.isEmpty()) return poly1;
     
-    List<Polygon> polys = new ArrayList<Polygon>();
+    List<Polygon> polys = new ArrayList<>();
     extractPolygons(poly0, polys);
     extractPolygons(poly1, polys);
     if (polys.size() == 1) return polys.get(0);
@@ -301,7 +296,7 @@ public class BufferOp
     }
   }
 
-  private Geometry argGeom;
+  private final Geometry argGeom;
   private double distance;
   
   private BufferParameters bufParams = new BufferParameters();

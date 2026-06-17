@@ -39,10 +39,10 @@ public class PreparedGeometryFactory
    */
 	public static PreparedGeometry prepare(Geometry geom)
 	{
-		return (new PreparedGeometryFactory()).create(geom); 
+		return PreparedGeometryFactory.create(geom);
 	}
 
-  public PreparedGeometryFactory() {
+  private PreparedGeometryFactory() {
   }
 
   /**
@@ -51,9 +51,9 @@ public class PreparedGeometryFactory
    * @param geom the geometry to prepare
    * @return the prepared geometry
    */
-  public PreparedGeometry create(Geometry geom)
+  public static PreparedGeometry create(Geometry geom)
   {
-    if (geom instanceof Polygonal) 
+    if (geom instanceof Polygonal)
       return new PreparedPolygon((Polygonal) geom);
     if (geom instanceof Lineal) 
       return new PreparedLineString((Lineal) geom);

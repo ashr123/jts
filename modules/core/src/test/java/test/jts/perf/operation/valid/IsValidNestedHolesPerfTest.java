@@ -31,7 +31,7 @@ public class IsValidNestedHolesPerfTest extends PerformanceTestCase {
   
   static final int N_ITER = 10;
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     PerformanceTestRunner.run(IsValidNestedHolesPerfTest.class);
   }
   
@@ -49,9 +49,9 @@ public class IsValidNestedHolesPerfTest extends PerformanceTestCase {
     geom = createSlantHoles(npts);
   }
 
-  static int NUM_GEOMS = 100;
+  static final int NUM_GEOMS = 100;
   
-  private Geometry createSlantHoles(int npts) {
+  private static Geometry createSlantHoles(int npts) {
     Geometry ellipses = TestShapeFactory.createSlantedEllipses(new Coordinate(0,0), 100, 10,
         NUM_GEOMS, npts);
     Geometry geom = TestShapeFactory.createExtentWithHoles(ellipses);

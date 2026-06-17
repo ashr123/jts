@@ -35,7 +35,7 @@ public class FastSegmentSetIntersectionFinder
 	 * 
 	 * @param baseSegStrings the segment strings to search for intersections
 	 */
-	public FastSegmentSetIntersectionFinder(Collection baseSegStrings)
+	public FastSegmentSetIntersectionFinder(Collection<? extends SegmentString> baseSegStrings)
 	{
 	    segSetMutInt = new MCIndexSegmentSetMutualIntersector(baseSegStrings);
 	}
@@ -57,7 +57,7 @@ public class FastSegmentSetIntersectionFinder
 	 * @param segStrings the SegmentStrings to test
 	 * @return true if an intersection is found
 	 */
-	public boolean intersects(Collection segStrings)
+	public boolean intersects(Collection<? extends SegmentString> segStrings)
 	{
 		SegmentIntersectionDetector intFinder = new SegmentIntersectionDetector();
 		return intersects(segStrings, intFinder);
@@ -71,7 +71,7 @@ public class FastSegmentSetIntersectionFinder
 	 * @param intDetector the intersection detector to use
 	 * @return true if the detector reports intersections
 	 */
-	public boolean intersects(Collection segStrings, SegmentIntersectionDetector intDetector)
+	public boolean intersects(Collection<? extends SegmentString> segStrings, SegmentIntersectionDetector intDetector)
 	{
 		segSetMutInt.process(segStrings, intDetector);
  		return intDetector.hasIntersection();

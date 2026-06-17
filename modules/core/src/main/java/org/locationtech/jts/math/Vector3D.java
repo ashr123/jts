@@ -77,9 +77,9 @@ public class Vector3D {
 		return v1.x * v2.x + v1.y * v2.y + v1.getZ() * v2.getZ();
 	}
 
-	private double x;
-	private double y;
-	private double z;
+	private final double x;
+	private final double y;
+	private final double z;
 
   /**
    * Creates a new 3D vector from a {@link Coordinate}. The coordinate should have

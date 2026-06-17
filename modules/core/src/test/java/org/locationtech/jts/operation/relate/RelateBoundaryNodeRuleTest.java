@@ -32,12 +32,12 @@ import junit.textui.TestRunner;
 public class RelateBoundaryNodeRuleTest
     extends TestCase
 {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(RelateBoundaryNodeRuleTest.class);
   }
 
-  private GeometryFactory fact = new GeometryFactory();
-  private WKTReader rdr = new WKTReader(fact);
+  private final GeometryFactory fact = new GeometryFactory();
+  private final WKTReader rdr = new WKTReader(fact);
 
   public RelateBoundaryNodeRuleTest(String name)
   {

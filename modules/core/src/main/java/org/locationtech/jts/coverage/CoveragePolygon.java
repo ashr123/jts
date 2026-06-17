@@ -20,8 +20,8 @@ import org.locationtech.jts.geom.Polygon;
 
 class CoveragePolygon {
 
-  private Polygon polygon;
-  private Envelope polyEnv;
+  private final Polygon polygon;
+  private final Envelope polyEnv;
   IndexedPointInAreaLocator locator;
 
   public CoveragePolygon(Polygon poly) {

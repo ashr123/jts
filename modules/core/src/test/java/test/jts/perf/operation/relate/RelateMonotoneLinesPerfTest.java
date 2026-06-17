@@ -42,7 +42,7 @@ public class RelateMonotoneLinesPerfTest  extends PerformanceTestCase
 {
   private static final int DENSIFY_FACTOR = 1000;
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     PerformanceTestRunner.run(RelateMonotoneLinesPerfTest.class);
   }
 
@@ -64,11 +64,10 @@ public class RelateMonotoneLinesPerfTest  extends PerformanceTestCase
     line1.intersects(line2);
   }
   
-  private LineString createLine(String wkt, int nVertices) {
+  private static LineString createLine(String wkt, int nVertices) {
     double distanceTolerance = 100.0 / nVertices;
     Geometry line = IOUtil.read(wkt);
-    LineString lineDense = (LineString) Densifier.densify(line, distanceTolerance);
-    return lineDense;
+      return (LineString) Densifier.densify(line, distanceTolerance);
   }
 
   public void runIntersects()
@@ -85,7 +84,7 @@ public class RelateMonotoneLinesPerfTest  extends PerformanceTestCase
     System.out.println();
   }
 
-  private void printArray(double[] timeFactor, PrintStream out) {
+  private static void printArray(double[] timeFactor, PrintStream out) {
     for (double d : timeFactor) {
       out.print(d + " ");
     }

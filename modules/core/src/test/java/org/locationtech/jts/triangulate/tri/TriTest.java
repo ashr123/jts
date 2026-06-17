@@ -1,6 +1,7 @@
 package org.locationtech.jts.triangulate.tri;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.locationtech.jts.algorithm.Orientation;
@@ -11,11 +12,11 @@ import test.jts.GeometryTestCase;
 
 public class TriTest extends GeometryTestCase {
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(TriTest.class);
   }
   
-  private static Tri triCentre = createSimpleTriangulation();
+  private static final Tri triCentre = createSimpleTriangulation();
   private static Tri tri0;
   private static Tri tri1;
   private static Tri tri2;
@@ -25,9 +26,9 @@ public class TriTest extends GeometryTestCase {
   }
 
   public void testAdjacent() {
-    assertTrue(tri0 == triCentre.getAdjacent(0));
-    assertTrue(tri1 == triCentre.getAdjacent(1));
-    assertTrue(tri2 == triCentre.getAdjacent(2));
+      assertSame(tri0, triCentre.getAdjacent(0));
+      assertSame(tri1, triCentre.getAdjacent(1));
+      assertSame(tri2, triCentre.getAdjacent(2));
   }
 
   public void testMidpoint() {
@@ -49,8 +50,8 @@ public class TriTest extends GeometryTestCase {
         new Coordinate(x0, y0),
         new Coordinate(x1, y1),
         new Coordinate(x2, y2));
-    assertTrue( Orientation.CLOCKWISE == Orientation.index(
-        tri.getCoordinate(0), tri.getCoordinate(1), tri.getCoordinate(2) ));
+      assertEquals(Orientation.CLOCKWISE, Orientation.index(
+              tri.getCoordinate(0), tri.getCoordinate(1), tri.getCoordinate(2)));
     return tri;
   }
   
@@ -64,10 +65,8 @@ public class TriTest extends GeometryTestCase {
   }
 
   private static void build(Tri... tri) {
-    List<Tri> triList = new ArrayList<Tri>();
-    for (int i = 0; i < tri.length; i++) {
-      triList.add(tri[i]);
-    }
+    List<Tri> triList = new ArrayList<>();
+      Collections.addAll(triList, tri);
     TriangulationBuilder.build(triList);
   }
 }

@@ -23,11 +23,11 @@ import org.locationtech.jts.io.ParseException;
 import java.util.*;
 
 public class KMLReaderTest extends TestCase {
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         TestRunner.run(KMLWriterTest.class);
     }
 
-    private KMLReader kmlReader = new KMLReader(Arrays.asList("altitudeMode", "tesselate", "extrude"));
+    private final KMLReader kmlReader = new KMLReader(Arrays.asList("altitudeMode", "tesselate", "extrude"));
 
     public KMLReaderTest(String name) {
         super(name);
@@ -36,13 +36,13 @@ public class KMLReaderTest extends TestCase {
     public void testPoint() {
         checkParsingResult("<Point><altitudeMode>absolute</altitudeMode><coordinates>1.0,1.0</coordinates></Point>",
                 "POINT (1 1)",
-                new Map[]{Collections.singletonMap("altitudeMode", "absolute")});
+                mapArray(Collections.singletonMap("altitudeMode", "absolute")));
     }
 
     public void testLineString() {
         checkParsingResult("<LineString><tesselate>1</tesselate><coordinates>1.0,1.0 2.0,2.0</coordinates></LineString>",
                 "LINESTRING (1 1, 2 2)",
-                new Map[]{Collections.singletonMap("tesselate", "1")});
+                mapArray(Collections.singletonMap("tesselate", "1")));
     }
 
     public void testPolygon() {
@@ -66,7 +66,7 @@ public class KMLReaderTest extends TestCase {
                         "   </innerBoundaryIs>" +
                         "</Polygon>",
                 "POLYGON ((1 1, 1 10, 10 10, 10 1, 1 1), (2 2, 2 3, 3 3, 3 2, 2 2), (6 6, 6 7, 7 7, 7 6, 6 6))",
-                new Map[]{Collections.singletonMap("altitudeMode", "relativeToGround")});
+                mapArray(Collections.singletonMap("altitudeMode", "relativeToGround")));
     }
 
     public void testMultiGeometry() {
@@ -90,9 +90,9 @@ public class KMLReaderTest extends TestCase {
                         "   </Polygon>" +
                         "</MultiGeometry>",
                 "GEOMETRYCOLLECTION (POINT (1 1), LINESTRING (1 1, 2 2), POLYGON ((1 1, 1 10, 10 10, 10 1, 1 1)))",
-                new Map[]{Collections.singletonMap("altitudeMode", "absolute"),
+                mapArray(Collections.singletonMap("altitudeMode", "absolute"),
                         Collections.singletonMap("tesselate", "1"),
-                        Collections.singletonMap("altitudeMode", "relativeToGround")}
+                        Collections.singletonMap("altitudeMode", "relativeToGround"))
         );
     }
 
@@ -103,7 +103,7 @@ public class KMLReaderTest extends TestCase {
                         "   <Point><coordinates>2.0,2.0</coordinates></Point>" +
                         "</MultiGeometry>",
                 "MULTIPOINT ((1 1), (2 2))",
-                new Map[]{null, null}
+                mapArray(null, null)
         );
     }
 
@@ -114,7 +114,7 @@ public class KMLReaderTest extends TestCase {
                         "   <LineString><coordinates>5.0,5.0 6.0,6.0</coordinates></LineString>" +
                         "</MultiGeometry>",
                 "MULTILINESTRING ((1 1, 2 2), (5 5, 6 6))",
-                new Map[]{null, null}
+                mapArray(null, null)
         );
     }
 
@@ -125,7 +125,7 @@ public class KMLReaderTest extends TestCase {
                         "   <Polygon><outerBoundaryIs><LinearRing><coordinates>6.0,6.0 6.0,7.0 7.0,7.0 7.0,6.0 6.0,6.0</coordinates></LinearRing></outerBoundaryIs></Polygon>" +
                         "</MultiGeometry>",
                 "MULTIPOLYGON (((2 2, 2 3, 3 3, 3 2, 2 2)), ((6 6, 6 7, 7 7, 7 6, 6 6)))",
-                new Map[]{null, null}
+                mapArray(null, null)
         );
     }
 
@@ -137,7 +137,7 @@ public class KMLReaderTest extends TestCase {
                         "   -1.0,-2.0 </coordinates>" +
                         "</LineString>",
                 "LINESTRING (1 2, -1 -2)",
-                new Map[]{null, null}
+                mapArray(null, null)
         );
     }
     public void testZ() {
@@ -188,6 +188,11 @@ public class KMLReaderTest extends TestCase {
         } catch (ParseException e) {
             assertEquals("Exception text differs", expectedError, e.getMessage());
         }
+    }
+
+    @SafeVarargs
+    private static Map<String, String>[] mapArray(Map<String, String>... maps) {
+        return maps;
     }
 
     private void checkParsingResult(String kmlString, String expectedWKT, Map<String, String>[] expectedAttributes) {

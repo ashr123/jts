@@ -14,7 +14,6 @@ package org.locationtech.jts.dissolve;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
@@ -71,7 +70,7 @@ public class LineDissolver
   private Geometry result;
   private GeometryFactory factory;
   private final DissolveEdgeGraph graph;
-  private final List lines = new ArrayList();
+  private final List<LineString> lines = new ArrayList<>();
 
   public LineDissolver()
   {
@@ -87,12 +86,10 @@ public class LineDissolver
    * @param geometry geometry to be line-merged
    */  
   public void add(Geometry geometry) {
-    geometry.apply(new GeometryComponentFilter() {
-      public void filter(Geometry component) {
-        if (component instanceof LineString) {
-          add((LineString)component);
-        }
-      }      
+    geometry.apply((GeometryComponentFilter) component -> {
+      if (component instanceof LineString) {
+        add((LineString)component);
+      }
     });
   }
   /**
@@ -102,12 +99,11 @@ public class LineDissolver
    * 
    * @param geometries the geometries to be line-merged
    */
-  public void add(Collection geometries) 
+  public void add(Collection<? extends Geometry> geometries)
   {
-    for (Iterator i = geometries.iterator(); i.hasNext(); ) {
-      Geometry geometry = (Geometry) i.next();
-      add(geometry);
-    }
+      for (Geometry geometry : geometries) {
+          add(geometry);
+      }
   }
   
   private void add(LineString lineString) {
@@ -144,16 +140,15 @@ public class LineDissolver
   }
 
   private void computeResult() {
-    Collection edges = graph.getVertexEdges();
-    for (Iterator i = edges.iterator(); i.hasNext(); ) {
-      HalfEdge e = (HalfEdge) i.next();
-      if (MarkHalfEdge.isMarked(e)) continue;
-      process(e);
-    }
+    Collection<HalfEdge> edges = graph.getVertexEdges();
+      for (HalfEdge e : edges) {
+          if (MarkHalfEdge.isMarked(e)) continue;
+          process(e);
+      }
     result = factory.buildGeometry(lines);
   }
 
-  private final Stack nodeEdgeStack = new Stack();
+  private final Stack<HalfEdge> nodeEdgeStack = new Stack<>();
   
   private void process(HalfEdge e) {
     HalfEdge eNode = e.prevNode();
@@ -172,7 +167,7 @@ public class LineDissolver
    */
   private void buildLines() {
     while (! nodeEdgeStack.empty()) {
-      HalfEdge e = (HalfEdge) nodeEdgeStack.pop();
+      HalfEdge e = nodeEdgeStack.pop();
       if (MarkHalfEdge.isMarked(e))
         continue;
       buildLine(e);

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.geom.Envelope;
@@ -38,24 +37,24 @@ public class TestSerializable {
   public static final String FILENAME = "c:\\testSerial.txt";
   public static final GeometryFactory fact = new GeometryFactory();
 
-  public TestSerializable() {
+  private TestSerializable() {
   }
 
   public static void main(String[] args) {
     TestSerializable test = new TestSerializable();
-    test.run();
+    run();
   }
 
-  public void run()
+  public static void run()
   {
-    List objList = createData();
+    List<Object> objList = createData();
     writeData(objList);
     readData(objList);
   }
 
-  List createData()
+  static List<Object> createData()
   {
-    List objList = new ArrayList();
+    List<Object> objList = new ArrayList<>();
 
     Envelope env = new Envelope(123, 456, 123, 456);
     objList.add(env);
@@ -65,74 +64,56 @@ public class TestSerializable {
     return objList;
 
   }
-  void writeData(List objList)
+  static void writeData(List<Object> objList)
   {
-    File file;                           // simply a file name
-    FileOutputStream outStream;             // generic stream to the file
-    ObjectOutputStream objStream;           // stream for objects to the file
+    File file = new File(FILENAME);             // simply a file name
 
-    file = new File(FILENAME);
-
-    try {
-      // setup a stream to a physical file on the filesystem
-      outStream = new FileOutputStream(file);
-
-      // attach a stream capable of writing objects to the stream that is
-      // connected to the file
-      objStream = new ObjectOutputStream(outStream);
-
+    // setup a stream to a physical file on the filesystem, and attach a stream
+    // capable of writing objects to the stream that is connected to the file
+    try (
+      FileOutputStream outStream = new FileOutputStream(file);
+      ObjectOutputStream objStream = new ObjectOutputStream(outStream)
+    ) {
       objStream.writeObject(objList);
 //      for (Iterator i = objList.iterator(); i.hasNext(); )
 //      {
 //        objStream.writeObject(i.next());
 //      }
-      objStream.close();
-
     } catch(IOException e) {
       System.err.println("Things not going as planned.");
       e.printStackTrace();
     }   // catch
   }
-  void readData(List objList)
+  static void readData(List<Object> objList)
   {
-    File file;                           // simply a file name
-    FileInputStream stream;             // generic stream to the file
-    ObjectInputStream objStream;           // stream for objects to the file
+    File file = new File(FILENAME);             // simply a file name
 
-    file = new File(FILENAME);
-
-    try {
-      // setup a stream to a physical file on the filesystem
-      stream = new FileInputStream(file);
-
-      // attach a stream capable of writing objects to the stream that is
-      // connected to the file
-      objStream = new ObjectInputStream(stream);
-
+    // setup a stream to a physical file on the filesystem, and attach a stream
+    // capable of reading objects from the stream that is connected to the file
+    try (
+      FileInputStream stream = new FileInputStream(file);
+      ObjectInputStream objStream = new ObjectInputStream(stream)
+    ) {
       int count = 0;
-      Object obj = objStream.readObject();
-      List inputList = (List) obj;
-      for (Iterator i = inputList.iterator(); i.hasNext(); ) {
-        compare(objList.get(count++), i.next());
-      }
+        for (Object o : (List<Object>) objStream.readObject()) {
+            compare(objList.get(count++), o);
+        }
 
 //      while (objStream.available() > 0) {
 //        Object obj = objStream.readObject();
 //        compare(objList.get(count++), obj);
 //      }
-      objStream.close();
-
     } catch(Exception e) {
       System.err.println("Things not going as planned.");
       e.printStackTrace();
     }   // catch
   }
 
-  boolean compare(Object o1, Object o2)
+  static boolean compare(Object o1, Object o2)
   {
     boolean matched = false;
     if (o1 instanceof Envelope) {
-      if (! ((Envelope) o1).equals(o2) ) {
+      if (! o1.equals(o2) ) {
         System.out.println("expected " + o1 + ", found " + o2);
       }
       else

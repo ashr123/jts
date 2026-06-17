@@ -11,15 +11,15 @@
  */
 package org.locationtech.jts.operation.overlay.validate;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Location;
 import org.locationtech.jts.operation.overlay.OverlayOp;
 import org.locationtech.jts.operation.overlay.snap.GeometrySnapper;
 import org.locationtech.jts.util.Debug;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Validates that the result of an overlay operation is
@@ -54,13 +54,13 @@ public class OverlayResultValidator
   
   private static final double TOLERANCE = 0.000001;
 
-  private Geometry[] geom;
-  private FuzzyPointLocator[] locFinder;
-  private int[] location = new int[3] ;
+  private final Geometry[] geom;
+  private final FuzzyPointLocator[] locFinder;
+  private final int[] location = new int[3] ;
   private Coordinate invalidLocation = null;
   private double boundaryDistanceTolerance = TOLERANCE;
 
-  private List testCoords = new ArrayList();
+  private final List<Coordinate> testCoords = new ArrayList<>();
 
   public OverlayResultValidator(Geometry a, Geometry b, Geometry result) 
   {
@@ -81,7 +81,6 @@ public class OverlayResultValidator
   {
     addTestPts(geom[0]);
     addTestPts(geom[1]);
-    boolean isValid = checkValid(overlayOp);
 
     /*
     System.out.println("OverlayResultValidator: " + isValid);
@@ -93,7 +92,7 @@ public class OverlayResultValidator
     System.out.println(geom[2]);
     */
     
-    return isValid;
+    return checkValid(overlayOp);
   }
 
   public Coordinate getInvalidLocation() { return invalidLocation; }
@@ -106,13 +105,12 @@ public class OverlayResultValidator
 
   private boolean checkValid(int overlayOp)
   {
-    for (int i = 0; i < testCoords.size(); i++) {
-      Coordinate pt = (Coordinate) testCoords.get(i);
-      if (! checkValid(overlayOp, pt)) {
-        invalidLocation = pt;
-        return false;
+      for (Coordinate pt : testCoords) {
+          if (!checkValid(overlayOp, pt)) {
+              invalidLocation = pt;
+              return false;
+          }
       }
-    }
     return true;
   }
 
@@ -140,20 +138,20 @@ public class OverlayResultValidator
     return false;
   }
 
-  private boolean isValidResult(int overlayOp, int[] location)
+  private static boolean isValidResult(int overlayOp, int[] location)
   {
     boolean expectedInterior = OverlayOp.isResultOfOp(location[0], location[1], overlayOp);
 
     boolean resultInInterior = (location[2] == Location.INTERIOR);
     // MD use simpler: boolean isValid = (expectedInterior == resultInInterior);
-    boolean isValid = ! (expectedInterior ^ resultInInterior);
+    boolean isValid = expectedInterior == resultInInterior;
     
     if (! isValid) reportResult(overlayOp, location, expectedInterior);
     
     return isValid;
  }
 
-  private void reportResult(int overlayOp, int[] location, boolean expectedInterior)
+  private static void reportResult(int overlayOp, int[] location, boolean expectedInterior)
   {
   	Debug.println(
   			"Overlay result invalid - A:" + Location.toLocationSymbol(location[0])
@@ -163,4 +161,3 @@ public class OverlayResultValidator
   			);
   }
 }
-

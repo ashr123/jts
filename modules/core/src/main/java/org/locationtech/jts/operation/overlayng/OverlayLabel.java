@@ -121,7 +121,7 @@ class OverlayLabel {
   /**
    * Indicates that the location is currently unknown
    */
-  public static int LOC_UNKNOWN = Location.NONE;
+  public static final int LOC_UNKNOWN = Location.NONE;
   
   
   private int aDim = DIM_NOT_PART;
@@ -462,8 +462,7 @@ class OverlayLabel {
    */
   public boolean isBoundarySingleton() {
     if (aDim == DIM_BOUNDARY && bDim == DIM_NOT_PART) return true;
-    if (bDim == DIM_BOUNDARY && aDim == DIM_NOT_PART) return true;
-    return false;
+      return bDim == DIM_BOUNDARY && aDim == DIM_NOT_PART;
   }
   
   /**
@@ -528,8 +527,7 @@ class OverlayLabel {
    */
   public boolean isInteriorCollapse() {
     if (aDim == DIM_COLLAPSE && aLocLine == Location.INTERIOR) return true;
-    if (bDim == DIM_COLLAPSE && bLocLine == Location.INTERIOR) return true;
-    return false;
+      return bDim == DIM_COLLAPSE && bLocLine == Location.INTERIOR;
   }
   
   /**
@@ -540,8 +538,7 @@ class OverlayLabel {
    */
   public boolean isCollapseAndNotPartInterior() {
     if (aDim == DIM_COLLAPSE && bDim == DIM_NOT_PART && bLocLine == Location.INTERIOR) return true;
-    if (bDim == DIM_COLLAPSE && aDim == DIM_NOT_PART && aLocLine == Location.INTERIOR) return true;
-    return false;
+      return bDim == DIM_COLLAPSE && aDim == DIM_NOT_PART && aLocLine == Location.INTERIOR;
   }
   
   /**
@@ -661,12 +658,11 @@ class OverlayLabel {
 
   public String toString(boolean isForward)
   {
-    StringBuilder buf = new StringBuilder();
-    buf.append("A:");
-    buf.append(locationString(0, isForward));
-    buf.append("/B:");
-    buf.append(locationString(1, isForward));
-    return buf.toString();
+      String buf = "A:" +
+              locationString(0, isForward) +
+              "/B:" +
+              locationString(1, isForward);
+    return buf;
   }
 
   private String locationString(int index, boolean isForward) {

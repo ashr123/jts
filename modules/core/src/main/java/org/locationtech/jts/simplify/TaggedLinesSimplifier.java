@@ -13,7 +13,6 @@
 package org.locationtech.jts.simplify;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * Simplifies a collection of TaggedLineStrings, preserving topology
@@ -23,8 +22,8 @@ import java.util.Iterator;
  */
 class TaggedLinesSimplifier
 {
-  private LineSegmentIndex inputIndex = new LineSegmentIndex();
-  private LineSegmentIndex outputIndex = new LineSegmentIndex();
+  private final LineSegmentIndex inputIndex = new LineSegmentIndex();
+  private final LineSegmentIndex outputIndex = new LineSegmentIndex();
   
   private double distanceTolerance = 0.0;
 
@@ -49,17 +48,17 @@ class TaggedLinesSimplifier
    *
    * @param taggedLines the collection of lines to simplify
    */
-  public void simplify(Collection taggedLines) {
+  public void simplify(Collection<TaggedLineString> taggedLines) {
     ComponentJumpChecker jumpChecker = new ComponentJumpChecker(taggedLines);
-    
-    for (Iterator i = taggedLines.iterator(); i.hasNext(); ) {
-      inputIndex.add((TaggedLineString) i.next());
-    }
-    for (Iterator i = taggedLines.iterator(); i.hasNext(); ) {
-      TaggedLineStringSimplifier tlss
-                    = new TaggedLineStringSimplifier(inputIndex, outputIndex, jumpChecker);
-      tlss.simplify((TaggedLineString) i.next(), distanceTolerance);
-    }
+
+      for (TaggedLineString line : taggedLines) {
+          inputIndex.add(line);
+      }
+      for (TaggedLineString taggedLine : taggedLines) {
+          TaggedLineStringSimplifier tlss
+                  = new TaggedLineStringSimplifier(inputIndex, outputIndex, jumpChecker);
+          tlss.simplify(taggedLine, distanceTolerance);
+      }
   }
 
 }

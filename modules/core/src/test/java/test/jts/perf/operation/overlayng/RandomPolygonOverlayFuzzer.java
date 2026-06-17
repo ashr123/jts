@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.geom.TopologyException;
 import org.locationtech.jts.geom.util.AffineTransformation;
@@ -40,7 +41,7 @@ import org.locationtech.jts.operation.overlayng.OverlayNGRobust;
  */
 public class RandomPolygonOverlayFuzzer {
   
-  private void overlay(Geometry poly1, Geometry poly2) {
+  private static void overlay(Geometry poly1, Geometry poly2) {
     //overlayOrig(poly1, poly2);
     //overlayOrigNoSnap(poly1, poly2);
     //overlayNGFloat(poly1, poly2);
@@ -59,7 +60,7 @@ public class RandomPolygonOverlayFuzzer {
   
   static double SCALE = 100000000;
   
-  static double[] SCALES = new double[] {
+  static final double[] SCALES = new double[] {
     // 0, // floating PM
     1, 100, 10000, 1000000, 100000000, 1e12
     // , 1e15  
@@ -76,7 +77,7 @@ public class RandomPolygonOverlayFuzzer {
     //return false;
   }
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     (new RandomPolygonOverlayFuzzer()).run();
   }
 
@@ -123,7 +124,7 @@ public class RandomPolygonOverlayFuzzer {
  
   private String stats() {
     return String.format("\nTest %d: %s   (# errs: %d = %d%%)\n", testIndex, testDesc, 
-        errCount, (int) (100 * errCount) / testIndex );
+        errCount, (100 * errCount) / testIndex );
   }
 
   private void overlayNG(Geometry poly1, Geometry poly2) {
@@ -150,25 +151,25 @@ public class RandomPolygonOverlayFuzzer {
   }
   
   private static Geometry onlyPolys(Geometry geom) {
-    List polyList = PolygonExtracter.getPolygons(geom);
+    List<Polygon> polyList = PolygonExtracter.getPolygons(geom);
     return geom.getFactory().createMultiPolygon(GeometryFactory.toPolygonArray(polyList));
   }
   
-  private PrecisionModel precModel(double scale) {
+  private static PrecisionModel precModel(double scale) {
     // floating PM
     if (scale <= 0) return new PrecisionModel();
     
     return new PrecisionModel(scale);
   }
 
-  private void overlayNGFloat(Geometry poly1, Geometry poly2) {
+  private static void overlayNGFloat(Geometry poly1, Geometry poly2) {
     OverlayNG.overlay(poly1, poly2, OverlayNG.INTERSECTION);
     //Geometry diff1 = poly1.difference(poly2);
     //Geometry diff2 = poly2.difference(poly1);
     //Geometry union = inter.union(diff1).union(diff2);
   }
 
-  private void overlayNGRobust(Geometry poly1, Geometry poly2) {
+  private static void overlayNGRobust(Geometry poly1, Geometry poly2) {
     OverlayNGRobust.overlay(poly1, poly2, OverlayNG.INTERSECTION);
     poly1.intersection(poly2);
     //Geometry diff1 = poly1.difference(poly2);
@@ -178,18 +179,18 @@ public class RandomPolygonOverlayFuzzer {
   
 
   
-  private void overlayOrig(Geometry poly1, Geometry poly2) {
+  private static void overlayOrig(Geometry poly1, Geometry poly2) {
     poly1.intersection(poly2);
     //Geometry diff1 = poly1.difference(poly2);
     //Geometry diff2 = poly2.difference(poly1);
     //Geometry union = inter.union(diff1).union(diff2);
   }
   
-  private void overlayOrigNoSnap(Geometry a, Geometry b) {
+  private static void overlayOrigNoSnap(Geometry a, Geometry b) {
     OverlayOp.overlayOp(a, b, OverlayOp.INTERSECTION);
   }
   
-  private void overlayNGSnapping(Geometry a, Geometry b) {
+  private static void overlayNGSnapping(Geometry a, Geometry b) {
     unionSnap(a, b, 0.00001);
   }
   
@@ -231,7 +232,7 @@ public class RandomPolygonOverlayFuzzer {
     return geomRot;
   }
   
-  private void checkValid(Geometry poly) {
+  private static void checkValid(Geometry poly) {
     if (poly.isValid()) return;
     System.out.println("INVALID!");
     System.out.println(poly);

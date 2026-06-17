@@ -31,7 +31,10 @@ import org.locationtech.jts.math.DD;
  */
 public class TriPredicate 
 {
-  /**
+    private TriPredicate() {
+    }
+
+    /**
    * Tests if a point is inside the circle defined by the points a, b, c. 
    * This test uses simple
    * double-precision arithmetic, and thus may not be robust.
@@ -45,13 +48,11 @@ public class TriPredicate
   public static boolean isInCircle(
       Coordinate a, Coordinate b, Coordinate c, 
       Coordinate p) {
-    boolean isInCircle = 
-              (a.x * a.x + a.y * a.y) * triArea(b, c, p)
-            - (b.x * b.x + b.y * b.y) * triArea(a, c, p)
-            + (c.x * c.x + c.y * c.y) * triArea(a, b, p)
-            - (p.x * p.x + p.y * p.y) * triArea(a, b, c) 
-            > 0;
-    return isInCircle;
+      return (a.x * a.x + a.y * a.y) * triArea(b, c, p)
+    - (b.x * b.x + b.y * b.y) * triArea(a, c, p)
+    + (c.x * c.x + c.y * c.y) * triArea(a, b, p)
+    - (p.x * p.x + p.y * p.y) * triArea(a, b, c)
+    > 0;
   }
   
   /**
@@ -117,9 +118,8 @@ public class TriPredicate
         .multiply(triAreaDD(ax, ay, bx, by, cx, cy));
 
     DD sum = aTerm.subtract(bTerm).add(cTerm).subtract(pTerm);
-    boolean isInCircle = sum.doubleValue() > 0;
 
-    return isInCircle;
+      return sum.doubleValue() > 0;
   }
   public static boolean isInCircleDD2(
       Coordinate a, Coordinate b, Coordinate c,
@@ -134,9 +134,8 @@ public class TriPredicate
         .selfMultiply(triAreaDD2(a, b, c));
 
     DD sum = aTerm.selfSubtract(bTerm).selfAdd(cTerm).selfSubtract(pTerm);
-    boolean isInCircle = sum.doubleValue() > 0;
 
-    return isInCircle;
+      return sum.doubleValue() > 0;
   }
   public static boolean isInCircleDD3(
       Coordinate a, Coordinate b, Coordinate c,
@@ -158,10 +157,8 @@ public class TriPredicate
     DD sum = alift.selfMultiply(bcdet)
     .selfAdd(blift.selfMultiply(cadet))
     .selfAdd(clift.selfMultiply(abdet));
-    
-    boolean isInCircle = sum.doubleValue() > 0;
 
-    return isInCircle;
+      return sum.doubleValue() > 0;
   }
 
   /**

@@ -29,12 +29,12 @@ import org.locationtech.jts.util.Stopwatch;
  */
 public class PointInAreaPerfTester 
 {
-	private GeometryFactory geomFactory;
-	private Geometry area;
+	private final GeometryFactory geomFactory;
+	private final Geometry area;
 	
 	private int numPts = 10000;
 	private PointOnGeometryLocator pia1;
-	private int[] locationCount = new int[3];
+	private final int[] locationCount = new int[3];
 		
 	public PointInAreaPerfTester(GeometryFactory geomFactory, Geometry area)
 	{
@@ -95,4 +95,3 @@ public class PointInAreaPerfTester
 
 	
 }
-

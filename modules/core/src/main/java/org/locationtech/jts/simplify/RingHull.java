@@ -33,7 +33,7 @@ import org.locationtech.jts.index.VertexSequencePackedRtree;
  */
 class RingHull {
   
-  private LinearRing inputRing;
+  private final LinearRing inputRing;
   private int targetVertexNum = -1;
   private double targetAreaDelta = -1;
 
@@ -93,8 +93,7 @@ class RingHull {
      * - outer, CW
      * - inner: CCW 
      */
-    boolean orientCW = isOuter;
-    if (orientCW == Orientation.isCCW(ring)) {
+      if (isOuter == Orientation.isCCW(ring)) {
       ring = ring.clone();
       CoordinateArrays.reverse(ring);
     }
@@ -104,7 +103,7 @@ class RingHull {
     //-- remove duplicate final vertex
     vertexIndex.remove(ring.length-1);
     
-    cornerQueue = new PriorityQueue<Corner>();
+    cornerQueue = new PriorityQueue<>();
     for (int i = 0; i < vertexRing.size(); i++) {
       addCorner(i, cornerQueue);
     }
@@ -220,17 +219,16 @@ class RingHull {
   private boolean hasIntersectingVertex(Corner corner, Envelope cornerEnv, 
       RingHull hull) {
     int[] result = hull.query(cornerEnv);
-    for (int i = 0; i < result.length; i++) {
-      int index = result[i];
-      //-- skip vertices of corner
-      if (hull == this && corner.isVertex(index))
-        continue;
-      
-      Coordinate v = hull.getCoordinate(index);
-      //--- does corner triangle contain vertex?
-      if (corner.intersects(v, vertexRing))
-        return true;
-    }
+      for (int index : result) {
+          //-- skip vertices of corner
+          if (hull == this && corner.isVertex(index))
+              continue;
+
+          Coordinate v = hull.getCoordinate(index);
+          //--- does corner triangle contain vertex?
+          if (corner.intersects(v, vertexRing))
+              return true;
+      }
     return false;
   }
   
@@ -244,15 +242,14 @@ class RingHull {
 
   void queryHull(Envelope queryEnv, List<Coordinate> pts) {
     int[] result = vertexIndex.query(queryEnv);
-    
-    for (int i = 0; i < result.length; i++) {
-      int index = result[i];
-      //-- skip if already removed
-      if (! vertexRing.hasCoordinate(index))
-        continue;
-      Coordinate v = vertexRing.getCoordinate(index);
-      pts.add(v);
-    }
+
+      for (int index : result) {
+          //-- skip if already removed
+          if (!vertexRing.hasCoordinate(index))
+              continue;
+          Coordinate v = vertexRing.getCoordinate(index);
+          pts.add(v);
+      }
 
   }
 
@@ -263,10 +260,10 @@ class RingHull {
   }
 
   private static class Corner implements Comparable<Corner> {
-    private int index;
-    private int prev;
-    private int next;
-    private double area;
+    private final int index;
+    private final int prev;
+    private final int next;
+    private final double area;
 
     public Corner(int i, int prev, int next, double area) {
       this.index = i;

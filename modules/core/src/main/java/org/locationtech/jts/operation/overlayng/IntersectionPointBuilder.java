@@ -37,9 +37,9 @@ import org.locationtech.jts.geom.Point;
  */
 class IntersectionPointBuilder {
 
-  private GeometryFactory geometryFactory;
-  private OverlayGraph graph;
-  private List<Point> points = new ArrayList<Point>();
+  private final GeometryFactory geometryFactory;
+  private final OverlayGraph graph;
+  private final List<Point> points = new ArrayList<>();
   
   /**
    * Controls whether lines created by area topology collapses
@@ -92,8 +92,7 @@ class IntersectionPointBuilder {
       isEdgeOfB |= isEdgeOf(label, 1);
       edge = (OverlayEdge) edge.oNext();
     } while (edge != nodeEdge);
-    boolean isNodeInBoth = isEdgeOfA && isEdgeOfB;
-    return isNodeInBoth;
+      return isEdgeOfA && isEdgeOfB;
   }
 
   private boolean isEdgeOf(OverlayLabel label, int i) {

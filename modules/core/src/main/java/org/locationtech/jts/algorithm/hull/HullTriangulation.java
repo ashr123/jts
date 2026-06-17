@@ -38,13 +38,15 @@ import org.locationtech.jts.util.Assert;
  */
 class HullTriangulation 
 {
-  public static List<HullTri> createDelaunayTriangulation(Geometry geom) {
+    private HullTriangulation() {
+    }
+
+    public static List<HullTri> createDelaunayTriangulation(Geometry geom) {
     //TODO: implement a DT on Tris directly?
     DelaunayTriangulationBuilder dt = new DelaunayTriangulationBuilder();
     dt.setSites(geom);
     QuadEdgeSubdivision subdiv = dt.getSubdivision();
-    List<HullTri> triList = toTris(subdiv);
-    return triList;
+      return toTris(subdiv);
   }
   
   private static List<HullTri> toTris(QuadEdgeSubdivision subdiv) {
@@ -56,7 +58,7 @@ class HullTriangulation
   }
   
   private static class HullTriVisitor implements TriangleVisitor {
-    private List<HullTri> triList = new ArrayList<HullTri>();
+    private final List<HullTri> triList = new ArrayList<>();
 
     public HullTriVisitor() {
     }
@@ -89,7 +91,7 @@ class HullTriangulation
    * @return the area polygonal geometry
    */
   public static Geometry union(List<? extends Tri> triList, GeometryFactory geomFactory) {
-    List<Polygon> polys = new ArrayList<Polygon>();
+    List<Polygon> polys = new ArrayList<>();
     for (Tri tri : triList) {
       Polygon poly = tri.toPolygon(geomFactory);
       polys.add(poly);

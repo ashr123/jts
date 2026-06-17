@@ -20,7 +20,7 @@ import org.locationtech.jts.geom.Coordinate;
  */
 public class PointPairDistance {
 
-  private Coordinate[] pt = { new Coordinate(), new Coordinate() };
+  private final Coordinate[] pt = { new Coordinate(), new Coordinate() };
   private double distance = Double.NaN;
   private boolean isNull = true;
 

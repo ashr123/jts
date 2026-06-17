@@ -34,7 +34,7 @@ public class TriangulationBuilder {
     new TriangulationBuilder(triList);
   }
   
-  private HashMap<TriEdge, Tri> triMap;
+  private final HashMap<TriEdge, Tri> triMap;
 
   /**
    * Computes the triangulation of a set of {@link Tri}s.
@@ -42,7 +42,7 @@ public class TriangulationBuilder {
    * @param triList the list of Tris
    */
   private TriangulationBuilder(List<? extends Tri> triList) {
-    triMap = new HashMap<TriEdge, Tri>();
+    triMap = new HashMap<>();
     for (Tri tri : triList) {
       add(tri);
     }

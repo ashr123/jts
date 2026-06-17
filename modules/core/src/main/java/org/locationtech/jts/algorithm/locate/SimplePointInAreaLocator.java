@@ -97,9 +97,9 @@ public class SimplePointInAreaLocator
     }
     
     if (geom instanceof GeometryCollection) {
-      Iterator geomi = new GeometryCollectionIterator((GeometryCollection) geom);
+      Iterator<Geometry> geomi = new GeometryCollectionIterator(geom);
       while (geomi.hasNext()) {
-        Geometry g2 = (Geometry) geomi.next();
+        Geometry g2 = geomi.next();
         if (g2 != geom) {
           int loc = locateInGeometry(p, g2);
           if (loc != Location.EXTERIOR) return loc;
@@ -174,7 +174,7 @@ public class SimplePointInAreaLocator
   	return PointLocation.locateInRing(p, ring.getCoordinates());
   }
 
-	private Geometry geom;
+	private final Geometry geom;
 
 	/**
 	 * Create an instance of a point-in-area locator,

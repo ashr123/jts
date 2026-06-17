@@ -21,7 +21,7 @@ import test.jts.GeometryTestCase;
 
 public class UnaryUnionNGTest extends GeometryTestCase
 {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(UnaryUnionNGTest.class);
   }
   
@@ -73,7 +73,7 @@ public class UnaryUnionNGTest extends GeometryTestCase
   }
   
   private void checkUnaryUnion(String[] wkt, double scaleFactor, String wktExpected) {
-    List geoms = readList(wkt);
+    List<Geometry> geoms = readList(wkt);
     Geometry expected = read(wktExpected);
     PrecisionModel pm = new PrecisionModel(scaleFactor);
     Geometry result;

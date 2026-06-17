@@ -28,7 +28,7 @@ import org.locationtech.jts.index.quadtree.Quadtree;
  */
 class LineSegmentIndex
 {
-  private Quadtree index = new Quadtree();
+  private final Quadtree<LineSegment> index = new Quadtree<>();
 
   public LineSegmentIndex()
   {
@@ -36,10 +36,9 @@ class LineSegmentIndex
 
   public void add(TaggedLineString line) {
     TaggedLineSegment[] segs = line.getSegments();
-    for (int i = 0; i < segs.length; i++) {
-      TaggedLineSegment seg = segs[i];
-      add(seg);
-    }
+      for (TaggedLineSegment seg : segs) {
+          add(seg);
+      }
   }
 
   public void add(LineSegment seg)
@@ -52,20 +51,19 @@ class LineSegmentIndex
     index.remove(new Envelope(seg.p0, seg.p1), seg);
   }
 
-  public List<Object> query(LineSegment querySeg)
+  public List<LineSegment> query(LineSegment querySeg)
   {
     Envelope env = new Envelope(querySeg.p0, querySeg.p1);
 
     LineSegmentVisitor visitor = new LineSegmentVisitor(querySeg);
     index.query(env, visitor);
-    List<Object> itemsFound = visitor.getItems();
 
 //    List listQueryItems = index.query(env);
 //    System.out.println("visitor size = " + itemsFound.size()
 //                       + "  query size = " + listQueryItems.size());
 //    List itemsFound = index.query(env);
 
-    return itemsFound;
+    return visitor.getItems();
   }
 }
 
@@ -73,23 +71,22 @@ class LineSegmentIndex
  * ItemVisitor subclass to reduce volume of query results.
  */
 class LineSegmentVisitor
-    implements ItemVisitor
+    implements ItemVisitor<LineSegment>
 {
 // MD - only seems to make about a 10% difference in overall time.
 
-  private LineSegment querySeg;
-  private ArrayList<Object> items = new ArrayList<Object>();
+  private final LineSegment querySeg;
+  private final ArrayList<LineSegment> items = new ArrayList<>();
 
   public LineSegmentVisitor(LineSegment querySeg) {
     this.querySeg = querySeg;
   }
 
-  public void visitItem(Object item)
+  public void visitItem(LineSegment seg)
   {
-    LineSegment seg = (LineSegment) item;
     if (Envelope.intersects(seg.p0, seg.p1, querySeg.p0, querySeg.p1))
-      items.add(item);
+      items.add(seg);
   }
 
-  public ArrayList<Object> getItems() { return items; }
+  public ArrayList<LineSegment> getItems() { return items; }
 }

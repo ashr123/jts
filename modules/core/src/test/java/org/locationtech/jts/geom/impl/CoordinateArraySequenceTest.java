@@ -29,7 +29,7 @@ import junit.textui.TestRunner;
 public class CoordinateArraySequenceTest
     extends CoordinateSequenceTestBase
 {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(CoordinateArraySequenceTest.class);
   }
 
@@ -51,18 +51,18 @@ public class CoordinateArraySequenceTest
     assertEquals("clipped dimension 3", 3, sequence.getDimension());
     assertEquals("default measure   0", 0, sequence.getMeasures());
     assertTrue(sequence.hasZ());
-    assertTrue(!sequence.hasM());
+      assertFalse(sequence.hasM());
     
     sequence = factory.create(10, 4, 0);
     assertEquals("clipped dimension 3", 3, sequence.getDimension());
     assertEquals("provided measure  0", 0, sequence.getMeasures());
     assertTrue(sequence.hasZ());
-    assertTrue(!sequence.hasM());
+      assertFalse(sequence.hasM());
 
     sequence = factory.create(10, 4, 2); // note clip to spatial dimension
     assertEquals("clipped dimension 3", 3, sequence.getDimension());
     assertEquals("clipped measure   1", 1, sequence.getMeasures());
-    assertTrue(!sequence.hasZ());
+      assertFalse(sequence.hasZ());
     assertTrue(sequence.hasM());
     
     sequence = factory.create(10, 5, 1);
@@ -75,13 +75,13 @@ public class CoordinateArraySequenceTest
     sequence = factory.create(10, 1);
     assertEquals("clipped dimension 2", 2, sequence.getDimension());
     assertEquals("default measure   0", 0, sequence.getMeasures());
-    assertTrue(!sequence.hasZ());
-    assertTrue(!sequence.hasM());
+      assertFalse(sequence.hasZ());
+      assertFalse(sequence.hasM());
 
     sequence = factory.create(10, 2, 1);
     assertEquals("clipped dimension 3", 3, sequence.getDimension());
     assertEquals("provided measure  1", 1, sequence.getMeasures());
-    assertTrue(!sequence.hasZ());
+      assertFalse(sequence.hasZ());
     assertTrue(sequence.hasM());
   }
   
@@ -97,8 +97,8 @@ public class CoordinateArraySequenceTest
     
     initProgression(seq);
     assertEquals("xz", 2, seq.getDimension());
-    assertTrue("Z", !seq.hasZ());
-    assertTrue("M", !seq.hasM());
+      assertFalse("Z", seq.hasZ());
+      assertFalse("M", seq.hasM());
     coord = seq.getCoordinate(4);
     assertTrue( coord instanceof CoordinateXY);
     assertEquals( 4.0, coord.getX());
@@ -115,9 +115,9 @@ public class CoordinateArraySequenceTest
     initProgression(seq);
     assertEquals("xyz", 3, seq.getDimension());
     assertTrue("Z", seq.hasZ());
-    assertTrue("M", !seq.hasM());
+      assertFalse("M", seq.hasM());
     coord = seq.getCoordinate(4);
-    assertTrue( coord.getClass() == Coordinate.class);
+      assertSame(coord.getClass(), Coordinate.class);
     assertEquals( 4.0, coord.getX());
     assertEquals( 4.0, coord.getY());
     assertEquals( 4.0, coord.getZ());
@@ -132,7 +132,7 @@ public class CoordinateArraySequenceTest
     seq = factory.create(5, 3, 1);
     initProgression(seq);
     assertEquals("xym", 3, seq.getDimension());
-    assertTrue("Z", !seq.hasZ());
+      assertFalse("Z", seq.hasZ());
     assertTrue("M", seq.hasM());
     coord = seq.getCoordinate(4);
     assertTrue( coord instanceof CoordinateXYM);
@@ -183,16 +183,16 @@ public class CoordinateArraySequenceTest
     CoordinateSequence seq = factory.create(array);
     assertEquals( 3, seq.getDimension());
     assertEquals( 1, seq.getMeasures());
-    assertTrue( coord1.equals( seq.getCoordinate(0)));
-    assertTrue( coord2.equals( seq.getCoordinate(1)));
-    assertTrue( coord3.equals( seq.getCoordinate(2)));   
+      assertEquals(coord1, seq.getCoordinate(0));
+      assertEquals(coord2, seq.getCoordinate(1));
+      assertEquals(coord3, seq.getCoordinate(2));
     assertNull( seq.getCoordinate(3));   
   }
   
-  private void initProgression(CoordinateSequence seq) {
+  private static void initProgression(CoordinateSequence seq) {
     for (int index = 0; index < seq.size(); index++) {
        for( int ordinateIndex = 0; ordinateIndex < seq.getDimension(); ordinateIndex++) {
-         seq.setOrdinate(index, ordinateIndex, (double) index);
+         seq.setOrdinate(index, ordinateIndex, index);
        }
     }
   }

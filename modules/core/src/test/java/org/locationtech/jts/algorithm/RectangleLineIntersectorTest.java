@@ -24,7 +24,7 @@ import junit.textui.TestRunner;
 public class RectangleLineIntersectorTest
 extends TestCase
 {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(RectangleLineIntersectorTest.class);
   }
 
@@ -46,11 +46,11 @@ extends TestCase
  */
 class RectangleLineIntersectorValidator
 {
-  private GeometryFactory geomFact = new GeometryFactory();
+  private final GeometryFactory geomFact = new GeometryFactory();
   
-  private double baseX = 0;
-  private double baseY = 0;
-  private double rectSize = 100;
+  private static final double baseX = 0;
+  private static final double baseY = 0;
+  private static final double rectSize = 100;
   private Envelope rectEnv;
   private Coordinate[] pts;
   private boolean isValid = true; 
@@ -105,12 +105,11 @@ class RectangleLineIntersectorValidator
     return circle.getCoordinates();
   }
   
-  private Envelope createRectangle()
+  private static Envelope createRectangle()
   {
-     Envelope rectEnv = new Envelope(
-        new Coordinate(baseX, baseY),
-        new Coordinate(baseX + rectSize, baseY + rectSize));
-     return rectEnv;
+      return new Envelope(
+         new Coordinate(baseX, baseY),
+         new Coordinate(baseX + rectSize, baseY + rectSize));
   }
   
 }
@@ -118,15 +117,15 @@ class RectangleLineIntersectorValidator
 class SimpleRectangleIntersector
 {
   // for intersection testing, don't need to set precision model
-  private LineIntersector li = new RobustLineIntersector();
+  private final LineIntersector li = new RobustLineIntersector();
 
-  private Envelope rectEnv;
+  private final Envelope rectEnv;
   /**
    * The corners of the rectangle, in the order:
    *  10
    *  23
    */
-  private Coordinate[] corner = new Coordinate[4];
+  private final Coordinate[] corner = new Coordinate[4];
 
   public SimpleRectangleIntersector(Envelope rectEnv)
   {
@@ -155,9 +154,7 @@ class SimpleRectangleIntersector
     li.computeIntersection(p0, p1, corner[2], corner[3]);
     if (li.hasIntersection()) return true;
     li.computeIntersection(p0, p1, corner[3], corner[0]);
-    if (li.hasIntersection()) return true;
-
-    return false;
+      return li.hasIntersection();
   }
 
 }

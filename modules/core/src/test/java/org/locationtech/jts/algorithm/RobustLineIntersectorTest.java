@@ -28,7 +28,7 @@ import junit.framework.TestCase;
  */
 public class RobustLineIntersectorTest extends TestCase {
 
-  RobustLineIntersector i = new RobustLineIntersector();
+  final RobustLineIntersector i = new RobustLineIntersector();
 
   public RobustLineIntersectorTest(String Name_) {
     super(Name_);
@@ -62,8 +62,8 @@ public class RobustLineIntersectorTest extends TestCase {
     Coordinate q2 = new Coordinate(30, 10);
     i.computeIntersection(p1, p2, q1, q2);
     assertEquals(RobustLineIntersector.NO_INTERSECTION, i.getIntersectionNum());
-    assertTrue(!i.isProper());
-    assertTrue(!i.hasIntersection());
+      assertFalse(i.isProper());
+      assertFalse(i.hasIntersection());
   }
 
   public void testCollinear2() {
@@ -74,7 +74,7 @@ public class RobustLineIntersectorTest extends TestCase {
     Coordinate q2 = new Coordinate(30, 10);
     i.computeIntersection(p1, p2, q1, q2);
     assertEquals(RobustLineIntersector.POINT_INTERSECTION, i.getIntersectionNum());
-    assertTrue(!i.isProper());
+      assertFalse(i.isProper());
     assertTrue(i.hasIntersection());
   }
 
@@ -86,7 +86,7 @@ public class RobustLineIntersectorTest extends TestCase {
     Coordinate q2 = new Coordinate(30, 10);
     i.computeIntersection(p1, p2, q1, q2);
     assertEquals(RobustLineIntersector.COLLINEAR_INTERSECTION, i.getIntersectionNum());
-    assertTrue(!i.isProper());
+      assertFalse(i.isProper());
     assertTrue(i.hasIntersection());
   }
 
@@ -136,7 +136,7 @@ public class RobustLineIntersectorTest extends TestCase {
         new Coordinate(11, 90), new Coordinate(10, 10));
     assertTrue(i.hasIntersection());
     assertEquals(1, i.getIntersectionNum());
-    assertTrue(! i.isProper());
+      assertFalse(i.isProper());
   }
 
   public void testIsCCW() {
@@ -153,8 +153,8 @@ public class RobustLineIntersectorTest extends TestCase {
     Coordinate q  = new Coordinate(0, 0);
     LineString l = new GeometryFactory().createLineString(new Coordinate[] {p1, p2});
     Point p = new GeometryFactory().createPoint(q);
-    assertEquals(false, l.intersects(p));
-    assertEquals(false, PointLocation.isOnLine(q, new Coordinate[] {p1, p2}));
+      assertFalse(l.intersects(p));
+      assertFalse(PointLocation.isOnLine(q, new Coordinate[]{p1, p2}));
     assertEquals(-1, Orientation.index(p1, p2, q));
   }
 

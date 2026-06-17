@@ -60,24 +60,19 @@ class OverlayEdge extends HalfEdge {
    * @return a Comparator sorting by origin coordinate
    */
   public static Comparator<OverlayEdge> nodeComparator() {
-    return new Comparator<OverlayEdge>() {
-      @Override
-      public int compare(OverlayEdge e1, OverlayEdge e2) {
-        return e1.orig().compareTo(e2.orig());
-      }
-    };
+    return Comparator.comparing(HalfEdge::orig);
   }
   
-  private Coordinate[] pts;
+  private final Coordinate[] pts;
   
   /**
    * <code>true</code> indicates direction is forward along segString
    * <code>false</code> is reverse direction
    * The label must be interpreted accordingly.
    */
-  private boolean direction;
-  private Coordinate dirPt;
-  private OverlayLabel label;
+  private final boolean direction;
+  private final Coordinate dirPt;
+  private final OverlayLabel label;
 
   private boolean isInResultArea = false;
   private boolean isInResultLine = false;
@@ -147,7 +142,7 @@ class OverlayEdge extends HalfEdge {
    */
   public void addCoordinates(CoordinateList coords)
   {
-    boolean isFirstEdge = coords.size() > 0;
+    boolean isFirstEdge = !coords.isEmpty();
     if (direction) {
       int startIndex = 1;
       if (isFirstEdge) startIndex = 0;

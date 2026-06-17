@@ -47,15 +47,15 @@ public class KMLWriter
   /**
    * The KML standard value <code>clampToGround</code> for use in {@link #setAltitudeMode(String)}.
    */
-  public static String ALTITUDE_MODE_CLAMPTOGROUND = "clampToGround ";
+  public static final String ALTITUDE_MODE_CLAMPTOGROUND = "clampToGround ";
   /**
    * The KML standard value <code>relativeToGround</code> for use in {@link #setAltitudeMode(String)}.
    */
-  public static String ALTITUDE_MODE_RELATIVETOGROUND  = "relativeToGround  ";
+  public static final String ALTITUDE_MODE_RELATIVETOGROUND  = "relativeToGround  ";
   /**
    * The KML standard value <code>absolute</code> for use in {@link #setAltitudeMode(String)}.
    */
-  public static String ALTITUDE_MODE_ABSOLUTE = "absolute";
+  public static final String ALTITUDE_MODE_ABSOLUTE = "absolute";
   
   /**
    * Writes a Geometry as KML to a string, using
@@ -240,11 +240,11 @@ public class KMLWriter
     buf.append(text);
   }
 
-  private String geometryTag(String geometryName, String attributes) {
-    StringBuffer buf = new StringBuffer();
+  private static String geometryTag(String geometryName, String attributes) {
+    StringBuilder buf = new StringBuilder();
     buf.append("<");
     buf.append(geometryName);
-    if (attributes != null && attributes.length() > 0) {
+    if (attributes != null && !attributes.isEmpty()) {
       buf.append(" ");
       buf.append(attributes);
     }

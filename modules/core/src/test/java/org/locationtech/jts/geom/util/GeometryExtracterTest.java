@@ -10,7 +10,7 @@ import junit.framework.TestCase;
 
 public class GeometryExtracterTest extends TestCase {
 
-	static WKTReader reader = new WKTReader();
+	static final WKTReader reader = new WKTReader();
 	
 	public GeometryExtracterTest(String name) {
 		super(name);
@@ -20,15 +20,15 @@ public class GeometryExtracterTest extends TestCase {
 		Geometry gc = reader.read("GEOMETRYCOLLECTION ( POINT (1 1), LINESTRING (0 0, 10 10), LINESTRING (10 10, 20 20), LINEARRING (10 10, 20 20, 15 15, 10 10), POLYGON ((0 0, 100 0, 100 100, 0 100, 0 0)), GEOMETRYCOLLECTION ( POINT (1 1) ) )");
 		
 		// verify that LinearRings are included when extracting LineStrings
-		List lineStringsAndLinearRings = GeometryExtracter.extract(gc, Geometry.TYPENAME_LINESTRING);
+		List<Geometry> lineStringsAndLinearRings = GeometryExtracter.extract(gc, Geometry.TYPENAME_LINESTRING);
 		assertEquals(3, lineStringsAndLinearRings.size());
-		
+
 		// verify that only LinearRings are extracted
-		List linearRings = GeometryExtracter.extract(gc, Geometry.TYPENAME_LINEARRING);
+		List<Geometry> linearRings = GeometryExtracter.extract(gc, Geometry.TYPENAME_LINEARRING);
 		assertEquals(1, linearRings.size());
-		
+
 		// verify that nested geometries are extracted
-		List points = GeometryExtracter.extract(gc, Geometry.TYPENAME_POINT);
+		List<Geometry> points = GeometryExtracter.extract(gc, Geometry.TYPENAME_POINT);
 		assertEquals(2, points.size());
 	}
 

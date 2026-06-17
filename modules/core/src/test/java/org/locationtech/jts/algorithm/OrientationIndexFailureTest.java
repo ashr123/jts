@@ -26,7 +26,7 @@ import junit.textui.TestRunner;
 public class OrientationIndexFailureTest
     extends TestCase
 {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(OrientationIndexFailureTest.class);
   }
 
@@ -42,8 +42,7 @@ public class OrientationIndexFailureTest
         OrientationIndexTest.getCoordinates("LINESTRING ( 0 0, 0 1, 1 1)")));
   }
 
-  public void testBadCCW() throws Exception
-  {
+  public void testBadCCW() {
     // this case fails because subtraction of small from large loses precision
     Coordinate[] pts = {
       new Coordinate(1.4540766091864998, -7.989685402102996),
@@ -66,8 +65,7 @@ public class OrientationIndexFailureTest
   }
 */
   
-  public void testBadCCW2() throws Exception
-  {
+  public void testBadCCW2() {
     // this case fails because subtraction of small from large loses precision
     Coordinate[] pts = {
       new Coordinate(219.3649559090992, 140.84159161824724),
@@ -77,8 +75,7 @@ public class OrientationIndexFailureTest
     checkOrientation(pts);
   }
 
-  public void testBadCCW3() throws Exception
-  {
+  public void testBadCCW3() {
     // this case fails because subtraction of small from large loses precision
     Coordinate[] pts = {
         new Coordinate(279.56857838488514, -186.3790522565901),
@@ -88,8 +85,7 @@ public class OrientationIndexFailureTest
     checkOrientation(pts);
   }
 
-  public void testBadCCW4() throws Exception
-  {
+  public void testBadCCW4() {
     // from JTS list - 5/15/2012  strange case for the GeometryNoder
     Coordinate[] pts = {
         new Coordinate(-26.2, 188.7),
@@ -99,8 +95,7 @@ public class OrientationIndexFailureTest
     checkOrientation(pts);
   }
 
-  public void testBadCCW5() throws Exception
-  {
+  public void testBadCCW5() {
     // from JTS list - 6/15/2012  another case from Tomas Fa
     Coordinate[] pts = {
         new Coordinate(-5.9, 163.1),
@@ -111,8 +106,7 @@ public class OrientationIndexFailureTest
     checkOrientation(pts);
   }
 
-  public void testBadCCW7() throws Exception
-  {
+  public void testBadCCW7() {
     // from JTS list - 6/26/2012  another case from Tomas Fa
     Coordinate[] pts = {
         new Coordinate(-0.9575, 0.4511),
@@ -124,8 +118,7 @@ public class OrientationIndexFailureTest
     checkOriginalJTS(pts, false);
   }
 
-  public void testBadCCW7_2() throws Exception
-  {
+  public void testBadCCW7_2() {
     // from JTS list - 6/26/2012  another case from Tomas Fa
     // scale to integers - all methods work on this
     Coordinate[] pts = {
@@ -138,8 +131,7 @@ public class OrientationIndexFailureTest
     checkOriginalJTS(pts, true);
   }
 
-  public void testBadCCW6() throws Exception
-  {
+  public void testBadCCW6() {
     // from JTS Convex Hull "Almost collinear" unit test
     Coordinate[] pts = {
         new Coordinate(-140.8859438214298, 140.88594382142983),
@@ -174,7 +166,7 @@ public class OrientationIndexFailureTest
    * where the high-precision methods work but JTS Robust algorithm fails.
    * @param pts
    */
-  void checkOrientation(Coordinate[] pts)
+  static void checkOrientation(Coordinate[] pts)
   {
     // this should succeed
     checkDD(pts, true);
@@ -184,19 +176,19 @@ public class OrientationIndexFailureTest
     checkOriginalJTS(pts, false);
   }
 
-  private void checkShewchuk(Coordinate[] pts, boolean expected)
+  private static void checkShewchuk(Coordinate[] pts, boolean expected)
   {
-    assertTrue("Shewchuk", expected == isAllOrientationsEqualSD(pts));
+      assertEquals("Shewchuk", expected, isAllOrientationsEqualSD(pts));
   }
 
-  private void checkOriginalJTS(Coordinate[] pts, boolean expected)
+  private static void checkOriginalJTS(Coordinate[] pts, boolean expected)
   {
-    assertTrue("JTS RobustDeterminant FAIL", expected == isAllOrientationsEqualRD(pts));
+      assertEquals("JTS RobustDeterminant FAIL", expected, isAllOrientationsEqualRD(pts));
   }
 
-  private void checkDD(Coordinate[] pts, boolean expected)
+  private static void checkDD(Coordinate[] pts, boolean expected)
   {
-    assertTrue("DD", expected == isAllOrientationsEqualDD(pts));
+      assertEquals("DD", expected, isAllOrientationsEqualDD(pts));
   }
   
   public static boolean isAllOrientationsEqual(

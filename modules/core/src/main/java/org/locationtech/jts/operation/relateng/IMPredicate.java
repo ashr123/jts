@@ -35,7 +35,7 @@ abstract class IMPredicate extends BasicPredicate {
 
   protected int dimA;
   protected int dimB;
-  protected IntersectionMatrix intMatrix;
+  protected final IntersectionMatrix intMatrix;
   
   public IMPredicate() {
     intMatrix = new IntersectionMatrix();

@@ -26,12 +26,12 @@ import java.util.NoSuchElementException;
  *
  *@version 1.7
  */
-public class GeometryCollectionIterator implements Iterator {
+public class GeometryCollectionIterator implements Iterator<Geometry> {
 
   /**
    *  The <code>Geometry</code> being iterated over.
    */
-  private Geometry parent;
+  private final Geometry parent;
   /**
    *  Indicates whether or not the first element 
    *  (the root <code>GeometryCollection</code>) has been returned.
@@ -40,7 +40,7 @@ public class GeometryCollectionIterator implements Iterator {
   /**
    *  The number of <code>Geometry</code>s in the the <code>GeometryCollection</code>.
    */
-  private int max;
+  private final int max;
   /**
    *  The index of the <code>Geometry</code> that will be returned when <code>next</code>
    *  is called.
@@ -81,10 +81,7 @@ public class GeometryCollectionIterator implements Iterator {
       }
       subcollectionIterator = null;
     }
-    if (index >= max) {
-      return false;
-    }
-    return true;
+      return index < max;
   }
 
   /**
@@ -92,7 +89,7 @@ public class GeometryCollectionIterator implements Iterator {
    * 
    * @return the next geometry in the iteration
    */
-  public Object next() {
+  public Geometry next() {
     // the parent GeometryCollection is the first object returned
     if (atStart) {
       atStart = false;
@@ -113,7 +110,7 @@ public class GeometryCollectionIterator implements Iterator {
     }
     Geometry obj = parent.getGeometryN(index++);
     if (obj instanceof GeometryCollection) {
-      subcollectionIterator = new GeometryCollectionIterator((GeometryCollection) obj);
+      subcollectionIterator = new GeometryCollectionIterator(obj);
       // there will always be at least one element in the sub-collection
       return subcollectionIterator.next();
     }
@@ -134,4 +131,3 @@ public class GeometryCollectionIterator implements Iterator {
     throw new UnsupportedOperationException(getClass().getName());
   }
 }
-

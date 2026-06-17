@@ -31,7 +31,7 @@ class InputGeometry {
   private Geometry[] geom = new Geometry[2];
   private PointOnGeometryLocator ptLocatorA;
   private PointOnGeometryLocator ptLocatorB;
-  private boolean[] isCollapsed = new boolean[2];
+  private final boolean[] isCollapsed = new boolean[2];
   
   public InputGeometry(Geometry geomA, Geometry geomB) {
     geom = new Geometry[] { geomA, geomB };

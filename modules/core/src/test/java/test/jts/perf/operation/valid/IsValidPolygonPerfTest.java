@@ -29,7 +29,7 @@ public class IsValidPolygonPerfTest extends PerformanceTestCase {
   
   static final int N_ITER = 10;
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     PerformanceTestRunner.run(IsValidPolygonPerfTest.class);
   }
   
@@ -47,7 +47,7 @@ public class IsValidPolygonPerfTest extends PerformanceTestCase {
     geom = createSineStar(npts);
   }
  
-  private Geometry createSineStar(int npts) {
+  private static Geometry createSineStar(int npts) {
     Geometry sineStar = TestShapeFactory.createSineStar(new Coordinate(0,0), 100, npts);
     System.out.println("\nRunning with # pts " + sineStar.getNumPoints() );
     return sineStar;

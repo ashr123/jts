@@ -17,7 +17,7 @@ import junit.textui.TestRunner;
 import test.jts.GeometryTestCase;
 
 public class TriangleCircumcentreTest extends GeometryTestCase {
-  public static void main(String args[])
+  public static void main(String[] args)
   {
     TestRunner.run(TriangleCircumcentreTest.class);
   }
@@ -55,7 +55,7 @@ public class TriangleCircumcentreTest extends GeometryTestCase {
     return Triangle.circumcentreDD(a, b, c);
   }
   
-  private void checkCCEqual(Coordinate cc1, Coordinate cc2) {
+  private static void checkCCEqual(Coordinate cc1, Coordinate cc2) {
     boolean isEqual = cc1.equals2D(cc2);
     if (! isEqual) {
       System.out.println("Triangle circumcentres are not equal!");

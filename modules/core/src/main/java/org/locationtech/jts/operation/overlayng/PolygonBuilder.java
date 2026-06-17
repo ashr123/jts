@@ -24,9 +24,9 @@ import org.locationtech.jts.index.hprtree.HPRtree;
 
 class PolygonBuilder {
 
-  private GeometryFactory geometryFactory;
-  private List<OverlayEdgeRing> shellList = new ArrayList<OverlayEdgeRing>();
-  private List<OverlayEdgeRing> freeHoleList = new ArrayList<OverlayEdgeRing>();
+  private final GeometryFactory geometryFactory;
+  private final List<OverlayEdgeRing> shellList = new ArrayList<>();
+  private final List<OverlayEdgeRing> freeHoleList = new ArrayList<>();
   private boolean isEnforcePolygonal = true;
 
   public PolygonBuilder(List<OverlayEdge> resultAreaEdges, GeometryFactory geomFact) {
@@ -49,7 +49,7 @@ class PolygonBuilder {
 
   private List<Polygon> computePolygons(List<OverlayEdgeRing> shellList)
   {
-    List<Polygon> resultPolyList = new ArrayList<Polygon>();
+    List<Polygon> resultPolyList = new ArrayList<>();
     // add Polygons for all shells
     for (OverlayEdgeRing er : shellList ) {
       Polygon poly = er.toPolygon(geometryFactory);
@@ -67,7 +67,7 @@ class PolygonBuilder {
     //Assert: every hole on freeHoleList has a shell assigned to it
   }
   
-  private void linkResultAreaEdgesMax(List<OverlayEdge> resultEdges) {
+  private static void linkResultAreaEdgesMax(List<OverlayEdge> resultEdges) {
     for (OverlayEdge edge : resultEdges ) {
       //Assert.isTrue(edge.isInResult());
       // TODO: find some way to skip nodes which are already linked
@@ -80,7 +80,7 @@ class PolygonBuilder {
    */
   private static List<MaximalEdgeRing> buildMaximalRings(Collection<OverlayEdge> edges)
   {
-    List<MaximalEdgeRing> edgeRings = new ArrayList<MaximalEdgeRing>();
+    List<MaximalEdgeRing> edgeRings = new ArrayList<>();
     for (OverlayEdge e : edges) {
       if (e.isInResultArea() && e.getLabel().isBoundaryEither() ) {
         // if this edge has not yet been processed
@@ -129,7 +129,7 @@ class PolygonBuilder {
    * @return the shell ring, if there is one
    * or null, if all rings are holes
    */
-  private OverlayEdgeRing findSingleShell(List<OverlayEdgeRing> edgeRings)
+  private static OverlayEdgeRing findSingleShell(List<OverlayEdgeRing> edgeRings)
   {
     int shellCount = 0;
     OverlayEdgeRing shell = null;
@@ -177,7 +177,7 @@ class PolygonBuilder {
    */
   private void placeFreeHoles(List<OverlayEdgeRing> shellList, List<OverlayEdgeRing> freeHoleList)
   {
-    SpatialIndex index = new HPRtree();
+    SpatialIndex<OverlayEdgeRing> index = new HPRtree<>();
     for (OverlayEdgeRing shell : shellList) {
       index.insert(shell.getRing().getEnvelopeInternal(), shell);
     }

@@ -34,18 +34,17 @@ extends PerformanceTestCase
 
   private static final int N_ITER = 100;
 
-  static double ORG_X = 100;
-  static double ORG_Y = 100;
-  static double SIZE = 100;
-  static int N_ARMS = 20;
-  static double ARM_RATIO = 0.3;
+  static final double ORG_X = 100;
+  static final double ORG_Y = 100;
+  static final double SIZE = 100;
+  static final int N_ARMS = 20;
+  static final double ARM_RATIO = 0.3;
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     PerformanceTestRunner.run(InteriorPointAreaPerfTest.class);
   }
 
-  private Geometry sineStar;
-  private Geometry sinePolyCrinkly;
+    private Geometry sinePolyCrinkly;
 
 
   public InteriorPointAreaPerfTest(String name)
@@ -66,8 +65,8 @@ extends PerformanceTestCase
   
   public void startRun(int npts)
   {
-    iter = 0;
-    sineStar = SineStarFactory.create(new Coordinate(ORG_X, ORG_Y), SIZE, npts, N_ARMS, ARM_RATIO);
+      int iter = 0;
+      Geometry sineStar = SineStarFactory.create(new Coordinate(ORG_X, ORG_Y), SIZE, npts, N_ARMS, ARM_RATIO);
     
     double scale = npts / SIZE;
     PrecisionModel pm = new PrecisionModel(scale);
@@ -77,10 +76,8 @@ extends PerformanceTestCase
     System.out.println("\nRunning with # pts " + sinePolyCrinkly.getNumPoints() );
     //if (size <= 1000) System.out.println(sineStar);
   }
-  
-  private int iter = 0;
-  
-  public void runTest1()
+
+    public void runTest1()
   {
     InteriorPointArea.getInteriorPoint(sinePolyCrinkly);
   }

@@ -20,7 +20,7 @@ public class CachedFastDistance
   private static Geometry cacheGeom = null;
   private static IndexedFacetDistance fastDistanceOp;
   
-  public CachedFastDistance() {
+  private CachedFastDistance() {
     super();
   }
 

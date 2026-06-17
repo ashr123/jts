@@ -23,13 +23,13 @@ import junit.textui.TestRunner;
  */
 public class AreaLengthTest extends TestCase {
 
-  private PrecisionModel precisionModel = new PrecisionModel();
-  private GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
-  WKTReader reader = new WKTReader(geometryFactory);
+  private final PrecisionModel precisionModel = new PrecisionModel();
+  private final GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
+  final WKTReader reader = new WKTReader(geometryFactory);
   
   private static final double TOLERANCE = 1E-5;
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(AreaLengthTest.class);
   }
 

@@ -21,6 +21,7 @@ import org.locationtech.jts.geom.Puntal;
 import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 import org.locationtech.jts.index.strtree.ItemBoundable;
 import org.locationtech.jts.index.strtree.ItemDistance;
+import org.locationtech.jts.index.strtree.ItemPair;
 import org.locationtech.jts.index.strtree.STRtree;
 
 /**
@@ -52,7 +53,7 @@ import org.locationtech.jts.index.strtree.STRtree;
  */
 public class IndexedFacetDistance 
 {
-  private static final FacetSequenceDistance FACET_SEQ_DIST = new FacetSequenceDistance();
+  private static final ItemDistance<FacetSequence> FACET_SEQ_DIST = new FacetSequenceDistance();
 
   /**
    * Computes the distance between facets of two geometries.
@@ -96,8 +97,8 @@ public class IndexedFacetDistance
     return dist.nearestPoints(g2);
   }
   
-  private STRtree cachedTree;
-  private Geometry baseGeometry;
+  private final STRtree<FacetSequence> cachedTree;
+  private final Geometry baseGeometry;
   
   /**
    * Creates a new distance-finding instance for a given target {@link Geometry}.
@@ -117,11 +118,9 @@ public class IndexedFacetDistance
     cachedTree = FacetSequenceTreeBuilder.build(geom);
   }
 
-  private Object[] nearestFacets(Geometry g) {
-    STRtree tree2 = FacetSequenceTreeBuilder.build(g);
-    Object[] obj = cachedTree.nearestNeighbour(tree2, 
-        FACET_SEQ_DIST);
-    return obj;
+  private ItemPair<FacetSequence> nearestFacets(Geometry g) {
+    STRtree<FacetSequence> tree2 = FacetSequenceTreeBuilder.build(g);
+    return cachedTree.nearestNeighbour(tree2, FACET_SEQ_DIST);
   }
   
   /**
@@ -133,19 +132,18 @@ public class IndexedFacetDistance
    */
   public Coordinate[] nearestPoints(Geometry g)
   {
-    Object[] obj = nearestFacets(g);
-    FacetSequence fs1 = (FacetSequence) obj[0];
-    FacetSequence fs2 = (FacetSequence) obj[1];
+    ItemPair<FacetSequence> obj = nearestFacets(g);
+    FacetSequence fs1 = obj.getItem0();
+    FacetSequence fs2 = obj.getItem1();
     return fs1.nearestLocations(fs2);
   }
 
   public CoordinateSequenceLocation nearestLocation(Coordinate p) {
     CoordinateSequence seq = new CoordinateArraySequence(new Coordinate[] { p });
     FacetSequence fs = new FacetSequence(seq, 0);
-    Object nearest = cachedTree.nearestNeighbour(fs.getEnvelope(), fs, FACET_SEQ_DIST);
-    FacetSequence fsN = (FacetSequence) nearest;
+    FacetSequence fsN = cachedTree.nearestNeighbour(fs.getEnvelope(), fs, FACET_SEQ_DIST);
     return fsN.nearestLocation(p);
- 
+
   }
   
   /**
@@ -159,8 +157,7 @@ public class IndexedFacetDistance
   {
     CoordinateSequence seq = new CoordinateArraySequence(new Coordinate[] { p });
     FacetSequence fs = new FacetSequence(seq, 0);
-    Object nearest = cachedTree.nearestNeighbour(fs.getEnvelope(), fs, FACET_SEQ_DIST);
-    FacetSequence fsN = (FacetSequence) nearest;
+    FacetSequence fsN = cachedTree.nearestNeighbour(fs.getEnvelope(), fs, FACET_SEQ_DIST);
     return fsN.nearestLocation(p).getCoordinate();
   }
   
@@ -174,9 +171,9 @@ public class IndexedFacetDistance
    */
   public double distance(Geometry g)
   {
-    Object[] obj = nearestFacets(g);
-    FacetSequence fs1 = (FacetSequence) obj[0];
-    FacetSequence fs2 = (FacetSequence) obj[1];
+    ItemPair<FacetSequence> obj = nearestFacets(g);
+    FacetSequence fs1 = obj.getItem0();
+    FacetSequence fs2 = obj.getItem1();
     return fs1.distance(fs2);
   }
   
@@ -188,8 +185,7 @@ public class IndexedFacetDistance
   {
     CoordinateSequence seq = new CoordinateArraySequence(new Coordinate[] { p0, p1 });
     FacetSequence fs2 = new FacetSequence(seq, 0, 2);
-    Object nearest = cachedTree.nearestNeighbour(fs2.getEnvelope(), fs2, FACET_SEQ_DIST);
-    FacetSequence fs1 = (FacetSequence) nearest;
+    FacetSequence fs1 = cachedTree.nearestNeighbour(fs2.getEnvelope(), fs2, FACET_SEQ_DIST);
     Coordinate[] loc = fs1.nearestLocations(fs2);
     return loc[0].distance(loc[1]);
   }
@@ -208,21 +204,19 @@ public class IndexedFacetDistance
     if (envDist > maxDistance)
       return false;
 
-    STRtree tree2 = FacetSequenceTreeBuilder.build(g);
-    return cachedTree.isWithinDistance(tree2, 
+    STRtree<FacetSequence> tree2 = FacetSequenceTreeBuilder.build(g);
+    return cachedTree.isWithinDistance(tree2,
         FACET_SEQ_DIST, maxDistance);
   }  
  
   private static class FacetSequenceDistance
-  implements ItemDistance
+  implements ItemDistance<FacetSequence>
   {
-    public double distance(ItemBoundable item1, ItemBoundable item2) {
-      FacetSequence fs1 = (FacetSequence) item1.getItem();
-      FacetSequence fs2 = (FacetSequence) item2.getItem();
-      return fs1.distance(fs2);    
+    public double distance(ItemBoundable<org.locationtech.jts.geom.Envelope, FacetSequence> item1, ItemBoundable<org.locationtech.jts.geom.Envelope, FacetSequence> item2) {
+      FacetSequence fs1 = item1.getItem();
+      FacetSequence fs2 = item2.getItem();
+      return fs1.distance(fs2);
     }
   }
 
 }
-
-

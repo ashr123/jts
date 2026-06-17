@@ -9,7 +9,7 @@ import test.jts.GeometryTestCase;
 
 public class MaximumInscribedCircleTest extends GeometryTestCase {
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(MaximumInscribedCircleTest.class);
   }
 
@@ -145,19 +145,19 @@ public class MaximumInscribedCircleTest extends GeometryTestCase {
     checkCircleAutoTol(read(wkt), tolerance, x, y, expectedRadius);
   }
   
-  private void checkCircle(Geometry geom, double tolerance, 
-      double x, double y, double expectedRadius) {
+  private static void checkCircle(Geometry geom, double tolerance,
+                                  double x, double y, double expectedRadius) {
     MaximumInscribedCircle mic = new MaximumInscribedCircle(geom, tolerance); 
     checkMIC(mic, tolerance, x, y, expectedRadius);
   }
 
-  private void checkCircleAutoTol(Geometry geom, double tolerance, 
-      double x, double y, double expectedRadius) {
+  private static void checkCircleAutoTol(Geometry geom, double tolerance,
+                                         double x, double y, double expectedRadius) {
     MaximumInscribedCircle mic = new MaximumInscribedCircle(geom); 
     checkMIC(mic, tolerance, x, y, expectedRadius);
   }
 
-  private void checkMIC(MaximumInscribedCircle mic, double tolerance, double x, double y, double expectedRadius) {
+  private static void checkMIC(MaximumInscribedCircle mic, double tolerance, double x, double y, double expectedRadius) {
     Geometry centerPoint = mic.getCenter();
     LineString radiusLine = mic.getRadiusLine();
     Coordinate radiusPt = mic.getRadiusPoint().getCoordinate();

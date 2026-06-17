@@ -33,8 +33,8 @@ import org.locationtech.jts.index.kdtree.KdTree;
  *
  */
 class HotPixelIndex {
-  private PrecisionModel precModel;
-  private double scaleFactor;
+  private final PrecisionModel precModel;
+  private final double scaleFactor;
 
   /**
    * Use a kd-tree to index the pixel centers for optimum performance.
@@ -42,7 +42,7 @@ class HotPixelIndex {
    * index must enlarge the query range by a suitable value
    * (using the pixel width is safest).
    */
-  private KdTree index = new KdTree();
+  private final KdTree index = new KdTree();
 
   public HotPixelIndex(PrecisionModel pm) {
     this.precModel = pm;

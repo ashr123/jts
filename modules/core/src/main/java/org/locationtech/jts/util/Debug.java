@@ -16,6 +16,7 @@ package org.locationtech.jts.util;
  */
 import java.io.PrintStream;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -43,9 +44,9 @@ import org.locationtech.jts.geom.LineString;
  */
 public class Debug {
 
-  public static String DEBUG_PROPERTY_NAME = "jts.debug";
-  public static String DEBUG_PROPERTY_VALUE_ON = "on";
-  public static String DEBUG_PROPERTY_VALUE_TRUE = "true";
+  public static final String DEBUG_PROPERTY_NAME = "jts.debug";
+  public static final String DEBUG_PROPERTY_VALUE_ON = "on";
+  public static final String DEBUG_PROPERTY_VALUE_TRUE = "true";
 
   private static boolean debugOn = false;
 
@@ -58,7 +59,7 @@ public class Debug {
     }
   }
 
-  private static Stopwatch stopwatch = new Stopwatch();
+  private static final Stopwatch stopwatch = new Stopwatch();
   private static long lastTimePrinted;
 
   /**
@@ -76,10 +77,10 @@ public class Debug {
   private static final GeometryFactory fact = new GeometryFactory();
   private static final String DEBUG_LINE_TAG = "D! ";
 
-  private PrintStream out;
-  private Class[] printArgs;
+  private final PrintStream out;
+  private final Class<?>[] printArgs;
   private Object watchObj = null;
-  private Object[] args = new Object[1];
+  private final Object[] args = new Object[1];
 
   public static boolean isDebugging() { return debugOn; }
 
@@ -159,9 +160,7 @@ public class Debug {
   private static String spaces(int n)
   {
     char[] ch = new char[n];
-    for (int i = 0; i < n; i++) {
-      ch[i] = ' ';
-    }
+      Arrays.fill(ch, ' ');
     return new String(ch);
   }
   
@@ -206,7 +205,6 @@ public class Debug {
   private static void doBreak()
   {
     // Put breakpoint on following statement to break here
-    return; 
   }
   
   public static boolean hasSegment(Geometry geom, Coordinate p0, Coordinate p1)
@@ -219,7 +217,8 @@ public class Debug {
   private static class SegmentFindingFilter
   implements CoordinateSequenceFilter
   {
-    private Coordinate p0, p1;
+    private final Coordinate p0;
+      private final Coordinate p1;
     private boolean hasSegment = false;
     
     public SegmentFindingFilter(Coordinate p0, Coordinate p1)
@@ -250,7 +249,7 @@ public class Debug {
   
   private Debug() {
     out = System.out;
-    printArgs = new Class[1];
+    printArgs = new Class<?>[1];
     try {
       printArgs[0] = Class.forName("java.io.PrintStream");
     }
@@ -273,17 +272,17 @@ public class Debug {
   public void instancePrint(Object obj)
   {
     if (obj instanceof Collection) {
-      instancePrint(((Collection) obj).iterator());
+      instancePrint(((Collection<?>) obj).iterator());
     }
     else if (obj instanceof Iterator) {
-      instancePrint((Iterator) obj);
+      instancePrint((Iterator<?>) obj);
     }
     else {
       instancePrintObject(obj);
     }
   }
 
-  public void instancePrint(Iterator it)
+  public void instancePrint(Iterator<?> it)
   {
     while (it.hasNext()) {
       Object obj = it.next();
@@ -294,7 +293,7 @@ public class Debug {
     //if (true) throw new RuntimeException("DEBUG TRAP!");
     Method printMethod = null;
     try {
-      Class cls = obj.getClass();
+      Class<?> cls = obj.getClass();
       try {
         printMethod = cls.getMethod("print", printArgs);
         args[0] = out;

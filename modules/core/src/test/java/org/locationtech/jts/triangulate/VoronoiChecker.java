@@ -17,8 +17,11 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 
 public class VoronoiChecker {
-  
-  public static boolean isValid(Geometry voronoiDiagram) {
+
+    private VoronoiChecker() {
+    }
+
+    public static boolean isValid(Geometry voronoiDiagram) {
     boolean isValid = voronoiDiagram.isValid();
     if (! isValid) return false;
     
@@ -26,9 +29,7 @@ public class VoronoiChecker {
     if (! isConvex) return false;
     
     boolean isNonoverlapping = isNonOverlapping(voronoiDiagram);
-    if (! isNonoverlapping) return false;
-    
-    return true;
+      return isNonoverlapping;
   }
   
   private static boolean isConvex(Geometry voronoiDiagram) {

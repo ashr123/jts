@@ -28,10 +28,10 @@ public class PolygonizerPerfTest extends PerformanceTestCase {
 
   private static final int BUFFER_SEGS = 10;
   
-  GeometryFactory geomFact = new GeometryFactory();
+  final GeometryFactory geomFact = new GeometryFactory();
   private Geometry testCircles;
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     PerformanceTestRunner.run(PolygonizerPerfTest.class);
   }
 
@@ -55,7 +55,7 @@ public class PolygonizerPerfTest extends PerformanceTestCase {
   }
   
   private List<Polygon> createCircleGrid(int num, double size, int bufferSegs) {
-    List<Polygon> polys = new ArrayList<Polygon>();
+    List<Polygon> polys = new ArrayList<>();
 
     int nOnSide = (int) Math.sqrt(num) + 1; 
     double radius = size / nOnSide / 4;
@@ -80,7 +80,7 @@ public class PolygonizerPerfTest extends PerformanceTestCase {
     return pt.getFactory().createPolygon(shell, new LinearRing[] { hole });
   }
 
-  private LinearRing bufferRing(Point pt, double radius, int bufferSegs) {
+  private static LinearRing bufferRing(Point pt, double radius, int bufferSegs) {
     Polygon buf = (Polygon) pt.buffer(radius, bufferSegs);
     return buf.getExteriorRing();
   }
@@ -90,6 +90,6 @@ public class PolygonizerPerfTest extends PerformanceTestCase {
     boolean extractOnlyPolygonal = false;
     Polygonizer polygonizer = new Polygonizer(extractOnlyPolygonal);
     polygonizer.add(testCircles);
-    Collection output = polygonizer.getPolygons();
+    Collection<Polygon> output = polygonizer.getPolygons();
   }
 }

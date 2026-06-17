@@ -13,7 +13,6 @@ package org.locationtech.jts.geomgraph;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.locationtech.jts.geom.TopologyException;
 import org.locationtech.jts.noding.BasicSegmentString;
@@ -39,31 +38,30 @@ public class EdgeNodingValidator
    * @throws TopologyException if the SegmentStrings are not correctly noded
    *
    */
-	public static void checkValid(Collection edges)
+	public static void checkValid(Collection<? extends Edge> edges)
 	{
 		EdgeNodingValidator validator = new EdgeNodingValidator(edges);
 		validator.checkValid();
 	}
-	
-  public static Collection toSegmentStrings(Collection edges)
+
+  public static Collection<BasicSegmentString> toSegmentStrings(Collection<? extends Edge> edges)
   {
     // convert Edges to SegmentStrings
-    Collection segStrings = new ArrayList();
-    for (Iterator i = edges.iterator(); i.hasNext(); ) {
-      Edge e = (Edge) i.next();
-      segStrings.add(new BasicSegmentString(e.getCoordinates(), e));
-    }
+    Collection<BasicSegmentString> segStrings = new ArrayList<>();
+      for (Edge e : edges) {
+          segStrings.add(new BasicSegmentString(e.getCoordinates(), e));
+      }
     return segStrings;
   }
 
-  private FastNodingValidator nv;
+  private final FastNodingValidator nv;
 
   /**
    * Creates a new validator for the given collection of {@link Edge}s.
    * 
    * @param edges a collection of Edges.
    */
-  public EdgeNodingValidator(Collection edges)
+  public EdgeNodingValidator(Collection<? extends Edge> edges)
   {
     nv = new FastNodingValidator(toSegmentStrings(edges));
   }

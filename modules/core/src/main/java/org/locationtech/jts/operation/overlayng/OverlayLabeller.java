@@ -32,9 +32,9 @@ import org.locationtech.jts.util.Assert;
  *
  */
 class OverlayLabeller {
-  private OverlayGraph graph;
-  private InputGeometry inputGeometry;
-  private Collection<OverlayEdge> edges;
+  private final OverlayGraph graph;
+  private final InputGeometry inputGeometry;
+  private final Collection<OverlayEdge> edges;
   
   public OverlayLabeller(OverlayGraph graph, InputGeometry inputGeometry) {
     this.graph = graph;
@@ -208,7 +208,7 @@ class OverlayLabeller {
     }
   }
 
-  private void labelCollapsedEdge(OverlayEdge edge, int geomIndex) {
+  private static void labelCollapsedEdge(OverlayEdge edge, int geomIndex) {
     //Debug.println("\n------  labelCollapsedEdge - geomIndex= " + geomIndex);
     //Debug.print("BEFORE: " + edge.toStringNode());
     OverlayLabel label = edge.getLabel();
@@ -244,9 +244,9 @@ class OverlayLabeller {
   private void propagateLinearLocations(int geomIndex) {
     // find located linear edges
     List<OverlayEdge> linearEdges = findLinearEdgesWithLocation(edges, geomIndex);
-    if (linearEdges.size() <= 0) return;
+    if (linearEdges.isEmpty()) return;
     
-    Deque<OverlayEdge> edgeStack = new ArrayDeque<OverlayEdge>(linearEdges);
+    Deque<OverlayEdge> edgeStack = new ArrayDeque<>(linearEdges);
     boolean isInputLine = inputGeometry.isLine(geomIndex);
     // traverse connected linear edges, labeling unknown ones
     while (! edgeStack.isEmpty()) {
@@ -302,7 +302,7 @@ class OverlayLabeller {
    */
   private static List<OverlayEdge> findLinearEdgesWithLocation(
       Collection<OverlayEdge>edges, int geomIndex) {
-    List<OverlayEdge> linearEdges = new ArrayList<OverlayEdge>();
+    List<OverlayEdge> linearEdges = new ArrayList<>();
     for (OverlayEdge edge : edges) {
       OverlayLabel lbl = edge.getLabel();
       // keep if linear with known location
@@ -364,9 +364,9 @@ class OverlayLabeller {
     if (! inputGeometry.isArea(geomIndex)) {
       label.setLocationAll(geomIndex, Location.EXTERIOR);
       return;
-    };
-    
-    //Debug.println("\n------  labelDisconnectedEdge - geomIndex= " + geomIndex);
+    }
+
+      //Debug.println("\n------  labelDisconnectedEdge - geomIndex= " + geomIndex);
     //Debug.print("BEFORE: " + edge.toStringNode());
     /**
      * Locate edge in input area using a Point-In-Poly check.
@@ -396,8 +396,7 @@ class OverlayLabeller {
    */
   private int locateEdge(int geomIndex, OverlayEdge edge) {
     int loc = inputGeometry.locatePointInArea(geomIndex, edge.orig());
-    int edgeLoc = loc != Location.EXTERIOR ? Location.INTERIOR : Location.EXTERIOR;
-    return edgeLoc;
+      return loc != Location.EXTERIOR ? Location.INTERIOR : Location.EXTERIOR;
   }  
   
   /**
@@ -424,8 +423,7 @@ class OverlayLabeller {
     int locOrig = inputGeometry.locatePointInArea(geomIndex, edge.orig());
     int locDest = inputGeometry.locatePointInArea(geomIndex, edge.dest());
     boolean isInt = locOrig != Location.EXTERIOR && locDest != Location.EXTERIOR;
-    int edgeLoc = isInt ? Location.INTERIOR : Location.EXTERIOR;
-    return edgeLoc;
+      return isInt ? Location.INTERIOR : Location.EXTERIOR;
   } 
 
   public void markResultAreaEdges(int overlayOpCode) {
@@ -444,7 +442,7 @@ class OverlayLabeller {
    * @param e the edge to mark
    * @param overlayOpCode the overlay operation
    */
-  public void markInResultArea(OverlayEdge e, int overlayOpCode) {
+  public static void markInResultArea(OverlayEdge e, int overlayOpCode) {
     OverlayLabel label = e.getLabel();
     if ( label.isBoundaryEither()
         && OverlayNG.isResultOfOp(
@@ -473,10 +471,10 @@ class OverlayLabeller {
   public static String toString(OverlayEdge nodeEdge) {
     Coordinate orig = nodeEdge.orig();
     StringBuilder sb = new StringBuilder();
-    sb.append("Node( "+ WKTWriter.format(orig) + " )" + "\n");
+    sb.append("Node( ").append(WKTWriter.format(orig)).append(" )").append("\n");
     OverlayEdge e = nodeEdge;
     do {
-      sb.append("  -> " + e);
+      sb.append("  -> ").append(e);
       if (e.isResultLinked()) {
         sb.append(" Link: ");
         sb.append(e.nextResult());

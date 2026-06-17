@@ -14,7 +14,6 @@ package org.locationtech.jts.triangulate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.geom.Coordinate;
@@ -69,8 +68,7 @@ public class DelaunayTriangulationBuilder
 	{
 	  Coordinate[] coordsCopy = CoordinateArrays.copyDeep(coords);
 		Arrays.sort(coordsCopy);
-		CoordinateList coordList = new CoordinateList(coordsCopy, false);
-		return coordList;
+        return new CoordinateList(coordsCopy, false);
 	}
 	
 	/**
@@ -78,13 +76,12 @@ public class DelaunayTriangulationBuilder
 	 * @param coords the coordinates to convert
 	 * @return a List of Vertex objects
 	 */
-	public static List toVertices(Collection coords)
+	public static List<Vertex> toVertices(Collection<? extends Coordinate> coords)
 	{
-		List verts = new ArrayList();
-		for (Iterator i = coords.iterator(); i.hasNext(); ) {
-			Coordinate coord = (Coordinate) i.next();
-			verts.add(new Vertex(coord));
-		}
+		List<Vertex> verts = new ArrayList<>();
+        for (Coordinate coord : coords) {
+            verts.add(new Vertex(coord));
+        }
 		return verts;
 	}
 
@@ -94,17 +91,16 @@ public class DelaunayTriangulationBuilder
 	 * @param coords a List of Coordinates
 	 * @return the envelope of the set of coordinates
 	 */
-	public static Envelope envelope(Collection coords)
+	public static Envelope envelope(Collection<? extends Coordinate> coords)
 	{
 		Envelope env = new Envelope();
-		for (Iterator i = coords.iterator(); i.hasNext(); ) {
-			Coordinate coord = (Coordinate) i.next();
-			env.expandToInclude(coord);
-		}
+        for (Coordinate coord : coords) {
+            env.expandToInclude(coord);
+        }
 		return env;
 	}
-	
-	private Collection siteCoords;
+
+	private Collection<Coordinate> siteCoords;
 	private double tolerance = 0.0;
 	private QuadEdgeSubdivision subdiv = null;
 	
@@ -134,7 +130,7 @@ public class DelaunayTriangulationBuilder
 	 * 
 	 * @param coords a collection of Coordinates.
 	 */
-	public void setSites(Collection coords)
+	public void setSites(Collection<Coordinate> coords)
 	{
 		// remove any duplicate points (they will cause the triangulation to fail)
 		siteCoords = unique(CoordinateArrays.toCoordinateArray(coords));
@@ -157,7 +153,7 @@ public class DelaunayTriangulationBuilder
 		if (subdiv != null) return;
 		
 		Envelope siteEnv = envelope(siteCoords);
-		List vertices = toVertices(siteCoords);
+		List<Vertex> vertices = toVertices(siteCoords);
 		subdiv = new QuadEdgeSubdivision(siteEnv, tolerance);
 		IncrementalDelaunayTriangulator triangulator = new IncrementalDelaunayTriangulator(subdiv);
 		triangulator.insertSites(vertices);

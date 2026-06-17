@@ -90,12 +90,10 @@ class InvalidSegmentDetector implements SegmentIntersector {
     }
   }
 
-  private boolean isEqual(Coordinate t0, Coordinate t1, Coordinate adj0, Coordinate adj1) {
+  private static boolean isEqual(Coordinate t0, Coordinate t1, Coordinate adj0, Coordinate adj1) {
     if (t0.equals2D(adj0) && t1.equals2D(adj1))
       return true;
-    if (t0.equals2D(adj1) && t1.equals2D(adj0))
-      return true;
-    return false;
+      return t0.equals2D(adj1) && t1.equals2D(adj0);
   }
 
   private boolean isInvalid(Coordinate tgt0, Coordinate tgt1, 
@@ -106,10 +104,7 @@ class InvalidSegmentDetector implements SegmentIntersector {
       return true;
 
     //-- segments which are nearly parallel for a significant length are invalid
-    if (distanceTol > 0 && isNearlyParallel(tgt0, tgt1, adj0, adj1, distanceTol))
-      return true;
-    
-    return false;
+      return distanceTol > 0 && isNearlyParallel(tgt0, tgt1, adj0, adj1, distanceTol);
   }
 
   /**
@@ -125,8 +120,8 @@ class InvalidSegmentDetector implements SegmentIntersector {
    * @param adj1
    * @return
    */
-  private boolean isCollinearOrInterior(Coordinate tgt0, Coordinate tgt1, 
-      Coordinate adj0, Coordinate adj1, CoverageRing adj, int indexAdj) {
+  private static boolean isCollinearOrInterior(Coordinate tgt0, Coordinate tgt1,
+                                               Coordinate adj0, Coordinate adj1, CoverageRing adj, int indexAdj) {
     RobustLineIntersector li = new RobustLineIntersector();
     li.computeIntersection(tgt0, tgt1, adj0, adj1);
     
@@ -152,12 +147,11 @@ class InvalidSegmentDetector implements SegmentIntersector {
      * Check if the target segment lies in the interior of the adj ring.
      */
     Coordinate intVertex = li.getIntersection(0);
-    boolean isInterior = isInteriorSegment(intVertex, tgt0, tgt1, adj, indexAdj);
-    return isInterior;
+      return isInteriorSegment(intVertex, tgt0, tgt1, adj, indexAdj);
   }
 
-  private boolean isInteriorSegment(Coordinate intVertex, Coordinate tgt0, Coordinate tgt1, 
-      CoverageRing adj, int indexAdj) {
+  private static boolean isInteriorSegment(Coordinate intVertex, Coordinate tgt0, Coordinate tgt1,
+                                           CoverageRing adj, int indexAdj) {
     //-- find target segment endpoint which is not the intersection point
     Coordinate tgtEnd = intVertex.equals2D(tgt0) ? tgt1 : tgt0;
 
@@ -176,9 +170,8 @@ class InvalidSegmentDetector implements SegmentIntersector {
       adjPrev = adjNext;
       adjNext = temp;
     }
-    
-    boolean isInterior = PolygonNodeTopology.isInteriorSegment(intVertex, adjPrev, adjNext, tgtEnd);
-    return isInterior;
+
+      return PolygonNodeTopology.isInteriorSegment(intVertex, adjPrev, adjNext, tgtEnd);
   }
 
   private static boolean isNearlyParallel(Coordinate p00, Coordinate p01, 

@@ -46,7 +46,7 @@ public interface RelatePredicate {
    *
    * @see #disjoint()
    */
-  public static TopologyPredicate intersects() {
+  static TopologyPredicate intersects() {
     return new BasicPredicate() {
       
       public String name() { return "intersects"; }
@@ -98,7 +98,7 @@ public interface RelatePredicate {
    *
    * @see #intersects()
    */
-  public static TopologyPredicate disjoint() {
+  static TopologyPredicate disjoint() {
     return new BasicPredicate() {
        
       public String name() { return "disjoint"; }
@@ -164,7 +164,7 @@ public interface RelatePredicate {
    *
    * @see #within()
    */
-  public static TopologyPredicate contains() {
+  static TopologyPredicate contains() {
     return new IMPredicate() {
   
     public String name() { return "contains"; }
@@ -227,7 +227,7 @@ public interface RelatePredicate {
    *
    * @see #contains()
    */
-  public static TopologyPredicate within() {
+  static TopologyPredicate within() {
     return new IMPredicate() {
   
       public String name() { return "within"; }
@@ -296,7 +296,7 @@ public interface RelatePredicate {
    *
    * @see #coveredBy()
    */
-  public static TopologyPredicate covers() {
+  static TopologyPredicate covers() {
     return new IMPredicate() {
   
       public String name() { return "covers"; }
@@ -361,7 +361,7 @@ public interface RelatePredicate {
    *
    * @see #covers()
    */
-  public static TopologyPredicate coveredBy() {
+  static TopologyPredicate coveredBy() {
     return new IMPredicate() {
       public String name() { return "coveredBy"; }
       
@@ -421,7 +421,7 @@ public interface RelatePredicate {
    *
    * @return the predicate instance
    */
-  public static TopologyPredicate crosses() {
+  static TopologyPredicate crosses() {
     return new IMPredicate() {
       public String name() { return "crosses"; }
       
@@ -437,20 +437,15 @@ public interface RelatePredicate {
       public boolean isDetermined() {
         if (dimA == Dimension.L && dimB == Dimension.L) {
           //-- L/L interaction can only be dim = P
-          if (getDimension(Location.INTERIOR, Location.INTERIOR) > Dimension.P)
-            return true;
+            return getDimension(Location.INTERIOR, Location.INTERIOR) > Dimension.P;
         }
         else if (dimA < dimB) {
-          if (isIntersects(Location.INTERIOR, Location.INTERIOR)
-              && isIntersects(Location.INTERIOR, Location.EXTERIOR)) {
-            return true;
-          }
+            return isIntersects(Location.INTERIOR, Location.INTERIOR)
+                    && isIntersects(Location.INTERIOR, Location.EXTERIOR);
         }
         else if (dimA > dimB) {
-          if (isIntersects(Location.INTERIOR, Location.INTERIOR)
-              && isIntersects(Location.EXTERIOR, Location.INTERIOR)) {
-            return true;
-          }
+            return isIntersects(Location.INTERIOR, Location.INTERIOR)
+                    && isIntersects(Location.EXTERIOR, Location.INTERIOR);
         }
         return false;
       }
@@ -475,7 +470,7 @@ public interface RelatePredicate {
    *
    * @return the predicate instance
    */
-  public static TopologyPredicate equalsTopo() {
+  static TopologyPredicate equalsTopo() {
     return new IMPredicate() {
       public String name() { return "equals"; }
       
@@ -489,9 +484,9 @@ public interface RelatePredicate {
       public boolean requireInteraction() {
         //-- allow EMPTY = EMPTY
         return false;
-      };
-    
-      @Override
+      }
+
+        @Override
       public void init(Envelope envA, Envelope envB) {
         //-- handle EMPTY = EMPTY cases
         setValueIf(true, envA.isNull() && envB.isNull());
@@ -501,13 +496,11 @@ public interface RelatePredicate {
       
       @Override
       public boolean isDetermined() {
-        boolean isEitherExteriorIntersects = 
-            isIntersects(Location.INTERIOR, Location.EXTERIOR)
-        || isIntersects(Location.BOUNDARY, Location.EXTERIOR)
-        || isIntersects(Location.EXTERIOR, Location.INTERIOR)
-        || isIntersects(Location.EXTERIOR, Location.BOUNDARY);
 
-        return isEitherExteriorIntersects;
+          return isIntersects(Location.INTERIOR, Location.EXTERIOR)
+      || isIntersects(Location.BOUNDARY, Location.EXTERIOR)
+      || isIntersects(Location.EXTERIOR, Location.INTERIOR)
+      || isIntersects(Location.EXTERIOR, Location.BOUNDARY);
       }
   
       @Override
@@ -536,7 +529,7 @@ public interface RelatePredicate {
    *
    * @return the predicate instance
    */
-  public static TopologyPredicate overlaps() {
+  static TopologyPredicate overlaps() {
     return new IMPredicate() {
       public String name() { return "overlaps"; }
       
@@ -555,10 +548,9 @@ public interface RelatePredicate {
             return true;          
         }
         if (dimA == Dimension.L) {
-          if (isDimension(Location.INTERIOR, Location.INTERIOR, Dimension.L)
-              && isIntersects(Location.INTERIOR, Location.EXTERIOR)
-              && isIntersects(Location.EXTERIOR, Location.INTERIOR))
-            return true;          
+            return isDimension(Location.INTERIOR, Location.INTERIOR, Dimension.L)
+                    && isIntersects(Location.INTERIOR, Location.EXTERIOR)
+                    && isIntersects(Location.EXTERIOR, Location.INTERIOR);
         }
         return false;
       }
@@ -591,7 +583,7 @@ public interface RelatePredicate {
    *
    * @return the predicate instance
    */
-  public static TopologyPredicate touches() {
+  static TopologyPredicate touches() {
     return new IMPredicate() {
       public String name() { return "touches"; }
       
@@ -606,8 +598,7 @@ public interface RelatePredicate {
       @Override
       public boolean isDetermined() {
         //-- for touches interiors cannot intersect
-        boolean isInteriorsIntersects = isIntersects(Location.INTERIOR, Location.INTERIOR);
-        return isInteriorsIntersects;
+          return isIntersects(Location.INTERIOR, Location.INTERIOR);
       }
   
       @Override
@@ -625,7 +616,7 @@ public interface RelatePredicate {
    * 
    * @see IntersectionMatrixPattern
    */
-  public static TopologyPredicate matches(String imPattern) {
+  static TopologyPredicate matches(String imPattern) {
     return new IMPatternMatcher(imPattern);
   }
 }

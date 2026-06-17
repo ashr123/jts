@@ -39,9 +39,9 @@ import org.locationtech.jts.geom.Polygon;
  */
 class AdjacentEdgeLocator {
 
-  private List<Coordinate[]> ringList;;
+  private List<Coordinate[]> ringList;
 
-  public AdjacentEdgeLocator(Geometry geom) {
+    public AdjacentEdgeLocator(Geometry geom) {
     init(geom);
   }
 
@@ -55,14 +55,13 @@ class AdjacentEdgeLocator {
     return node.hasExteriorEdge(true) ? Location.BOUNDARY : Location.INTERIOR;
   }
 
-  private void addSections(Coordinate p, Coordinate[] ring, NodeSections sections) {
+  private static void addSections(Coordinate p, Coordinate[] ring, NodeSections sections) {
     for (int i = 0; i < ring.length - 1; i++) {
       Coordinate p0 = ring[i];
       Coordinate pnext = ring[i + 1];
       
       if (p.equals2D(pnext)) {
         //-- segment final point is assigned to next segment
-        continue;
       }
       else if (p.equals2D(p0)) {
         int iprev = i > 0 ? i - 1 : ring.length - 2; 
@@ -75,18 +74,17 @@ class AdjacentEdgeLocator {
     }
   }
 
-  private NodeSection createSection(Coordinate p, Coordinate prev, Coordinate next) {
+  private static NodeSection createSection(Coordinate p, Coordinate prev, Coordinate next) {
     if (prev.distance(p) == 0 || next.distance(p) == 0) {
       System.out.println("Found zero-length section segment");
-    };
-    NodeSection ns = new NodeSection(true, Dimension.A, 1, 0, null, false, prev, p, next);
-    return ns;
+    }
+      return new NodeSection(true, Dimension.A, 1, 0, null, false, prev, p, next);
   }
 
   private void init(Geometry geom) {
     if (geom.isEmpty())
       return;
-    ringList = new ArrayList<Coordinate[]>();
+    ringList = new ArrayList<>();
     addRings(geom, ringList);
   }
 

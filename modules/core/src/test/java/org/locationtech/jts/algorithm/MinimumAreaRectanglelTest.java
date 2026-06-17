@@ -24,7 +24,7 @@ public class MinimumAreaRectanglelTest extends GeometryTestCase {
 
   private static final double TOL = 1e-10;
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(MinimumAreaRectanglelTest.class);
   }
 
@@ -73,14 +73,13 @@ public class MinimumAreaRectanglelTest extends GeometryTestCase {
   
   /**
    * Failure case from https://trac.osgeo.org/postgis/ticket/5163
-   * @throws Exception
    */
-  public void testFlatDiagonal() throws Exception {
+  public void testFlatDiagonal() {
     checkMinRectangle("LINESTRING(-99.48710639268086 34.79029839231914,-99.48370699999998 34.78689899963806,-99.48152167568102 34.784713675318976)", 
         "POLYGON ((-99.48710639268066 34.790298392318675, -99.48710639268066 34.790298392318675, -99.48152167568082 34.78471367531866, -99.48152167568082 34.78471367531866, -99.48710639268066 34.790298392318675))");
   } 
   
-  public void testBadRectl() throws Exception {
+  public void testBadRectl() {
     checkMinRectangle("POLYGON ((-5.21175 49.944633, -5.77435 50.021367, -5.7997 50.0306, -5.81815 50.0513, -5.82625 50.073567, -5.83085 50.1173, -6.2741 56.758767, -5.93245 57.909, -5.1158 58.644533, -5.07915 58.661733, -3.42575 58.686633, -3.1392 58.6685, -3.12495 58.666233, -1.88745 57.6444, 1.68845 52.715133, 1.7057 52.6829, 1.70915 52.6522, 1.7034 52.585433, 1.3867 51.214033, 1.36595 51.190267, 1.30485 51.121967, 0.96365 50.928567, 0.93025 50.912433, 0.1925 50.7436, -5.21175 49.944633))", 
         "POLYGON ((1.8583607388069103 50.41649058582797, -5.816631979932251 49.904263313964535, -6.395241388167441 58.57389735949991, 1.2797513305717105 59.08612463136336, 1.8583607388069103 50.41649058582797))");
   }  

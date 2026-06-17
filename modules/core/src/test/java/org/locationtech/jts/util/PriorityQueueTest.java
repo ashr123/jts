@@ -28,39 +28,39 @@ public class PriorityQueueTest
     junit.textui.TestRunner.run(PriorityQueueTest.class);
   }
 
-  public void testOrder1() throws Exception {
-    PriorityQueue q = new PriorityQueue();
-    q.add(new Integer(1));
-    q.add(new Integer(10));
-    q.add(new Integer(5));
-    q.add(new Integer(8));
-    q.add(new Integer(-1));
+  public void testOrder1() {
+    PriorityQueue<Integer> q = new PriorityQueue<>();
+    q.add(1);
+    q.add(10);
+    q.add(5);
+    q.add(8);
+    q.add(-1);
     checkOrder(q);
   }
-  
-  public void testOrderRandom1() throws Exception {
-    PriorityQueue q = new PriorityQueue();
+
+  public void testOrderRandom1() {
+    PriorityQueue<Integer> q = new PriorityQueue<>();
     addRandomItems(q, 100);
     checkOrder(q);
   }
-  
-  private void addRandomItems(PriorityQueue q, int num)
+
+  private static void addRandomItems(PriorityQueue<Integer> q, int num)
   {
     for (int i = 0 ; i < num; i++) {
-      q.add(new Integer((int) (num * Math.random())));
+      q.add((int) (num * Math.random()));
     }
   }
-  
-  private void checkOrder(PriorityQueue q)
+
+  private static void checkOrder(PriorityQueue<Integer> q)
   {
-    Comparable curr = null;
-    
+    Integer curr = null;
+
     while (! q.isEmpty()) {
-      Comparable next = (Comparable) q.poll();
+      Integer next = q.poll();
       //System.out.println(next);
       if (curr == null)
         curr = next;
-      else 
+      else
         assertTrue(next.compareTo(curr) >= 0);
     }
   }

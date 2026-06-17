@@ -37,7 +37,7 @@ public interface PointShapeFactory {
    */
   Shape createPoint(Point2D point);
 
-  public static abstract class BasePointShapeFactory implements
+  abstract class BasePointShapeFactory implements
       PointShapeFactory {
     /**
      * The default size of the shape
@@ -73,7 +73,7 @@ public interface PointShapeFactory {
     public abstract Shape createPoint(Point2D point);
   }
 
-  public static class Point extends BasePointShapeFactory {
+  class Point extends BasePointShapeFactory {
     /**
      * Creates a new factory for points with default size.
      * 
@@ -100,17 +100,15 @@ public interface PointShapeFactory {
      * @return a shape
      */
     public Shape createPoint(Point2D point) {
-      Line2D.Double pointMarker =
-        new Line2D.Double(
+        return new Line2D.Double(
         	point.getX(),
         	point.getY(),
           point.getX(),
           point.getY());
-      return pointMarker;
     }
   }
   
-  public static class Square extends BasePointShapeFactory {
+  class Square extends BasePointShapeFactory {
     /**
      * Creates a new factory for squares with default size.
      * 
@@ -150,7 +148,7 @@ public interface PointShapeFactory {
     }
   }
   
-  public static class Star extends BasePointShapeFactory {
+  class Star extends BasePointShapeFactory {
     /**
      * Creates a new factory for points with default size.
      * 
@@ -193,7 +191,7 @@ public interface PointShapeFactory {
     }
   }
   
-  public static class Triangle extends BasePointShapeFactory {
+  class Triangle extends BasePointShapeFactory {
     /**
      * Creates a new factory for points with default size.
      * 
@@ -231,7 +229,7 @@ public interface PointShapeFactory {
     }
 
   }
-  public static class Circle extends BasePointShapeFactory {
+  class Circle extends BasePointShapeFactory {
     /**
      * Creates a new factory for points with default size.
      * 
@@ -271,7 +269,7 @@ public interface PointShapeFactory {
     }
 
   }
-  public static class Cross extends BasePointShapeFactory {
+  class Cross extends BasePointShapeFactory {
     /**
      * Creates a new factory for points with default size.
      * 
@@ -328,7 +326,7 @@ public interface PointShapeFactory {
     }
 
   }
-  public static class X extends BasePointShapeFactory {
+  class X extends BasePointShapeFactory {
     /**
      * Creates a new factory for points with default size.
      * 

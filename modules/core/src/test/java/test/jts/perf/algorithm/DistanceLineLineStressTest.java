@@ -23,7 +23,7 @@ import junit.textui.TestRunner;
 public class DistanceLineLineStressTest extends TestCase
 {
 
-  public static void main(String args[])
+  public static void main(String[] args)
   {
     TestRunner.run(DistanceLineLineStressTest.class);
   }
@@ -33,8 +33,7 @@ public class DistanceLineLineStressTest extends TestCase
     super(name);
   }
 
-  public void testRandomDisjointCollinearSegments() throws Exception
-  {
+  public void testRandomDisjointCollinearSegments() {
     int n = 1000000;
     int failCount = 0;
     for (int i = 0; i < n; i++) {
@@ -53,7 +52,7 @@ public class DistanceLineLineStressTest extends TestCase
   }
 
   // make results reproducible
-  static Random randGen = new Random(123456);
+  static final Random randGen = new Random(123456);
   
   private static Coordinate[] randomDisjointCollinearSegments()
   {

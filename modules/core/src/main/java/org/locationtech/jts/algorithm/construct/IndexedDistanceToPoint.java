@@ -29,7 +29,7 @@ import org.locationtech.jts.operation.distance.IndexedFacetDistance;
  */
 class IndexedDistanceToPoint {
   
-  private Geometry targetGeometry;
+  private final Geometry targetGeometry;
   private IndexedFacetDistance facetDistance;
   private IndexedPointInPolygonsLocator ptLocater;
 

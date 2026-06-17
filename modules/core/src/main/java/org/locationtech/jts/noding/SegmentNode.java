@@ -21,17 +21,15 @@ import org.locationtech.jts.geom.Coordinate;
  * @version 1.7
  */
 public class SegmentNode
-    implements Comparable
+    implements Comparable<SegmentNode>
 {
-  private final NodedSegmentString segString;
-  public final Coordinate coord;   // the point of intersection
+    public final Coordinate coord;   // the point of intersection
   public final int segmentIndex;   // the index of the containing line segment in the parent edge
   private final int segmentOctant;
   private final boolean isInterior;
 
   public SegmentNode(NodedSegmentString segString, Coordinate coord, int segmentIndex, int segmentOctant) {
-    this.segString = segString;
-    this.coord = coord.copy();
+      this.coord = coord.copy();
     this.segmentIndex = segmentIndex;
     this.segmentOctant = segmentOctant;
     isInterior = ! coord.equals2D(segString.getCoordinate(segmentIndex));
@@ -52,8 +50,7 @@ public class SegmentNode
   public boolean isEndPoint(int maxSegmentIndex)
   {
     if (segmentIndex == 0 && ! isInterior) return true;
-    if (segmentIndex == maxSegmentIndex) return true;
-    return false;
+      return segmentIndex == maxSegmentIndex;
   }
 
   /**
@@ -61,10 +58,8 @@ public class SegmentNode
    * 0 this SegmentNode is at the argument location;
    * 1 this SegmentNode is located after the argument location
    */
-  public int compareTo(Object obj)
+  public int compareTo(SegmentNode other)
   {
-    SegmentNode other = (SegmentNode) obj;
-
     if (segmentIndex < other.segmentIndex) return -1;
     if (segmentIndex > other.segmentIndex) return 1;
 

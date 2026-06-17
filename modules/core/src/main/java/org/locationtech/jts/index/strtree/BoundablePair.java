@@ -11,7 +11,6 @@
  */
 package org.locationtech.jts.index.strtree;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -19,43 +18,43 @@ import org.locationtech.jts.geom.Envelope;
 
 
 /**
- * A pair of {@link Boundable}s, whose leaf items 
+ * A pair of {@link Boundable}s, whose leaf items
  * support a distance metric between them.
  * Used to compute the distance between the members,
  * and to expand a member relative to the other
- * in order to produce new branches of the 
+ * in order to produce new branches of the
  * Branch-and-Bound evaluation tree.
  * Provides an ordering based on the distance between the members,
  * which allows building a priority queue by minimum distance.
- * 
+ *
  * @author Martin Davis
  *
  */
-class BoundablePair
-  implements Comparable
+class BoundablePair<T>
+  implements Comparable<BoundablePair<T>>
 {
-  private Boundable boundable1;
-  private Boundable boundable2;
-  private double distance;
-  private ItemDistance itemDistance;
+  private final Boundable<Envelope> boundable1;
+  private final Boundable<Envelope> boundable2;
+  private final double distance;
+  private final ItemDistance<T> itemDistance;
   //private double maxDistance = -1.0;
-  
-  public BoundablePair(Boundable boundable1, Boundable boundable2, ItemDistance itemDistance)
+
+  public BoundablePair(Boundable<Envelope> boundable1, Boundable<Envelope> boundable2, ItemDistance<T> itemDistance)
   {
     this.boundable1 = boundable1;
     this.boundable2 = boundable2;
     this.itemDistance = itemDistance;
     distance = distance();
   }
-  
+
   /**
-   * Gets one of the member {@link Boundable}s in the pair 
+   * Gets one of the member {@link Boundable}s in the pair
    * (indexed by [0, 1]).
-   * 
+   *
    * @param i the index of the member to return (0 or 1)
    * @return the chosen member
    */
-  public Boundable getBoundable(int i)
+  public Boundable<Envelope> getBoundable(int i)
   {
     if (i == 0) return boundable1;
     return boundable2;
@@ -64,84 +63,81 @@ class BoundablePair
   /**
    * Computes the maximum distance between any
    * two items in the pair of nodes.
-   * 
+   *
    * @return the maximum distance between items in the pair
    */
   public double maximumDistance()
   {
-    return EnvelopeDistance.maximumDistance( 
-        (Envelope) boundable1.getBounds(),
-        (Envelope) boundable2.getBounds());       
+    return EnvelopeDistance.maximumDistance(
+        boundable1.getBounds(),
+        boundable2.getBounds());
   }
-  
+
   /**
    * Computes the distance between the {@link Boundable}s in this pair.
    * The boundables are either composites or leaves.
    * If either is composite, the distance is computed as the minimum distance
-   * between the bounds.  
+   * between the bounds.
    * If both are leaves, the distance is computed by {@link #itemDistance(ItemBoundable, ItemBoundable)}.
-   * 
+   *
    * @return
    */
   private double distance()
   {
     // if items, compute exact distance
     if (isLeaves()) {
-      return itemDistance.distance((ItemBoundable) boundable1,
-          (ItemBoundable) boundable2);
+      return itemDistance.distance((ItemBoundable<Envelope, T>) boundable1,
+          (ItemBoundable<Envelope, T>) boundable2);
     }
     // otherwise compute distance between bounds of boundables
-    return ((Envelope) boundable1.getBounds()).distance(
-        ((Envelope) boundable2.getBounds()));
+    return boundable1.getBounds().distance(
+        boundable2.getBounds());
   }
-  
+
   /**
    * Gets the minimum possible distance between the Boundables in
-   * this pair. 
+   * this pair.
    * If the members are both items, this will be the
    * exact distance between them.
-   * Otherwise, this distance will be a lower bound on 
+   * Otherwise, this distance will be a lower bound on
    * the distances between the items in the members.
-   * 
+   *
    * @return the exact or lower bound distance for this pair
    */
   public double getDistance() { return distance; }
-  
+
   /**
    * Compares two pairs based on their minimum distances
    */
-  public int compareTo(Object o)
+  public int compareTo(BoundablePair<T> nd)
   {
-    BoundablePair nd = (BoundablePair) o;
-    if (distance < nd.distance) return -1;
-    if (distance > nd.distance) return 1;
-    return 0;
+      return Double.compare(distance, nd.distance);
   }
 
   /**
    * Tests if both elements of the pair are leaf nodes
-   * 
+   *
    * @return true if both pair elements are leaf nodes
    */
   public boolean isLeaves()
   {
     return ! (isComposite(boundable1) || isComposite(boundable2));
   }
-  
+
   public static boolean isComposite(Object item)
   {
-    return (item instanceof AbstractNode); 
+    return (item instanceof AbstractNode);
   }
-  
-  private static double area(Boundable b)
+
+  private static double area(Boundable<Envelope> b)
   {
-    return ((Envelope) b.getBounds()).getArea();
+    return b.getBounds().getArea();
   }
-  
+
   /**
-   * For a pair which is not a leaf 
+   * For a pair which is not a leaf
    * (i.e. has at least one composite boundable)
-   * computes a list of new pairs 
+   * computes a list of new pairs
    * from the expansion of the larger boundable
    * with distance less than minDistance
    * and adds them to a priority queue.
@@ -151,16 +147,16 @@ class BoundablePair
    * This must be allowed to support distance
    * functions which have non-zero distances
    * between the item and itself (non-zero reflexive distance).
-   * 
+   *
    * @param priQ the priority queue to add the new pairs to
    * @param minDistance the limit on the distance between added pairs
-   * 
+   *
    */
-  public void expandToQueue(PriorityQueue priQ, double minDistance)
+  public void expandToQueue(PriorityQueue<BoundablePair<T>> priQ, double minDistance)
   {
     boolean isComp1 = isComposite(boundable1);
     boolean isComp2 = isComposite(boundable2);
-    
+
     /**
      * HEURISTIC: If both boundable are composite,
      * choose the one with largest area to expand.
@@ -184,28 +180,26 @@ class BoundablePair
       expand(boundable2, boundable1, true, priQ, minDistance);
       return;
     }
-    
+
     throw new IllegalArgumentException("neither boundable is composite");
   }
-  
-  private void expand(Boundable bndComposite, Boundable bndOther, boolean isFlipped,
-      PriorityQueue priQ, double minDistance)
+
+  private void expand(Boundable<Envelope> bndComposite, Boundable<Envelope> bndOther, boolean isFlipped,
+      PriorityQueue<BoundablePair<T>> priQ, double minDistance)
   {
-    List children = ((AbstractNode) bndComposite).getChildBoundables();
-    for (Iterator i = children.iterator(); i.hasNext(); ) {
-      Boundable child = (Boundable) i.next();
-      BoundablePair bp;
-      if (isFlipped) {
-        bp = new BoundablePair(bndOther, child, itemDistance);
+    List<Boundable<Envelope>> children = ((AbstractNode<Envelope>) bndComposite).getChildBoundables();
+      for (Boundable<Envelope> child : children) {
+          BoundablePair<T> bp;
+          if (isFlipped) {
+              bp = new BoundablePair<>(bndOther, child, itemDistance);
+          } else {
+              bp = new BoundablePair<>(child, bndOther, itemDistance);
+          }
+          // only add to queue if this pair might contain the closest points
+          // MD - it's actually faster to construct the object rather than called distance(child, bndOther)!
+          if (bp.getDistance() < minDistance) {
+              priQ.add(bp);
+          }
       }
-      else {
-        bp = new BoundablePair(child, bndOther, itemDistance);        
-      }
-      // only add to queue if this pair might contain the closest points
-      // MD - it's actually faster to construct the object rather than called distance(child, bndOther)!
-      if (bp.getDistance() < minDistance) {
-        priQ.add(bp);
-      }
-    }
   }
 }

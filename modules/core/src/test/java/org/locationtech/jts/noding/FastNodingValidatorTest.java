@@ -63,22 +63,22 @@ public class FastNodingValidatorTest extends GeometryTestCase {
   }
 
   private void checkValid(String[] inputWKT, boolean isValidExpected) {
-    List input = readList(inputWKT);
-    List segStrings = toSegmentStrings(input); 
+    List<Geometry> input = readList(inputWKT);
+    List<NodedSegmentString> segStrings = toSegmentStrings(input);
     FastNodingValidator fnv = new FastNodingValidator(segStrings);
     boolean isValid = fnv.isValid();
 
-    assertTrue(isValidExpected == isValid);
+      assertEquals(isValidExpected, isValid);
   }
   
   private void checkIntersection(String[] inputWKT, String expectedWKT) {
-    List input = readList(inputWKT);
+    List<Geometry> input = readList(inputWKT);
     Geometry expected = read(expectedWKT);
     Coordinate[] pts = expected.getCoordinates();
     CoordinateList intPtsExpected = new CoordinateList(pts);
-    
-    List segStrings = toSegmentStrings(input); 
-    List intPtsActual = FastNodingValidator.computeIntersections(segStrings);
+
+    List<NodedSegmentString> segStrings = toSegmentStrings(input);
+    List<Coordinate> intPtsActual = FastNodingValidator.computeIntersections(segStrings);
     
     boolean isSameNumberOfIntersections = intPtsExpected.size() == intPtsActual.size();
     assertTrue(isSameNumberOfIntersections);
@@ -86,21 +86,21 @@ public class FastNodingValidatorTest extends GeometryTestCase {
     checkIntersections(intPtsActual, intPtsExpected);
   }
   
-  private void checkIntersections(List intPtsActual, List intPtsExpected) {
+  private static void checkIntersections(List<Coordinate> intPtsActual, List<Coordinate> intPtsExpected) {
     //TODO: sort intersections so they can be compared
     for (int i = 0; i < intPtsActual.size(); i++) {
-      Coordinate ptActual = (Coordinate) intPtsActual.get(i);
-      Coordinate ptExpected = (Coordinate) intPtsExpected.get(i);
-      
+      Coordinate ptActual = intPtsActual.get(i);
+      Coordinate ptExpected = intPtsExpected.get(i);
+
       boolean isEqual = ptActual.equals2D(ptExpected);
       assertTrue(isEqual);
     }
   }
 
-  private static List toSegmentStrings(Collection geoms) {
-    List segStrings = new ArrayList();
-    for (Object geom : geoms) {
-      segStrings.addAll(SegmentStringUtil.extractSegmentStrings((Geometry) geom));
+  private static List<NodedSegmentString> toSegmentStrings(Collection<? extends Geometry> geoms) {
+    List<NodedSegmentString> segStrings = new ArrayList<>();
+    for (Geometry geom : geoms) {
+      segStrings.addAll(SegmentStringUtil.extractSegmentStrings(geom));
     }
     return segStrings;
   }

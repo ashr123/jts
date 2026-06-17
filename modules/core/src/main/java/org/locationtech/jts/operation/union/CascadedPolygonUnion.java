@@ -13,11 +13,9 @@ package org.locationtech.jts.operation.union;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.Polygonal;
@@ -76,7 +74,7 @@ public class CascadedPolygonUnion
    *
    * @param polys a collection of {@link Polygonal} {@link Geometry}s
    */
-  public static Geometry union(Collection polys)
+  public static Geometry union(Collection<? extends Geometry> polys)
   {
     CascadedPolygonUnion op = new CascadedPolygonUnion(polys);
     return op.union();
@@ -88,15 +86,14 @@ public class CascadedPolygonUnion
    *
    * @param polys a collection of {@link Polygonal} {@link Geometry}s
    */
-  public static Geometry union(Collection polys, UnionStrategy unionFun)
+  public static Geometry union(Collection<? extends Geometry> polys, UnionStrategy unionFun)
   {
     CascadedPolygonUnion op = new CascadedPolygonUnion(polys, unionFun);
     return op.union();
   }
 
-	private Collection inputPolys;
-	private GeometryFactory geomFactory = null;
-  private UnionStrategy unionFun;
+	private Collection<? extends Geometry> inputPolys;
+    private final UnionStrategy unionFun;
 
   private int countRemainder = 0;
   private int countInput = 0;
@@ -107,7 +104,7 @@ public class CascadedPolygonUnion
    *
    * @param polys a collection of {@link Polygonal} {@link Geometry}s
    */
-  public CascadedPolygonUnion(Collection polys)
+  public CascadedPolygonUnion(Collection<? extends Geometry> polys)
   {
     this(polys, CLASSIC_UNION );
   }
@@ -118,13 +115,13 @@ public class CascadedPolygonUnion
    *
    * @param polys a collection of {@link Polygonal} {@link Geometry}s
    */
-  public CascadedPolygonUnion(Collection polys, UnionStrategy unionFun)
+  public CascadedPolygonUnion(Collection<? extends Geometry> polys, UnionStrategy unionFun)
   {
     this.inputPolys = polys;
     this.unionFun = unionFun;
     // guard against null input
     if (inputPolys == null)
-      inputPolys = new ArrayList();
+      inputPolys = new ArrayList<>();
     this.countInput = inputPolys.size();
     this.countRemainder = countInput;
   }
@@ -157,7 +154,7 @@ public class CascadedPolygonUnion
 	    throw new IllegalStateException("union() method cannot be called twice");
 		if (inputPolys.isEmpty())
 			return null;
-		geomFactory = ((Geometry) inputPolys.iterator().next()).getFactory();
+        GeometryFactory geomFactory = inputPolys.iterator().next().getFactory();
 
 		/**
 		 * A spatial index to organize the collection
@@ -166,34 +163,31 @@ public class CascadedPolygonUnion
 		 * to be eliminated on each round.
 		 */
 //    STRtree index = new STRtree();
-    STRtree index = new STRtree(STRTREE_NODE_CAPACITY);
-    for (Iterator i = inputPolys.iterator(); i.hasNext(); ) {
-      Geometry item = (Geometry) i.next();
-      index.insert(item.getEnvelopeInternal(), item);
-    }
+    STRtree<Geometry> index = new STRtree<>(STRTREE_NODE_CAPACITY);
+        for (Geometry item : inputPolys) {
+            index.insert(item.getEnvelopeInternal(), item);
+        }
     // To avoiding holding memory remove references to the input geometries,
     inputPolys = null;
 
-    List itemTree = index.itemsTree();
+    List<Object> itemTree = index.itemsTree();
 //    printItemEnvelopes(itemTree);
-    Geometry unionAll = unionTree(itemTree);
-    return unionAll;
+        return unionTree(itemTree);
 	}
 
-  private Geometry unionTree(List geomTree)
+  private Geometry unionTree(List<Object> geomTree)
   {
     /**
      * Recursively unions all subtrees in the list into single geometries.
      * The result is a list of Geometrys only
      */
-    List geoms = reduceToGeometries(geomTree);
+    List<Geometry> geoms = reduceToGeometries(geomTree);
 //    Geometry union = bufferUnion(geoms);
-    Geometry union = binaryUnion(geoms);
 
-    // print out union (allows visualizing hierarchy)
+      // print out union (allows visualizing hierarchy)
 //    System.out.println(union);
 
-    return union;
+    return binaryUnion(geoms);
   }
 
   //========================================================
@@ -201,11 +195,11 @@ public class CascadedPolygonUnion
    * The following methods are for experimentation only
    */
 /*
-  private Geometry repeatedUnion(List geoms)
+  private Geometry repeatedUnion(List<Geometry> geoms)
   {
   	Geometry union = null;
-  	for (Iterator i = geoms.iterator(); i.hasNext(); ) {
-  		Geometry g = (Geometry) i.next();
+  	for (Iterator<Geometry> i = geoms.iterator(); i.hasNext(); ) {
+  		Geometry g = i.next();
   		if (union == null)
   			union = g.copy();
   		else
@@ -222,7 +216,7 @@ public class CascadedPolygonUnion
    * by treating the list as a flattened binary tree,
    * and performing a cascaded union on the tree.
    */
-  private Geometry binaryUnion(List geoms)
+  private Geometry binaryUnion(List<Geometry> geoms)
   {
   	return binaryUnion(geoms, 0, geoms.size());
   }
@@ -236,7 +230,7 @@ public class CascadedPolygonUnion
    * @param end the index after the end of the section
    * @return the union of the list section
    */
-  private Geometry binaryUnion(List geoms, int start, int end)
+  private Geometry binaryUnion(List<Geometry> geoms, int start, int end)
   {
   	if (end - start <= 1) {
   		Geometry g0 = getGeometry(geoms, start);
@@ -263,10 +257,10 @@ public class CascadedPolygonUnion
    * @return the geometry at the given index
    * or null if the index is out of range
    */
-  private static Geometry getGeometry(List list, int index)
+  private static Geometry getGeometry(List<? extends Geometry> list, int index)
   {
   	if (index >= list.size()) return null;
-  	return (Geometry) list.get(index);
+  	return list.get(index);
   }
 
   /**
@@ -276,20 +270,19 @@ public class CascadedPolygonUnion
    * @param geomTree a tree-structured list of geometries
    * @return a list of Geometrys
    */
-  private List reduceToGeometries(List geomTree)
+  @SuppressWarnings("unchecked")
+  private List<Geometry> reduceToGeometries(List<Object> geomTree)
   {
-    List geoms = new ArrayList();
-    for (Iterator i = geomTree.iterator(); i.hasNext(); ) {
-      Object o = i.next();
-      Geometry geom = null;
-      if (o instanceof List) {
-        geom = unionTree((List) o);
+    List<Geometry> geoms = new ArrayList<>();
+      for (Object o : geomTree) {
+          Geometry geom = null;
+          if (o instanceof List) {
+              geom = unionTree((List<Object>) o);
+          } else if (o instanceof Geometry) {
+              geom = (Geometry) o;
+          }
+          geoms.add(geom);
       }
-      else if (o instanceof Geometry) {
-        geom = (Geometry) o;
-      }
-      geoms.add(geom);
-    }
     return geoms;
   }
 
@@ -336,8 +329,7 @@ public class CascadedPolygonUnion
   private Geometry unionActual(Geometry g0, Geometry g1)
   {
     Geometry union = unionFun.union(g0, g1);
-    Geometry unionPoly = restrictToPolygons( union );
-  	return unionPoly;
+      return restrictToPolygons( union );
   }
 
   /**
@@ -358,9 +350,9 @@ public class CascadedPolygonUnion
     if (g instanceof Polygonal) {
       return g;
     }
-    List polygons = PolygonExtracter.getPolygons(g);
+    List<Polygon> polygons = PolygonExtracter.getPolygons(g);
     if (polygons.size() == 1)
-      return (Polygon) polygons.get(0);
+      return polygons.get(0);
     return g.getFactory().createMultiPolygon(GeometryFactory.toPolygonArray(polygons));
   }
 }

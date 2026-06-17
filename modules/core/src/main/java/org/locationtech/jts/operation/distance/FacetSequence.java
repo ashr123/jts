@@ -28,9 +28,9 @@ import org.locationtech.jts.geom.LineSegment;
  */
 public class FacetSequence
 {
-  private CoordinateSequence pts;
-  private int start;
-  private int end; 
+  private final CoordinateSequence pts;
+  private final int start;
+  private final int end;
   
   /**
    * Creates a new sequence of facets based on a {@link CoordinateSequence}.
@@ -198,7 +198,7 @@ public class FacetSequence
     return index;
   }
   
-  private Coordinate nearestPoint(Coordinate pt, Coordinate q0, Coordinate q1) {
+  private static Coordinate nearestPoint(Coordinate pt, Coordinate q0, Coordinate q1) {
     LineSegment seg = new LineSegment(q0, q1);
     return seg.closestPoint(pt);
   }
@@ -226,8 +226,8 @@ public class FacetSequence
     return minDistance;
   }
 
-  private void updateNearestLocationsLineLine(int i, Coordinate p0, Coordinate p1, FacetSequence facetSeq, int j,
-      Coordinate q0, Coordinate q1, Coordinate[] locs) {
+  private static void updateNearestLocationsLineLine(int i, Coordinate p0, Coordinate p1, FacetSequence facetSeq, int j,
+                                                     Coordinate q0, Coordinate q1, Coordinate[] locs) {
     LineSegment seg0 = new LineSegment(p0, p1);
     LineSegment seg1 = new LineSegment(q0, q1);
     Coordinate[] closestPt = seg0.closestPoints(seg1);
@@ -235,7 +235,7 @@ public class FacetSequence
     locs[1] = closestPt[1].copy();    
   }
   
-  private double computeDistancePointLine(Coordinate pt, FacetSequence facetSeq, Coordinate[] locs) 
+  private static double computeDistancePointLine(Coordinate pt, FacetSequence facetSeq, Coordinate[] locs)
   {
     double minDistance = Double.MAX_VALUE;
 
@@ -252,9 +252,9 @@ public class FacetSequence
     return minDistance;
   }
   
-  private void updateNearestLocationsPointLine(Coordinate pt, 
-      FacetSequence facetSeq, int i, Coordinate q0, Coordinate q1, 
-      Coordinate[] locs) {
+  private static void updateNearestLocationsPointLine(Coordinate pt,
+                                                      FacetSequence facetSeq, int i, Coordinate q0, Coordinate q1,
+                                                      Coordinate[] locs) {
     locs[0] = pt.copy();
     LineSegment seg = new LineSegment(q0, q1);
     Coordinate segClosestPoint = seg.closestPoint(pt);
@@ -263,14 +263,14 @@ public class FacetSequence
 
   public String toString()
   {
-    StringBuffer buf = new StringBuffer();
+    StringBuilder buf = new StringBuilder();
     buf.append("LINESTRING ( ");
     Coordinate p = new Coordinate();
     for (int i = start; i < end; i++) {
       if (i > start)
         buf.append(", ");
       pts.getCoordinate(i, p);
-      buf.append(p.x + " " + p.y);
+      buf.append(p.x).append(" ").append(p.y);
     }
     buf.append(" )");
     return buf.toString();

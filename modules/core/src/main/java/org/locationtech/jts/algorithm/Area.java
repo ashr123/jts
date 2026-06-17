@@ -22,7 +22,10 @@ import org.locationtech.jts.geom.CoordinateSequence;
  */
 public class Area {
 
-  /**
+    private Area() {
+    }
+
+    /**
    * Computes the area for a ring. 
    * 
    * @param ring the coordinates forming the ring

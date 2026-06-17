@@ -34,8 +34,8 @@ import org.locationtech.jts.noding.SegmentString;
  */
 class PolygonNoder {
 
-  private boolean[] isHoleTouching;
-  private List<NodedSegmentString> nodedRings;
+  private final boolean[] isHoleTouching;
+  private final List<NodedSegmentString> nodedRings;
 
   public PolygonNoder(Coordinate[] shellRing, Coordinate[][] holeRings) {
     nodedRings = createNodedSegmentStrings(shellRing, holeRings);
@@ -70,7 +70,7 @@ class PolygonNoder {
   
   public static List<NodedSegmentString> createNodedSegmentStrings(Coordinate[] shellRing, Coordinate[][] holeRings)
   {
-    List<NodedSegmentString> segStr = new ArrayList<NodedSegmentString>();
+    List<NodedSegmentString> segStr = new ArrayList<>();
     segStr.add(createNodedSegString(shellRing, -1));
     for (int i = 0; i < holeRings.length; i++) {
       segStr.add(createNodedSegString(holeRings[i], i));
@@ -92,8 +92,8 @@ class PolygonNoder {
    */
   private static class NodeAdder implements SegmentIntersector {
 
-    private LineIntersector li = new RobustLineIntersector();
-    private boolean[] isHoleTouching;
+    private final LineIntersector li = new RobustLineIntersector();
+    private final boolean[] isHoleTouching;
 
     public NodeAdder(boolean[] isHoleTouching) {
       this.isHoleTouching = isHoleTouching;

@@ -166,7 +166,7 @@ public class ValidSelfTouchingRingTest
     Geometry geom = read(wkt);
     IsValidOp validator = new IsValidOp(geom);
     boolean isValid = validator.isValid();
-    assertTrue(isValid == expected);
+      assertEquals(isValid, expected);
   }
 
   private void checkIsValidSTR(String wkt, boolean expected)
@@ -175,7 +175,7 @@ public class ValidSelfTouchingRingTest
     IsValidOp validator = new IsValidOp(geom);
     validator.setSelfTouchingRingFormingHoleValid(true);
     boolean isValid = validator.isValid();
-    assertTrue(isValid == expected);
+      assertEquals(isValid, expected);
   }
 
 

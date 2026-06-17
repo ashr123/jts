@@ -55,7 +55,7 @@ public class FastNodingValidator
    * @param segStrings a collection of SegmentStrings
    * @return a list of Coordinate
    */
-  public static List computeIntersections(Collection segStrings)
+  public static List<Coordinate> computeIntersections(Collection<? extends SegmentString> segStrings)
   {
     FastNodingValidator nv = new FastNodingValidator(segStrings);
     nv.setFindAllIntersections(true);
@@ -63,9 +63,9 @@ public class FastNodingValidator
     return nv.getIntersections();
   }
   
-  private LineIntersector li = new RobustLineIntersector();
+  private final LineIntersector li = new RobustLineIntersector();
 
-  private Collection segStrings;
+  private final Collection<? extends SegmentString> segStrings;
   private boolean findAllIntersections = false;
   private NodingIntersectionFinder segInt = null;
   private boolean isValid = true;
@@ -75,7 +75,7 @@ public class FastNodingValidator
    * 
    * @param segStrings a collection of {@link SegmentString}s
    */
-  public FastNodingValidator(Collection segStrings)
+  public FastNodingValidator(Collection<? extends SegmentString> segStrings)
   {
     this.segStrings = segStrings;
   }
@@ -92,7 +92,7 @@ public class FastNodingValidator
    * 
    * @return a list of Coordinate
    */
-  public List getIntersections()
+  public List<Coordinate> getIntersections()
   {
     return segInt.getIntersections();
   }
@@ -161,8 +161,7 @@ public class FastNodingValidator
   	noder.computeNodes(segStrings);
   	if (segInt.hasIntersection()) {
   		isValid = false;
-  		return;
-  	}
+    }
   }
   
 }

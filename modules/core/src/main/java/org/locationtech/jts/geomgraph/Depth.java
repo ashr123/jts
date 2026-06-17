@@ -30,7 +30,7 @@ public class Depth {
     return NULL_VALUE;
   }
 
-  private int[][] depth = new int[2][3];
+  private final int[][] depth = new int[2][3];
 
   public Depth() {
     // initialize depth array to a sentinel value

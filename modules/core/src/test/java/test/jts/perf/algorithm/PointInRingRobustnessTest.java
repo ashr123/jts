@@ -6,7 +6,6 @@ import org.locationtech.jts.algorithm.RayCrossingCounter;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.LineSegment;
 import org.locationtech.jts.geom.Location;
-import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.io.WKTWriter;
 
 import junit.textui.TestRunner;
@@ -40,7 +39,7 @@ import test.jts.GeometryTestCase;
  */
 public class PointInRingRobustnessTest extends GeometryTestCase {
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(PointInRingRobustnessTest.class);
   }
 
@@ -144,7 +143,7 @@ public class PointInRingRobustnessTest extends GeometryTestCase {
   
   public static String toPolygon(Coordinate[] coord)
   {
-    StringBuffer buf = new StringBuffer();
+    StringBuilder buf = new StringBuilder();
     buf.append("POLYGON ");
     if (coord.length == 0)
       buf.append(" EMPTY");
@@ -153,7 +152,7 @@ public class PointInRingRobustnessTest extends GeometryTestCase {
       for (int i = 0; i < coord.length; i++) {
         if (i > 0)
           buf.append(", ");
-        buf.append(coord[i].x + " " + coord[i].y );
+        buf.append(coord[i].x).append(" ").append(coord[i].y);
       }
       buf.append("))");
     }

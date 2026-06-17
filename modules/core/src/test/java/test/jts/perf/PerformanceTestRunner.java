@@ -33,21 +33,21 @@ public class PerformanceTestRunner
 {
   private static final String RUN_PREFIX = "run";
 
-  public static void run(Class clz)
+  public static void run(Class<?> clz)
   {
     PerformanceTestRunner runner = new PerformanceTestRunner();
-    runner.runInternal(clz);
+    runInternal(clz);
   }
 
   private PerformanceTestRunner()
   {
-    
+
   }
-  
-  private void runInternal(Class clz)
+
+  private static void runInternal(Class<?> clz)
   {
     try {
-      Constructor ctor = clz.getConstructor(String.class);
+      Constructor<?> ctor = clz.getConstructor(String.class);
       PerformanceTestCase test = (PerformanceTestCase) ctor.newInstance("Name");
       int[] runSize = test.getRunSize();
       int runIter = test.getRunIterations();
@@ -87,7 +87,7 @@ public class PerformanceTestRunner
   }
   
   
-  private void reportRun(String name, String timeString, int size, long time, int sizePrev, long timePrev) {
+  private static void reportRun(String name, String timeString, int size, long time, int sizePrev, long timePrev) {
     String factorStr = "";
     if (sizePrev > 0 && timePrev > 0) {
       double sizeFactor = size / (double) sizePrev;
@@ -98,15 +98,15 @@ public class PerformanceTestRunner
         + " : " + timeString + factorStr);
   }
 
-  private static Method[] findMethods(Class clz, String methodPrefix)
+  private static Method[] findMethods(Class<?> clz, String methodPrefix)
   {
-    List runMeths = new ArrayList();
-    Method meth[] = clz.getDeclaredMethods();
-    for (int i = 0; i < meth.length; i++) {
-      if (meth[i].getName().startsWith(RUN_PREFIX)) {
-        runMeths.add(meth[i]);
+    List<Method> runMeths = new ArrayList<>();
+    Method[] meth = clz.getDeclaredMethods();
+      for (Method method : meth) {
+          if (method.getName().startsWith(RUN_PREFIX)) {
+              runMeths.add(method);
+          }
       }
-    }
-    return (Method[]) runMeths.toArray(new Method[0]);
+    return runMeths.toArray(new Method[0]);
   }
 }

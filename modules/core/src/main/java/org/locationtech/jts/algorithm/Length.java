@@ -23,7 +23,10 @@ import org.locationtech.jts.math.MathUtil;
  */
 public class Length {
 
-  /**
+    private Length() {
+    }
+
+    /**
    * Computes the length of a linestring specified by a sequence of points.
    * 
    * @param pts the points specifying the linestring

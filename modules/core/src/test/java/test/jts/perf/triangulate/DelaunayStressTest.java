@@ -41,9 +41,9 @@ public class DelaunayStressTest
   final static double SIDE_LEN = 1000.0;
   final static double BASE_OFFSET = 0;
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
   	DelaunayStressTest test = new DelaunayStressTest();
-  	test.run();
+  	run();
   }
 	
 	final static GeometryFactory geomFact = new GeometryFactory();
@@ -51,7 +51,7 @@ public class DelaunayStressTest
   private static final double HEIGHT = 100;
 	
 	
-  public void run()
+  public static void run()
   {
     for (int i = 0; i < RUN_COUNT; i++) {
       System.out.println("Run # " + i);
@@ -59,13 +59,13 @@ public class DelaunayStressTest
     }
   }
   
-	public void run(int nPts)
+	public static void run(int nPts)
 	{
     List<Coordinate> pts = randomPointsInGrid(nPts, BASE_OFFSET, BASE_OFFSET, WIDTH, HEIGHT, 1);
     run(pts);
 	}
 	
-	public void run(List<Coordinate> pts)
+	public static void run(List<Coordinate> pts)
 	{
     System.out.println("Base offset: " + BASE_OFFSET);
 		System.out.println("# pts: " + pts.size());
@@ -83,7 +83,7 @@ public class DelaunayStressTest
 //		System.out.println(g);
 	}
 	
-	private void checkVoronoi(List<Coordinate> pts) {
+	private static void checkVoronoi(List<Coordinate> pts) {
 	  VoronoiDiagramBuilder vdb = new VoronoiDiagramBuilder();
 	  vdb.setSites(pts);
 	  vdb.getDiagram(geomFact);
@@ -91,7 +91,7 @@ public class DelaunayStressTest
 	  //-- for now simply confirm the Voronoi is computed with no failure
   }
 
-  private void checkDelaunay(Geometry tris) {
+  private static void checkDelaunay(Geometry tris) {
 	  //TODO: check all elements are triangles
 	  
 	  //-- check triangulation is a coverage
@@ -101,7 +101,7 @@ public class DelaunayStressTest
 	  checkConvex(tris, union);
   }
 
-  private void checkConvex(Geometry tris, Geometry triHull) {
+  private static void checkConvex(Geometry tris, Geometry triHull) {
     Geometry convexHull = convexHull(tris); 
     boolean isEqual = triHull.equalsTopo(convexHull);
     
@@ -116,12 +116,12 @@ public class DelaunayStressTest
 	  }
   }
 
-  private Geometry convexHull(Geometry tris) {
+  private static Geometry convexHull(Geometry tris) {
     ConvexHull hull = new ConvexHull(tris);
     return hull.getConvexHull();
   }
 
-  private boolean isConvex(Polygon poly) {
+  private static boolean isConvex(Polygon poly) {
     Coordinate[] pts = poly.getCoordinates();
     for (int i = 0; i < pts.length - 1; i++) {
       int iprev = i - 1;
@@ -140,7 +140,7 @@ public class DelaunayStressTest
     if (scale > 0) {
       pm = new PrecisionModel(scale);
     }
-		List<Coordinate> pts = new ArrayList<Coordinate>();
+		List<Coordinate> pts = new ArrayList<>();
 		
 		int nSide = (int) Math.sqrt(nPts) + 1;
 		
@@ -164,7 +164,7 @@ public class DelaunayStressTest
 
   static List<Coordinate> randomPoints(int nPts, double sideLen)
 	{
-		List<Coordinate> pts = new ArrayList<Coordinate>();
+		List<Coordinate> pts = new ArrayList<>();
 		
 		for (int i = 0; i < nPts; i++) {
 				double x = sideLen * Math.random();

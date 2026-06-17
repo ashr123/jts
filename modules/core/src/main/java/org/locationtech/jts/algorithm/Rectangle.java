@@ -18,8 +18,11 @@ import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
 
 class Rectangle {
-  
-  /**
+
+    private Rectangle() {
+    }
+
+    /**
    * Creates a rectangular {@link Polygon} from a base segment
    * defining the position and orientation of one side of the rectangle, and 
    * three points defining the locations of the line segments 

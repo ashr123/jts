@@ -20,7 +20,7 @@ import junit.textui.TestRunner;
 
 public class OverlayNGEmptyDisjointTest extends OverlayNGTestCase {
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(OverlayNGEmptyDisjointTest.class);
   }
 

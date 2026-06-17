@@ -23,14 +23,14 @@ import org.locationtech.jts.util.GeometricShapeFactory;
 public class PackedCoordinateSequenceMemoryTest 
 {
 
-	 public static void main(String args[]) {
+	 public static void main(String[] args) {
 		 PackedCoordinateSequenceMemoryTest test = new PackedCoordinateSequenceMemoryTest();
 	  	test.run();
 	  }
 
 //	 PackedCoordinateSequenceFactory coordSeqFact = new PackedCoordinateSequenceFactory(PackedCoordinateSequenceFactory.DOUBLE, 2);
-	 CoordinateArraySequenceFactory coordSeqFact = CoordinateArraySequenceFactory.instance();
-	 GeometryFactory geomFact = new GeometryFactory(coordSeqFact);
+final CoordinateArraySequenceFactory coordSeqFact = CoordinateArraySequenceFactory.instance();
+	 final GeometryFactory geomFact = new GeometryFactory(coordSeqFact);
 	 
 	 PackedCoordinateSequenceMemoryTest()
 	 {
@@ -48,7 +48,7 @@ public class PackedCoordinateSequenceMemoryTest
 	 
 	 void runToMemoryOverflow()
 	 {
-		 List geoms = new ArrayList();
+		 List<Geometry> geoms = new ArrayList<>();
 		 while (true) {
 			 geoms.add(createGeometry());
 			 System.out.println(geoms.size());

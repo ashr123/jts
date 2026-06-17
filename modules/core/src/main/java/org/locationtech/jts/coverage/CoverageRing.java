@@ -35,7 +35,7 @@ class CoverageRing extends BasicSegmentString {
   }
 
   public static List<CoverageRing> createRings(List<Polygon> polygons) {
-    List<CoverageRing> rings = new ArrayList<CoverageRing>();
+    List<CoverageRing> rings = new ArrayList<>();
     for (Polygon poly : polygons) {
       createRings(poly, rings);
     }
@@ -63,7 +63,7 @@ class CoverageRing extends BasicSegmentString {
       pts = CoordinateArrays.removeRepeatedOrInvalidPoints(pts);
     }
     boolean isCCW = Orientation.isCCW(pts);
-    boolean isInteriorOnRight = isShell ? ! isCCW : isCCW;
+    boolean isInteriorOnRight = isShell != isCCW;
     return new CoverageRing(pts, isInteriorOnRight);
   }
   
@@ -82,9 +82,9 @@ class CoverageRing extends BasicSegmentString {
     return true;
   }
   
-  private boolean isInteriorOnRight;
-  private boolean[] isInvalid;
-  private boolean[] isMatched;
+  private final boolean isInteriorOnRight;
+  private final boolean[] isInvalid;
+  private final boolean[] isMatched;
 
   private CoverageRing(Coordinate[] pts, boolean isInteriorOnRight) {
     super(pts, null);
@@ -162,10 +162,10 @@ class CoverageRing extends BasicSegmentString {
    * @return true if all segments are invalid
    */
   public boolean isInvalid() {
-    for (int i = 0; i < isInvalid.length; i++) {
-      if (! isInvalid[i])
-        return false;
-    }
+      for (boolean b : isInvalid) {
+          if (!b)
+              return false;
+      }
     return true;
   }
 
@@ -175,10 +175,10 @@ class CoverageRing extends BasicSegmentString {
    * @return true if some segment is invalid
    */
   public boolean hasInvalid() {
-    for (int i = 0; i < isInvalid.length; i++) {
-      if (isInvalid[i])
-        return true;
-    }
+      for (boolean b : isInvalid) {
+          if (b)
+              return true;
+      }
     return false;
   }
 
@@ -267,14 +267,12 @@ class CoverageRing extends BasicSegmentString {
     int startIndex = findInvalidStart(0);
     int firstEndIndex = findInvalidEnd(startIndex);
     int endIndex = firstEndIndex;
-    while (true) {
-      startIndex = findInvalidStart(endIndex); 
-      endIndex = findInvalidEnd(startIndex);
-      LineString line = createLine(startIndex, endIndex, geomFactory);
-      lines.add(line);
-      if (endIndex == firstEndIndex)
-        break;
-    }
+      do {
+          startIndex = findInvalidStart(endIndex);
+          endIndex = findInvalidEnd(startIndex);
+          LineString line = createLine(startIndex, endIndex, geomFactory);
+          lines.add(line);
+      } while (endIndex != firstEndIndex);
   }
 
   private int findInvalidStart(int index) {
@@ -285,10 +283,9 @@ class CoverageRing extends BasicSegmentString {
   }
 
   private int findInvalidEnd(int index) {
-    index = nextMarkIndex(index);
-    while (isInvalid(index)) {
-      index = nextMarkIndex(index);
-    }
+      do {
+          index = nextMarkIndex(index);
+      } while (isInvalid(index));
     return index;
   }
   

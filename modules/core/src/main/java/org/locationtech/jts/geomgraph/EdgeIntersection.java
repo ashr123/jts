@@ -26,17 +26,17 @@ import org.locationtech.jts.geom.Coordinate;
  * @version 1.7
  */
 public class EdgeIntersection
-    implements Comparable
+    implements Comparable<EdgeIntersection>
 {
 
   /** Point of intersection */
-  public Coordinate coord;
+  public final Coordinate coord;
 
   /** Index of the containing line segment in the parent edge */
-  public int segmentIndex;
+  public final int segmentIndex;
 
   /** Edge distance of this point along the containing line segment */
-  public double dist;
+  public final double dist;
 
   /**
    * EdgeIntersection.
@@ -57,9 +57,8 @@ public class EdgeIntersection
 
   public double getDistance() { return dist; }
 
-  public int compareTo(Object obj)
+  public int compareTo(EdgeIntersection other)
   {
-    EdgeIntersection other = (EdgeIntersection) obj;
     return compare(other.segmentIndex, other.dist);
   }
   /**
@@ -75,16 +74,13 @@ public class EdgeIntersection
   {
     if (this.segmentIndex < segmentIndex) return -1;
     if (this.segmentIndex > segmentIndex) return 1;
-    if (this.dist < dist) return -1;
-    if (this.dist > dist) return 1;
-    return 0;
+      return Double.compare(this.dist, dist);
   }
 
   public boolean isEndPoint(int maxSegmentIndex)
   {
     if (segmentIndex == 0 && dist == 0.0) return true;
-    if (segmentIndex == maxSegmentIndex) return true;
-    return false;
+      return segmentIndex == maxSegmentIndex;
   }
 
   public void print(PrintStream out)

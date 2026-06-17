@@ -11,7 +11,6 @@
  */
 package org.locationtech.jts.geomgraph.index;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.geom.Coordinate;
@@ -33,32 +32,28 @@ public class SimpleEdgeSetIntersector
   public SimpleEdgeSetIntersector() {
   }
 
-  public void computeIntersections(List edges, SegmentIntersector si, boolean testAllSegments)
+  public void computeIntersections(List<? extends Edge> edges, SegmentIntersector si, boolean testAllSegments)
   {
     nOverlaps = 0;
 
-    for (Iterator i0 = edges.iterator(); i0.hasNext(); ) {
-      Edge edge0 = (Edge) i0.next();
-      for (Iterator i1 = edges.iterator(); i1.hasNext(); ) {
-        Edge edge1 = (Edge) i1.next();
-        if (testAllSegments || edge0 != edge1)
-          computeIntersects(edge0, edge1, si);
+      for (Edge edge0 : edges) {
+          for (Edge edge1 : edges) {
+              if (testAllSegments || edge0 != edge1)
+                  computeIntersects(edge0, edge1, si);
+          }
       }
-    }
   }
 
 
-  public void computeIntersections(List edges0, List edges1, SegmentIntersector si)
+  public void computeIntersections(List<? extends Edge> edges0, List<? extends Edge> edges1, SegmentIntersector si)
   {
     nOverlaps = 0;
 
-    for (Iterator i0 = edges0.iterator(); i0.hasNext(); ) {
-      Edge edge0 = (Edge) i0.next();
-      for (Iterator i1 = edges1.iterator(); i1.hasNext(); ) {
-        Edge edge1 = (Edge) i1.next();
-        computeIntersects(edge0, edge1, si);
+      for (Edge edge0 : edges0) {
+          for (Edge edge1 : edges1) {
+              computeIntersects(edge0, edge1, si);
+          }
       }
-    }
   }
 
   /**
@@ -66,7 +61,7 @@ public class SimpleEdgeSetIntersector
    * This has n^2 performance, and is about 100 times slower than using
    * monotone chains.
    */
-  private void computeIntersects(Edge e0, Edge e1, SegmentIntersector si)
+  private static void computeIntersects(Edge e0, Edge e1, SegmentIntersector si)
   {
    Coordinate[] pts0 = e0.getCoordinates();
     Coordinate[] pts1 = e1.getCoordinates();

@@ -15,21 +15,21 @@ import java.util.ArrayList;
 
 /**
  * A priority queue over a set of {@link Comparable} objects.
- * 
+ *
  * @author Martin Davis
  * @deprecated
  */
-public class PriorityQueue 
+public class PriorityQueue<E extends Comparable<? super E>>
 {
   private int size; // Number of elements in queue
-  private ArrayList items; // The queue binary heap array
+  private final ArrayList<E> items; // The queue binary heap array
 
   /**
    * Creates a new empty priority queue
    */
   public PriorityQueue() {
     size = 0;
-    items = new ArrayList();
+    items = new ArrayList<>();
     // create space for sentinel
     items.add(null);
   }
@@ -39,7 +39,7 @@ public class PriorityQueue
    * Duplicates are allowed.
    * @param x the item to insert.
    */
-  public void add(Comparable x) 
+  public void add(E x)
   {
     // increase the size of the items heap to create a hole for the new item
     items.add(null);
@@ -59,7 +59,7 @@ public class PriorityQueue
   }
 
   /**
-   * Establish heap from an arbitrary arrangement of items. 
+   * Establish heap from an arbitrary arrangement of items.
    */
   /*
    private void buildHeap( ) {
@@ -96,11 +96,11 @@ public class PriorityQueue
    * Remove the smallest item from the priority queue.
    * @return the smallest item, or null if empty
    */
-  public Object poll() 
+  public E poll()
   {
     if (isEmpty())
       return null;
-    Object minItem = items.get(1);
+    E minItem = items.get(1);
     items.set(1, items.get(size));
     size -= 1;
     reorder(1);
@@ -108,30 +108,29 @@ public class PriorityQueue
     return minItem;
   }
 
-  public Object peek() 
+  public E peek()
   {
     if (isEmpty())
       return null;
-    Object minItem = items.get(1);
-    return minItem;
+      return items.get(1);
   }
-  
+
   /**
    * Internal method to percolate down in the heap.
-   * 
+   *
    * @param hole the index at which the percolate begins.
    */
-  private void reorder(int hole) 
+  private void reorder(int hole)
   {
     int child;
-    Object tmp = items.get(hole);
+    E tmp = items.get(hole);
 
     for (; hole * 2 <= size; hole = child) {
       child = hole * 2;
       if (child != size
-          && ((Comparable) items.get(child + 1)).compareTo(items.get(child)) < 0)
+          && items.get(child + 1).compareTo(items.get(child)) < 0)
         child++;
-      if (((Comparable) items.get(child)).compareTo(tmp) < 0)
+      if (items.get(child).compareTo(tmp) < 0)
         items.set(hole, items.get(child));
       else
         break;

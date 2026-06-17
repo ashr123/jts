@@ -19,7 +19,7 @@ import test.jts.GeometryTestCase;
 public class CoverageValidatorTest extends GeometryTestCase 
 {
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(CoverageValidatorTest.class);
   }
   
@@ -152,16 +152,16 @@ public class CoverageValidatorTest extends GeometryTestCase
   
   //------------------------------------------------------------
   
-  private void checkValid(Geometry[] coverage) {
+  private static void checkValid(Geometry[] coverage) {
     assertTrue(CoverageValidator.isValid(coverage));
   }
 
-  private void checkInvalid(Geometry[] coverage, Geometry[] expected) {
+  private static void checkInvalid(Geometry[] coverage, Geometry[] expected) {
     Geometry[] actual = CoverageValidator.validate(coverage);
     checkEqual(expected, actual);
   }
   
-  private void checkInvalidWithGaps(Geometry[] coverage, double gapWidth, Geometry[] expected) {
+  private static void checkInvalidWithGaps(Geometry[] coverage, double gapWidth, Geometry[] expected) {
     Geometry[] actual = CoverageValidator.validate(coverage, gapWidth);
     checkEqual(expected, actual);
   }

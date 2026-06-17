@@ -19,7 +19,6 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.locationtech.jts.geom.Coordinate;
 
@@ -44,12 +43,11 @@ public class PolygonShape implements Shape
      * @param holeVerticesCollection a collection of Coordinate[] for each hole
      */
     public PolygonShape(Coordinate[] shellVertices,
-        Collection holeVerticesCollection) 
+        Collection<? extends Coordinate[]> holeVerticesCollection)
     {
         polygonPath = toPath(shellVertices);
 
-        for (Iterator i = holeVerticesCollection.iterator(); i.hasNext();) {
-            Coordinate[] holeVertices = (Coordinate[]) i.next();
+        for (Coordinate[] holeVertices : holeVerticesCollection) {
             polygonPath.append(toPath(holeVertices), false);
         }
     }
@@ -89,14 +87,14 @@ public class PolygonShape implements Shape
      * @param coordinates a coordinate sequence
      * @return the path for the coordinate sequence
      */
-    private GeneralPath toPath(Coordinate[] coordinates) {
+    private static GeneralPath toPath(Coordinate[] coordinates) {
       GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD, coordinates.length);
 
       if (coordinates.length > 0) {
         path.moveTo((float) coordinates[0].x, (float) coordinates[0].y);
-        for (int i = 0; i < coordinates.length; i++) {
-          path.lineTo((float) coordinates[i].x, (float) coordinates[i].y);
-        }
+          for (Coordinate coordinate : coordinates) {
+              path.lineTo((float) coordinate.x, (float) coordinate.y);
+          }
       }
       return path;
   }

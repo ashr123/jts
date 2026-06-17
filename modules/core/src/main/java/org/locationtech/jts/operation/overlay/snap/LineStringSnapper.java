@@ -15,7 +15,6 @@ package org.locationtech.jts.operation.overlay.snap;
 import org.locationtech.jts.algorithm.Distance;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateList;
-import org.locationtech.jts.geom.LineSegment;
 import org.locationtech.jts.geom.LineString;
 
 /**
@@ -33,7 +32,7 @@ public class LineStringSnapper
   private double snapTolerance = 0.0;
   private double snapToleranceSq = 0.0;
 
-  private Coordinate[] srcPts;
+  private final Coordinate[] srcPts;
   private boolean allowSnappingToSourceVertices = false;
   private boolean isClosed = false;
 
@@ -87,8 +86,7 @@ public class LineStringSnapper
     snapVertices(coordList, snapPts);
     snapSegments(coordList, snapPts);
 
-    Coordinate[] newPts = coordList.toCoordinateArray();
-    return newPts;
+      return coordList.toCoordinateArray();
   }
 
   /**
@@ -103,7 +101,7 @@ public class LineStringSnapper
     // if src is a ring then don't snap final vertex
     int end = isClosed ? srcCoords.size() - 1 : srcCoords.size();
     for (int i = 0; i < end; i++) {
-      Coordinate srcPt = (Coordinate) srcCoords.get(i);
+      Coordinate srcPt = srcCoords.get(i);
       Coordinate snapVert = findSnapForVertex(srcPt, snapPts);
       if (snapVert != null) {
         // update src with snap pt
@@ -117,13 +115,13 @@ public class LineStringSnapper
 
   private Coordinate findSnapForVertex(Coordinate pt, Coordinate[] snapPts)
   {
-    for (int i = 0; i < snapPts.length; i++) {
-      // if point is already equal to a src pt, don't snap
-      if (pt.equals2D(snapPts[i]))
-        return null;
-      if (pt.distance(snapPts[i]) < snapTolerance)
-        return snapPts[i];
-    }
+      for (Coordinate snapPt : snapPts) {
+          // if point is already equal to a src pt, don't snap
+          if (pt.equals2D(snapPt))
+              return null;
+          if (pt.distance(snapPt) < snapTolerance)
+              return snapPt;
+      }
     return null;
   }
 

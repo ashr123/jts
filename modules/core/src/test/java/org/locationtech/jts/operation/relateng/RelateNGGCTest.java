@@ -15,7 +15,7 @@ import junit.textui.TestRunner;
 
 public class RelateNGGCTest extends RelateNGTestCase {
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(RelateNGGCTest.class);
   }
   

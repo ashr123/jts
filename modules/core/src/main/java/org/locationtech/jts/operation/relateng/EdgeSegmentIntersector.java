@@ -26,8 +26,8 @@ import org.locationtech.jts.noding.SegmentString;
  */
 class EdgeSegmentIntersector implements SegmentIntersector 
 {
-  private RobustLineIntersector li = new RobustLineIntersector();
-  private TopologyComputer topoComputer;
+  private final RobustLineIntersector li = new RobustLineIntersector();
+  private final TopologyComputer topoComputer;
 
   public EdgeSegmentIntersector(TopologyComputer topoBuilder) {
     this.topoComputer = topoBuilder;

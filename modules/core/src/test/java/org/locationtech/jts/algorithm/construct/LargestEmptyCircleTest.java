@@ -9,7 +9,7 @@ import test.jts.GeometryTestCase;
 
 public class LargestEmptyCircleTest extends GeometryTestCase {
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(LargestEmptyCircleTest.class);
   }
 
@@ -168,8 +168,8 @@ public class LargestEmptyCircleTest extends GeometryTestCase {
     checkCircle(lec, tolerance, x, y, expectedRadius);
   }
   
-  private void checkCircle(LargestEmptyCircle lec, double tolerance, 
-      double x, double y, double expectedRadius) {
+  private static void checkCircle(LargestEmptyCircle lec, double tolerance,
+                                  double x, double y, double expectedRadius) {
     Geometry centerPoint = lec.getCenter();
     Coordinate centerPt = centerPoint.getCoordinate();
     Coordinate expectedCenter = new Coordinate(x, y);
@@ -188,7 +188,7 @@ public class LargestEmptyCircleTest extends GeometryTestCase {
     checkCircleZeroRadius(read(wkt), tolerance);
   }
 
-  private void checkCircleZeroRadius(Geometry geom, double tolerance) {
+  private static void checkCircleZeroRadius(Geometry geom, double tolerance) {
     LargestEmptyCircle lec = new LargestEmptyCircle(geom, null, tolerance); 
 
     LineString radiusLine = lec.getRadiusLine();

@@ -20,9 +20,9 @@ import org.locationtech.jts.util.Assert;
 
 public class MinimumBoundingCircleStressTest 
 {
-	GeometryFactory geomFact = new GeometryFactory();
+	final GeometryFactory geomFact = new GeometryFactory();
 	
-  public static void main(String args[]) {
+  public static void main(String[] args) {
   	try {
   		(new MinimumBoundingCircleStressTest()).run();
   	}
@@ -57,18 +57,17 @@ public class MinimumBoundingCircleStressTest
   	checkWithinCircle(randPts, centre, radius, 0.0001);
   }
   
-  void checkWithinCircle(Coordinate[] pts, Coordinate centre, double radius, double tolerance)
+  static void checkWithinCircle(Coordinate[] pts, Coordinate centre, double radius, double tolerance)
   {
-  	for (int i = 0; i < pts.length; i++ ) {
-  		Coordinate p = pts[i];
-  		double ptRadius = centre.distance(p);
-  		double error = ptRadius - radius;
-  		if (error > tolerance) {
-  			Assert.shouldNeverReachHere();
-  		}
-  	}
+      for (Coordinate p : pts) {
+          double ptRadius = centre.distance(p);
+          double error = ptRadius - radius;
+          if (error > tolerance) {
+              Assert.shouldNeverReachHere();
+          }
+      }
   }
-  Coordinate[] createRandomPoints(int n)
+  static Coordinate[] createRandomPoints(int n)
   {
   	Coordinate[] pts = new Coordinate[n];
   	for(int i = 0; i < n; i++) {

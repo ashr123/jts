@@ -54,7 +54,7 @@ public class NodedSegmentStringTest extends GeometryTestCase {
       nss.addIntersection(node[i], segmentIndex[i]);
     }
     
-    List nodedSS = NodingTestUtil.getNodedSubstrings(nss);
+    List<SegmentString> nodedSS = NodingTestUtil.getNodedSubstrings(nss);
     Geometry result = NodingTestUtil.toLines(nodedSS, line.getFactory());
     //System.out.println(result);
     Geometry expected = read(wktExpected);

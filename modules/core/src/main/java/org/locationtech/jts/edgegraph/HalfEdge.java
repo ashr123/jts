@@ -65,7 +65,7 @@ public class HalfEdge {
     return e0;
   }
   
-  private Coordinate orig;
+  private final Coordinate orig;
   private HalfEdge sym;
   private HalfEdge next;
 
@@ -371,8 +371,7 @@ public class HalfEdge {
   public int compareTo(Object obj)
   {
     HalfEdge e = (HalfEdge) obj;
-    int comp = compareAngularDirection(e);
-    return comp;
+      return compareAngularDirection(e);
   }
 
   /**
@@ -451,10 +450,10 @@ public class HalfEdge {
     Coordinate orig = orig();
     Coordinate dest = dest();
     StringBuilder sb = new StringBuilder();
-    sb.append("Node( " + WKTWriter.format(orig) + " )" + "\n");
+    sb.append("Node( ").append(WKTWriter.format(orig)).append(" )").append("\n");
     HalfEdge e = this;
     do {
-      sb.append("  -> " + e);
+      sb.append("  -> ").append(e);
       sb.append("\n");
       e = e.oNext();
     } while (e != this);

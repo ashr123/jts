@@ -20,9 +20,9 @@ import org.locationtech.jts.geomgraph.Edge;
  */
 public class SweepLineSegment {
 
-  Edge edge;
-  Coordinate[] pts;
-  int ptIndex;
+  final Edge edge;
+  final Coordinate[] pts;
+  final int ptIndex;
 
   public SweepLineSegment(Edge edge,  int ptIndex) {
     this.edge = edge;
@@ -34,13 +34,13 @@ public class SweepLineSegment {
   {
     double x1 = pts[ptIndex].x;
     double x2 = pts[ptIndex + 1].x;
-    return x1 < x2 ? x1 : x2;
+    return Math.min(x1, x2);
   }
   public double getMaxX()
   {
     double x1 = pts[ptIndex].x;
     double x2 = pts[ptIndex + 1].x;
-    return x1 > x2 ? x1 : x2;
+    return Math.max(x1, x2);
   }
   public void computeIntersections(SweepLineSegment ss, SegmentIntersector si)
   {

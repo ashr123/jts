@@ -21,11 +21,11 @@ import test.jts.perf.PerformanceTestRunner;
 public class STRtreePerfTest
 extends PerformanceTestCase {
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     PerformanceTestRunner.run(STRtreePerfTest.class);
   }
   
-  private STRtree index;
+  private STRtree<String> index;
 
   public STRtreePerfTest(String name) {
     super(name);
@@ -41,7 +41,7 @@ extends PerformanceTestCase {
   public void startRun(int size)
   {
     System.out.println("----- Tree size: " + size);
-    index = new STRtree(); 
+    index = new STRtree<>();
     int side = (int) Math.sqrt(size);
     for (int i = 0; i < side; i++) {
       for (int j = 0; j < side; j++) {
@@ -71,5 +71,5 @@ extends PerformanceTestCase {
     //System.out.println("Node compares = " + index.nodeIntersectsCount);
     System.out.println("Total query result items = " + visitor.count);
 
-  };
+  }
 }

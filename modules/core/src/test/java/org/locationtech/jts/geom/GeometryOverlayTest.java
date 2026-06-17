@@ -23,7 +23,7 @@ import test.jts.GeometryTestCase;
  *
  */
 public class GeometryOverlayTest extends GeometryTestCase {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(GeometryOverlayTest.class);
   }
 
@@ -45,7 +45,7 @@ public class GeometryOverlayTest extends GeometryTestCase {
     checkIntersectionPM(pmFloat, expected);
   }
 
-  private void checkIntersectionPM(PrecisionModel pmFixed, Geometry expected) {
+  private static void checkIntersectionPM(PrecisionModel pmFixed, Geometry expected) {
     GeometryFactory geomFactFixed = new GeometryFactory(pmFixed);
     Geometry a = read(geomFactFixed, "POLYGON ((1 1, 1 2, 5 1, 1 1))");
     Geometry b = read(geomFactFixed, "POLYGON ((0 3, 4 3, 4 0, 0 0, 0 3))");

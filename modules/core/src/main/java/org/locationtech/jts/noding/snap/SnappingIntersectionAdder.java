@@ -28,11 +28,11 @@ import org.locationtech.jts.noding.SegmentString;
 public class SnappingIntersectionAdder
     implements SegmentIntersector
 {
-  private LineIntersector li = new RobustLineIntersector();;
+  private final LineIntersector li = new RobustLineIntersector();
 
-  private double snapTolerance;
+    private final double snapTolerance;
 
-  private SnappingPointIndex snapPointIndex;
+  private final SnappingPointIndex snapPointIndex;
 
   /**
    * Creates an intersector which finds intersections, snaps them,
@@ -152,10 +152,8 @@ public class SnappingIntersectionAdder
       return true;
     if (ss0.isClosed()) {
       int maxSegIndex = ss0.size() - 1;
-      if (   (segIndex0 == 0 && segIndex1 == maxSegIndex)
-          || (segIndex1 == 0 && segIndex0 == maxSegIndex) ) {
-        return true;
-      }
+        return (segIndex0 == 0 && segIndex1 == maxSegIndex)
+                || (segIndex1 == 0 && segIndex0 == maxSegIndex);
     }
     return false;
   }

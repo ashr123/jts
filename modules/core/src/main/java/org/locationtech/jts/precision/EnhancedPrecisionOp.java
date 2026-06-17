@@ -21,7 +21,10 @@ import org.locationtech.jts.geom.Geometry;
  */
 public class EnhancedPrecisionOp
 {
-  /**
+    private EnhancedPrecisionOp() {
+    }
+
+    /**
    * Computes the set-theoretic intersection of two {@link Geometry}s, using enhanced precision.
    * @param geom0 the first Geometry
    * @param geom1 the second Geometry
@@ -31,8 +34,7 @@ public class EnhancedPrecisionOp
   {
     RuntimeException originalEx;
     try {
-      Geometry result = geom0.intersection(geom1);
-      return result;
+        return geom0.intersection(geom1);
     }
     catch (RuntimeException ex)
     {
@@ -66,8 +68,7 @@ public class EnhancedPrecisionOp
   {
     RuntimeException originalEx;
     try {
-      Geometry result = geom0.union(geom1);
-      return result;
+        return geom0.union(geom1);
     }
     catch (RuntimeException ex)
     {
@@ -101,8 +102,7 @@ public class EnhancedPrecisionOp
   {
     RuntimeException originalEx;
     try {
-      Geometry result = geom0.difference(geom1);
-      return result;
+        return geom0.difference(geom1);
     }
     catch (RuntimeException ex)
     {
@@ -136,8 +136,7 @@ public class EnhancedPrecisionOp
   {
     RuntimeException originalEx;
     try {
-      Geometry result = geom0.symDifference(geom1);
-      return result;
+        return geom0.symDifference(geom1);
     }
     catch (RuntimeException ex)
     {
@@ -174,8 +173,7 @@ public class EnhancedPrecisionOp
   {
     RuntimeException originalEx;
     try {
-      Geometry result = geom.buffer(distance);
-      return result;
+        return geom.buffer(distance);
     }
     catch (RuntimeException ex)
     {

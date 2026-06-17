@@ -23,14 +23,14 @@ import java.util.Map;
 public class ObjectCounter 
 {
 
-  private Map counts = new HashMap();
+  private final Map<Object, Counter> counts = new HashMap<>();
   
   public ObjectCounter() {
   }
 
   public void add(Object o)
   {
-    Counter counter = (Counter) counts.get(o);
+    Counter counter = counts.get(o);
     if (counter == null)
       counts.put(o, new Counter(1));
     else
@@ -41,7 +41,7 @@ public class ObjectCounter
   
   public int count(Object o)
   {
-    Counter counter = (Counter) counts.get(o);
+    Counter counter = counts.get(o);
     if (counter == null)
       return 0;
     else

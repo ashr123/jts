@@ -34,9 +34,9 @@ implements SegmentIntersector
 {
   private static final int NO_INVALID_INTERSECTION = -1;
   
-  private boolean isInvertedRingValid;
+  private final boolean isInvertedRingValid;
   
-  private LineIntersector li = new RobustLineIntersector();
+  private final LineIntersector li = new RobustLineIntersector();
   private int invalidCode = NO_INVALID_INTERSECTION;
   private Coordinate invalidLocation = null;
   
@@ -199,12 +199,12 @@ implements SegmentIntersector
     return NO_INVALID_INTERSECTION;
   }
 
-  private boolean addDoubleTouch(SegmentString ss0, SegmentString ss1, Coordinate intPt) {
+  private static boolean addDoubleTouch(SegmentString ss0, SegmentString ss1, Coordinate intPt) {
     return PolygonRing.addTouch((PolygonRing) ss0.getData(), (PolygonRing) ss1.getData(), intPt);
   }
 
-  private void addSelfTouch(SegmentString ss, Coordinate intPt, Coordinate e00, Coordinate e01, Coordinate e10,
-      Coordinate e11) {
+  private static void addSelfTouch(SegmentString ss, Coordinate intPt, Coordinate e00, Coordinate e01, Coordinate e10,
+                                   Coordinate e11) {
     PolygonRing polyRing = (PolygonRing) ss.getData();
     if (polyRing == null) {
       throw new IllegalStateException("SegmentString missing PolygonRing data when checking self-touches");
@@ -245,7 +245,6 @@ implements SegmentIntersector
      * If the delta is at least N-2, the segments must be
      * at the start and end of the string and thus adjacent.
      */
-    if (delta >= ringSS.size() - 2) return true;
-    return false;
+      return delta >= ringSS.size() - 2;
   }
 }

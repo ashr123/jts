@@ -124,7 +124,7 @@ public class GeometryPrecisionReducer
 		return reducer.reduce(g);
 	}
 	
-  private PrecisionModel targetPM;
+  private final PrecisionModel targetPM;
   private boolean removeCollapsed = true;
   private boolean changePrecisionModel = false;
   private boolean isPointwise = false;
@@ -210,31 +210,28 @@ public class GeometryPrecisionReducer
    * @param newPM the precision model to use
    * @return the geometry value with a new precision model
    */
-  private Geometry changePM(Geometry geom, PrecisionModel newPM)
+  private static Geometry changePM(Geometry geom, PrecisionModel newPM)
   {
   	GeometryEditor geomEditor = createEditor(geom.getFactory(), newPM);
   	// this operation changes the PM for the entire geometry tree
   	return geomEditor.edit(geom, new GeometryEditor.NoOpGeometryOperation());
   }
   
-  private GeometryEditor createEditor(GeometryFactory geomFactory, PrecisionModel newPM)
+  private static GeometryEditor createEditor(GeometryFactory geomFactory, PrecisionModel newPM)
   {
     // no need to change if precision model is the same
   	if (geomFactory.getPrecisionModel() == newPM)
   		return new GeometryEditor();
   	// otherwise create a geometry editor which changes PrecisionModel
   	GeometryFactory newFactory = createFactory(geomFactory, newPM);
-  	GeometryEditor geomEdit = new GeometryEditor(newFactory);
-    return geomEdit;
+      return new GeometryEditor(newFactory);
   }
   
-  private GeometryFactory createFactory(GeometryFactory inputFactory, PrecisionModel pm)
+  private static GeometryFactory createFactory(GeometryFactory inputFactory, PrecisionModel pm)
   {
-    GeometryFactory newFactory 
-  	= new GeometryFactory(pm, 
-  			inputFactory.getSRID(),
-  			inputFactory.getCoordinateSequenceFactory());
-    return newFactory;
+      return new GeometryFactory(pm,
+              inputFactory.getSRID(),
+              inputFactory.getCoordinateSequenceFactory());
   }
   
 }

@@ -31,7 +31,7 @@ public class MultiGenerator extends GeometryGenerator {
 
 	private GeometryGenerator generator = null;
 	private int numberGeometries = 2;
-	private int generationAlgorithm = 0;
+	private static final int generationAlgorithm = 0;
 	
 	/**
 	 * Grid style blocks
@@ -74,7 +74,7 @@ public class MultiGenerator extends GeometryGenerator {
 		if(numberGeometries < 1)
 			throw new IllegalStateException("Too few child geoms to create");
 		
-		ArrayList geoms = new ArrayList(numberGeometries);
+		ArrayList<Geometry> geoms = new ArrayList<>(numberGeometries);
 
 		GridGenerator grid = GeometryGenerator.createGridGenerator();
 		grid.setBoundingBox(boundingBox);
@@ -112,16 +112,16 @@ public class MultiGenerator extends GeometryGenerator {
 		
 		// yes ... there are better ways
 		if(generator instanceof PointGenerator){
-			return geometryFactory.createMultiPoint((Point[]) geoms.toArray(new Point[numberGeometries]));
+			return geometryFactory.createMultiPoint(geoms.toArray(new Point[numberGeometries]));
 		}else{
 		if(generator instanceof LineStringGenerator){
-			return geometryFactory.createMultiLineString((LineString[]) geoms.toArray(new LineString[numberGeometries]));
+			return geometryFactory.createMultiLineString(geoms.toArray(new LineString[numberGeometries]));
 		}else{
 		if(generator instanceof PolygonGenerator){
-			return geometryFactory.createMultiPolygon((Polygon[]) geoms.toArray(new Polygon[numberGeometries]));
+			return geometryFactory.createMultiPolygon(geoms.toArray(new Polygon[numberGeometries]));
 		}else{
 			// same as multi
-			return geometryFactory.createGeometryCollection((Geometry[]) geoms.toArray(new Geometry[numberGeometries]));
+			return geometryFactory.createGeometryCollection(geoms.toArray(new Geometry[numberGeometries]));
 		}}}
 	}
 

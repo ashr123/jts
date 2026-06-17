@@ -4,16 +4,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.io.WKTReader;
-import org.locationtech.jts.planargraph.DirectedEdgeTest;
 
 import junit.textui.TestRunner;
 import test.jts.GeometryTestCase;
 
 public class OverlayMiscTest extends GeometryTestCase 
 {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(OverlayMiscTest.class);
   }
 
@@ -22,13 +20,13 @@ public class OverlayMiscTest extends GeometryTestCase
     super(name);
   }
   
-  public void testNoding() throws Exception {
+  public void testNoding() {
     Geometry a = read("LINESTRING(0 0, 100 100)");
     Geometry b = read("LINESTRING(0 100, 100 0)");
-    List lineStrings = Arrays.asList(new Object[] {a, b});
-    Geometry nodedLineStrings = (LineString) lineStrings.get(0);
+    List<Geometry> lineStrings = Arrays.asList(a, b);
+    Geometry nodedLineStrings = lineStrings.get(0);
     for (int i = 1; i < lineStrings.size(); i++) {
-      nodedLineStrings = nodedLineStrings.union((LineString)lineStrings.get(i));
+      nodedLineStrings = nodedLineStrings.union(lineStrings.get(i));
     }
     assertEquals("MULTILINESTRING ((0 0, 50 50), (50 50, 100 100), (0 100, 50 50), (50 50, 100 0))", nodedLineStrings.toString());
   }

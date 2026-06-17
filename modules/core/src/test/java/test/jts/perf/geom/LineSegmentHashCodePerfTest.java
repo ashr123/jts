@@ -69,8 +69,8 @@ public class LineSegmentHashCodePerfTest extends PerformanceTestCase
     }
   }
   
-  private double sumSegmentWeights(List<LineSegment> lines) {
-    Map<LineSegment, Double> weights = new HashMap<LineSegment, Double>();
+  private static double sumSegmentWeights(List<LineSegment> lines) {
+    Map<LineSegment, Double> weights = new HashMap<>();
     double total = 0;
     //-- store data against LineSegment keys
     for (LineSegment line : lines)
@@ -88,8 +88,8 @@ public class LineSegmentHashCodePerfTest extends PerformanceTestCase
     return total;
   }
 
-  List<LineSegment> createGrid(int gridSize) {
-    List<LineSegment> grid = new ArrayList<LineSegment>();
+  static List<LineSegment> createGrid(int gridSize) {
+    List<LineSegment> grid = new ArrayList<>();
     for (int gx = 0; gx < gridSize * 10; gx += 10)
     {
         for (int gy = 0; gy < gridSize * 10; gy += 10)

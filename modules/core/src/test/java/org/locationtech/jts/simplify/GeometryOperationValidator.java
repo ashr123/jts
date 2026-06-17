@@ -22,8 +22,8 @@ import org.locationtech.jts.io.WKTReader;
  */
 public class GeometryOperationValidator
 {
-  private static WKTReader rdr = new WKTReader();
-  private Geometry[] ioGeometry;
+  private static final WKTReader rdr = new WKTReader();
+  private final Geometry[] ioGeometry;
   private boolean expectedSameStructure = false;
   private String wktExpected = null;
 
@@ -69,7 +69,7 @@ public class GeometryOperationValidator
     testExpectedResult();
   }
 
-  public GeometryOperationValidator testSameStructure() throws Exception {
+  public GeometryOperationValidator testSameStructure() {
 		if (!expectedSameStructure)
 			return this;
 		Assert.assertTrue("simplified geometry has different structure than input",
@@ -77,16 +77,15 @@ public class GeometryOperationValidator
 		return this;
 	}
 
-	public GeometryOperationValidator testValid() throws Exception {
+	public GeometryOperationValidator testValid() {
 		Assert.assertTrue("simplified geometry is not valid", ioGeometry[1]
 				.isValid());
 		return this;
 	}
 
-	public GeometryOperationValidator testEmpty(boolean isEmpty) throws Exception {
+	public GeometryOperationValidator testEmpty(boolean isEmpty) {
 		String failureCondition = isEmpty ? "not empty" : "empty";
-		Assert.assertTrue("simplified geometry is " + failureCondition,
-				ioGeometry[1].isEmpty() == isEmpty);
+        Assert.assertEquals("simplified geometry is " + failureCondition, ioGeometry[1].isEmpty(), isEmpty);
 		return this;
 	}
 

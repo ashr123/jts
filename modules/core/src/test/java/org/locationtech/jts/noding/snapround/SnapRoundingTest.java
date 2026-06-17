@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineSegment;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.PrecisionModel;
@@ -32,9 +33,9 @@ import junit.textui.TestRunner;
  */
 public class SnapRoundingTest  extends TestCase {
 
-  WKTReader rdr = new WKTReader();
+  final WKTReader rdr = new WKTReader();
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(SnapRoundingTest.class);
   }
 
@@ -121,37 +122,36 @@ public class SnapRoundingTest  extends TestCase {
 
   void checkRounding(String[] wkt)
   {
-    List geoms = fromWKT(wkt);
+    List<Geometry> geoms = fromWKT(wkt);
     PrecisionModel pm = new PrecisionModel(SNAP_TOLERANCE);
     GeometryNoder noder = new GeometryNoder(pm);
     noder.setValidate(true);
-    List nodedLines = noder.node(geoms);
+    List<LineString> nodedLines = noder.node(geoms);
 /*
-    for (Iterator it = nodedLines.iterator(); it.hasNext(); ) {
+    for (Iterator<LineString> it = nodedLines.iterator(); it.hasNext(); ) {
       System.out.println(it.next());
     }
     */
     assertTrue(isSnapped(nodedLines, SNAP_TOLERANCE));
   }
 
-  List fromWKT(String[] wkts)
+  List<Geometry> fromWKT(String[] wkts)
   {
-    List geomList = new ArrayList();
-    for (int i = 0; i < wkts.length; i++) {
-      try {
-        geomList.add(rdr.read(wkts[i]));
+    List<Geometry> geomList = new ArrayList<>();
+      for (String wkt : wkts) {
+          try {
+              geomList.add(rdr.read(wkt));
+          } catch (Exception ex) {
+              ex.printStackTrace();
+          }
       }
-      catch (Exception ex) {
-        ex.printStackTrace();
-      }
-    }
     return geomList;
   }
 
-  boolean isSnapped(List lines, double tol)
+  static boolean isSnapped(List<LineString> lines, double tol)
   {
     for (int i = 0; i < lines.size(); i++) {
-      LineString line = (LineString) lines.get(i);
+      LineString line = lines.get(i);
       for (int j = 0; j < line.getNumPoints(); j++) {
         Coordinate v = line.getCoordinateN(j);
           if (! isSnapped(v, lines)) return false;
@@ -161,27 +161,25 @@ public class SnapRoundingTest  extends TestCase {
     return true;
   }
 
-  private boolean isSnapped(Coordinate v, List lines)
+  private static boolean isSnapped(Coordinate v, List<LineString> lines)
   {
-    for (int i = 0; i < lines.size(); i++) {
-      LineString line = (LineString) lines.get(i);
-      for (int j = 0; j < line.getNumPoints() - 1; j++) {
-        Coordinate p0 = line.getCoordinateN(j);
-        Coordinate p1 = line.getCoordinateN(j+1);
-        if (! isSnapped(v, p0, p1)) return false;
+      for (LineString line : lines) {
+          for (int j = 0; j < line.getNumPoints() - 1; j++) {
+              Coordinate p0 = line.getCoordinateN(j);
+              Coordinate p1 = line.getCoordinateN(j + 1);
+              if (!isSnapped(v, p0, p1)) return false;
+          }
       }
-    }
     return true;
   }
 
-  private boolean isSnapped(Coordinate v, Coordinate p0, Coordinate p1)
+  private static boolean isSnapped(Coordinate v, Coordinate p0, Coordinate p1)
   {
     if (v.equals2D(p0)) return true;
     if (v.equals2D(p1)) return true;
     LineSegment seg = new LineSegment(p0, p1);
     double dist = seg.distance(v);
-    if (dist < SNAP_TOLERANCE / 2.05) return false;
-    return true;
+      return !(dist < SNAP_TOLERANCE / 2.05);
   }
 
 }

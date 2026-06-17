@@ -48,11 +48,10 @@ public class ValidatingNoder implements Noder {
    * 
    * @throws org.locationtech.jts.geom.TopologyException
    */
-  @SuppressWarnings("unchecked")
   @Override
-  public void computeNodes(@SuppressWarnings("rawtypes") Collection segStrings) {
+  public void computeNodes(Collection<? extends SegmentString> segStrings) {
     noder.computeNodes(segStrings);
-    nodedSS = noder.getNodedSubstrings(); 
+    nodedSS = noder.getNodedSubstrings();
     validate();
   }
 
@@ -61,9 +60,8 @@ public class ValidatingNoder implements Noder {
     nv.checkValid();
   }
 
-  @SuppressWarnings("rawtypes")
   @Override
-  public Collection getNodedSubstrings() {
+  public Collection<SegmentString> getNodedSubstrings() {
     return nodedSS;
   }
 

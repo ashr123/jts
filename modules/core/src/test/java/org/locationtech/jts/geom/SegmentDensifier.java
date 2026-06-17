@@ -19,7 +19,7 @@ package org.locationtech.jts.geom;
  */
 public class SegmentDensifier
 {
-  private LineString inputLine;
+  private final LineString inputLine;
   private CoordinateList newCoords;
 
   public SegmentDensifier(LineString line) {

@@ -10,13 +10,12 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.geom.impl.CoordinateArraySequenceFactory;
 import org.locationtech.jts.io.WKTReader;
 
 public class IntersectionTest extends TestCase {
   private static final double MAX_ABS_ERROR = 1e-5;
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(IntersectionTest.class);
   }
 
@@ -116,9 +115,9 @@ public class IntersectionTest extends TestCase {
 
   //==================================================
   
-  private void checkIntersection(double p1x, double p1y, double p2x, double p2y, 
-      double q1x, double q1y, double q2x, double q2y, 
-      double expectedx, double expectedy) {
+  private static void checkIntersection(double p1x, double p1y, double p2x, double p2y,
+                                        double q1x, double q1y, double q2x, double q2y,
+                                        double expectedx, double expectedy) {
     Coordinate p1 = new Coordinate(p1x, p1y);
     Coordinate p2 = new Coordinate(p2x, p2y);
     Coordinate q1 = new Coordinate(q1x, q1y);
@@ -131,19 +130,19 @@ public class IntersectionTest extends TestCase {
     assertTrue(dist <= MAX_ABS_ERROR);
   }
   
-  private void checkIntersectionNull(double p1x, double p1y, double p2x, double p2y, 
-      double q1x, double q1y, double q2x, double q2y) {
+  private static void checkIntersectionNull(double p1x, double p1y, double p2x, double p2y,
+                                            double q1x, double q1y, double q2x, double q2y) {
     Coordinate p1 = new Coordinate(p1x, p1y);
     Coordinate p2 = new Coordinate(p2x, p2y);
     Coordinate q1 = new Coordinate(q1x, q1y);
     Coordinate q2 = new Coordinate(q2x, q2y);
     Coordinate actual = Intersection.intersection(p1, p2, q1, q2);
-    assertTrue(actual == null);
+      assertNull(actual);
   }
   
-  private void checkIntersectionLineSegment(double p1x, double p1y, double p2x, double p2y, 
-      double q1x, double q1y, double q2x, double q2y, 
-      double expectedx, double expectedy) {
+  private static void checkIntersectionLineSegment(double p1x, double p1y, double p2x, double p2y,
+                                                   double q1x, double q1y, double q2x, double q2y,
+                                                   double expectedx, double expectedy) {
     Coordinate p1 = new Coordinate(p1x, p1y);
     Coordinate p2 = new Coordinate(p2x, p2y);
     Coordinate q1 = new Coordinate(q1x, q1y);
@@ -156,13 +155,13 @@ public class IntersectionTest extends TestCase {
     assertTrue(dist <= MAX_ABS_ERROR);
   }
   
-  private void checkIntersectionLineSegmentNull(double p1x, double p1y, double p2x, double p2y, 
-      double q1x, double q1y, double q2x, double q2y) {
+  private static void checkIntersectionLineSegmentNull(double p1x, double p1y, double p2x, double p2y,
+                                                       double q1x, double q1y, double q2x, double q2y) {
     Coordinate p1 = new Coordinate(p1x, p1y);
     Coordinate p2 = new Coordinate(p2x, p2y);
     Coordinate q1 = new Coordinate(q1x, q1y);
     Coordinate q2 = new Coordinate(q2x, q2y);
     Coordinate actual = Intersection.lineSegment(p1, p2, q1, q2);
-    assertTrue(actual == null);
+      assertNull(actual);
   }
 }

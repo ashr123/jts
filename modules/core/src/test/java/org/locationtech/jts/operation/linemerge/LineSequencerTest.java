@@ -30,7 +30,7 @@ import junit.framework.TestCase;
 public class LineSequencerTest
     extends TestCase
 {
-  private static WKTReader rdr = new WKTReader();
+  private static final WKTReader rdr = new WKTReader();
 
   public LineSequencerTest(String name) {
     super(name);
@@ -40,7 +40,7 @@ public class LineSequencerTest
     junit.textui.TestRunner.run(LineSequencerTest.class);
   }
 
-  public void testSimple()
+  public static void testSimple()
       throws Exception
   {
     String[] wkt = {
@@ -53,7 +53,7 @@ public class LineSequencerTest
     runLineSequencer(wkt, result);
   }
 
-  public void testSimpleLoop()
+  public static void testSimpleLoop()
       throws Exception
   {
     String[] wkt = {
@@ -65,7 +65,7 @@ public class LineSequencerTest
     runLineSequencer(wkt, result);
   }
 
-  public void testSimpleBigLoop()
+  public static void testSimpleBigLoop()
       throws Exception
   {
     String[] wkt = {
@@ -79,7 +79,7 @@ public class LineSequencerTest
     runLineSequencer(wkt, result);
   }
 
-  public void test2SimpleLoops()
+  public static void test2SimpleLoops()
       throws Exception
   {
     String[] wkt = {
@@ -93,7 +93,7 @@ public class LineSequencerTest
     runLineSequencer(wkt, result);
   }
 
-  public void testWide8WithTail()
+  public static void testWide8WithTail()
       throws Exception
   {
     String[] wkt = {
@@ -111,7 +111,7 @@ public class LineSequencerTest
     runLineSequencer(wkt, result);
   }
 
-  public void testSimpleLoopWithTail()
+  public static void testSimpleLoopWithTail()
       throws Exception
   {
     String[] wkt = {
@@ -124,7 +124,7 @@ public class LineSequencerTest
     runLineSequencer(wkt, result);
   }
 
-  public void testLineWithRing()
+  public static void testLineWithRing()
       throws Exception
   {
     String[] wkt = {
@@ -138,7 +138,7 @@ public class LineSequencerTest
     runLineSequencer(wkt, result);
   }
 
-  public void testMultipleGraphsWithRing()
+  public static void testMultipleGraphsWithRing()
       throws Exception
   {
     String[] wkt = {
@@ -154,7 +154,7 @@ public class LineSequencerTest
     runLineSequencer(wkt, result);
   }
 
-  public void testMultipleGraphsWithMultipeRings()
+  public static void testMultipleGraphsWithMultipeRings()
       throws Exception
   {
     String[] wkt = {
@@ -199,16 +199,16 @@ public class LineSequencerTest
 
 //==========================================================
 
-  private void runLineSequencer(String[] inputWKT, String expectedWKT)
+  private static void runLineSequencer(String[] inputWKT, String expectedWKT)
       throws ParseException
   {
-    List inputGeoms = fromWKT(inputWKT);
+    List<Geometry> inputGeoms = fromWKT(inputWKT);
     LineSequencer sequencer = new LineSequencer();
     sequencer.add(inputGeoms);
 
     boolean isCorrect = false;
     if (! sequencer.isSequenceable()) {
-      assertTrue(expectedWKT == null);
+        assertNull(expectedWKT);
     }
     else {
       Geometry expected = rdr.read(expectedWKT);
@@ -225,25 +225,24 @@ public class LineSequencerTest
     }
   }
 
-  private void runIsSequenced(String inputWKT, boolean expected)
+  private static void runIsSequenced(String inputWKT, boolean expected)
       throws ParseException
   {
     Geometry g = rdr.read(inputWKT);
     boolean isSequenced = LineSequencer.isSequenced(g);
-    assertTrue(isSequenced == expected);
+      assertEquals(expected, isSequenced);
   }
 
-  List fromWKT(String[] wkts)
+  static List<Geometry> fromWKT(String[] wkts)
   {
-    List geomList = new ArrayList();
-    for (int i = 0; i < wkts.length; i++) {
-      try {
-        geomList.add(rdr.read(wkts[i]));
+    List<Geometry> geomList = new ArrayList<>();
+      for (String wkt : wkts) {
+          try {
+              geomList.add(rdr.read(wkt));
+          } catch (Exception ex) {
+              ex.printStackTrace();
+          }
       }
-      catch (Exception ex) {
-        ex.printStackTrace();
-      }
-    }
     return geomList;
   }
 

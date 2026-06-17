@@ -11,14 +11,14 @@
  */
 package org.locationtech.jts.noding;
 
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.LineSegment;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.LineSegment;
 
 /**
  * A noder which extracts chains of boundary segments 
@@ -50,8 +50,8 @@ public class BoundaryChainNoder implements Noder {
   }
 
   @Override
-  public void computeNodes(Collection segStrings) {
-    HashSet<Segment> boundarySegSet = new HashSet<Segment>();
+  public void computeNodes(Collection<? extends SegmentString> segStrings) {
+    HashSet<Segment> boundarySegSet = new HashSet<>();
     BoundaryChainMap[] boundaryChains = new BoundaryChainMap[segStrings.size()];
     addSegments(segStrings, boundarySegSet, boundaryChains);
     markBoundarySegments(boundarySegSet);
@@ -59,12 +59,12 @@ public class BoundaryChainNoder implements Noder {
     
     //-- check for self-touching nodes and split chains at those nodes
     Set<Coordinate> nodePts = findNodePts(chainList); 
-    if (nodePts.size() > 0) {
+    if (!nodePts.isEmpty()) {
       chainList = nodeChains(chainList, nodePts);
     }
   }
 
-  private static void addSegments(Collection<SegmentString> segStrings, HashSet<Segment> segSet, 
+  private static void addSegments(Collection<? extends SegmentString> segStrings, HashSet<Segment> segSet,
       BoundaryChainMap[] boundaryChains) {
     int i = 0;
     for (SegmentString ss : segStrings) {
@@ -95,16 +95,16 @@ public class BoundaryChainNoder implements Noder {
   }
 
   private static List<SegmentString> extractChains(BoundaryChainMap[] boundaryChains) {
-    List<SegmentString> chainList = new ArrayList<SegmentString>();
+    List<SegmentString> chainList = new ArrayList<>();
     for (BoundaryChainMap chainMap : boundaryChains) {
       chainMap.createChains(chainList);
     }
     return chainList;
   }
 
-  private Set<Coordinate> findNodePts(List<SegmentString> segStrings) {
-    Set<Coordinate> interorVertices = new HashSet<Coordinate>();
-    Set<Coordinate> nodes = new HashSet<Coordinate>();
+  private static Set<Coordinate> findNodePts(List<SegmentString> segStrings) {
+    Set<Coordinate> interorVertices = new HashSet<>();
+    Set<Coordinate> nodes = new HashSet<>();
     for (SegmentString ss : segStrings) {
       //-- endpoints are nodes
       nodes.add(ss.getCoordinate(0));
@@ -122,15 +122,15 @@ public class BoundaryChainNoder implements Noder {
     return nodes;
   }
   
-  private List<SegmentString> nodeChains(List<SegmentString> chains, Set<Coordinate> nodePts) {
-    List<SegmentString> nodedChains = new ArrayList<SegmentString>();
+  private static List<SegmentString> nodeChains(List<SegmentString> chains, Set<Coordinate> nodePts) {
+    List<SegmentString> nodedChains = new ArrayList<>();
     for (SegmentString chain : chains) {
       nodeChain(chain, nodePts, nodedChains);
     }
     return nodedChains;
   }
   
-  private void nodeChain(SegmentString chain, Set<Coordinate> nodePts, List<SegmentString> nodedChains) {
+  private static void nodeChain(SegmentString chain, Set<Coordinate> nodePts, List<SegmentString> nodedChains) {
     int start = 0;
     while (start < chain.size() - 1) {
       int end = findNodeIndex(chain, start, nodePts);
@@ -144,7 +144,7 @@ public class BoundaryChainNoder implements Noder {
     }
   }
 
-  private int findNodeIndex(SegmentString chain, int start, Set<Coordinate> nodePts) {
+  private static int findNodeIndex(SegmentString chain, int start, Set<Coordinate> nodePts) {
     for (int i = start + 1; i < chain.size(); i++) {
       if (nodePts.contains(chain.getCoordinate(i)))
         return i;
@@ -153,13 +153,13 @@ public class BoundaryChainNoder implements Noder {
   }
 
   @Override
-  public Collection getNodedSubstrings() {
+  public Collection<SegmentString> getNodedSubstrings() {
     return chainList;
   }
 
   private static class BoundaryChainMap {
-    private SegmentString segString;
-    private boolean[] isBoundary;
+    private final SegmentString segString;
+    private final boolean[] isBoundary;
     
     public BoundaryChainMap(SegmentString ss) {
       this.segString = ss;
@@ -183,12 +183,7 @@ public class BoundaryChainNoder implements Noder {
     }
 
     private static SegmentString createChain(SegmentString segString, int startIndex, int endIndex) {
-      Coordinate[] pts = new Coordinate[endIndex - startIndex + 1];
-      int ipts = 0;
-      for (int i = startIndex; i < endIndex + 1; i++) {
-        pts[ipts++] = segString.getCoordinate(i).copy();
-      }
-      return new BasicSegmentString(pts, segString.getData());
+        return BasicSegmentString.substring(segString, startIndex, endIndex);
     }
 
     private int findChainStart(int index) {
@@ -199,17 +194,16 @@ public class BoundaryChainNoder implements Noder {
     }
 
     private int findChainEnd(int index) {
-      index++;
-      while (index < isBoundary.length && isBoundary[index]) {
-        index++;
-      }
+        do {
+            index++;
+        } while (index < isBoundary.length && isBoundary[index]);
       return index;
     }
   }
   
   private static class Segment extends LineSegment {
-    private BoundaryChainMap segMap;
-    private int index;
+    private final BoundaryChainMap segMap;
+    private final int index;
 
     public Segment(Coordinate p0, Coordinate p1, 
         BoundaryChainMap segMap, int index) {

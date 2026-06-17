@@ -33,11 +33,11 @@ public class Node
   /**
    * Returns all Edges that connect the two nodes (which are assumed to be different).
    */
-  public static Collection getEdgesBetween(Node node0, Node node1)
+  public static Collection<Edge> getEdgesBetween(Node node0, Node node1)
   {
-    List edges0 = DirectedEdge.toEdges(node0.getOutEdges().getEdges());
-    Set commonEdges = new HashSet(edges0);
-    List edges1 = DirectedEdge.toEdges(node1.getOutEdges().getEdges());
+    List<Edge> edges0 = DirectedEdge.toEdges(node0.getOutEdges().getEdges());
+    Set<Edge> commonEdges = new HashSet<>(edges0);
+    List<Edge> edges1 = DirectedEdge.toEdges(node1.getOutEdges().getEdges());
     commonEdges.retainAll(edges1);
     return commonEdges;
   }
@@ -46,7 +46,7 @@ public class Node
   protected Coordinate pt;
 
   /** The collection of DirectedEdges that leave this Node */
-  protected DirectedEdgeStar deStar;
+  protected final DirectedEdgeStar deStar;
 
   /**
    * Constructs a Node with the given location.

@@ -57,7 +57,7 @@ public class SnapIfNeededOverlayOp
      return overlayOp(g0, g1, OverlayOp.SYMDIFFERENCE);
   }
   
-  private Geometry[] geom = new Geometry[2];
+  private final Geometry[] geom = new Geometry[2];
 
   public SnapIfNeededOverlayOp(Geometry g1, Geometry g2)
   {

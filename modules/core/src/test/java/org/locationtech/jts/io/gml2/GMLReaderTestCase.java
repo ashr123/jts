@@ -40,17 +40,16 @@ public class GMLReaderTestCase extends TestCase
 		// TODO Auto-generated constructor stub
 	}
 	
-	protected static PrecisionModel precisionModel = new PrecisionModel(1000);
-	protected static GeometryFactory geometryFactory = new GeometryFactory(precisionModel);
+	protected static final PrecisionModel precisionModel = new PrecisionModel(1000);
+	protected static final GeometryFactory geometryFactory = new GeometryFactory(precisionModel);
 	
 	public void testPointRead() throws SAXException, IOException, ParserConfigurationException{
 		FileReader fr = new FileReader(TEST_DIR + "points.xml");
-		
-		GMLReader gr = new GMLReader();
-		Geometry g = gr.read(fr,geometryFactory);
+
+        Geometry g = GMLReader.read(fr,geometryFactory);
 		
 		GeometryCollection gc = (GeometryCollection)g;
-		assertTrue(gc.getNumGeometries() == 25);
+        assertEquals(25, gc.getNumGeometries());
 		
 		for(int i=0;i<25;i++){
 			Point p = (Point) gc.getGeometryN(i);
@@ -60,12 +59,11 @@ public class GMLReaderTestCase extends TestCase
 
 	public void testLineStringRead() throws SAXException, IOException, ParserConfigurationException{
 		FileReader fr = new FileReader(TEST_DIR + "linestrings.xml");
-		
-		GMLReader gr = new GMLReader();
-		Geometry g = gr.read(fr,geometryFactory);
+
+        Geometry g = GMLReader.read(fr,geometryFactory);
 		
 		GeometryCollection gc = (GeometryCollection)g;
-		assertTrue(gc.getNumGeometries() == 25);
+        assertEquals(25, gc.getNumGeometries());
 		
 		for(int i=0;i<25;i++){
 			LineString ls = (LineString) gc.getGeometryN(i);
@@ -75,12 +73,11 @@ public class GMLReaderTestCase extends TestCase
 
 	public void testPolygonRead() throws SAXException, IOException, ParserConfigurationException{
 		FileReader fr = new FileReader(TEST_DIR + "polygons.xml");
-		
-		GMLReader gr = new GMLReader();
-		Geometry g = gr.read(fr,geometryFactory);
+
+        Geometry g = GMLReader.read(fr,geometryFactory);
 		
 		GeometryCollection gc = (GeometryCollection)g;
-		assertTrue(gc.getNumGeometries() == 25);
+        assertEquals(25, gc.getNumGeometries());
 		
 		for(int i=0;i<25;i++){
 			Polygon p = (Polygon) gc.getGeometryN(i);
@@ -90,12 +87,11 @@ public class GMLReaderTestCase extends TestCase
 	
 	public void testMultiPointRead() throws SAXException, IOException, ParserConfigurationException{
 		FileReader fr = new FileReader(TEST_DIR + "multipoints.xml");
-		
-		GMLReader gr = new GMLReader();
-		Geometry g = gr.read(fr,geometryFactory);
+
+        Geometry g = GMLReader.read(fr,geometryFactory);
 		
 		GeometryCollection gc = (GeometryCollection)g;
-		assertTrue(gc.getNumGeometries() == 25);
+        assertEquals(25, gc.getNumGeometries());
 		
 		for(int i=0;i<25;i++){
 			MultiPoint p = (MultiPoint) gc.getGeometryN(i);
@@ -105,12 +101,11 @@ public class GMLReaderTestCase extends TestCase
 
 	public void testMultiLineStringRead() throws SAXException, IOException, ParserConfigurationException{
 		FileReader fr = new FileReader(TEST_DIR + "multilinestrings.xml");
-		
-		GMLReader gr = new GMLReader();
-		Geometry g = gr.read(fr,geometryFactory);
+
+        Geometry g = GMLReader.read(fr,geometryFactory);
 		
 		GeometryCollection gc = (GeometryCollection)g;
-		assertTrue(gc.getNumGeometries() == 25);
+        assertEquals(25, gc.getNumGeometries());
 		
 		for(int i=0;i<25;i++){
 			MultiLineString ls = (MultiLineString) gc.getGeometryN(i);
@@ -120,12 +115,11 @@ public class GMLReaderTestCase extends TestCase
 
 	public void testMultiPolygonRead() throws SAXException, IOException, ParserConfigurationException{
 		FileReader fr = new FileReader(TEST_DIR + "multipolygons.xml");
-		
-		GMLReader gr = new GMLReader();
-		Geometry g = gr.read(fr,geometryFactory);
+
+        Geometry g = GMLReader.read(fr,geometryFactory);
 		
 		GeometryCollection gc = (GeometryCollection)g;
-		assertTrue(gc.getNumGeometries() == 25);
+        assertEquals(25, gc.getNumGeometries());
 		
 		for(int i=0;i<25;i++){
 			MultiPolygon p = (MultiPolygon) gc.getGeometryN(i);

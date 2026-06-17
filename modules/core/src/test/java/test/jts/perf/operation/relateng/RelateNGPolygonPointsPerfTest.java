@@ -30,21 +30,21 @@ public class RelateNGPolygonPointsPerfTest
 extends PerformanceTestCase
 {
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     PerformanceTestRunner.run(RelateNGPolygonPointsPerfTest.class);
   }
   
   private static final int N_ITER = 1;
   
-  static double ORG_X = 100;
-  static double ORG_Y = ORG_X;
-  static double SIZE = 2 * ORG_X;
-  static int N_ARMS = 6;
-  static double ARM_RATIO = 0.3;
+  static final double ORG_X = 100;
+  static final double ORG_Y = ORG_X;
+  static final double SIZE = 2 * ORG_X;
+  static final int N_ARMS = 6;
+  static final double ARM_RATIO = 0.3;
   
-  static int GRID_SIZE = 100;
+  static final int GRID_SIZE = 100;
   
-  private static GeometryFactory geomFact = new GeometryFactory();
+  private static final GeometryFactory geomFact = new GeometryFactory();
   
   private Geometry geomA;
   private Geometry[] geomB;
@@ -66,8 +66,7 @@ extends PerformanceTestCase
   
   public void startRun(int npts)
   {
-    Geometry sineStar = SineStarFactory.create(new Coordinate(ORG_X, ORG_Y), SIZE, npts, N_ARMS, ARM_RATIO);
-    geomA = sineStar;
+      geomA = SineStarFactory.create(new Coordinate(ORG_X, ORG_Y), SIZE, npts, N_ARMS, ARM_RATIO);
     
     geomB =  createTestPoints(geomA.getEnvelopeInternal(),  GRID_SIZE);
 
@@ -155,7 +154,7 @@ extends PerformanceTestCase
     }
   } 
   
-  private Geometry[] createTestPoints(Envelope env, int nPtsOnSide) {
+  private static Geometry[] createTestPoints(Envelope env, int nPtsOnSide) {
     Geometry[] geoms = new Geometry[ nPtsOnSide * nPtsOnSide ];
     double baseX = env.getMinX();
     double deltaX = env.getWidth() / nPtsOnSide;

@@ -53,12 +53,11 @@ public class WKTorBReader {
   {
     if (Character.isDigit(ch)) return true;
     char chLow = Character.toLowerCase(ch);
-    if (chLow >= 'a' && chLow <= 'f') return true;
-    return false;
+      return chLow >= 'a' && chLow <= 'f';
   }
 
   private static final int MAX_CHARS_TO_CHECK = 6;
-  private GeometryFactory geomFactory;
+  private final GeometryFactory geomFactory;
   
   public WKTorBReader(GeometryFactory geomFact) {
     this.geomFactory = geomFact;

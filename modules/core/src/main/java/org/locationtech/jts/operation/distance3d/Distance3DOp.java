@@ -90,7 +90,7 @@ public class Distance3DOp {
 	}
 
 	// input
-	private Geometry[] geom;
+	private final Geometry[] geom;
 	private double terminateDistance = 0.0;
 	// working
 	private GeometryLocation[] minDistanceLocation;
@@ -154,10 +154,9 @@ public class Distance3DOp {
 	 */
 	public Coordinate[] nearestPoints() {
 		computeMinDistance();
-		Coordinate[] nearestPts = new Coordinate[] {
-				minDistanceLocation[0].getCoordinate(),
-				minDistanceLocation[1].getCoordinate() };
-		return nearestPts;
+        return new Coordinate[] {
+                minDistanceLocation[0].getCoordinate(),
+                minDistanceLocation[1].getCoordinate() };
 	}
 
 	/**
@@ -272,8 +271,7 @@ public class Distance3DOp {
 			}
 			if (geom instanceof Polygon) {
 				computeMinDistancePolygonPolygon(poly, (Polygon) geom, flip);
-				return;
-			}
+            }
 		}
 	}
 
@@ -327,8 +325,7 @@ public class Distance3DOp {
 			}
 			if (g1 instanceof Polygon) {
 				computeMinDistancePolygonPolygon(polyPlane(g0), (Polygon) g1, flip);
-				return;
-			}
+            }
 		}
 	}
 
@@ -403,7 +400,7 @@ public class Distance3DOp {
 		}
 	}
 
-	private Coordinate intersection(PlanarPolygon3D poly,LineString line) {
+	private static Coordinate intersection(PlanarPolygon3D poly, LineString line) {
 		CoordinateSequence seq = line.getCoordinateSequence();
 		if (seq.size() == 0)
 			return null;

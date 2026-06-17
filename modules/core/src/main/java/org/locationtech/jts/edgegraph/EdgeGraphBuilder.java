@@ -13,7 +13,6 @@
 package org.locationtech.jts.edgegraph;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Geometry;
@@ -29,13 +28,13 @@ import org.locationtech.jts.geom.LineString;
  */
 public class EdgeGraphBuilder 
 {
-  public static EdgeGraph build(Collection geoms) {
+  public static EdgeGraph build(Collection<? extends Geometry> geoms) {
     EdgeGraphBuilder builder = new EdgeGraphBuilder();
     builder.add(geoms);
     return builder.getGraph();
   }
 
-  private EdgeGraph graph = new EdgeGraph();
+  private final EdgeGraph graph = new EdgeGraph();
 
   public EdgeGraphBuilder()
   {
@@ -56,12 +55,10 @@ public class EdgeGraphBuilder
    * @param geometry geometry to be added
    */  
   public void add(Geometry geometry) {
-    geometry.apply(new GeometryComponentFilter() {
-      public void filter(Geometry component) {
-        if (component instanceof LineString) {
-          add((LineString)component);
-        }
-      }      
+    geometry.apply((GeometryComponentFilter) component -> {
+      if (component instanceof LineString) {
+        add((LineString)component);
+      }
     });
   }
   /**
@@ -71,12 +68,11 @@ public class EdgeGraphBuilder
    * 
    * @param geometries the geometries to be added
    */
-  public void add(Collection geometries) 
+  public void add(Collection<? extends Geometry> geometries)
   {
-    for (Iterator i = geometries.iterator(); i.hasNext(); ) {
-      Geometry geometry = (Geometry) i.next();
-      add(geometry);
-    }
+      for (Geometry geometry : geometries) {
+          add(geometry);
+      }
   }
   
   private void add(LineString lineString) {

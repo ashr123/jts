@@ -13,7 +13,6 @@ package org.locationtech.jts.noding.snapround;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.geom.Geometry;
@@ -44,7 +43,7 @@ import org.locationtech.jts.noding.SegmentString;
 public class GeometryNoder
 {
   private GeometryFactory geomFact;
-  private PrecisionModel pm;
+  private final PrecisionModel pm;
   private boolean isValidityChecked = false;
 
   /**
@@ -73,16 +72,16 @@ public class GeometryNoder
    * @param geoms a Collection of Geometrys of any type
    * @return a List of LineStrings representing the noded linework of the input
    */
-  public List node(Collection geoms)
+  public List<LineString> node(Collection<? extends Geometry> geoms)
   {
     // get geometry factory
-    Geometry geom0 = (Geometry) geoms.iterator().next();
+    Geometry geom0 = geoms.iterator().next();
     geomFact = geom0.getFactory();
 
-    List segStrings = toSegmentStrings(extractLines(geoms));
+    List<SegmentString> segStrings = toSegmentStrings(extractLines(geoms));
     Noder sr = new SnapRoundingNoder(pm);
     sr.computeNodes(segStrings);
-    Collection nodedLines = sr.getNodedSubstrings();
+    Collection<SegmentString> nodedLines = sr.getNodedSubstrings();
 
     //TODO: improve this to check for full snap-rounded correctness
     if (isValidityChecked) {
@@ -93,37 +92,34 @@ public class GeometryNoder
     return toLineStrings(nodedLines);
   }
 
-  private List toLineStrings(Collection segStrings)
+  private List<LineString> toLineStrings(Collection<? extends SegmentString> segStrings)
   {
-    List lines = new ArrayList();
-    for (Iterator it = segStrings.iterator(); it.hasNext(); ) {
-      SegmentString ss = (SegmentString) it.next();
-      // skip collapsed lines
-      if (ss.size() < 2)
-      	continue;
-      lines.add(geomFact.createLineString(ss.getCoordinates()));
-    }
+    List<LineString> lines = new ArrayList<>();
+      for (SegmentString ss : segStrings) {
+          // skip collapsed lines
+          if (ss.size() < 2)
+              continue;
+          lines.add(geomFact.createLineString(ss.getCoordinates()));
+      }
     return lines;
   }
 
-  private List extractLines(Collection geoms)
+  private static List<LineString> extractLines(Collection<? extends Geometry> geoms)
   {
-    List lines = new ArrayList();
+    List<LineString> lines = new ArrayList<>();
     LinearComponentExtracter lce = new LinearComponentExtracter(lines);
-    for (Iterator it = geoms.iterator(); it.hasNext(); ) {
-      Geometry geom = (Geometry) it.next();
-      geom.apply(lce);
-    }
+      for (Geometry geom : geoms) {
+          geom.apply(lce);
+      }
     return lines;
   }
 
-  private List toSegmentStrings(Collection lines)
+  private static List<SegmentString> toSegmentStrings(Collection<? extends LineString> lines)
   {
-    List segStrings = new ArrayList();
-    for (Iterator it = lines.iterator(); it.hasNext(); ) {
-      LineString line = (LineString) it.next();
-      segStrings.add(new NodedSegmentString(line.getCoordinates(), null));
-    }
+    List<SegmentString> segStrings = new ArrayList<>();
+      for (LineString line : lines) {
+          segStrings.add(new NodedSegmentString(line.getCoordinates(), null));
+      }
     return segStrings;
   }
 }

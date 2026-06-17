@@ -45,9 +45,9 @@ public class NodedSegmentString
 	 * @param segStrings a Collection of NodedSegmentStrings
 	 * @return a Collection of NodedSegmentStrings representing the substrings
 	 */
-  public static List getNodedSubstrings(Collection segStrings)
+  public static List<SegmentString> getNodedSubstrings(Collection<? extends SegmentString> segStrings)
   {
-    List resultEdgelist = new ArrayList();
+    List<SegmentString> resultEdgelist = new ArrayList<>();
     getNodedSubstrings(segStrings, resultEdgelist);
     return resultEdgelist;
   }
@@ -58,16 +58,16 @@ public class NodedSegmentString
 	 * @param segStrings a Collection of NodedSegmentStrings
 	 * @param resultEdgelist a List which will collect the NodedSegmentStrings representing the substrings
 	 */
- public static void getNodedSubstrings(Collection segStrings, Collection resultEdgelist)
+ public static void getNodedSubstrings(Collection<? extends SegmentString> segStrings, Collection<SegmentString> resultEdgelist)
   {
-    for (Object segString : segStrings) {
+    for (SegmentString segString : segStrings) {
       NodedSegmentString ss = (NodedSegmentString) segString;
       ss.getNodeList().addSplitEdges(resultEdgelist);
     }
   }
 
-  private SegmentNodeList nodeList = new SegmentNodeList(this);
-  private Coordinate[] pts;
+  private final SegmentNodeList nodeList = new SegmentNodeList(this);
+  private final Coordinate[] pts;
   private Object data;
 
   /**
@@ -148,7 +148,7 @@ public class NodedSegmentString
 //    return Octant.octant(getCoordinate(index), getCoordinate(index + 1));
   }
 
-  private int safeOctant(Coordinate p0, Coordinate p1)
+  private static int safeOctant(Coordinate p0, Coordinate p1)
   {
   	if (p0.equals2D(p1)) return 0;
   	return Octant.octant(p0, p1);
@@ -214,8 +214,7 @@ public class NodedSegmentString
 		/*
 		  Add the intersection point to edge intersection list.
 		 */
-		SegmentNode ei = nodeList.add(intPt, normalizedSegmentIndex);
-		return ei;
+      return nodeList.add(intPt, normalizedSegmentIndex);
 	}
   
   public String toString()

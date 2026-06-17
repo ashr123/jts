@@ -12,6 +12,7 @@
 package org.locationtech.jts.operation.buffer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.locationtech.jts.algorithm.Distance;
@@ -130,13 +131,13 @@ public class OffsetCurve {
     return oc.getCurve();
   }
   
-  private Geometry inputGeom;
-  private double distance;
+  private final Geometry inputGeom;
+  private final double distance;
   private boolean isJoined = false;
   
-  private BufferParameters bufferParams;
-  private double matchDistance;
-  private GeometryFactory geomFactory;
+  private final BufferParameters bufferParams;
+  private final double matchDistance;
+  private final GeometryFactory geomFactory;
 
   /**
    * Creates a new instance for computing an offset curve for a geometry at a given distance.
@@ -203,16 +204,12 @@ public class OffsetCurve {
    * @return the offset curve geometry
    */
   public Geometry getCurve() {
-    return GeometryMapper.flatMap(inputGeom, 1, new GeometryMapper.MapOp() {
-      
-      @Override
-      public Geometry map(Geometry geom) {
-        if (geom instanceof Point) return null;
-        if (geom instanceof Polygon ) {
-          return computePolygonCurve((Polygon) geom, distance);
-        } 
-        return computeCurve((LineString) geom, distance);
+    return GeometryMapper.flatMap(inputGeom, 1, geom -> {
+      if (geom instanceof Point) return null;
+      if (geom instanceof Polygon ) {
+        return computePolygonCurve((Polygon) geom, distance);
       }
+      return computeCurve((LineString) geom, distance);
     });
   }
   
@@ -260,8 +257,7 @@ public class OffsetCurve {
     OffsetCurveBuilder ocb = new OffsetCurveBuilder(
         line.getFactory().getPrecisionModel(), bufParams
         );
-    Coordinate[] rawPts = ocb.getOffsetCurve(cleanPts, distance);
-    return rawPts;
+      return ocb.getOffsetCurve(cleanPts, distance);
   }
   
   /**
@@ -306,7 +302,7 @@ public class OffsetCurve {
 
   private List<OffsetCurveSection> computeSections(LineString lineGeom, double distance) {
     Coordinate[] rawCurve = rawOffset(lineGeom, distance, bufferParams);
-    List<OffsetCurveSection> sections = new ArrayList<OffsetCurveSection>();
+    List<OffsetCurveSection> sections = new ArrayList<>();
     if (rawCurve.length == 0) {
       return sections;
     }
@@ -378,9 +374,7 @@ public class OffsetCurve {
   private void computeCurveSections(Coordinate[] bufferRingPts, 
       Coordinate[] rawCurve, List<OffsetCurveSection> sections) {
     double[] rawPosition = new double[bufferRingPts.length - 1];
-    for (int i = 0; i < rawPosition.length; i++) {
-      rawPosition[i] = NOT_IN_CURVE;
-    }
+      Arrays.fill(rawPosition, NOT_IN_CURVE);
     SegmentMCIndex bufferSegIndex = new SegmentMCIndex(bufferRingPts);
     int bufferFirstIndex = -1;
     double minRawPosition = -1;
@@ -433,13 +427,13 @@ public class OffsetCurve {
   private static class MatchCurveSegmentAction 
     extends MonotoneChainSelectAction
   {
-    private Coordinate raw0;
-    private Coordinate raw1;
-    private double rawLen;
-    private int rawCurveIndex;
-    private Coordinate[] bufferRingPts;
-    private double matchDistance;
-    private double[] rawCurveLoc;
+    private final Coordinate raw0;
+    private final Coordinate raw1;
+    private final double rawLen;
+    private final int rawCurveIndex;
+    private final Coordinate[] bufferRingPts;
+    private final double matchDistance;
+    private final double[] rawCurveLoc;
     private double minRawLocation = -1;
     private int bufferRingMinIndex = -1;
     
@@ -505,17 +499,14 @@ public class OffsetCurve {
       if (rawLen <= bufSegLen) {
         if (matchDistance < Distance.pointToSegment(raw0, buf0, buf1))
           return false;
-        if (matchDistance < Distance.pointToSegment(raw1, buf0, buf1))
-          return false;
+          return !(matchDistance < Distance.pointToSegment(raw1, buf0, buf1));
       }
       else {
         //TODO: only match longer buf segs at raw curve end segs?
         if (matchDistance < Distance.pointToSegment(buf0, raw0, raw1))
           return false;
-        if (matchDistance < Distance.pointToSegment(buf1, raw0, raw1))
-          return false;      
+          return !(matchDistance < Distance.pointToSegment(buf1, raw0, raw1));
       }
-      return true;
     }  
   }
 

@@ -12,7 +12,6 @@
 package org.locationtech.jts.noding;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -58,11 +57,11 @@ public class SegmentStringDissolver
     void merge(SegmentString mergeTarget, SegmentString ssToMerge, boolean isSameOrientation);
   }
 
-  private SegmentStringMerger merger;
-  private Map ocaMap = new TreeMap();
+  private final SegmentStringMerger merger;
+  private final Map<OrientedCoordinateArray, SegmentString> ocaMap = new TreeMap<>();
 
   // testing only
-  //private List testAddedSS = new ArrayList();
+  //private List<OrientedCoordinateArray> testAddedSS = new ArrayList<OrientedCoordinateArray>();
 
   /**
    * Creates a dissolver with a user-defined merge strategy.
@@ -84,11 +83,11 @@ public class SegmentStringDissolver
    * Dissolve all {@link SegmentString}s in the input {@link Collection}
    * @param segStrings
    */
-  public void dissolve(Collection segStrings)
+  public void dissolve(Collection<? extends SegmentString> segStrings)
   {
-    for (Iterator i = segStrings.iterator(); i.hasNext(); ) {
-      dissolve((SegmentString) i.next());
-    }
+      for (SegmentString segString : segStrings) {
+          dissolve(segString);
+      }
   }
 
   private void add(OrientedCoordinateArray oca, SegmentString segString)
@@ -121,22 +120,21 @@ public class SegmentStringDissolver
   private SegmentString findMatching(OrientedCoordinateArray oca,
                                     SegmentString segString)
   {
-    SegmentString matchSS = (SegmentString) ocaMap.get(oca);
     /*
     boolean hasBeenAdded = checkAdded(oca);
     if (matchSS == null && hasBeenAdded) {
       System.out.println("added!");
     }
     */
-    return matchSS;
+    return ocaMap.get(oca);
   }
 
 /*
 
   private boolean checkAdded(OrientedCoordinateArray oca)
   {
-    for (Iterator i = testAddedSS.iterator(); i.hasNext(); ) {
-      OrientedCoordinateArray addedOCA = (OrientedCoordinateArray) i.next();
+    for (Iterator<OrientedCoordinateArray> i = testAddedSS.iterator(); i.hasNext(); ) {
+      OrientedCoordinateArray addedOCA = i.next();
       if (oca.compareTo(addedOCA) == 0)
         return true;
     }
@@ -149,8 +147,5 @@ public class SegmentStringDissolver
    *
    * @return the unique {@link SegmentString}s
    */
-  public Collection getDissolved() { return ocaMap.values(); }
+  public Collection<SegmentString> getDissolved() { return ocaMap.values(); }
 }
-
-
-

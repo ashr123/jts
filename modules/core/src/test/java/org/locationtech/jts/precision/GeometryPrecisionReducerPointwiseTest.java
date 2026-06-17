@@ -25,7 +25,7 @@ public class GeometryPrecisionReducerPointwiseTest
     extends GeometryTestCase
 {
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(GeometryPrecisionReducerPointwiseTest.class);
   }
 
@@ -34,37 +34,37 @@ public class GeometryPrecisionReducerPointwiseTest
     super(name);
   }
   
-  public void testLineWithCollapse() throws Exception {
+  public void testLineWithCollapse() {
     checkReducePointwise(
         "LINESTRING (0 0,  0.1 0,  1 0)",
         "LINESTRING (0 0,  0   0,  1 0)");
   }
 
-  public void testLineDuplicatePointsPreserved() throws Exception {
+  public void testLineDuplicatePointsPreserved() {
     checkReducePointwise(
         "LINESTRING (0 0,  0.1 0,  0.1 0,  1 0, 1 0)",
         "LINESTRING (0 0,  0   0,  0   0,  1 0, 1 0)");
   }
 
-  public void testLineFullCollapse() throws Exception {
+  public void testLineFullCollapse() {
     checkReducePointwise(
         "LINESTRING (0 0,  0.1 0)",
         "LINESTRING (0 0,  0   0)");
   }
 
-  public void testPolygonFullCollapse() throws Exception {
+  public void testPolygonFullCollapse() {
     checkReducePointwise(
         "POLYGON ((0.1 0.3, 0.3 0.3, 0.3 0.1, 0.1 0.1, 0.1 0.3))",
         "POLYGON ((0 0, 0 0, 0 0, 0 0, 0 0))");
   }
 
-  public void testPolygonWithCollapsedLine() throws Exception {
+  public void testPolygonWithCollapsedLine() {
     checkReducePointwise(
         "POLYGON ((10 10, 100 100, 200 10.1, 300 10, 10 10))",
         "POLYGON ((10 10, 100 100, 200 10,   300 10, 10 10))");
   }
 
-  public void testPolygonWithCollapsedPoint() throws Exception {
+  public void testPolygonWithCollapsedPoint() {
     checkReducePointwise(
         "POLYGON ((10 10, 100 100, 200 10.1, 300 100, 400 10, 10 10))",
         "POLYGON ((10 10, 100 100, 200 10,   300 100, 400 10, 10 10))");
@@ -80,9 +80,9 @@ public class GeometryPrecisionReducerPointwiseTest
     assertEqualsExactAndHasSameFactory(gExpected, gReduce);
   }
   
-  private void assertEqualsExactAndHasSameFactory(Geometry expected, Geometry actual)
+  private static void assertEqualsExactAndHasSameFactory(Geometry expected, Geometry actual)
   {
     checkEqual(expected, actual);
-    assertTrue("Factories are not the same", expected.getFactory() == actual.getFactory());
+      assertSame("Factories are not the same", expected.getFactory(), actual.getFactory());
   }
 }

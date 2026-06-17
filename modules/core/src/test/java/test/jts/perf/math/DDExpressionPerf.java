@@ -13,6 +13,7 @@
 package test.jts.perf.math;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import org.locationtech.jts.math.DD;
 import org.locationtech.jts.util.Stopwatch;
@@ -28,15 +29,14 @@ import org.locationtech.jts.util.Stopwatch;
 public class DDExpressionPerf 
 {
 
-	public static void main(String[] args) throws Exception
-	{
+	public static void main(String[] args) {
 		  DDExpressionPerf test = new DDExpressionPerf();
-	    test.run();
+	    run();
 	}
 
-	public DDExpressionPerf() { }
+	private DDExpressionPerf() { }
 	
-	public void run() {
+	public static void run() {
 	  int n = 1000000;
 		double doubleTime   = runDouble(n);
 		double ddTime       = runDoubleDouble(n);
@@ -51,7 +51,7 @@ public class DDExpressionPerf
 		
 	}
 	
-	public double runDouble(int nIter)
+	public static double runDouble(int nIter)
 	{
 		Stopwatch sw = new Stopwatch();
 		for (int i = 0; i < nIter; i++) {
@@ -71,7 +71,7 @@ public class DDExpressionPerf
 	}
 	
 	
-	public double runBigDecimal(int nIter)
+	public static double runBigDecimal(int nIter)
 	{
 		Stopwatch sw = new Stopwatch();
 		for (int i = 0; i < nIter; i++) {
@@ -79,7 +79,7 @@ public class DDExpressionPerf
       BigDecimal a = (new BigDecimal(9.0)).setScale(20);
       BigDecimal factor = (new BigDecimal(10.0)).setScale(20);
 			BigDecimal aMul = factor.multiply(a);
-			BigDecimal aDiv = a.divide(factor, BigDecimal.ROUND_HALF_UP);
+			BigDecimal aDiv = a.divide(factor, RoundingMode.HALF_UP);
 			
 			BigDecimal det = a.multiply(a)
 					.subtract(aMul.multiply(aDiv));
@@ -92,7 +92,7 @@ public class DDExpressionPerf
 		return sw.getTime() / (double) nIter;
 	}
 	
-  public double runDoubleDouble(int nIter)
+  public static double runDoubleDouble(int nIter)
   {
     Stopwatch sw = new Stopwatch();
     for (int i = 0; i < nIter; i++) {
@@ -113,7 +113,7 @@ public class DDExpressionPerf
     return sw.getTime() / (double) nIter;
   }
   
-  public double xrunDoubleDoubleSelf(int nIter)
+  public static double xrunDoubleDoubleSelf(int nIter)
   {
     Stopwatch sw = new Stopwatch();
     for (int i = 0; i < nIter; i++) {
@@ -135,7 +135,7 @@ public class DDExpressionPerf
   }
   
 	//*
-	public double runDoubleDoubleSelf(int nIter)
+	public static double runDoubleDoubleSelf(int nIter)
 	{
 		Stopwatch sw = new Stopwatch();
 		for (int i = 0; i < nIter; i++) {

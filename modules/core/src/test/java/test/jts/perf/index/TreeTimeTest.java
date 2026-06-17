@@ -26,31 +26,29 @@ import org.locationtech.jts.index.strtree.STRtree;
 public class TreeTimeTest {
   public static final int NUM_ITEMS = 100000;
 
-  public static void main(String[] args) throws Exception
-  {
+  public static void main(String[] args) {
     int n = NUM_ITEMS;
     TreeTimeTest test = new TreeTimeTest();
-    //List items = IndexTester.createGridItems(n);
-    List items = IndexTester.createRandomBoxes(n);
-    List queries = IndexTester.createRandomBoxes(n);
-    
+    //List<Envelope> items = IndexTester.createGridItems(n);
+    List<Envelope> items = IndexTester.createRandomBoxes(n);
+    List<Envelope> queries = IndexTester.createRandomBoxes(n);
+
     System.out.println("----------------------------------------------");
     System.out.println("Dummy run to ensure classes are loaded before real run");
     System.out.println("----------------------------------------------");
-    test.run(items, queries);
+    run(items, queries);
     System.out.println("----------------------------------------------");
     System.out.println("Real run");
     System.out.println("----------------------------------------------");
-    test.run(items, queries);
+    run(items, queries);
   }
 
-  public TreeTimeTest()
+  private TreeTimeTest()
   {
   }
 
-  public List run(List items, List queries) throws Exception
-  {
-    ArrayList indexResults = new ArrayList();
+  public static List<IndexTester.IndexResult> run(List<Envelope> items, List<Envelope> queries) {
+    ArrayList<IndexTester.IndexResult> indexResults = new ArrayList<>();
     System.out.println("# items = " + items.size());
     indexResults.add(run(new HPRtreeIndex(16), items, queries));
     indexResults.add(run(new STRtreeIndex(4), items, queries));
@@ -60,27 +58,26 @@ public class TreeTimeTest {
     return indexResults;
   }
 
-  public IndexTester.IndexResult run(Index index, List items, List queries) throws Exception
-  {
+  public static IndexTester.IndexResult run(Index index, List<Envelope> items, List<Envelope> queries) {
     return new IndexTester(index).testAll(items, queries);
   }
 
-  class STRtreeIndex
+  static class STRtreeIndex
   implements Index
 {
   public String toString() { return "STR[M=" + index.getNodeCapacity() + "]"; }
 //  public String toString() { return "" + index.getNodeCapacity() + ""; }
   public STRtreeIndex(int nodeCapacity)
   {
-    index = new STRtree(nodeCapacity);
+    index = new STRtree<>(nodeCapacity);
   }
-  STRtree index;
+  final STRtree<Object> index;
 
   public void insert(Envelope itemEnv, Object item)
   {
     index.insert(itemEnv, item);
   }
-  public List query(Envelope searchEnv)
+  public List<Object> query(Envelope searchEnv)
   {
     return index.query(searchEnv);
   }
@@ -90,23 +87,23 @@ public class TreeTimeTest {
   }
 }
 
-  class HPRtreeIndex
+  static class HPRtreeIndex
   implements Index
 {
-  private int nodeCapacity;
+  private final int nodeCapacity;
 
   public HPRtreeIndex(int nodeCapacity)
   {
     this.nodeCapacity = nodeCapacity;
-    index = new HPRtree(nodeCapacity);
+    index = new HPRtree<>(nodeCapacity);
   }
-  HPRtree index;
+  final HPRtree<Object> index;
 
   public void insert(Envelope itemEnv, Object item)
   {
     index.insert(itemEnv, item);
   }
-  public List query(Envelope searchEnv)
+  public List<Object> query(Envelope searchEnv)
   {
     return index.query(searchEnv);
   }
@@ -117,16 +114,16 @@ public class TreeTimeTest {
   public String toString() { return "HPR[M=" + nodeCapacity + "]"; }
 }
 
-  class QuadtreeIndex
+  static class QuadtreeIndex
     implements Index
   {
-    Quadtree index = new Quadtree();
+    final Quadtree<Object> index = new Quadtree<>();
     public String toString() { return "Quad"; }
     public void insert(Envelope itemEnv, Object item)
     {
       index.insert(itemEnv, item);
     }
-    public List query(Envelope searchEnv)
+    public List<Object> query(Envelope searchEnv)
     {
       return index.query(searchEnv);
     }
@@ -135,16 +132,16 @@ public class TreeTimeTest {
     }
   }
 
-  class EnvelopeListIndex
+  static class EnvelopeListIndex
     implements Index
   {
-    EnvelopeList index = new EnvelopeList();
+    final EnvelopeList index = new EnvelopeList();
     public String toString() { return "Env"; }
     public void insert(Envelope itemEnv, Object item)
     {
       index.add(itemEnv);
     }
-    public List query(Envelope searchEnv)
+    public List<Envelope> query(Envelope searchEnv)
     {
       return index.query(searchEnv);
     }

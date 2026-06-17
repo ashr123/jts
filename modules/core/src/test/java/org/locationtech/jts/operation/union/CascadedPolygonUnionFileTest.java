@@ -15,7 +15,6 @@ package org.locationtech.jts.operation.union;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Collection;
 
 import org.locationtech.jts.io.ParseException;
 
@@ -53,13 +52,12 @@ public class CascadedPolygonUnionFileTest extends TestCase
   			CascadedPolygonUnionTester.MIN_SIMILARITY_MEAURE);
   }
 
-  private static CascadedPolygonUnionTester tester = new CascadedPolygonUnionTester();
+  private static final CascadedPolygonUnionTester tester = new CascadedPolygonUnionTester();
   
-  private void runTest(String filename, double minimumMeasure) 
+  private static void runTest(String filename, double minimumMeasure)
   throws IOException, ParseException
   {
-    Collection geoms = IOUtil.readWKTFile(filename);
-    assertTrue(tester.test(geoms, minimumMeasure));
+      assertTrue(CascadedPolygonUnionTester.test(IOUtil.readWKTFile(filename), minimumMeasure));
   }
   private void runTestResource(String resource, double minimumMeasure) 
   throws IOException, ParseException
@@ -67,8 +65,7 @@ public class CascadedPolygonUnionFileTest extends TestCase
     InputStream is = this.getClass().getResourceAsStream(resource);
     // don't bother if file is missing
     if (is == null) return;
-    Collection geoms = IOUtil.readWKTFile(new InputStreamReader(is));
-    assertTrue(tester.test(geoms, minimumMeasure));
+      assertTrue(CascadedPolygonUnionTester.test(IOUtil.readWKTFile(new InputStreamReader(is)), minimumMeasure));
   }
   
 }

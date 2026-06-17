@@ -1,19 +1,17 @@
 package test.jts.perf.algorithm;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.util.GeometricShapeFactory;
 
 import test.jts.perf.PerformanceTestCase;
 import test.jts.perf.PerformanceTestRunner;
 
 public class ConvexHullPerfTest extends PerformanceTestCase {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     PerformanceTestRunner.run(ConvexHullPerfTest.class);
   }
 
@@ -32,7 +30,7 @@ public class ConvexHullPerfTest extends PerformanceTestCase {
     geom = createRandomMultiPoint(num);
   }
 
-  private MultiPoint createRandomMultiPoint(int num) {
+  private static MultiPoint createRandomMultiPoint(int num) {
     Coordinate[] pts = new Coordinate[num];
     Random rand = new Random(1324);
     for (int i = 0; i < num; i++) {

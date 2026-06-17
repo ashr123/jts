@@ -37,10 +37,10 @@ public class PointExtracter
    * @param geom the geometry from which to extract
    * @param list the list to add the extracted elements to
    */
-  public static List getPoints(Geometry geom, List list)
+  public static List<Point> getPoints(Geometry geom, List<Point> list)
   {
   	if (geom instanceof Point) {
-  		list.add(geom);
+  		list.add((Point) geom);
   	}
   	else if (geom instanceof GeometryCollection) {
   		geom.apply(new PointExtracter(list));
@@ -56,25 +56,25 @@ public class PointExtracter
    * 
    * @param geom the geometry from which to extract
    */
-  public static List getPoints(Geometry geom) {
+  public static List<Point> getPoints(Geometry geom) {
     if (geom instanceof Point) {
-      return Collections.singletonList(geom);
+      return Collections.singletonList((Point) geom);
     }
-    return getPoints(geom, new ArrayList());
+    return getPoints(geom, new ArrayList<>());
   }
 
-  private List pts;
+  private final List<Point> pts;
   /**
    * Constructs a PointExtracterFilter with a list in which to store Points found.
    */
-  public PointExtracter(List pts)
+  public PointExtracter(List<Point> pts)
   {
     this.pts = pts;
   }
 
   public void filter(Geometry geom)
   {
-    if (geom instanceof Point) pts.add(geom);
+    if (geom instanceof Point) pts.add((Point) geom);
   }
 
 }

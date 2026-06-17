@@ -25,14 +25,17 @@ import org.locationtech.jts.geom.Quadrant;
  */
 public class MonotoneChainBuilder {
 
-  /**
+    private MonotoneChainBuilder() {
+    }
+
+    /**
    * Computes a list of the {@link MonotoneChain}s
    * for a list of coordinates.
    * 
    * @param pts the list of points to compute chains for
    * @return a list of the monotone chains for the points 
    */
-  public static List getChains(Coordinate[] pts)
+  public static List<MonotoneChain> getChains(Coordinate[] pts)
   {
     return getChains(pts, null);
   }
@@ -46,9 +49,9 @@ public class MonotoneChainBuilder {
    * @param context a data object to attach to each chain
    * @return a list of the monotone chains for the points 
    */
-  public static List getChains(Coordinate[] pts, Object context)
+  public static List<MonotoneChain> getChains(Coordinate[] pts, Object context)
   {
-    List mcList = new ArrayList();
+    List<MonotoneChain> mcList = new ArrayList<>();
     if (pts.length == 0)
       return mcList;
     int chainStart = 0;

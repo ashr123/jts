@@ -35,7 +35,7 @@ public class EdgeEndBundle
   extends EdgeEnd
 {
 //  private BoundaryNodeRule boundaryNodeRule;
-  private List edgeEnds = new ArrayList();
+  private final List<EdgeEnd> edgeEnds = new ArrayList<>();
 
   public EdgeEndBundle(BoundaryNodeRule boundaryNodeRule, EdgeEnd e)
   {
@@ -55,8 +55,8 @@ public class EdgeEndBundle
   }
 
   public Label getLabel() { return label; }
-  public Iterator iterator() { return edgeEnds.iterator(); }
-  public List getEdgeEnds() { return edgeEnds; }
+  public Iterator<EdgeEnd> iterator() { return edgeEnds.iterator(); }
+  public List<EdgeEnd> getEdgeEnds() { return edgeEnds; }
 
   public void insert(EdgeEnd e)
   {
@@ -74,8 +74,8 @@ public class EdgeEndBundle
     // create the label.  If any of the edges belong to areas,
     // the label must be an area label
     boolean isArea = false;
-    for (Iterator it = iterator(); it.hasNext(); ) {
-      EdgeEnd e = (EdgeEnd) it.next();
+    for (Iterator<EdgeEnd> it = iterator(); it.hasNext(); ) {
+      EdgeEnd e = it.next();
       if (e.getLabel().isArea()) isArea = true;
     }
     if (isArea)
@@ -117,8 +117,8 @@ public class EdgeEndBundle
     int boundaryCount = 0;
     boolean foundInterior = false;
 
-    for (Iterator it = iterator(); it.hasNext(); ) {
-      EdgeEnd e = (EdgeEnd) it.next();
+    for (Iterator<EdgeEnd> it = iterator(); it.hasNext(); ) {
+      EdgeEnd e = it.next();
       int loc = e.getLabel().getLocation(geomIndex);
       if (loc == Location.BOUNDARY) boundaryCount++;
       if (loc == Location.INTERIOR) foundInterior = true;
@@ -156,8 +156,8 @@ public class EdgeEndBundle
    */
   private void computeLabelSide(int geomIndex, int side)
   {
-    for (Iterator it = iterator(); it.hasNext(); ) {
-      EdgeEnd e = (EdgeEnd) it.next();
+    for (Iterator<EdgeEnd> it = iterator(); it.hasNext(); ) {
+      EdgeEnd e = it.next();
       if (e.getLabel().isArea()) {
         int loc = e.getLabel().getLocation(geomIndex, side);
         if (loc == Location.INTERIOR) {
@@ -180,8 +180,8 @@ public class EdgeEndBundle
   public void print(PrintStream out)
   {
     out.println("EdgeEndBundle--> Label: " + label);
-    for (Iterator it = iterator(); it.hasNext(); ) {
-      EdgeEnd ee = (EdgeEnd) it.next();
+    for (Iterator<EdgeEnd> it = iterator(); it.hasNext(); ) {
+      EdgeEnd ee = it.next();
       ee.print(out);
       out.println();
     }

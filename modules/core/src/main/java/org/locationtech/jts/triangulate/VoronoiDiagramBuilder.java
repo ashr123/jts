@@ -26,6 +26,7 @@ import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.noding.snap.SnappingPointIndex;
 import org.locationtech.jts.triangulate.quadedge.QuadEdgeSubdivision;
+import org.locationtech.jts.triangulate.quadedge.Vertex;
 
 
 /**
@@ -53,7 +54,7 @@ public class VoronoiDiagramBuilder
    */
 	private static final double SHORT_SEG_TOLERANCE_FACTOR = 1.0e-10;
 	
-  private Collection siteCoords;
+  private Collection<Coordinate> siteCoords;
 	private double tolerance = 0.0;
 	private QuadEdgeSubdivision subdiv = null;
 	private Envelope clipEnv = null;
@@ -85,7 +86,7 @@ public class VoronoiDiagramBuilder
 	 * 
 	 * @param coords a collection of Coordinates.
 	 */
-	public void setSites(Collection coords)
+	public void setSites(Collection<Coordinate> coords)
 	{
 		// remove any duplicate points (they will cause the triangulation to fail)
 		siteCoords = DelaunayTriangulationBuilder.unique(CoordinateArrays.toCoordinateArray(coords));
@@ -131,7 +132,7 @@ public class VoronoiDiagramBuilder
   		diagramEnv.expandBy(expandBy);
 		}
 
-		List vertices = DelaunayTriangulationBuilder.toVertices(siteCoords);
+		List<Vertex> vertices = DelaunayTriangulationBuilder.toVertices(siteCoords);
 		subdiv = new QuadEdgeSubdivision(diagramEnv, tolerance);
 		IncrementalDelaunayTriangulator triangulator = new IncrementalDelaunayTriangulator(subdiv);
 		/**
@@ -188,7 +189,7 @@ public class VoronoiDiagramBuilder
   private static Geometry clipGeometryCollection(Geometry geom, Envelope clipEnv)
   {
     Geometry clipPoly = geom.getFactory().toGeometry(clipEnv);
-    List<Geometry> clipped = new ArrayList<Geometry>();
+    List<Geometry> clipped = new ArrayList<>();
     for (int i = 0; i < geom.getNumGeometries(); i++) {
       Geometry g = geom.getGeometryN(i);
       Geometry result = null;
@@ -229,8 +230,7 @@ public class VoronoiDiagramBuilder
 		double segmentLenTolerance = SHORT_SEG_TOLERANCE_FACTOR * diagramEnv.getDiameter();
 		if (hasInvalidPolygonWithShortEdge(polys, segmentLenTolerance)) {
 		  //System.out.println("SNAPPING!");
-		  Geometry polysSnap = snap(polys, segmentLenTolerance);
-		  return polysSnap;
+            return snap(polys, segmentLenTolerance);
 		}
     return polys;
   }
@@ -285,7 +285,7 @@ public class VoronoiDiagramBuilder
    */
   private static Geometry snap(Geometry polys, double snapTolerance) {
     SnappingPointIndex snapMap = new SnappingPointIndex(snapTolerance);
-    List<Polygon> polysSnap = new ArrayList<Polygon>();
+    List<Polygon> polysSnap = new ArrayList<>();
     for (int i = 0; i < polys.getNumGeometries(); i++) {
       Polygon polySnap = snapPolygon((Polygon) polys.getGeometryN(i), snapMap);
       polysSnap.add(polySnap);
@@ -302,8 +302,7 @@ public class VoronoiDiagramBuilder
       Coordinate snapPt = snapMap.snap(pt);
       ptsSnap.add(snapPt.copy(), false);
     }
-    Polygon polySnap = poly.getFactory().createPolygon(ptsSnap.toCoordinateArray());
-    return polySnap;
+      return poly.getFactory().createPolygon(ptsSnap.toCoordinateArray());
   }
 
 }

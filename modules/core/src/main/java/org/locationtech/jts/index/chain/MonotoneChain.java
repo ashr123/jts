@@ -72,8 +72,9 @@ import org.locationtech.jts.geom.LineSegment;
  */
 public class MonotoneChain {
 
-  private Coordinate[] pts;
-  private int start, end;
+  private final Coordinate[] pts;
+  private final int start;
+    private final int end;
   private Envelope env = null;
   private Object context = null;// user-defined information
   private int id;// useful for optimizing chain comparisons
@@ -192,7 +193,7 @@ public class MonotoneChain {
    */
   public Coordinate[] getCoordinates()
   {
-    Coordinate coord[] = new Coordinate[end - start + 1];
+    Coordinate[] coord = new Coordinate[end - start + 1];
     int index = 0;
     for (int i = start; i <= end; i++) {
       coord[index++] = pts[i];
@@ -359,7 +360,7 @@ public class MonotoneChain {
     return Envelope.intersects(pts[start0], pts[end0], mc.pts[start1], mc.pts[end1]);
   }
   
-  private boolean overlaps(Coordinate p1, Coordinate p2, Coordinate q1, Coordinate q2, double overlapTolerance)
+  private static boolean overlaps(Coordinate p1, Coordinate p2, Coordinate q1, Coordinate q2, double overlapTolerance)
   {
     double minq = Math.min(q1.x, q2.x);
     double maxq = Math.max(q1.x, q2.x);
@@ -378,9 +379,7 @@ public class MonotoneChain {
 
     if( minp > maxq + overlapTolerance )
         return false;
-    if( maxp < minq - overlapTolerance )
-        return false;
-    return true;
+      return !(maxp < minq - overlapTolerance);
   }
 
 }

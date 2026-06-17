@@ -23,7 +23,10 @@ import org.locationtech.jts.math.MathUtil;
  */
 public class Distance {
 
-  /**
+    private Distance() {
+    }
+
+    /**
    * Computes the distance from a line segment AB to a line segment CD
    * 
    * Note: NON-ROBUST!

@@ -37,12 +37,12 @@ public class PreparedPolygonIntersectsStressTest extends TestCase
 {
   static final int MAX_ITER = 10000;
 
-  static PrecisionModel pm = new PrecisionModel();
-  static GeometryFactory fact = new GeometryFactory(pm, 0);
+  static final PrecisionModel pm = new PrecisionModel();
+  static final GeometryFactory fact = new GeometryFactory(pm, 0);
   static WKTReader wktRdr = new WKTReader(fact);
   static WKTWriter wktWriter = new WKTWriter();
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(PreparedPolygonIntersectsStressTest.class);
   }
 
@@ -57,7 +57,7 @@ public class PreparedPolygonIntersectsStressTest extends TestCase
     run(1000);
   }
   
-  public void run(int nPts)
+  public static void run(int nPts)
   {
 //  	Geometry poly = createCircle(new Coordinate(0, 0), 100, nPts);
   	Geometry poly = createSineStar(new Coordinate(0, 0), 100, nPts);
@@ -68,29 +68,27 @@ public class PreparedPolygonIntersectsStressTest extends TestCase
     test(poly);
   }
 
-  Geometry createCircle(Coordinate origin, double size, int nPts) {
+  static Geometry createCircle(Coordinate origin, double size, int nPts) {
 		GeometricShapeFactory gsf = new GeometricShapeFactory();
 		gsf.setCentre(origin);
 		gsf.setSize(size);
 		gsf.setNumPoints(nPts);
-		Geometry circle = gsf.createCircle();
-		// Polygon gRect = gsf.createRectangle();
+      // Polygon gRect = gsf.createRectangle();
 		// Geometry g = gRect.getExteriorRing();
-		return circle;
+		return gsf.createCircle();
 	}
   
-  Geometry createSineStar(Coordinate origin, double size, int nPts) {
+  static Geometry createSineStar(Coordinate origin, double size, int nPts) {
 		SineStarFactory gsf = new SineStarFactory();
 		gsf.setCentre(origin);
 		gsf.setSize(size);
 		gsf.setNumPoints(nPts);
 		gsf.setArmLengthRatio(0.1);
 		gsf.setNumArms(20);
-		Geometry poly = gsf.createSineStar();
-		return poly;
+      return gsf.createSineStar();
 	}
   
-  LineString createTestLine(Envelope env, double size, int nPts)
+  static LineString createTestLine(Envelope env, double size, int nPts)
   {
   	double width = env.getWidth();
   	double xOffset = width * Math.random();
@@ -98,11 +96,10 @@ public class PreparedPolygonIntersectsStressTest extends TestCase
     Coordinate basePt = new Coordinate(
     				env.getMinX() + xOffset,
     				env.getMinY() + yOffset);
-    LineString line = createTestLine(basePt, size, nPts);
-    return line;
+      return createTestLine(basePt, size, nPts);
   }
   
-  LineString createTestLine(Coordinate base, double size, int nPts)
+  static LineString createTestLine(Coordinate base, double size, int nPts)
   {
     GeometricShapeFactory gsf = new GeometricShapeFactory();
     gsf.setCentre(base);
@@ -113,7 +110,7 @@ public class PreparedPolygonIntersectsStressTest extends TestCase
     return (LineString) circle.getBoundary();
   }
   
-  public void test(Geometry g) {
+  public static void test(Geometry g) {
   	int count = 0;
   	while (count < MAX_ITER) {
   		count++;
@@ -125,12 +122,11 @@ public class PreparedPolygonIntersectsStressTest extends TestCase
   	}
 	}
   
-  public void testResultsEqual(Geometry g, LineString line) 
+  public static void testResultsEqual(Geometry g, LineString line)
   {
 		boolean slowIntersects = g.intersects(line);
 
-    PreparedGeometryFactory pgFact = new PreparedGeometryFactory();
-    PreparedGeometry prepGeom = pgFact.create(g);
+      PreparedGeometry prepGeom = PreparedGeometryFactory.create(g);
     
 		boolean fastIntersects = prepGeom.intersects(line);
 

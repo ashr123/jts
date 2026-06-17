@@ -54,7 +54,7 @@ public class SimpleGeometryPrecisionReducer
 		return reducer.reduce(g);
 	}
 	
-  private PrecisionModel newPrecisionModel;
+  private final PrecisionModel newPrecisionModel;
   private boolean removeCollapsed = true;
   private boolean changePrecisionModel = false;
 

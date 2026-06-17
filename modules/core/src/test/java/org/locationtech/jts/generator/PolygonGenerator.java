@@ -120,7 +120,7 @@ public class PolygonGenerator extends GeometryGenerator {
 		radius *= .75;
 		int degreesPerHole = 360/(nholes+1);
 		int degreesPerGap = degreesPerHole/nholes;
-		degreesPerGap = degreesPerGap<2?2:degreesPerGap;
+		degreesPerGap = Math.max(degreesPerGap, 2);
 		degreesPerHole = (360-(degreesPerGap*nholes))/nholes;
 		
 		if(degreesPerHole < 2)
@@ -211,7 +211,7 @@ public class PolygonGenerator extends GeometryGenerator {
 				if(cindex<nholes){
 					// make another box
 					int pts = npoints/2;
-					pts = pts<4?4:pts;
+					pts = Math.max(pts, 4);
 					
 					inner[cindex++] = createBox(spx+x+j*(ddx+spx),ddx,spy+y+i*(ddy+spy),ddy,pts,gf);
 				}

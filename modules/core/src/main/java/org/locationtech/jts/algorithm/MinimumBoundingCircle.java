@@ -68,7 +68,7 @@ public class MinimumBoundingCircle
    * the article "An Easy Bounding Circle" in <i>Graphic Gems II</i>.
    */
 	
-	private Geometry input;
+	private final Geometry input;
 	private Coordinate[] extremalPts = null;
 	private Coordinate centre = null;
 	private double radius = 0.0;
@@ -327,13 +327,11 @@ public class MinimumBoundingCircle
 			else if (Angle.isObtuse(R, P, Q)) {
 				// if RPQ is obtuse, update baseline and iterate
 				P = R;
-				continue;
-			}
+            }
 			else if (Angle.isObtuse(R, Q, P)) {
 				// if RQP is obtuse, update baseline and iterate
 				Q = R;
-				continue;
-			}
+            }
 			else {
 				// otherwise all angles are acute, and the MBC is determined by the triangle PQR
 				extremalPts = new Coordinate[] { new Coordinate(P), new Coordinate(Q), new Coordinate(R) };
@@ -357,25 +355,27 @@ public class MinimumBoundingCircle
 	{
 		double minSin = Double.MAX_VALUE;
 		Coordinate minAngPt = null;
-		for (int i = 0; i < pts.length; i++) {
-			
-			Coordinate p = pts[i];
-			if (p == P) continue;
-			
-			/**
-			 * The sin of the angle is a simpler proxy for the angle itself
-			 */
-			double dx = p.x - P.x;
-			double dy = p.y - P.y;
-			if (dy < 0) dy = -dy;
-			double len = MathUtil.hypot(dx, dy);
-			double sin = dy / len;
-			
-			if (sin < minSin) {
-				minSin = sin;
-				minAngPt = p;
-			}
-		}
+        /**
+         * The sin of the angle is a simpler proxy for the angle itself
+         */
+        for (Coordinate p : pts) {
+
+            if (p == P) continue;
+
+            /**
+             * The sin of the angle is a simpler proxy for the angle itself
+             */
+            double dx = p.x - P.x;
+            double dy = p.y - P.y;
+            if (dy < 0) dy = -dy;
+            double len = MathUtil.hypot(dx, dy);
+            double sin = dy / len;
+
+            if (sin < minSin) {
+                minSin = sin;
+                minAngPt = p;
+            }
+        }
 		return minAngPt;
 	}
 	
@@ -383,21 +383,18 @@ public class MinimumBoundingCircle
 	{
 		double minAng = Double.MAX_VALUE;
 		Coordinate minAngPt = null;
-		for (int i = 0; i < pts.length; i++) {
-			
-			Coordinate p = pts[i];
-			if (p == P) continue;
-			if (p == Q) continue;
-			
-			double ang = Angle.angleBetween(P, p, Q);
-			if (ang < minAng) {
-				minAng = ang;
-				minAngPt = p;
-			}
-		}
+        for (Coordinate p : pts) {
+
+            if (p == P) continue;
+            if (p == Q) continue;
+
+            double ang = Angle.angleBetween(P, p, Q);
+            if (ang < minAng) {
+                minAng = ang;
+                minAngPt = p;
+            }
+        }
 		return minAngPt;
 		
 	}
 }
-
-  

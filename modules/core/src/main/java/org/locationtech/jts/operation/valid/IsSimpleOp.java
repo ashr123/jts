@@ -168,7 +168,7 @@ public class IsSimpleOp
   public Coordinate getNonSimpleLocation()
   {
     compute();
-    if (nonSimplePts.size() == 0) return null;
+    if (nonSimplePts.isEmpty()) return null;
     return nonSimplePts.get(0);
   }
 
@@ -185,7 +185,7 @@ public class IsSimpleOp
 
   private void compute() {
     if (nonSimplePts != null) return;
-    nonSimplePts = new ArrayList<Coordinate>();
+    nonSimplePts = new ArrayList<>();
     isSimple = computeSimple(inputGeom);
   }
 
@@ -206,7 +206,7 @@ public class IsSimpleOp
   {
     if (mp.isEmpty()) return true;
     boolean isSimple = true;
-    Set<Coordinate> points = new HashSet<Coordinate>();
+    Set<Coordinate> points = new HashSet<>();
     for (int i = 0; i < mp.getNumGeometries(); i++) {
       Point pt = (Point) mp.getGeometryN(i);
       Coordinate p = pt.getCoordinate();
@@ -233,7 +233,7 @@ public class IsSimpleOp
   private boolean isSimplePolygonal(Geometry geom)
   {
     boolean isSimple = true;
-    List<Geometry> rings = LinearComponentExtracter.getLines(geom);
+    List<LineString> rings = LinearComponentExtracter.getLines(geom);
     for (Geometry ring : rings) {
       if (! isSimpleLinearGeometry(ring))
       {
@@ -275,14 +275,11 @@ public class IsSimpleOp
     MCIndexNoder noder = new MCIndexNoder();
     noder.setSegmentIntersector(segInt);
     noder.computeNodes(segStrings);
-    if (segInt.hasIntersection()) {
-      return false;
-    }
-    return true;
+      return !segInt.hasIntersection();
   }
 
   private static List<SegmentString> extractSegmentStrings(Geometry geom) {
-    List<SegmentString> segStrings = new ArrayList<SegmentString>();
+    List<SegmentString> segStrings = new ArrayList<>();
     for (int i = 0; i < geom.getNumGeometries(); i++) {
       LineString line = (LineString) geom.getGeometryN(i);
       Coordinate[] trimPts = trimRepeatedPoints(line.getCoordinates());
@@ -319,8 +316,7 @@ public class IsSimpleOp
     if (endIndex - startIndex < 1) {
       return null;
     }
-    Coordinate[] trimPts = CoordinateArrays.extract(pts, startIndex, endIndex);
-    return trimPts;
+      return CoordinateArrays.extract(pts, startIndex, endIndex);
   }
   
   private static class NonSimpleIntersectionFinder
@@ -329,7 +325,7 @@ public class IsSimpleOp
     private final boolean isClosedEndpointsInInterior;
     private final boolean isFindAll;
 
-    LineIntersector li = new RobustLineIntersector();
+    final LineIntersector li = new RobustLineIntersector();
     private final List<Coordinate> intersectionPts;
 
     public NonSimpleIntersectionFinder(boolean isClosedEndpointsInInterior, boolean isFindAll, List<Coordinate> intersectionPts) {
@@ -345,7 +341,7 @@ public class IsSimpleOp
      */
     public boolean hasIntersection()
     {
-      return intersectionPts.size() > 0;
+      return !intersectionPts.isEmpty();
     }
 
     @Override
@@ -416,8 +412,7 @@ public class IsSimpleOp
        * (which avoids reporting ring endpoints).
        */
       if (isClosedEndpointsInInterior && !isSameSegString) {
-        boolean hasInteriorEndpointInt = ss0.isClosed() || ss1.isClosed();
-        if (hasInteriorEndpointInt) return true;
+          return ss0.isClosed() || ss1.isClosed();
       }
       return false;
     }
@@ -463,7 +458,7 @@ public class IsSimpleOp
     @Override
     public boolean isDone() {
       if (isFindAll) return false;
-      return intersectionPts.size() > 0;
+      return !intersectionPts.isEmpty();
     }
 
   }

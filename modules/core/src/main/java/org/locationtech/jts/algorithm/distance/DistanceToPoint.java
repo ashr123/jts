@@ -25,7 +25,7 @@ import org.locationtech.jts.geom.Polygon;
 public class DistanceToPoint 
 {
 
-  public DistanceToPoint() {
+  private DistanceToPoint() {
   }
 
   public static void computeDistance(Geometry geom, Coordinate pt, PointPairDistance geomPtDist)

@@ -38,14 +38,14 @@ public class PolygonBufferStressTest {
 
   static final int MAX_ITER = 50;
 
-  static PrecisionModel pm = new PrecisionModel();
+  static final PrecisionModel pm = new PrecisionModel();
   //static PrecisionModel pm = new PrecisionModel(10);
 
-  static GeometryFactory fact = new GeometryFactory(pm, 0);
-  static WKTReader wktRdr = new WKTReader(fact);
+  static final GeometryFactory fact = new GeometryFactory(pm, 0);
+  static final WKTReader wktRdr = new WKTReader(fact);
   static WKTWriter wktWriter = new WKTWriter();
 
-  Stopwatch sw = new Stopwatch();
+  final Stopwatch sw = new Stopwatch();
 
   public static void main(String[] args) {
     PolygonBufferStressTest test = new PolygonBufferStressTest();
@@ -106,10 +106,9 @@ public class PolygonBufferStressTest {
   }
   public void test(Geometry g)
   {
-    int maxCount = MAX_ITER;
-    //doIteratedBuffer(g, 1, -120.01, maxCount);
+      //doIteratedBuffer(g, 1, -120.01, maxCount);
     //doIteratedBuffer(g, 1, 2, maxCount);
-    doAlternatingIteratedBuffer(g, 1, maxCount);
+    doAlternatingIteratedBuffer(g, 1, MAX_ITER);
     if (testFailed) {
       System.out.println("FAILED!");
     }

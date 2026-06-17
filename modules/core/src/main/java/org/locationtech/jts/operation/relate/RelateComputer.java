@@ -55,13 +55,13 @@ import org.locationtech.jts.util.Assert;
  */
 public class RelateComputer
 {
-  private LineIntersector li = new RobustLineIntersector();
-  private PointLocator ptLocator = new PointLocator();
-  private GeometryGraph[] arg;  // the arg(s) of the operation
-  private NodeMap nodes = new NodeMap(new RelateNodeFactory());
+  private final LineIntersector li = new RobustLineIntersector();
+  private final PointLocator ptLocator = new PointLocator();
+  private final GeometryGraph[] arg;  // the arg(s) of the operation
+  private final NodeMap nodes = new NodeMap(new RelateNodeFactory());
   // this intersection matrix will hold the results compute for the relate
-  private IntersectionMatrix im = null;
-  private ArrayList isolatedEdges = new ArrayList();
+  private final IntersectionMatrix im = null;
+  private final ArrayList<Edge> isolatedEdges = new ArrayList<>();
 
   // the intersection point found (if any)
   private Coordinate invalidPoint;
@@ -113,11 +113,8 @@ public class RelateComputer
      */
 
     // build EdgeEnds for all intersections
-    EdgeEndBuilder eeBuilder = new EdgeEndBuilder();
-    List ee0 = eeBuilder.computeEdgeEnds(arg[0].getEdgeIterator());
-    insertEdgeEnds(ee0);
-    List ee1 = eeBuilder.computeEdgeEnds(arg[1].getEdgeIterator());
-    insertEdgeEnds(ee1);
+      insertEdgeEnds(EdgeEndBuilder.computeEdgeEnds(arg[0].getEdgeIterator()));
+      insertEdgeEnds(EdgeEndBuilder.computeEdgeEnds(arg[1].getEdgeIterator()));
 
 //Debug.println("==== NodeList ===");
 //Debug.print(nodes);
@@ -143,12 +140,11 @@ public class RelateComputer
     return im;
   }
 
-  private void insertEdgeEnds(List ee)
+  private void insertEdgeEnds(List<? extends EdgeEnd> ee)
   {
-    for (Iterator i = ee.iterator(); i.hasNext(); ) {
-      EdgeEnd e = (EdgeEnd) i.next();
-      nodes.add(e);
-    }
+      for (EdgeEnd e : ee) {
+          nodes.add(e);
+      }
   }
 
   private void computeProperIntersectionIM(SegmentIntersector intersector, IntersectionMatrix im)
@@ -208,8 +204,8 @@ public class RelateComputer
      */
   private void copyNodesAndLabels(int argIndex)
   {
-    for (Iterator i = arg[argIndex].getNodeIterator(); i.hasNext(); ) {
-      Node graphNode = (Node) i.next();
+    for (Iterator<Node> i = arg[argIndex].getNodeIterator(); i.hasNext(); ) {
+      Node graphNode = i.next();
       Node newNode = nodes.addNode(graphNode.getCoordinate());
       newNode.setLabel(argIndex, graphNode.getLabel().getLocation(argIndex));
 //node.print(System.out);
@@ -224,11 +220,11 @@ public class RelateComputer
    */
   private void computeIntersectionNodes(int argIndex)
   {
-    for (Iterator i = arg[argIndex].getEdgeIterator(); i.hasNext(); ) {
-      Edge e = (Edge) i.next();
+    for (Iterator<Edge> i = arg[argIndex].getEdgeIterator(); i.hasNext(); ) {
+      Edge e = i.next();
       int eLoc = e.getLabel().getLocation(argIndex);
-      for (Iterator eiIt = e.getEdgeIntersectionList().iterator(); eiIt.hasNext(); ) {
-        EdgeIntersection ei = (EdgeIntersection) eiIt.next();
+      for (Iterator<EdgeIntersection> eiIt = e.getEdgeIntersectionList().iterator(); eiIt.hasNext(); ) {
+        EdgeIntersection ei = eiIt.next();
         RelateNode n = (RelateNode) nodes.addNode(ei.coord);
         if (eLoc == Location.BOUNDARY)
           n.setLabelBoundary(argIndex);
@@ -249,11 +245,11 @@ public class RelateComputer
    */
   private void labelIntersectionNodes(int argIndex)
   {
-    for (Iterator i = arg[argIndex].getEdgeIterator(); i.hasNext(); ) {
-      Edge e = (Edge) i.next();
+    for (Iterator<Edge> i = arg[argIndex].getEdgeIterator(); i.hasNext(); ) {
+      Edge e = i.next();
       int eLoc = e.getLabel().getLocation(argIndex);
-      for (Iterator eiIt = e.getEdgeIntersectionList().iterator(); eiIt.hasNext(); ) {
-        EdgeIntersection ei = (EdgeIntersection) eiIt.next();
+      for (Iterator<EdgeIntersection> eiIt = e.getEdgeIntersectionList().iterator(); eiIt.hasNext(); ) {
+        EdgeIntersection ei = eiIt.next();
         RelateNode n = (RelateNode) nodes.find(ei.coord);
         if (n.getLabel().isNull(argIndex)) {
           if (eLoc == Location.BOUNDARY)
@@ -320,7 +316,7 @@ public class RelateComputer
   
   private void labelNodeEdges()
   {
-    for (Iterator ni = nodes.iterator(); ni.hasNext(); ) {
+    for (Iterator<Node> ni = nodes.iterator(); ni.hasNext(); ) {
       RelateNode node = (RelateNode) ni.next();
       node.getEdges().computeLabelling(arg);
 //Debug.print(node.getEdges());
@@ -334,12 +330,11 @@ public class RelateComputer
   private void updateIM(IntersectionMatrix im)
   {
 //Debug.println(im);
-    for (Iterator ei = isolatedEdges.iterator(); ei.hasNext(); ) {
-      Edge e = (Edge) ei.next();
-      e.updateIM(im);
+      for (Edge e : isolatedEdges) {
+          e.updateIM(im);
 //Debug.println(im);
-    }
-    for (Iterator ni = nodes.iterator(); ni.hasNext(); ) {
+      }
+    for (Iterator<Node> ni = nodes.iterator(); ni.hasNext(); ) {
       RelateNode node = (RelateNode) ni.next();
       node.updateIM(im);
 //Debug.println(im);
@@ -358,8 +353,8 @@ public class RelateComputer
    */
   private void labelIsolatedEdges(int thisIndex, int targetIndex)
   {
-    for (Iterator ei = arg[thisIndex].getEdgeIterator(); ei.hasNext(); ) {
-      Edge e = (Edge) ei.next();
+    for (Iterator<Edge> ei = arg[thisIndex].getEdgeIterator(); ei.hasNext(); ) {
+      Edge e = ei.next();
       if (e.isIsolated()) {
         labelIsolatedEdge(e, targetIndex, arg[targetIndex].getGeometry());
         isolatedEdges.add(e);
@@ -398,8 +393,8 @@ public class RelateComputer
    */
   private void labelIsolatedNodes()
   {
-    for (Iterator ni = nodes.iterator(); ni.hasNext(); ) {
-      Node n = (Node) ni.next();
+    for (Iterator<Node> ni = nodes.iterator(); ni.hasNext(); ) {
+      Node n = ni.next();
       Label label = n.getLabel();
       // isolated nodes should always have at least one geometry in their label
       Assert.isTrue(label.getGeometryCount() > 0, "node with empty label found");

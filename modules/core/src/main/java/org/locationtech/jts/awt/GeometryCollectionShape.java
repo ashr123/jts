@@ -19,7 +19,6 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.locationtech.jts.geom.Geometry;
 
@@ -31,7 +30,7 @@ import org.locationtech.jts.geom.Geometry;
  *
  */
 public class GeometryCollectionShape implements Shape {
-    private ArrayList shapes = new ArrayList();
+    private final ArrayList<Shape> shapes = new ArrayList<>();
 
     public GeometryCollectionShape() {
     }
@@ -49,9 +48,7 @@ public class GeometryCollectionShape implements Shape {
     public Rectangle2D getBounds2D() {
         Rectangle2D rectangle = null;
 
-        for (Iterator i = shapes.iterator(); i.hasNext();) {
-            Shape shape = (Shape) i.next();
-
+        for (Shape shape : shapes) {
             if (rectangle == null) {
                 rectangle = shape.getBounds2D();
             } else {

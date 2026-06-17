@@ -43,7 +43,7 @@ public class DirectedEdge
     return 0;
   }
 
-  protected boolean isForward;
+  protected final boolean isForward;
   private boolean isInResult = false;
   private boolean isVisited = false;
 
@@ -56,7 +56,7 @@ public class DirectedEdge
    * The depth of each side (position) of this edge.
    * The 0 element of the array is never used.
    */
-  private int[] depth = { 0, -999, -999 };
+  private final int[] depth = { 0, -999, -999 };
 
   public DirectedEdge(Edge edge, boolean isForward)
   {

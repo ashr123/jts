@@ -12,7 +12,6 @@
 package org.locationtech.jts.operation.overlay;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.algorithm.PointLocator;
@@ -32,12 +31,12 @@ import org.locationtech.jts.util.Assert;
  * @version 1.7
  */
 public class LineBuilder {
-  private OverlayOp op;
-  private GeometryFactory geometryFactory;
-  private PointLocator ptLocator;
+  private final OverlayOp op;
+  private final GeometryFactory geometryFactory;
+  private final PointLocator ptLocator;
 
-  private List lineEdgesList    = new ArrayList();
-  private List resultLineList   = new ArrayList();
+  private final List<Edge> lineEdgesList         = new ArrayList<>();
+  private final List<LineString> resultLineList  = new ArrayList<>();
 
   public LineBuilder(OverlayOp op, GeometryFactory geometryFactory, PointLocator ptLocator) {
     this.op = op;
@@ -47,7 +46,7 @@ public class LineBuilder {
   /**
    * @return a list of the LineStrings in the result of the specified overlay operation
    */
-  public List build(int opCode)
+  public List<LineString> build(int opCode)
   {
     findCoveredLineEdges();
     collectLines(opCode);
@@ -65,33 +64,32 @@ public class LineBuilder {
   private void findCoveredLineEdges()
   {
     // first set covered for all L edges at nodes which have A edges too
-    for (Iterator nodeit = op.getGraph().getNodes().iterator(); nodeit.hasNext(); ) {
-      Node node = (Node) nodeit.next();
-//node.print(System.out);
-      ((DirectedEdgeStar) node.getEdges()).findCoveredLineEdges();
-    }
+      for (Node node : op.getGraph().getNodes()) {
+          //node.print(System.out);
+          ((DirectedEdgeStar) node.getEdges()).findCoveredLineEdges();
+      }
 
     /**
      * For all L edges which weren't handled by the above,
      * use a point-in-poly test to determine whether they are covered
      */
-    for (Iterator it = op.getGraph().getEdgeEnds().iterator(); it.hasNext(); ) {
-      DirectedEdge de = (DirectedEdge) it.next();
-      Edge e = de.getEdge();
-      if (de.isLineEdge() && ! e.isCoveredSet()) {
-        boolean isCovered = op.isCoveredByA(de.getCoordinate());
-        e.setCovered(isCovered);
+      for (org.locationtech.jts.geomgraph.EdgeEnd edgeEnd : op.getGraph().getEdgeEnds()) {
+          DirectedEdge de = (DirectedEdge) edgeEnd;
+          Edge e = de.getEdge();
+          if (de.isLineEdge() && !e.isCoveredSet()) {
+              boolean isCovered = op.isCoveredByA(de.getCoordinate());
+              e.setCovered(isCovered);
+          }
       }
-    }
   }
 
   private void collectLines(int opCode)
   {
-    for (Iterator it = op.getGraph().getEdgeEnds().iterator(); it.hasNext(); ) {
-      DirectedEdge de = (DirectedEdge) it.next();
-      collectLineEdge(de, opCode, lineEdgesList);
-      collectBoundaryTouchEdge(de, opCode, lineEdgesList);
-    }
+      for (org.locationtech.jts.geomgraph.EdgeEnd edgeEnd : op.getGraph().getEdgeEnds()) {
+          DirectedEdge de = (DirectedEdge) edgeEnd;
+          collectLineEdge(de, opCode, lineEdgesList);
+          collectBoundaryTouchEdge(de, opCode, lineEdgesList);
+      }
   }
 
   /**
@@ -104,7 +102,7 @@ public class LineBuilder {
    * @param opCode the overlap operation
    * @param edges the list of included line edges
    */
-  private void collectLineEdge(DirectedEdge de, int opCode, List edges)
+  private static void collectLineEdge(DirectedEdge de, int opCode, List<Edge> edges)
   {
     Label label = de.getLabel();
     Edge e = de.getEdge();
@@ -130,7 +128,7 @@ public class LineBuilder {
    * <li> OR as a result of a dimensional collapse.
    * </ul>
    */
-  private void collectBoundaryTouchEdge(DirectedEdge de, int opCode, List edges)
+  private static void collectBoundaryTouchEdge(DirectedEdge de, int opCode, List<Edge> edges)
   {
     Label label = de.getLabel();
     if (de.isLineEdge()) return;  // only interested in area edges
@@ -152,28 +150,26 @@ public class LineBuilder {
 
   private void buildLines(int opCode)
   {
-    for (Iterator it = lineEdgesList.iterator(); it.hasNext(); ) {
-      Edge e = (Edge) it.next();
-      // Label label = e.getLabel();
-        LineString line = geometryFactory.createLineString(e.getCoordinates());
-        resultLineList.add(line);
-        e.setInResult(true);
-    }
+      for (Edge e : lineEdgesList) {
+          // Label label = e.getLabel();
+          LineString line = geometryFactory.createLineString(e.getCoordinates());
+          resultLineList.add(line);
+          e.setInResult(true);
+      }
   }
 
-  private void labelIsolatedLines(List edgesList)
+  private void labelIsolatedLines(List<? extends Edge> edgesList)
   {
-    for (Iterator it = edgesList.iterator(); it.hasNext(); ) {
-      Edge e = (Edge) it.next();
-      Label label = e.getLabel();
+      for (Edge e : edgesList) {
+          Label label = e.getLabel();
 //n.print(System.out);
-      if (e.isIsolated()) {
-        if (label.isNull(0))
-          labelIsolatedLine(e, 0);
-        else
-          labelIsolatedLine(e, 1);
+          if (e.isIsolated()) {
+              if (label.isNull(0))
+                  labelIsolatedLine(e, 0);
+              else
+                  labelIsolatedLine(e, 1);
+          }
       }
-    }
   }
   /**
    * Label an isolated node with its relationship to the target geometry.

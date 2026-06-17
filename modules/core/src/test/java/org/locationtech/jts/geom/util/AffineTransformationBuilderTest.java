@@ -99,13 +99,13 @@ public class AffineTransformationBuilderTest
   			5, 5,    6, 9);
   }
 
-  void run(double p0x, double p0y, 
-      double p1x, double p1y, 
-      double p2x, double p2y,
-      double pp0x, double pp0y,
-      double pp1x, double pp1y, 
-      double pp2x, double pp2y
-      )
+  static void run(double p0x, double p0y,
+                  double p1x, double p1y,
+                  double p2x, double p2y,
+                  double pp0x, double pp0y,
+                  double pp1x, double pp1y,
+                  double pp2x, double pp2y
+  )
   {
     Coordinate p0 = new Coordinate(p0x, p0y);
     Coordinate p1 = new Coordinate(p1x, p1y);
@@ -126,11 +126,11 @@ public class AffineTransformationBuilderTest
     assertEqualPoint(pp2, trans.transform(p2, dest));
   }
   
-  void run(double p0x, double p0y, 
-      double p1x, double p1y, 
-      double pp0x, double pp0y,
-      double pp1x, double pp1y
-      )
+  static void run(double p0x, double p0y,
+                  double p1x, double p1y,
+                  double pp0x, double pp0y,
+                  double pp1x, double pp1y
+  )
   {
     Coordinate p0 = new Coordinate(p0x, p0y);
     Coordinate p1 = new Coordinate(p1x, p1y);
@@ -147,9 +147,9 @@ public class AffineTransformationBuilderTest
     assertEqualPoint(pp1, trans.transform(p1, dest));
   }
   
-  void run(double p0x, double p0y, 
-      double pp0x, double pp0y
-      )
+  static void run(double p0x, double p0y,
+                  double pp0x, double pp0y
+  )
   {
     Coordinate p0 = new Coordinate(p0x, p0y);
     
@@ -163,13 +163,13 @@ public class AffineTransformationBuilderTest
   }
   
   
-  void runSingular(double p0x, double p0y, 
-      double p1x, double p1y, 
-      double p2x, double p2y,
-      double pp0x, double pp0y,
-      double pp1x, double pp1y, 
-      double pp2x, double pp2y
-      )
+  static void runSingular(double p0x, double p0y,
+                          double p1x, double p1y,
+                          double p2x, double p2y,
+                          double pp0x, double pp0y,
+                          double pp1x, double pp1y,
+                          double pp2x, double pp2y
+  )
   {
     Coordinate p0 = new Coordinate(p0x, p0y);
     Coordinate p1 = new Coordinate(p1x, p1y);
@@ -183,12 +183,12 @@ public class AffineTransformationBuilderTest
         p0, p1, p2,
         pp0, pp1, pp2);
     AffineTransformation trans = atb.getTransformation();
-    assertEquals(trans, null);
+      assertNull(trans);
   }
 
-  private Coordinate ctl0 = new Coordinate(-10, -10);
-  private Coordinate ctl1 = new Coordinate(10, 20);
-  private Coordinate ctl2 = new Coordinate(10, -20);
+  private final Coordinate ctl0 = new Coordinate(-10, -10);
+  private final Coordinate ctl1 = new Coordinate(10, 20);
+  private final Coordinate ctl2 = new Coordinate(10, -20);
   
   public void testTransform1()
   {
@@ -210,10 +210,10 @@ public class AffineTransformationBuilderTest
     runTransform(trans, ctl0, ctl1, ctl2);
   }
   
-  private void runTransform(AffineTransformation trans,
-      Coordinate p0,
-      Coordinate p1, 
-      Coordinate p2)
+  private static void runTransform(AffineTransformation trans,
+                                   Coordinate p0,
+                                   Coordinate p1,
+                                   Coordinate p2)
   {    
     Coordinate pp0 = trans.transform(p0, new Coordinate());
     Coordinate pp1 = trans.transform(p1, new Coordinate());
@@ -231,7 +231,7 @@ public class AffineTransformationBuilderTest
   }
   
   
-  private void assertEqualPoint(Coordinate p, Coordinate q)
+  private static void assertEqualPoint(Coordinate p, Coordinate q)
   {
     assertEquals(p.x, q.x, 0.00005);
     assertEquals(p.y, q.y, 0.00005);

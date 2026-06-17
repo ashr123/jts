@@ -59,8 +59,8 @@ public abstract class WritingTestCase extends TestCase
 		return new StringReader(s);
 	}
 	
-	protected static PrecisionModel precisionModel = new PrecisionModel(1000);
-	protected static GeometryFactory geometryFactory = new GeometryFactory(precisionModel);
+	protected static final PrecisionModel precisionModel = new PrecisionModel(1000);
+	protected static final GeometryFactory geometryFactory = new GeometryFactory(precisionModel);
 
 	protected void checkRoundTrip(Geometry g) 
 	throws SAXException, IOException, ParserConfigurationException
@@ -74,9 +74,8 @@ public abstract class WritingTestCase extends TestCase
 		out.write(g, getWriter());
 
 		//System.out.println(sw.toString());
-		
-		GMLReader in = new GMLReader();
-		Geometry g2 = in.read(getReader(), geometryFactory);
+
+        Geometry g2 = GMLReader.read(getReader(), geometryFactory);
 
 		// System.out.println((pt==null?"NULL":pt.toString()));
 		// System.out.println((pt2==null?"NULL":pt2.toString()));

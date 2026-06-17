@@ -54,8 +54,11 @@ public class MortonCode
    * The maximum curve level that can be represented.
    */
   public static final int MAX_LEVEL = 16;
-  
-  /**
+
+    private MortonCode() {
+    }
+
+    /**
    * The number of points in the curve for the given level.
    * The number of points is 2<sup>2 * level</sup>.
    * 

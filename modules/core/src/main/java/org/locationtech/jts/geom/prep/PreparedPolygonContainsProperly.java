@@ -83,7 +83,7 @@ class PreparedPolygonContainsProperly
 		/**
 		 * If any segments intersect, result is false.
 		 */
-    List lineSegStr = SegmentStringUtil.extractSegmentStrings(geom);
+    List<org.locationtech.jts.noding.NodedSegmentString> lineSegStr = SegmentStringUtil.extractSegmentStrings(geom);
 		boolean segsIntersect = prepPoly.getIntersectionFinder().intersects(lineSegStr);
 		if (segsIntersect) 
       return false;
@@ -96,7 +96,7 @@ class PreparedPolygonContainsProperly
 		if (geom instanceof Polygonal) {
 			// TODO: generalize this to handle GeometryCollections
 			boolean isTargetGeomInTestArea = isAnyTargetComponentInAreaTest(geom, prepPoly.getRepresentativePoints());
-			if (isTargetGeomInTestArea) return false;
+            return !isTargetGeomInTestArea;
 		}
 		
 		return true;

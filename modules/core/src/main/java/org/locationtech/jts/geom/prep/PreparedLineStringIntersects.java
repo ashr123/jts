@@ -11,7 +11,6 @@
  */
 package org.locationtech.jts.geom.prep;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.algorithm.PointLocator;
@@ -46,7 +45,7 @@ class PreparedLineStringIntersects
     return op.intersects(geom);
 	}
 
-	protected PreparedLineString prepLine;
+	protected final PreparedLineString prepLine;
 
   /**
    * Creates an instance of this operation.
@@ -69,9 +68,9 @@ class PreparedLineStringIntersects
 		/**
 		 * If any segments intersect, obviously intersects = true
 		 */
-    List lineSegStr = SegmentStringUtil.extractSegmentStrings(geom);
+    List<org.locationtech.jts.noding.NodedSegmentString> lineSegStr = SegmentStringUtil.extractSegmentStrings(geom);
     // only request intersection finder if there are segments (ie NOT for point inputs)
-    if (lineSegStr.size() > 0) {
+    if (!lineSegStr.isEmpty()) {
   		boolean segsIntersect = prepLine.getIntersectionFinder().intersects(lineSegStr);
   		// MD - performance testing
   //		boolean segsIntersect = false;
@@ -109,12 +108,11 @@ class PreparedLineStringIntersects
 		 * However, it seems like the L/P case would be pretty rare in practice.
 		 */
 		PointLocator locator = new PointLocator();
-    List coords = ComponentCoordinateExtracter.getCoordinates(testGeom);
-    for (Iterator i = coords.iterator(); i.hasNext(); ) {
-      Coordinate p = (Coordinate) i.next();
-      if (locator.intersects(p, prepLine.getGeometry()))
-        return true;
-    }
+    List<Coordinate> coords = ComponentCoordinateExtracter.getCoordinates(testGeom);
+        for (Coordinate p : coords) {
+            if (locator.intersects(p, prepLine.getGeometry()))
+                return true;
+        }
 		return false;
 	}
 

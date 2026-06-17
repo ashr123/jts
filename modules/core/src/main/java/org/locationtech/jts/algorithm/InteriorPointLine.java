@@ -43,7 +43,7 @@ public class InteriorPointLine {
     return intPt.getInteriorPoint();
   }
   
-  private Coordinate centroid;
+  private final Coordinate centroid;
   private double minDistance = Double.MAX_VALUE;
 
   private Coordinate interiorPoint = null;

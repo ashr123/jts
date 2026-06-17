@@ -19,7 +19,7 @@ import test.jts.GeometryTestCase;
 public class DiscreteHausdorffDistanceTest 
 extends GeometryTestCase
 {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(DiscreteHausdorffDistanceTest.class);
   }
 
@@ -58,16 +58,14 @@ extends GeometryTestCase
     runOriented(wkt1, wkt2, 0.1, "LINESTRING (107.41176470588235 36.352941176470594, 65 0)");
   }
   
-  public void testOrientedLines() throws Exception
-  {
+  public void testOrientedLines() {
     String wkt1 = "LINESTRING (1 6, 3 5, 1 4)";
     String wkt2 = "LINESTRING (1 9, 9 5, 1 1)";
     runOriented(wkt1, wkt2, "LINESTRING (2.2 8.4, 1 6)");
     runOriented(wkt2, wkt1, "LINESTRING (3 5, 9 5)");
   }
 
-  public void testOrientedLines2() throws Exception
-  {
+  public void testOrientedLines2() {
     String wkt1 = "LINESTRING (1 6, 3 5, 1 4)";
     String wkt2 = "LINESTRING (1 3, 1 9, 9 5, 1 1)";
     runOriented(wkt1, wkt2, "LINESTRING (1 5, 3 5)");

@@ -26,8 +26,8 @@ import java.util.Random;
  */
 public class CoordinateSequencesTest extends TestCase {
 
-  private PrecisionModel precisionModel = new PrecisionModel();
-  private GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
+  private final PrecisionModel precisionModel = new PrecisionModel();
+  private final GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
   WKTReader reader = new WKTReader(geometryFactory);
 
   private static final double[][] ordinateValues = {
@@ -36,7 +36,7 @@ public class CoordinateSequencesTest extends TestCase {
           {63.76,77.35},{45.26,85.15},{51.71,50.38},{92.16,19.85},{64.18,27.7},{64.74,65.1},
           {80.07,13.55},{55.54,94.07}};
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(CoordinateSequencesTest.class);
   }
 
@@ -128,7 +128,7 @@ public class CoordinateSequencesTest extends TestCase {
    *
    * @deprecated only use to update {@link #ordinateValues}
    */
-  public void ttestCreateRandomOrdinates() {
+  public static void ttestCreateRandomOrdinates() {
     CoordinateSequence sequence = createRandomTestSequence(CoordinateArraySequenceFactory.instance(), 20,
             2, new Random(7),
             new Envelope(10, 100, 10, 100), new PrecisionModel(100));
@@ -144,7 +144,7 @@ public class CoordinateSequencesTest extends TestCase {
     }
     ordinates.append("};");
 
-    System.out.println(ordinates.toString());
+    System.out.println(ordinates);
     assertTrue(true);
   }
 
@@ -249,12 +249,12 @@ public class CoordinateSequencesTest extends TestCase {
 
     // assert
     assertTrue(isRingRing);
-    assertTrue(!isRingNoRing);
+      assertFalse(isRingNoRing);
     assertTrue(isRingEmpty);
-    assertTrue(!isRingIncomplete1);
-    assertTrue(!isRingIncomplete2);
-    assertTrue(!isRingIncomplete3);
-    assertTrue(!isRingIncomplete4a);
+      assertFalse(isRingIncomplete1);
+      assertFalse(isRingIncomplete2);
+      assertFalse(isRingIncomplete3);
+      assertFalse(isRingIncomplete4a);
     assertTrue(isRingIncomplete4b);
   }
 

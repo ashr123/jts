@@ -11,14 +11,6 @@
  */
 package org.locationtech.jts.algorithm;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.Stack;
-
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateArrays;
 import org.locationtech.jts.geom.CoordinateList;
@@ -30,6 +22,15 @@ import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.util.Assert;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.Stack;
 
 /**
  * Computes the convex hull of a {@link Geometry}.
@@ -47,8 +48,8 @@ public class ConvexHull
 {
   private static final int TUNING_REDUCE_SIZE = 50;
   
-  private GeometryFactory geomFactory;
-  private Coordinate[] inputPts;
+  private final GeometryFactory geomFactory;
+  private final Coordinate[] inputPts;
 
   /**
    * Create a new convex hull construction for the input {@link Geometry}.
@@ -155,7 +156,7 @@ public class ConvexHull
    * @return an array of unique values, or null
    */
   private static Coordinate[] extractUnique(Coordinate[] pts, int maxPts) {
-    Set<Coordinate> uniquePts = new HashSet<Coordinate>();
+    Set<Coordinate> uniquePts = new HashSet<>();
     for (Coordinate pt : pts) {
       uniquePts.add(pt);
       //-- if maxPts is provided, exit if more unique pts found
@@ -171,7 +172,7 @@ public class ConvexHull
   protected Coordinate[] toCoordinateArray(Stack<Coordinate> stack) {
     Coordinate[] coordinates = new Coordinate[stack.size()];
     for (int i = 0; i < stack.size(); i++) {
-      Coordinate coordinate = (Coordinate) stack.get(i);
+      Coordinate coordinate = stack.get(i);
       coordinates[i] = coordinate;
     }
     return coordinates;
@@ -199,7 +200,7 @@ public class ConvexHull
    * @param pts the points to reduce
    * @return the reduced list of points (at least 3)
    */
-  private Coordinate[] reduce(Coordinate[] inputPts)
+  private static Coordinate[] reduce(Coordinate[] inputPts)
   {
     //Coordinate[] polyPts = computeQuad(inputPts);
     Coordinate[] innerPolyPts = computeInnerOctolateralRing(inputPts);
@@ -213,21 +214,19 @@ public class ConvexHull
 //    System.out.println(ring);
 
     // add points defining polygon
-    Set<Coordinate> reducedSet = new HashSet();
-    for (int i = 0; i < innerPolyPts.length; i++) {
-      reducedSet.add(innerPolyPts[i]);
-    }
+    Set<Coordinate> reducedSet = new HashSet<>();
+      Collections.addAll(reducedSet, innerPolyPts);
     /**
      * Add all unique points not in the interior poly.
      * CGAlgorithms.isPointInRing is not defined for points exactly on the ring,
      * but this doesn't matter since the points of the interior polygon
      * are forced to be in the reduced set.
      */
-    for (int i = 0; i < inputPts.length; i++) {
-      if (! PointLocation.isInRing(inputPts[i], innerPolyPts)) {
-        reducedSet.add(inputPts[i]);
+      for (Coordinate inputPt : inputPts) {
+          if (!PointLocation.isInRing(inputPt, innerPolyPts)) {
+              reducedSet.add(inputPt);
+          }
       }
-    }
     Coordinate[] reducedPts = CoordinateArrays.toCoordinateArray(reducedSet);
     
     // ensure that computed array has at least 3 points (not necessarily unique)  
@@ -236,7 +235,7 @@ public class ConvexHull
     return reducedPts;
   }
 
-  private Coordinate[] padArray3(Coordinate[] pts)
+  private static Coordinate[] padArray3(Coordinate[] pts)
   {
     Coordinate[] pad = new Coordinate[3];
     for (int i = 0; i < pad.length; i++) {
@@ -255,7 +254,7 @@ public class ConvexHull
    * @param pts the points to sort
    * @return the sorted points
    */
-  private Coordinate[] preSort(Coordinate[] pts) {
+  private static Coordinate[] preSort(Coordinate[] pts) {
     Coordinate t;
 
     /**
@@ -283,21 +282,19 @@ public class ConvexHull
    * @param c a list of points, with at least 3 entries
    * @return a Stack containing the ordered points of the convex hull ring
    */
-  private Stack<Coordinate> grahamScan(Coordinate[] c) {
+  private static Stack<Coordinate> grahamScan(Coordinate[] c) {
     Coordinate p;
-    Stack<Coordinate> ps = new Stack<Coordinate>();
+    Stack<Coordinate> ps = new Stack<>();
     ps.push(c[0]);
     ps.push(c[1]);
     ps.push(c[2]);
     for (int i = 3; i < c.length; i++) {
       Coordinate cp = c[i];
-      p = (Coordinate) ps.pop();
-      // check for empty stack to guard against robustness problems
-      while (
-          ! ps.empty() && 
-          Orientation.index((Coordinate) ps.peek(), p, cp) > 0) {
-         p = (Coordinate) ps.pop();
-      }
+        // check for empty stack to guard against robustness problems
+        do {
+            p = ps.pop();
+        } while (!ps.empty() &&
+                Orientation.index(ps.peek(), p, cp) > 0);
       ps.push(p);
       ps.push(cp);
     }
@@ -309,7 +306,7 @@ public class ConvexHull
    *@return    whether the three coordinates are collinear and c2 lies between
    *      c1 and c3 inclusive
    */
-  private boolean isBetween(Coordinate c1, Coordinate c2, Coordinate c3) {
+  private static boolean isBetween(Coordinate c1, Coordinate c2, Coordinate c3) {
     if (Orientation.index(c1, c2, c3) != 0) {
       return false;
     }
@@ -325,14 +322,12 @@ public class ConvexHull
       if (c1.y <= c2.y && c2.y <= c3.y) {
         return true;
       }
-      if (c3.y <= c2.y && c2.y <= c1.y) {
-        return true;
-      }
+        return c3.y <= c2.y && c2.y <= c1.y;
     }
     return false;
   }
 
-  private Coordinate[] computeInnerOctolateralRing(Coordinate[] inputPts) {
+  private static Coordinate[] computeInnerOctolateralRing(Coordinate[] inputPts) {
     Coordinate[] octPts = computeInnerOctolateralPts(inputPts);
     CoordinateList coordList = new CoordinateList();
     coordList.add(octPts, false);
@@ -352,12 +347,10 @@ public class ConvexHull
    * @param inputPts the points to compute the octolateral for
    * @return the extremal points of the octolateral
    */
-  private Coordinate[] computeInnerOctolateralPts(Coordinate[] inputPts)
+  private static Coordinate[] computeInnerOctolateralPts(Coordinate[] inputPts)
   {
     Coordinate[] pts = new Coordinate[8];
-    for (int j = 0; j < pts.length; j++) {
-      pts[j] = inputPts[0];
-    }
+      Arrays.fill(pts, inputPts[0]);
     for (int i = 1; i < inputPts.length; i++) {
       if (inputPts[i].x < pts[0].x) {
         pts[0] = inputPts[i];
@@ -412,9 +405,9 @@ public class ConvexHull
    *      flattened (i.e. vertices collinear)
    * @return the coordinates with unnecessary (collinear) vertices removed
    */
-  private Coordinate[] cleanRing(Coordinate[] original) {
+  private static Coordinate[] cleanRing(Coordinate[] original) {
     Assert.equals(original[0], original[original.length - 1]);
-    List<Coordinate> cleanedRing = new ArrayList<Coordinate>();
+    List<Coordinate> cleanedRing = new ArrayList<>();
     Coordinate previousDistinctCoordinate = null;
     for (int i = 0; i <= original.length - 2; i++) {
       Coordinate currentCoordinate = original[i];
@@ -431,7 +424,7 @@ public class ConvexHull
     }
     cleanedRing.add(original[original.length - 1]);
     Coordinate[] cleanedRingCoordinates = new Coordinate[cleanedRing.size()];
-    return (Coordinate[]) cleanedRing.toArray(cleanedRingCoordinates);
+    return cleanedRing.toArray(cleanedRingCoordinates);
   }
 
 
@@ -448,7 +441,7 @@ public class ConvexHull
   private static class RadialComparator
       implements Comparator<Coordinate>
   {
-    private Coordinate origin;
+    private final Coordinate origin;
 
     /**
      * Creates a new comparator using a given origin.
@@ -465,8 +458,7 @@ public class ConvexHull
     @Override
     public int compare(Coordinate p1, Coordinate p2)
     {
-      int comp = polarCompare(origin, p1, p2);      
-      return comp;
+        return polarCompare(origin, p1, p2);
     }
 
     /**
@@ -511,11 +503,9 @@ public class ConvexHull
        * (since they are collinear).
        * Also, they must be above the origin.
        * Use the X ordinate to determine distance. 
-       */ 
-      if (p.x > q.x) return 1;
-      if (p.x < q.x) return -1;
-      // Assert: p = q
-      return 0;
+       */
+        return Double.compare(p.x, q.x);
+        // Assert: p = q
     }
   }
 }

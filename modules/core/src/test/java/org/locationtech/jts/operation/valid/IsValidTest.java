@@ -25,18 +25,17 @@ import test.jts.GeometryTestCase;
  */
 public class IsValidTest extends GeometryTestCase {
 
-  private PrecisionModel precisionModel = new PrecisionModel();
-  private GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
+  private final PrecisionModel precisionModel = new PrecisionModel();
+  private final GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
   WKTReader reader = new WKTReader(geometryFactory);
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(IsValidTest.class);
   }
 
   public IsValidTest(String name) { super(name); }
 
-  public void testInvalidCoordinate() throws Exception
-  {
+  public void testInvalidCoordinate() {
     Coordinate badCoord = new Coordinate(1.0, Double.NaN);
     Coordinate[] pts = { new Coordinate(0.0, 0.0), badCoord };
     Geometry line = geometryFactory.createLineString(pts);
@@ -47,7 +46,7 @@ public class IsValidTest extends GeometryTestCase {
 
     assertEquals(TopologyValidationError.INVALID_COORDINATE, err.getErrorType());
     assertTrue(Double.isNaN(errCoord.y));
-    assertEquals(false, valid);
+      assertFalse(valid);
   }
 
   public void testZeroAreaPolygon() {

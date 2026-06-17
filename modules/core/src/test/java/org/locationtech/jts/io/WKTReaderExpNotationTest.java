@@ -11,8 +11,6 @@
  */
 package org.locationtech.jts.io;
 
-import java.io.IOException;
-
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -28,45 +26,42 @@ import junit.textui.TestRunner;
 public class WKTReaderExpNotationTest
     extends TestCase
 {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(WKTReaderExpNotationTest.class);
   }
 
-  private GeometryFactory fact = new GeometryFactory();
-  private WKTReader rdr = new WKTReader(fact);
+  private final GeometryFactory fact = new GeometryFactory();
+  private final WKTReader rdr = new WKTReader(fact);
 
   public WKTReaderExpNotationTest(String name)
   {
     super(name);
   }
 
-  public void testGoodBasicExp() throws IOException, ParseException
+  public void testGoodBasicExp() throws ParseException
   {
     readGoodCheckCoordinate("POINT ( 1e01 -1E02)", 1E01, -1E02);
   }
 
-  public void testGoodWithExpSign() throws IOException, ParseException
+  public void testGoodWithExpSign() throws ParseException
   {
     readGoodCheckCoordinate("POINT ( 1e-04 1E-05)", 1e-04, 1e-05);
   }
 
-  public void testBadExpFormat() throws IOException, ParseException
-  {
+  public void testBadExpFormat() {
     readBad("POINT (1e0a1 1X02)");
   }
 
-  public void testBadExpPlusSign() throws IOException, ParseException
-  {
+  public void testBadExpPlusSign() {
     readBad("POINT (1e+01 1X02)");
   }
 
-  public void testBadPlusSign() throws IOException, ParseException
-  {
+  public void testBadPlusSign() {
     readBad("POINT ( +1e+01 1X02)");
   }
 
   private void readGoodCheckCoordinate(String wkt, double x, double y)
-      throws IOException, ParseException
+      throws ParseException
   {
     Geometry g = rdr.read(wkt);
     Coordinate pt = g.getCoordinate();
@@ -74,9 +69,7 @@ public class WKTReaderExpNotationTest
     assertEquals(pt.y, y, 0.0001);
   }
 
-  private void readBad(String wkt)
-      throws IOException
-  {
+  private void readBad(String wkt) {
     boolean threwParseEx = false;
     try {
       Geometry g = rdr.read(wkt);
@@ -88,4 +81,3 @@ public class WKTReaderExpNotationTest
     assertTrue(threwParseEx);
   }
 }
-

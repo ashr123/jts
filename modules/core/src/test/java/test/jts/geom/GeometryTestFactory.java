@@ -22,7 +22,10 @@ import org.locationtech.jts.geom.Polygon;
  */
 public class GeometryTestFactory {
 
-  public static Coordinate[] createBox(
+    private GeometryTestFactory() {
+    }
+
+    public static Coordinate[] createBox(
                         double minx, double miny,
                         int nSide,
                         double segLen)
@@ -36,23 +39,19 @@ public class GeometryTestFactory {
 
     for (i = 0; i < nSide; i++) {
       double x = minx + i * segLen;
-      double y = miny;
-      pts[ipt++] = new Coordinate(x, y);
+        pts[ipt++] = new Coordinate(x, miny);
     }
     for (i = 0; i < nSide; i++) {
-      double x = maxx;
-      double y = miny + i * segLen;
-      pts[ipt++] = new Coordinate(x, y);
+        double y = miny + i * segLen;
+      pts[ipt++] = new Coordinate(maxx, y);
     }
     for (i = 0; i < nSide; i++) {
       double x = maxx - i * segLen;
-      double y = maxy;
-      pts[ipt++] = new Coordinate(x, y);
+        pts[ipt++] = new Coordinate(x, maxy);
     }
     for (i = 0; i < nSide; i++) {
-      double x = minx;
-      double y = maxy - i * segLen;
-      pts[ipt++] = new Coordinate(x, y);
+        double y = maxy - i * segLen;
+      pts[ipt++] = new Coordinate(minx, y);
     }
     pts[ipt++] = new Coordinate(pts[0]);
 
@@ -67,8 +66,7 @@ public class GeometryTestFactory {
   {
     Coordinate[] pts = createCircle(basex, basey, size, nPts);
     LinearRing ring = fact.createLinearRing(pts);
-    Polygon poly = fact.createPolygon(ring, null);
-    return poly;
+      return fact.createPolygon(ring, null);
   }
 
   /**
@@ -108,8 +106,7 @@ public class GeometryTestFactory {
   {
     Coordinate[] pts = createBox(minx, minx, nSide, segLen);
     LinearRing ring = fact.createLinearRing(pts);
-    Polygon poly = fact.createPolygon(ring, null);
-    return poly;
+      return fact.createPolygon(ring, null);
   }
 
   /**
@@ -168,8 +165,7 @@ public class GeometryTestFactory {
   {
     Coordinate[] pts = createSineStar(basex, basey, size, armLen, nArms, nPts);
     LinearRing ring = fact.createLinearRing(pts);
-    Polygon poly = fact.createPolygon(ring, null);
-    return poly;
+      return fact.createPolygon(ring, null);
   }
 
 }

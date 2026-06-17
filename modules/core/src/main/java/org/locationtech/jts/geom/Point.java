@@ -148,7 +148,7 @@ public class Point
     if (isEmpty() != other.isEmpty()) {
       return false;
     }
-    return equal(((Point) other).getCoordinate(), this.getCoordinate(), tolerance);
+    return equal(other.getCoordinate(), this.getCoordinate(), tolerance);
   }
 
   public void apply(CoordinateFilter filter) {
@@ -221,4 +221,3 @@ public class Point
     return coordinates;
   }
 }
-

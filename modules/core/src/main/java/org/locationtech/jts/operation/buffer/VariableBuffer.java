@@ -54,8 +54,7 @@ public class VariableBuffer {
       double endDistance) {
     double[] distance = interpolate((LineString) line,
         startDistance, endDistance);
-    VariableBuffer vb = new VariableBuffer(line, distance);
-    return vb.getResult();
+      return buffer(line, distance);
   }
 
   /**
@@ -77,8 +76,7 @@ public class VariableBuffer {
       double endDistance) {
     double[] distance = interpolate((LineString) line,
         startDistance, midDistance, endDistance);
-    VariableBuffer vb = new VariableBuffer(line, distance);
-    return vb.getResult();
+      return buffer(line, distance);
   }
 
   /**
@@ -203,10 +201,10 @@ public class VariableBuffer {
     return len;
   }
 
-  private LineString line;
-  private double[] distance;
-  private GeometryFactory geomFactory;
-  private int quadrantSegs = BufferParameters.DEFAULT_QUADRANT_SEGMENTS;
+  private final LineString line;
+  private final double[] distance;
+  private final GeometryFactory geomFactory;
+  private static final int quadrantSegs = BufferParameters.DEFAULT_QUADRANT_SEGMENTS;
 
   /**
    * Creates a generator for a variable-distance line buffer.
@@ -230,7 +228,7 @@ public class VariableBuffer {
    * @return a buffer polygon
    */
   public Geometry getResult() {
-    List<Geometry> parts = new ArrayList<Geometry>();
+    List<Geometry> parts = new ArrayList<>();
 
     Coordinate[] pts = line.getCoordinates();
     // construct segment buffers
@@ -317,12 +315,11 @@ public class VariableBuffer {
     coords.closeRing();
     
     Coordinate[] pts = coords.toCoordinateArray();
-    Polygon polygon = geomFactory.createPolygon(pts);
-//System.out.println(polygon);
-    return polygon;
+      //System.out.println(polygon);
+    return geomFactory.createPolygon(pts);
   }
 
-  private LineSegment reflect(LineSegment seg, Coordinate p0, Coordinate p1, double dist0) {
+  private static LineSegment reflect(LineSegment seg, Coordinate p0, Coordinate p1, double dist0) {
     LineSegment line = new LineSegment(p0, p1);
     Coordinate r0 = line.reflect(seg.p0);
     Coordinate r1 = line.reflect(seg.p1);
@@ -365,7 +362,7 @@ public class VariableBuffer {
    * @param t2 the ending point of the cap
    * @param coords the coordinate list to add to
    */
-  private void addCap(Coordinate p, double r, Coordinate t1, Coordinate t2, CoordinateList coords) {
+  private static void addCap(Coordinate p, double r, Coordinate t1, Coordinate t2, CoordinateList coords) {
     //-- if radius is zero just copy the vertex
     if (r == 0) {
       coords.add(p.copy(), false);
@@ -432,7 +429,7 @@ public class VariableBuffer {
    * @param index the cap angle index
    * @return the angle
    */
-  private double capAngle(int index) {
+  private static double capAngle(int index) {
     double capSegAng = Math.PI / 2 / quadrantSegs;
     return index * capSegAng;
   }
@@ -450,10 +447,9 @@ public class VariableBuffer {
    * @param ang the angle 
    * @return the index for the angle.
    */
-  private int capAngleIndex(double ang) {
+  private static int capAngleIndex(double ang) {
     double capSegAng = Math.PI / 2 / quadrantSegs;
-    int index = (int) (ang / capSegAng);
-    return index;
+      return (int) (ang / capSegAng);
   }
 
   /**

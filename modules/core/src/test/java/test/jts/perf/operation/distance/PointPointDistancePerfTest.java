@@ -15,7 +15,7 @@ import test.jts.perf.PerformanceTestRunner;
 public class PointPointDistancePerfTest extends PerformanceTestCase {
 
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     PerformanceTestRunner.run(PointPointDistancePerfTest.class);
   }
 
@@ -33,8 +33,8 @@ public class PointPointDistancePerfTest extends PerformanceTestCase {
     grid = createPointGrid(new Envelope(0, 10., 0, 10), npts);
   }
 
-  private Point[] createPointGrid(Envelope envelope, int npts) {
-    List<Point> geoms = new ArrayList<Point>();
+  private static Point[] createPointGrid(Envelope envelope, int npts) {
+    List<Point> geoms = new ArrayList<>();
     GeometryFactory fact = new GeometryFactory();
     int nSide = (int) Math.sqrt(npts);
     double xInc = envelope.getWidth() / nSide;

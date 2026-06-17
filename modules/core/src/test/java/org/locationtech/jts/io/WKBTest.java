@@ -33,12 +33,12 @@ import junit.textui.TestRunner;
 public class WKBTest
     extends TestCase
 {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(WKBTest.class);
   }
 
-  private GeometryFactory geomFactory = new GeometryFactory();
-  private WKTReader rdr = new WKTReader(geomFactory);
+  private final GeometryFactory geomFactory = new GeometryFactory();
+  private final WKTReader rdr = new WKTReader(geomFactory);
 
   public WKBTest(String name)
   {
@@ -46,78 +46,78 @@ public class WKBTest
   }
 
   public void testFirst()
-  throws IOException, ParseException
+  throws ParseException
   {
     runWKBTest("MULTIPOINT ((0 0), (1 4), (100 200))");
   }
 
-	public void testPointPCS() throws IOException, ParseException {
+	public void testPointPCS() throws ParseException {
 		runWKBTestPackedCoordinate("POINT (1 2)");
 	}
 	
-	public void testPoint() throws IOException, ParseException {
+	public void testPoint() throws ParseException {
 		runWKBTest("POINT (1 2)");
 	}
 	
-  public void testPointEmpty() throws IOException, ParseException {
+  public void testPointEmpty() throws ParseException {
     runWKBTest("POINT EMPTY");
   }
   
 	public void testLineString()
-      throws IOException, ParseException
+      throws ParseException
   {
     runWKBTest("LINESTRING (1 2, 10 20, 100 200)");
   }
   public void testPolygon()
-      throws IOException, ParseException
+      throws ParseException
   {
     runWKBTest("POLYGON ((0 0, 100 0, 100 100, 0 100, 0 0))");
   }
   public void testPolygonWithHole()
-      throws IOException, ParseException
+      throws ParseException
   {
     runWKBTest("POLYGON ((0 0, 100 0, 100 100, 0 100, 0 0), (1 1, 1 10, 10 10, 10 1, 1 1) )");
   }
   public void testMultiPoint()
-      throws IOException, ParseException
+      throws ParseException
   {
     runWKBTest("MULTIPOINT ((0 0), (1 4), (100 200))");
   }
   public void testMultiLineString()
-      throws IOException, ParseException
+      throws ParseException
   {
     runWKBTest("MULTILINESTRING ((0 0, 1 10), (10 10, 20 30), (123 123, 456 789))");
   }
   public void testMultiPolygon()
-      throws IOException, ParseException
+      throws ParseException
   {
     runWKBTest("MULTIPOLYGON ( ((0 0, 100 0, 100 100, 0 100, 0 0), (1 1, 1 10, 10 10, 10 1, 1 1) ), ((200 200, 200 250, 250 250, 250 200, 200 200)) )");
   }
 
   public void testGeometryCollection()
-      throws IOException, ParseException
+      throws ParseException
   {
     runWKBTest("GEOMETRYCOLLECTION ( POINT ( 1 1), LINESTRING (0 0, 10 10), POLYGON ((0 0, 100 0, 100 100, 0 100, 0 0)) )");
   }
 
   public void testNestedGeometryCollection()
-      throws IOException, ParseException
+      throws ParseException
   {
     runWKBTest("GEOMETRYCOLLECTION ( POINT (20 20), GEOMETRYCOLLECTION ( POINT ( 1 1), LINESTRING (0 0, 10 10), POLYGON ((0 0, 100 0, 100 100, 0 100, 0 0)) ) )");
   }
   public void testLineStringEmpty()
-      throws IOException, ParseException
+      throws ParseException
   {
     runWKBTest("LINESTRING EMPTY");
   }
   public void testGeometryCollectionContainingEmptyGeometries()
-      throws IOException, ParseException
+      throws ParseException
   {
     runWKBTest("GEOMETRYCOLLECTION (LINESTRING EMPTY, MULTIPOINT EMPTY)");
   }
 
   public void testBigPolygon()
-      throws IOException, ParseException
+      throws ParseException
   {
     GeometricShapeFactory shapeFactory = new GeometricShapeFactory(geomFactory);
     shapeFactory.setBase(new Coordinate(0,0));
@@ -128,27 +128,27 @@ public class WKBTest
   }
 
   public void testPolygonEmpty()
-      throws IOException, ParseException
+      throws ParseException
   {
     runWKBTest("POLYGON EMPTY");
   }
   public void testMultiPointEmpty()
-      throws IOException, ParseException
+      throws ParseException
   {
     runWKBTest("MULTIPOINT EMPTY");
   }
   public void testMultiLineStringEmpty()
-      throws IOException, ParseException
+      throws ParseException
   {
     runWKBTest("MULTILINESTRING EMPTY");
   }
   public void testMultiPolygonEmpty()
-      throws IOException, ParseException
+      throws ParseException
   {
     runWKBTest("MULTIPOLYGON EMPTY");
   }
   public void testGeometryCollectionEmpty()
-      throws IOException, ParseException
+      throws ParseException
   {
     runWKBTest("GEOMETRYCOLLECTION EMPTY");
   }
@@ -196,13 +196,13 @@ public class WKBTest
     assertEquals(Double.NaN, geometryAfter.getCoordinates()[0].getM());
   }
 
-  private void runWKBTest(String wkt) throws IOException, ParseException 
+  private void runWKBTest(String wkt) throws ParseException
   {
   	runWKBTestCoordinateArray(wkt);
   	runWKBTestPackedCoordinate(wkt);
 	}
 
-	private void runWKBTestPackedCoordinate(String wkt) throws IOException, ParseException {
+	private void runWKBTestPackedCoordinate(String wkt) throws ParseException {
 		GeometryFactory geomFactory = new GeometryFactory(
 				new PackedCoordinateSequenceFactory(PackedCoordinateSequenceFactory.DOUBLE));
 	  WKTReader rdr = new WKTReader(geomFactory);
@@ -213,7 +213,7 @@ public class WKBTest
 		runWKBTest(g, 2, false);
 	}
 
-	private void runWKBTestCoordinateArray(String wkt) throws IOException, ParseException {
+	private void runWKBTestCoordinateArray(String wkt) throws ParseException {
 	  GeometryFactory geomFactory = new GeometryFactory();
 	  WKTReader rdr = new WKTReader(geomFactory);
 		Geometry g = rdr.read(wkt);
@@ -226,7 +226,7 @@ public class WKBTest
 	}
 
 	private void runWKBTest(Geometry g, int dimension, boolean toHex)
-	throws IOException, ParseException
+	throws ParseException
 	{
 	  setZ(g);
     runWKBTest(g, dimension, ByteOrderValues.LITTLE_ENDIAN, toHex);
@@ -234,7 +234,7 @@ public class WKBTest
 	}
 	
 	private void runWKBTest(Geometry g, int dimension, int byteOrder, boolean toHex)
-	throws IOException, ParseException
+	throws ParseException
 	{
     runGeometry(g, dimension, byteOrder, toHex, 100);
     runGeometry(g, dimension, byteOrder, toHex, 0);
@@ -242,7 +242,7 @@ public class WKBTest
 	  runGeometry(g, dimension, byteOrder, toHex, -1);
 	}
 
-  private void setZ(Geometry g)
+  private static void setZ(Geometry g)
   {
     g.apply(new AverageZFilter());
   }
@@ -250,16 +250,16 @@ public class WKBTest
   //static Comparator comp2D = new Coordinate.DimensionalComparator();
   //static Comparator comp3D = new Coordinate.DimensionalComparator(3);
 
-  static CoordinateSequenceComparator comp2 = new CoordinateSequenceComparator(2);
-  static CoordinateSequenceComparator comp3 = new CoordinateSequenceComparator(3);
+  static final CoordinateSequenceComparator comp2 = new CoordinateSequenceComparator(2);
+  static final CoordinateSequenceComparator comp3 = new CoordinateSequenceComparator(3);
 
   /**
    * Use single WKB reader, to ensure it can be used for multiple input geometries
    */
-  WKBReader wkbReader = new WKBReader(geomFactory);
+  final WKBReader wkbReader = new WKBReader(geomFactory);
 
   void runGeometry(Geometry g, int dimension, int byteOrder, boolean toHex, int srid)
-      throws IOException, ParseException
+      throws ParseException
   {
     boolean includeSRID = false;
     if (srid >= 0) {
@@ -295,4 +295,3 @@ class AverageZFilter implements CoordinateFilter
     coord.setZ((coord.x + coord.y) / 2);
   }
 }
-

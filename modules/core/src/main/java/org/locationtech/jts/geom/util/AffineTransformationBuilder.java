@@ -42,12 +42,12 @@ import org.locationtech.jts.math.Matrix;
  */
 public class AffineTransformationBuilder
 {
-  private Coordinate src0;
-  private Coordinate src1;
-  private Coordinate src2;
-  private Coordinate dest0;
-  private Coordinate dest1;
-  private Coordinate dest2;
+  private final Coordinate src0;
+  private final Coordinate src1;
+  private final Coordinate src2;
+  private final Coordinate dest0;
+  private final Coordinate dest1;
+  private final Coordinate dest2;
   
   // the matrix entries for the transformation
   private double m00, m01, m02, m10, m11, m12;

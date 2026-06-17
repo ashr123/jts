@@ -31,16 +31,18 @@ public class VoronoiRandomStressTest {
   
   private static final int NUM_CASES = 1000;
 
-  public static void main(String args[]) {
-    VoronoiRandomStressTest test = new VoronoiRandomStressTest();
-    test.run(NUM_CASES);
+    private VoronoiRandomStressTest() {
+    }
+
+    public static void main(String[] args) {
+      VoronoiRandomStressTest.run(NUM_CASES);
   }
   
   final static GeometryFactory geomFact = new GeometryFactory();
   
   private static final double WIDTH = 1000;
   
-  private void run(int numCases) {
+  private static void run(int numCases) {
     int numValid = 0;
     for (int i = 0; i < numCases; i++) {
       boolean isValid = runVoronoi(i);
@@ -51,7 +53,7 @@ public class VoronoiRandomStressTest {
         numCases, numValid, numCases - numValid);
   }
 
-  private boolean runVoronoi(int i) {
+  private static boolean runVoronoi(int i) {
     Geometry sites = createRandomPoints(100, WIDTH);
     boolean isValid = checkVoronoiValid(sites);
     String msg = isValid ? "Valid" : ">>>>>>>  INVALID ";
@@ -59,7 +61,7 @@ public class VoronoiRandomStressTest {
     return isValid;
   }
 
-  private Geometry createRandomPoints(int nPts, double width) {
+  private static Geometry createRandomPoints(int nPts, double width) {
     Coordinate[] pts = new Coordinate[nPts];
     for (int i = 0; i < nPts; i++) {
       double x = width * Math.random();
@@ -69,7 +71,7 @@ public class VoronoiRandomStressTest {
     return geomFact.createMultiPointFromCoords(pts);
   }
 
-  boolean checkVoronoiValid(Geometry sites) {
+  static boolean checkVoronoiValid(Geometry sites) {
     Geometry result = null;
     try {
       result = computeVoronoi(sites); 
@@ -84,7 +86,6 @@ public class VoronoiRandomStressTest {
   private static Geometry computeVoronoi(Geometry sites) {
     VoronoiDiagramBuilder builder = new VoronoiDiagramBuilder();
     builder.setSites(sites);
-    Geometry result = builder.getDiagram(sites.getFactory());
-    return result;
+      return builder.getDiagram(sites.getFactory());
   }
 }

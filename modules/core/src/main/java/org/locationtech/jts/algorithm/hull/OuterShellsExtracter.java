@@ -38,7 +38,7 @@ class OuterShellsExtracter {
     return extracter.extractShells();
   }
 
-  private Geometry polygons;
+  private final Geometry polygons;
 
   public OuterShellsExtracter(Geometry polygons) {
     this.polygons = polygons;
@@ -49,12 +49,12 @@ class OuterShellsExtracter {
     
     //-- sort shells in order of increasing envelope area
     Arrays.sort(shells, new EnvelopeAreaComparator());
-    List<LinearRing> outerShells = new ArrayList<LinearRing>();
+    List<LinearRing> outerShells = new ArrayList<>();
 
     //-- Scan shells by decreasing area to ensure that shells are added before any nested shells
     for (int i = shells.length - 1; i >= 0; i--) {
       LinearRing shell = shells[i];
-      if (outerShells.size() == 0 
+      if (outerShells.isEmpty()
           || isOuter(shell, outerShells)) {
         outerShells.add(shell);
       }
@@ -62,7 +62,7 @@ class OuterShellsExtracter {
     return GeometryFactory.toLinearRingArray(outerShells);
   }
   
-  private boolean isOuter(LinearRing shell, List<LinearRing> outerShells) {
+  private static boolean isOuter(LinearRing shell, List<LinearRing> outerShells) {
     for (LinearRing outShell : outerShells) {
       if (covers(outShell, shell)) {
         return false;
@@ -71,17 +71,15 @@ class OuterShellsExtracter {
     return true;
   }
 
-  private boolean covers(LinearRing shellA, LinearRing shellB) {
+  private static boolean covers(LinearRing shellA, LinearRing shellB) {
     //-- if shellB envelope is not covered then shell is not covered
     if (! shellA.getEnvelopeInternal().covers(shellB.getEnvelopeInternal()))
       return false;
     //-- if a shellB point lies inside shellA, shell is covered (since shells do not overlap)
-    if (isPointInRing(shellB, shellA))
-      return true;
-    return false;
+      return isPointInRing(shellB, shellA);
   }
 
-  private boolean isPointInRing(LinearRing shell, LinearRing shellRing) {
+  private static boolean isPointInRing(LinearRing shell, LinearRing shellRing) {
     //TODO: optimize this with cached index
     Coordinate pt = shell.getCoordinate();
     return PointLocation.isInRing(pt, shellRing.getCoordinates());

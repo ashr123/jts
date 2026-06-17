@@ -22,7 +22,10 @@ public class ByteOrderValues
   public static final int BIG_ENDIAN = 1;
   public static final int LITTLE_ENDIAN = 2;
 
-  public static int getInt(byte[] buf, int byteOrder)
+    private ByteOrderValues() {
+    }
+
+    public static int getInt(byte[] buf, int byteOrder)
   {
     if (byteOrder == BIG_ENDIAN) {
       return  ( (buf[0] & 0xff) << 24)

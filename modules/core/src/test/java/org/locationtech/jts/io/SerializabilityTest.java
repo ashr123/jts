@@ -26,9 +26,9 @@ public class SerializabilityTest
 extends TestCase
 {
 
-  static GeometryFactory fact = new GeometryFactory();
+  static final GeometryFactory fact = new GeometryFactory();
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(SerializabilityTest.class);
   }
 

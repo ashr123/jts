@@ -13,8 +13,6 @@ package test.jts.perf.algorithm;
 
 import org.locationtech.jts.algorithm.Orientation;
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.PrecisionModel;
-import org.locationtech.jts.io.WKTWriter;
 import org.locationtech.jts.math.DD;
 
 import junit.textui.TestRunner;
@@ -31,7 +29,7 @@ import test.jts.GeometryTestCase;
  */
 public class DDOrientationIndexCorrectTest extends GeometryTestCase {
 
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		TestRunner.run(DDOrientationIndexCorrectTest.class);
 	}
 
@@ -89,7 +87,7 @@ public class DDOrientationIndexCorrectTest extends GeometryTestCase {
         new Coordinate( 24830818.25, 488731955.75)
     };
     int orientOLSC = runDD("On-line scaled case", ptOnLineScaled);
-    assertTrue(orientOLSC == 0);
+      assertEquals(0, orientOLSC);
     
     /**
      * By adjusting the point slightly it lies exactly on the line
@@ -101,12 +99,12 @@ public class DDOrientationIndexCorrectTest extends GeometryTestCase {
     };
     int orientOL = runDD("On-line case", ptOnLine);
     //assertTrue(orientOL == 0);
-    
-    assertTrue("Orignal index not equal to lower-precision index", orientDD == orientLP);
+
+      assertEquals("Orignal index not equal to lower-precision index", orientDD, orientLP);
 
   }
 
-  private int runDD(String desc, Coordinate[] pts) {
+  private static int runDD(String desc, Coordinate[] pts) {
     int orientDD = Orientation.index(pts[0], pts[1], pts[2]); 
     //int orientSD = ShewchuksDeterminant.orientationIndex(pts[0], pts[1], pts[2]); 
     //int orientAlt = orientationIndexAlt(pts[0], pts[1], pts[2]); 

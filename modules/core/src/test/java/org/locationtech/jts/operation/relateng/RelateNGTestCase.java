@@ -17,9 +17,7 @@ import test.jts.GeometryTestCase;
 
 public abstract class RelateNGTestCase extends GeometryTestCase {
 
-  private boolean isTrace = false;
-  
-  public RelateNGTestCase(String name) {
+    public RelateNGTestCase(String name) {
     super(name);
   }
   
@@ -123,8 +121,9 @@ public abstract class RelateNGTestCase extends GeometryTestCase {
         );
   }
 
-  TopologyPredicate trace(TopologyPredicate pred) {
-    if (! isTrace)
+  static TopologyPredicate trace(TopologyPredicate pred) {
+      boolean isTrace = false;
+      if (!isTrace)
       return pred;
     
     System.out.println("----------- Pred: " + pred.name());

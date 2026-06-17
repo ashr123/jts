@@ -243,7 +243,7 @@ class HullTri extends Tri
   }
   
   public static void markConnected(HullTri triStart, Tri exceptTri) {
-    Deque<HullTri> queue = new ArrayDeque<HullTri>();
+    Deque<HullTri> queue = new ArrayDeque<>();
     queue.add(triStart);
     while (! queue.isEmpty()) {
       HullTri tri = queue.pop();
@@ -269,7 +269,7 @@ class HullTri extends Tri
    * @return true if the triangulation is still connnected
    */
   public static boolean isConnected(List<HullTri> triList, HullTri removedTri) {
-    if (triList.size() == 0) return false;
+    if (triList.isEmpty()) return false;
     clearMarks(triList);
     HullTri triStart = findTri(triList, removedTri);
     if (triStart == null) return false;

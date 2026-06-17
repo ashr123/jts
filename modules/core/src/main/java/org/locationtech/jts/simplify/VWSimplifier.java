@@ -63,7 +63,7 @@ public class VWSimplifier
     return simp.getResultGeometry();
   }
 
-  private Geometry inputGeom;
+  private final Geometry inputGeom;
   private double distanceTolerance;
   private boolean isEnsureValidTopology = true;
 
@@ -128,7 +128,7 @@ public class VWSimplifier
   static class VWTransformer extends GeometryTransformer
   {
     private boolean isEnsureValidTopology = true;
-    private double distanceTolerance;
+    private final double distanceTolerance;
 
     public VWTransformer(boolean isEnsureValidTopology, double distanceTolerance)
     {
@@ -177,8 +177,7 @@ public class VWSimplifier
       Geometry simpResult = super.transformLinearRing(geom, parent);
       if (removeDegenerateRings && !(simpResult instanceof LinearRing))
         return null;
-      ;
-      return simpResult;
+        return simpResult;
     }
 
     /**

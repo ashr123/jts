@@ -15,7 +15,10 @@ package org.locationtech.jts.geom;
  * Useful utility functions for handling Coordinate objects.
  */
 public class Coordinates {
-  /**
+    private Coordinates() {
+    }
+
+    /**
    * Factory method providing access to common Coordinate implementations.
    * 
    * @param dimension

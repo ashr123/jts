@@ -210,8 +210,7 @@ public class KdNode {
         envMin = env.getMinY();
       }
       double splitValue = splitValue(isSplitOnX);
-      boolean isInRange = envMin < splitValue;
-      return isInRange;
+        return envMin < splitValue;
     }
     
     /**
@@ -230,8 +229,7 @@ public class KdNode {
         envMax = env.getMaxY();
       }
       double splitValue = splitValue(isSplitOnX);
-      boolean isInRange = splitValue <= envMax;
-      return isInRange;
+       return splitValue <= envMax;
     }
 
    /**
@@ -257,8 +255,7 @@ public class KdNode {
           ptOrdinate = pt.y;
       }
       double splitValue = splitValue(isSplitOnX);
-      boolean isInRange = (ptOrdinate < splitValue);
-      return isInRange;
+       return (ptOrdinate < splitValue);
     }
     
 }

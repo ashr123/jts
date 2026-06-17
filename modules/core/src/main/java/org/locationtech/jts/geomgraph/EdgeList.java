@@ -30,12 +30,12 @@ import org.locationtech.jts.noding.OrientedCoordinateArray;
  */
 public class EdgeList
 {
-  private List edges = new ArrayList();
+  private final List<Edge> edges = new ArrayList<>();
   /**
    * An index of the edges, for fast lookup.
    *
    */
-  private Map ocaMap = new TreeMap();
+  private final Map<OrientedCoordinateArray, Edge> ocaMap = new TreeMap<>();
 
   public EdgeList() {
   }
@@ -52,14 +52,14 @@ public class EdgeList
     ocaMap.put(oca, e);
   }
 
-  public void addAll(Collection edgeColl)
+  public void addAll(Collection<? extends Edge> edgeColl)
   {
-    for (Iterator i = edgeColl.iterator(); i.hasNext(); ) {
-      add((Edge) i.next());
-    }
+      for (Edge edge : edgeColl) {
+          add(edge);
+      }
   }
 
-  public List getEdges() { return edges; }
+  public List<Edge> getEdges() { return edges; }
 
   /**
    * If there is an edge equal to e already in the list, return it.
@@ -72,13 +72,12 @@ public class EdgeList
   {
     OrientedCoordinateArray oca = new OrientedCoordinateArray(e.getCoordinates());
     // will return null if no edge matches
-    Edge matchEdge = (Edge) ocaMap.get(oca);
-    return matchEdge; 
+      return ocaMap.get(oca);
   }
-  
-  public Iterator iterator() { return edges.iterator(); }
 
-  public Edge get(int i) { return (Edge) edges.get(i); }
+  public Iterator<Edge> iterator() { return edges.iterator(); }
+
+  public Edge get(int i) { return edges.get(i); }
 
   /**
    * If the edge e is already in the list, return its index.
@@ -89,7 +88,7 @@ public class EdgeList
   public int findEdgeIndex(Edge e)
   {
     for (int i = 0; i < edges.size(); i++) {
-      if ( ((Edge) edges.get(i)).equals(e) ) return i;
+      if ( edges.get(i).equals(e) ) return i;
     }
     return -1;
   }
@@ -98,7 +97,7 @@ public class EdgeList
   {
     out.print("MULTILINESTRING ( ");
     for (int j = 0; j < edges.size(); j++) {
-      Edge e = (Edge) edges.get(j);
+      Edge e = edges.get(j);
       if (j > 0) out.print(",");
       out.print("(");
       Coordinate[] pts = e.getCoordinates();

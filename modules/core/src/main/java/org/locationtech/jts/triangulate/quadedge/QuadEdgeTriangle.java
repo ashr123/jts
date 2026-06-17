@@ -54,7 +54,7 @@ public class QuadEdgeTriangle
 	 * 				the QuadEdgeSubdivision to create the triangles on.
 	 * @return a List of the created QuadEdgeTriangles
 	 */
-	public static List createOn(QuadEdgeSubdivision subdiv)
+	public static List<QuadEdgeTriangle> createOn(QuadEdgeSubdivision subdiv)
 	{
 		QuadEdgeTriangleBuilderVisitor visitor = new QuadEdgeTriangleBuilderVisitor();
 		subdiv.visitTriangles(visitor, false);
@@ -99,8 +99,7 @@ public class QuadEdgeTriangle
 				v[1].getCoordinate(), v[2].getCoordinate(), v[0].getCoordinate() };
 		GeometryFactory fact = new GeometryFactory();
 		LinearRing ring = fact.createLinearRing(ringPts);
-		Polygon tri = fact.createPolygon(ring);
-		return tri;
+        return fact.createPolygon(ring);
 	}
 
 	public static Geometry toPolygon(QuadEdge[] e) {
@@ -109,8 +108,7 @@ public class QuadEdgeTriangle
 				e[0].orig().getCoordinate() };
 		GeometryFactory fact = new GeometryFactory();
 		LinearRing ring = fact.createLinearRing(ringPts);
-		Polygon tri = fact.createPolygon(ring);
-		return tri;
+        return fact.createPolygon(ring);
 	}
 
 	/**
@@ -133,7 +131,7 @@ public class QuadEdgeTriangle
 	 * @param edge an array of the edges of the triangle in CCW order
 	 */
 	public QuadEdgeTriangle(QuadEdge[] edge) {
-		this.edge = (QuadEdge[]) Arrays.copyOf(edge, edge.length);
+		this.edge = Arrays.copyOf(edge, edge.length);
 		// link the quadedges back to this triangle
 		for (int i = 0; i < 3; i++) {
 			edge[i].setData(this);
@@ -249,8 +247,7 @@ public class QuadEdgeTriangle
 
 	public Polygon getGeometry(GeometryFactory fact) {
 		LinearRing ring = fact.createLinearRing(getCoordinates());
-		Polygon tri = fact.createPolygon(ring);
-		return tri;
+        return fact.createPolygon(ring);
 	}
 
 	public String toString() {
@@ -289,9 +286,9 @@ public class QuadEdgeTriangle
 	 * @param vertexIndex the vertex to query
 	 * @return a list of the vertex-adjacent triangles
 	 */
-	public List getTrianglesAdjacentToVertex(int vertexIndex) {
+	public List<QuadEdgeTriangle> getTrianglesAdjacentToVertex(int vertexIndex) {
 		// Assert: isVertex
-		List adjTris = new ArrayList();
+		List<QuadEdgeTriangle> adjTris = new ArrayList<>();
 
 		QuadEdge start = getEdge(vertexIndex);
 		QuadEdge qe = start;
@@ -322,7 +319,7 @@ public class QuadEdgeTriangle
 	}
 
 	private static class QuadEdgeTriangleBuilderVisitor implements TriangleVisitor {
-		private List triangles = new ArrayList();
+		private final List<QuadEdgeTriangle> triangles = new ArrayList<>();
 
 		public QuadEdgeTriangleBuilderVisitor() {
 		}
@@ -331,10 +328,8 @@ public class QuadEdgeTriangle
 			triangles.add(new QuadEdgeTriangle(edges));
 		}
 
-		public List getTriangles() {
+		public List<QuadEdgeTriangle> getTriangles() {
 			return triangles;
 		}
 	}
 }
-
-

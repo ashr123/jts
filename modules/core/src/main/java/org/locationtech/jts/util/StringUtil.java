@@ -12,14 +12,15 @@
 
 package org.locationtech.jts.util;
 
+import org.locationtech.jts.io.OrdinateFormat;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.ArrayList;
-
-import org.locationtech.jts.io.OrdinateFormat;
+import java.util.Arrays;
 
 /**
  * Utility methods for working with {@link String}s.
@@ -29,7 +30,10 @@ import org.locationtech.jts.io.OrdinateFormat;
  */
 public class StringUtil
 {
-  /**
+    private StringUtil() {
+    }
+
+    /**
    * Mimics the the Java SE {@link String#split(String)} method.
    *
    * @param s the string to split.
@@ -39,8 +43,8 @@ public class StringUtil
  public static String[] split(String s, String separator)
  {
    int separatorlen = separator.length();
-   ArrayList tokenList = new ArrayList();
-   String tmpString = "" + s;
+   ArrayList<String> tokenList = new ArrayList<>();
+   String tmpString = s;
    int pos = tmpString.indexOf(separator);
    while (pos >= 0) {
      String token = tmpString.substring(0, pos);
@@ -48,16 +52,16 @@ public class StringUtil
      tmpString = tmpString.substring(pos + separatorlen);
      pos = tmpString.indexOf(separator);
    }
-   if (tmpString.length() > 0)
+   if (!tmpString.isEmpty())
      tokenList.add(tmpString);
    String[] res = new String[tokenList.size()];
    for (int i = 0; i < res.length; i++) {
-     res[i] = (String) tokenList.get(i);
+     res[i] = tokenList.get(i);
    }
    return res;
  }
 
- public final static String NEWLINE = System.getProperty("line.separator");
+ public final static String NEWLINE = System.lineSeparator();
 
  /**
   *  Returns an throwable's stack trace
@@ -70,17 +74,17 @@ public class StringUtil
  }
 
  public static String getStackTrace(Throwable t, int depth) {
-     String stackTrace = "";
+     StringBuilder stackTrace = new StringBuilder();
      StringReader stringReader = new StringReader(getStackTrace(t));
      LineNumberReader lineNumberReader = new LineNumberReader(stringReader);
      for (int i = 0; i < depth; i++) {
          try {
-             stackTrace += lineNumberReader.readLine() + NEWLINE;
+             stackTrace.append(lineNumberReader.readLine()).append(NEWLINE);
          } catch (IOException e) {
              Assert.shouldNeverReachHere();
          }
      }
-     return stackTrace;
+     return stackTrace.toString();
  }
 
   /**
@@ -104,9 +108,7 @@ public class StringUtil
   public static String chars(char c, int n)
   {
     char[] ch = new char[n];
-    for (int i = 0; i < n; i++) {
-      ch[i] = c;
-    }
+      Arrays.fill(ch, c);
     return new String(ch);
   }
 }

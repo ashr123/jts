@@ -27,18 +27,17 @@ import org.locationtech.jts.util.Stopwatch;
 public class InCirclePerf 
 {
 
-	public static void main(String[] args) throws Exception
-	{
+	public static void main(String[] args) {
 		  InCirclePerf test = new InCirclePerf();
 	    test.run();
 	}
 
 	public InCirclePerf() { }
 	
-  Coordinate pa= new Coordinate(687958.05, 7460725.97);
-  Coordinate pb= new Coordinate(687957.43, 7460725.93);
-  Coordinate pc= new Coordinate(687957.58, 7460721);
-  Coordinate pp= new Coordinate(687958.13, 7460720.99);
+  final Coordinate pa= new Coordinate(687958.05, 7460725.97);
+  final Coordinate pb= new Coordinate(687957.43, 7460725.93);
+  final Coordinate pc= new Coordinate(687957.58, 7460721);
+  final Coordinate pp= new Coordinate(687958.13, 7460720.99);
   
 	public void run() {
     System.out.println("InCircle perf");

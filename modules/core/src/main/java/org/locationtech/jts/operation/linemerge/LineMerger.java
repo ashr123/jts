@@ -19,6 +19,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryComponentFilter;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.planargraph.DirectedEdge;
 import org.locationtech.jts.planargraph.GraphComponent;
 import org.locationtech.jts.planargraph.Node;
 import org.locationtech.jts.util.Assert;
@@ -48,8 +49,8 @@ import org.locationtech.jts.util.Assert;
  */
 public class LineMerger 
 {
-  private LineMergeGraph graph = new LineMergeGraph();
-  private Collection mergedLineStrings = null;
+  private final LineMergeGraph graph = new LineMergeGraph();
+  private Collection<LineString> mergedLineStrings = null;
   private GeometryFactory factory = null;
   
   /**
@@ -69,12 +70,10 @@ public class LineMerger
    * @param geometry geometry to be line-merged
    */  
   public void add(Geometry geometry) {
-    geometry.apply(new GeometryComponentFilter() {
-      public void filter(Geometry component) {
-        if (component instanceof LineString) {
-          add((LineString)component);
-        }
-      }      
+    geometry.apply((GeometryComponentFilter) component -> {
+      if (component instanceof LineString) {
+        add((LineString)component);
+      }
     });
   }
   /**
@@ -84,13 +83,12 @@ public class LineMerger
    * 
    * @param geometries the geometries to be line-merged
    */
-  public void add(Collection geometries) 
+  public void add(Collection<? extends Geometry> geometries)
   {
   	mergedLineStrings = null;
-    for (Iterator i = geometries.iterator(); i.hasNext(); ) {
-      Geometry geometry = (Geometry) i.next();
-      add(geometry);
-    }
+      for (Geometry geometry : geometries) {
+          add(geometry);
+      }
   }
   private void add(LineString lineString) {
     if (factory == null) {
@@ -99,7 +97,7 @@ public class LineMerger
     graph.addEdge(lineString);
   }
   
-  private Collection edgeStrings = null;
+  private Collection<EdgeString> edgeStrings = null;
   
   private void merge() 
   {
@@ -109,14 +107,13 @@ public class LineMerger
     GraphComponent.setMarked(graph.nodeIterator(), false);
     GraphComponent.setMarked(graph.edgeIterator(), false);
     
-    edgeStrings = new ArrayList();
+    edgeStrings = new ArrayList<>();
     buildEdgeStringsForObviousStartNodes();
     buildEdgeStringsForIsolatedLoops();
-    mergedLineStrings = new ArrayList();    
-    for (Iterator i = edgeStrings.iterator(); i.hasNext(); ) {
-      EdgeString edgeString = (EdgeString) i.next();
-      mergedLineStrings.add(edgeString.toLineString());
-    }    
+    mergedLineStrings = new ArrayList<>();
+      for (EdgeString edgeString : edgeStrings) {
+          mergedLineStrings.add(edgeString.toLineString());
+      }
   }
   
   private void buildEdgeStringsForObviousStartNodes() {
@@ -128,26 +125,24 @@ public class LineMerger
   }  
   
   private void buildEdgeStringsForUnprocessedNodes() {
-    for (Iterator i = graph.getNodes().iterator(); i.hasNext(); ) {
-      Node node = (Node) i.next();
-      if (!node.isMarked()) { 
-        Assert.isTrue(node.getDegree() == 2);
-        buildEdgeStringsStartingAt(node);
-        node.setMarked(true);
+      for (Node node : graph.getNodes()) {
+          if (!node.isMarked()) {
+              Assert.isTrue(node.getDegree() == 2);
+              buildEdgeStringsStartingAt(node);
+              node.setMarked(true);
+          }
       }
-    }
   }  
   private void buildEdgeStringsForNonDegree2Nodes() {
-    for (Iterator i = graph.getNodes().iterator(); i.hasNext(); ) {
-      Node node = (Node) i.next();
-      if (node.getDegree() != 2) { 
-        buildEdgeStringsStartingAt(node);
-        node.setMarked(true);
+      for (Node node : graph.getNodes()) {
+          if (node.getDegree() != 2) {
+              buildEdgeStringsStartingAt(node);
+              node.setMarked(true);
+          }
       }
-    }
   }
   private void buildEdgeStringsStartingAt(Node node) {
-    for (Iterator i = node.getOutEdges().iterator(); i.hasNext(); ) {
+    for (Iterator<DirectedEdge> i = node.getOutEdges().iterator(); i.hasNext(); ) {
       LineMergeDirectedEdge directedEdge = (LineMergeDirectedEdge) i.next();
       if (directedEdge.getEdge().isMarked()) { continue; }
       edgeStrings.add(buildEdgeStringStartingWith(directedEdge));
@@ -170,7 +165,7 @@ public class LineMerger
    * 
    * @return the collection of merged LineStrings
    */
-  public Collection getMergedLineStrings() {
+  public Collection<LineString> getMergedLineStrings() {
     merge();
     return mergedLineStrings;
   }

@@ -23,15 +23,17 @@ import org.locationtech.jts.util.GeometricShapeFactory;
 
 public class TestShapeFactory {
 
-  public static Polygon createSquare(Coordinate origin, double size) {
+    private TestShapeFactory() {
+    }
+
+    public static Polygon createSquare(Coordinate origin, double size) {
     GeometricShapeFactory gsf = new GeometricShapeFactory();
     gsf.setCentre(origin);
     gsf.setSize(size);
     gsf.setNumPoints(4);
-    Polygon g = gsf.createRectangle();
-    // Polygon gRect = gsf.createRectangle();
+      // Polygon gRect = gsf.createRectangle();
     // Geometry g = gRect.getExteriorRing();
-    return g;
+    return gsf.createRectangle();
   }
 
   public static Geometry createSineStar(Coordinate origin, double size, int nPts) {
@@ -41,8 +43,7 @@ public class TestShapeFactory {
     gsf.setNumPoints(nPts);
     gsf.setArmLengthRatio(2);
     gsf.setNumArms(20);
-    Geometry poly = gsf.createSineStar();
-    return poly;
+      return gsf.createSineStar();
   }
 
   public static Polygon createCircle(Coordinate origin, double size, int nPts) {
@@ -50,11 +51,10 @@ public class TestShapeFactory {
     gsf.setCentre(origin);
     gsf.setSize(size);
     gsf.setNumPoints(nPts);
-    Polygon circle = gsf.createCircle();
-    return circle;
+      return gsf.createCircle();
   }
 
-  private static double HOLE_SIZE_FACTOR = 0.8;
+  private static final double HOLE_SIZE_FACTOR = 0.8;
 
   public static Geometry createSquareWithCircleHoles(Coordinate origin, double size, int nHoles, int nPtsHole) {
     Polygon square = createSquare(origin, size);

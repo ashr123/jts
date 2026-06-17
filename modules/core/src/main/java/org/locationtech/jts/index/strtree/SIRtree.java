@@ -12,7 +12,6 @@
 package org.locationtech.jts.index.strtree;
 
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -21,34 +20,26 @@ import java.util.List;
  * P. Rigaux, Michel Scholl and Agnes Voisard. Spatial Databases With
  * Application To GIS. Morgan Kaufmann, San Francisco, 2002.
  * <p>
- * This class is thread-safe.  Building the tree is synchronized, 
+ * This class is thread-safe.  Building the tree is synchronized,
  * and querying is stateless.
- * 
+ *
  * @see STRtree
  *
  * @version 1.7
  */
-public class SIRtree extends AbstractSTRtree {
+public class SIRtree extends AbstractSTRtree<Interval, Object> {
 
-  private Comparator comparator = new Comparator() {
-    public int compare(Object o1, Object o2) {
-      return compareDoubles(
-          ((Interval)((Boundable)o1).getBounds()).getCentre(),
-          ((Interval)((Boundable)o2).getBounds()).getCentre());
-    }
-  };
+  private static final Comparator<Boundable<Interval>> comparator = (o1, o2) -> compareDoubles(
+      o1.getBounds().getCentre(),
+      o2.getBounds().getCentre());
 
-  private IntersectsOp intersectsOp = new IntersectsOp() {
-    public boolean intersects(Object aBounds, Object bBounds) {
-      return ((Interval)aBounds).intersects((Interval)bBounds);
-    }
-  };
-  
+  private static final IntersectsOp intersectsOp = (aBounds, bBounds) -> ((Interval)aBounds).intersects((Interval)bBounds);
+
   /**
    * Constructs an SIRtree with the default node capacity.
    */
   public SIRtree() { this(10); }
-   
+
   /**
    * Constructs an SIRtree with the given maximum number of child nodes that
    * a node may have
@@ -57,19 +48,19 @@ public class SIRtree extends AbstractSTRtree {
     super(nodeCapacity);
   }
 
-  protected AbstractNode createNode(int level) {
-    return new AbstractNode(level) {
-      protected Object computeBounds() {
+  @Override
+  protected AbstractNode<Interval> createNode(int level) {
+    return new AbstractNode<Interval>(level) {
+      @Override
+      protected Interval computeBounds() {
         Interval bounds = null;
-        for (Iterator i = getChildBoundables().iterator(); i.hasNext(); ) {
-          Boundable childBoundable = (Boundable) i.next();
-          if (bounds == null) {
-            bounds = new Interval((Interval)childBoundable.getBounds());
+          for (Boundable<Interval> childBoundable : getChildBoundables()) {
+              if (bounds == null) {
+                  bounds = new Interval(childBoundable.getBounds());
+              } else {
+                  bounds.expandToInclude(childBoundable.getBounds());
+              }
           }
-          else {
-            bounds.expandToInclude((Interval)childBoundable.getBounds());
-          }
-        }
         return bounds;
       }
     };
@@ -85,7 +76,7 @@ public class SIRtree extends AbstractSTRtree {
   /**
    * Returns items whose bounds intersect the given value.
    */
-  public List query(double x) {
+  public List<Object> query(double x) {
     return query(x, x);
   }
 
@@ -93,15 +84,17 @@ public class SIRtree extends AbstractSTRtree {
    * Returns items whose bounds intersect the given bounds.
    * @param x1 possibly equal to x2
    */
-  public List query(double x1, double x2) {
+  public List<Object> query(double x1, double x2) {
     return super.query(new Interval(Math.min(x1, x2), Math.max(x1, x2)));
   }
 
+  @Override
   protected IntersectsOp getIntersectsOp() {
     return intersectsOp;
   }
 
-  protected Comparator getComparator() {
+  @Override
+  protected Comparator<Boundable<Interval>> getComparator() {
     return comparator;
   }
 

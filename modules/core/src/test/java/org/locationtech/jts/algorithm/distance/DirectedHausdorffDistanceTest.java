@@ -20,7 +20,7 @@ import test.jts.GeometryTestCase;
 public class DirectedHausdorffDistanceTest 
 extends GeometryTestCase
 {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(DirectedHausdorffDistanceTest.class);
   }
 
@@ -224,8 +224,7 @@ extends GeometryTestCase
   }
   
   // Tests that target area interiors have distance = 0
-  public void testLinePolygonCrossing() throws Exception
-  {
+  public void testLinePolygonCrossing() {
     String wkt1 = "LINESTRING (2 5, 5 10, 6 4)";
     String wkt2 = "POLYGON ((1 9, 9 9, 9 1, 1 1, 1 9))";
     checkDistance(wkt1, wkt2, "LINESTRING (5 10, 5 9)");

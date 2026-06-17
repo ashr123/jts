@@ -21,7 +21,7 @@ public class RelatePredicateTest extends TestCase {
   private static final String A_EXT_B_INT = "***.***.1**";
   private static final String A_INT_B_INT = "1**.***.***";
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(RelatePredicateTest.class);
   }
   
@@ -53,19 +53,19 @@ public class RelatePredicateTest extends TestCase {
 
   //=======================================================
   
-  private void checkPredicate(TopologyPredicate pred, String im, boolean expected) {
+  private static void checkPredicate(TopologyPredicate pred, String im, boolean expected) {
     applyIM(im, pred);
     checkPred(pred, expected);    
   }
   
-  private void checkPredicatePartial(TopologyPredicate pred, String im, boolean expected) {
+  private static void checkPredicatePartial(TopologyPredicate pred, String im, boolean expected) {
     applyIM(im, pred);
     boolean isKnown = pred.isKnown();
     assertTrue("predicate value is not known", isKnown);
     checkPred(pred, expected);
   }
 
-  private void checkPred(TopologyPredicate pred, boolean expected) {
+  private static void checkPred(TopologyPredicate pred, boolean expected) {
     pred.finish();
     boolean actual = pred.value();
     assertEquals(expected, actual);
@@ -85,8 +85,7 @@ public class RelatePredicateTest extends TestCase {
   }
 
   private static String cleanIM(String im) {
-    String im1 = im.replaceAll("\\.", "");
-    return im1;
+      return im.replaceAll("\\.", "");
   }
   
 }

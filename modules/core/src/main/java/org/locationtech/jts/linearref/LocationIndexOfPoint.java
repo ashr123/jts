@@ -38,7 +38,7 @@ class LocationIndexOfPoint
     return locater.indexOfAfter(inputPt, minIndex);
   }
 
-  private Geometry linearGeom;
+  private final Geometry linearGeom;
 
   public LocationIndexOfPoint(Geometry linearGeom) {
     this.linearGeom = linearGeom;
@@ -128,8 +128,7 @@ class LocationIndexOfPoint
       return new LinearLocation(minIndex);
     }
     // otherwise, return computed location
-    LinearLocation loc = new LinearLocation(minComponentIndex, minSegmentIndex, minFrac);
-    return loc;
+      return new LinearLocation(minComponentIndex, minSegmentIndex, minFrac);
   }
 
   /**

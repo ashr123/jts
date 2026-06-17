@@ -18,40 +18,34 @@ import org.locationtech.jts.index.ItemVisitor;
 import org.locationtech.jts.io.WKTWriter;
 
 
-public abstract class IntervalRTreeNode 
+public abstract class IntervalRTreeNode<T>
 {
 	protected double min = Double.POSITIVE_INFINITY;
 	protected double max = Double.NEGATIVE_INFINITY;
 
 	public double getMin() { return min; }
 	public double getMax() { return max; }
-	
-	public abstract void query(double queryMin, double queryMax, ItemVisitor visitor);
-	
+
+	public abstract void query(double queryMin, double queryMax, ItemVisitor<? super T> visitor);
+
 	protected boolean intersects(double queryMin, double queryMax)
 	{
-		if (min > queryMax 
-				|| max < queryMin)
-			return false;
-		return true;
-	}
+        return !(min > queryMax)
+                && !(max < queryMin);
+    }
 
 	public String toString()
 	{
 		return WKTWriter.toLineString(new Coordinate(min, 0), new Coordinate(max, 0));
 	}
-  
-  public static class NodeComparator implements Comparator
+
+  public static class NodeComparator implements Comparator<IntervalRTreeNode<?>>
   {
-    public int compare(Object o1, Object o2)
+    public int compare(IntervalRTreeNode<?> n1, IntervalRTreeNode<?> n2)
     {
-      IntervalRTreeNode n1 = (IntervalRTreeNode) o1;
-      IntervalRTreeNode n2 = (IntervalRTreeNode) o2;
       double mid1 = (n1.min + n1.max) / 2;
       double mid2 = (n2.min + n2.max) / 2;
-      if (mid1 < mid2) return -1;
-      if (mid1 > mid2) return 1;
-      return 0;
+        return Double.compare(mid1, mid2);
     }
   }
 

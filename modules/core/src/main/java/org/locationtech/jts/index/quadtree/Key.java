@@ -27,13 +27,12 @@ public class Key {
   {
     double dx = env.getWidth();
     double dy = env.getHeight();
-    double dMax = dx > dy ? dx : dy;
-    int level = DoubleBits.exponent(dMax) + 1;
-    return level;
+    double dMax = Math.max(dx, dy);
+      return DoubleBits.exponent(dMax) + 1;
   }
 
   // the fields which make up the key
-  private Coordinate pt = new Coordinate();
+  private final Coordinate pt = new Coordinate();
   private int level = 0;
   // auxiliary data which is derived from the key for use in computation
   private Envelope env = null;

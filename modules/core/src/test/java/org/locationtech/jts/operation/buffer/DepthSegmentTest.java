@@ -31,64 +31,55 @@ public class DepthSegmentTest extends TestCase {
     junit.textui.TestRunner.run(DepthSegmentTest.class);
   }
 
-  public void testCompareTipToTail() throws Exception
-  {
+  public void testCompareTipToTail() {
     SubgraphDepthLocater.DepthSegment ds0 = depthSeg(0.7, 0.2, 1.4, 0.9);
     SubgraphDepthLocater.DepthSegment ds1 = depthSeg(0.7, 0.2, 0.3, 1.1);
     checkCompare(ds0, ds1, 1);
   }
 
-  public void testCompare2() throws Exception
-  {
+  public void testCompare2() {
     SubgraphDepthLocater.DepthSegment ds0 = depthSeg(0.5, 1.0, 0.1, 1.9);
     SubgraphDepthLocater.DepthSegment ds1 = depthSeg(1.0, 0.9, 1.9, 1.4);
     checkCompare(ds0, ds1, -1);
   }
 
-  public void testCompareVertical() throws Exception
-  {
+  public void testCompareVertical() {
     SubgraphDepthLocater.DepthSegment ds0 = depthSeg(1, 1, 1, 2);
     SubgraphDepthLocater.DepthSegment ds1 = depthSeg(1, 0, 1, 1);
     checkCompare(ds0, ds1, 1);
   }
 
-  public void testCompareHorizontal() throws Exception
-  {
+  public void testCompareHorizontal() {
     SubgraphDepthLocater.DepthSegment ds0 = depthSeg(1, 1, 1, 1);
     SubgraphDepthLocater.DepthSegment ds1 = depthSeg(0, 1, 1, 1);
     checkCompare(ds0, ds1, 1);
   }
 
-  public void testCompareSameMinX() throws Exception
-  {
+  public void testCompareSameMinX() {
     SubgraphDepthLocater.DepthSegment ds0 = depthSeg(24.0, 96.0,    24.0,   99.0);
     SubgraphDepthLocater.DepthSegment ds1 = depthSeg(24.0, 95.239,  24.816, 99.0);
     checkCompare(ds0, ds1, -1);
   }
   
-  public void testCompareOrientBug() throws Exception
-  {
+  public void testCompareOrientBug() {
     SubgraphDepthLocater.DepthSegment ds0 = depthSeg(146.268, -8.42361, 146.263, -8.3875);
     SubgraphDepthLocater.DepthSegment ds1 = depthSeg(146.269, -8.42889, 146.268, -8.42361);
     checkCompare(ds0, ds1, 1);
   }
   
-  public void testCompareTouchingAndRight() throws Exception
-  {
+  public void testCompareTouchingAndRight() {
     SubgraphDepthLocater.DepthSegment ds0 = depthSeg(31, 20, 41, 29);
     SubgraphDepthLocater.DepthSegment ds1 = depthSeg(43, 17, 31, 20);
     checkCompare(ds0, ds1, 1);
   }
   
-  public void testCompareTouchingAndLeft() throws Exception
-  {
+  public void testCompareTouchingAndLeft() {
     SubgraphDepthLocater.DepthSegment ds0 = depthSeg(806, 480, 804, 482);
     SubgraphDepthLocater.DepthSegment ds1 = depthSeg(804, 479, 806, 480);
     checkCompare(ds0, ds1, 1);
   }
   
-  public void testCompareEqual() throws Exception
-  {
+  public void testCompareEqual() {
     SubgraphDepthLocater.DepthSegment ds0 = depthSeg(1, 1, 2, 2);
     checkCompare(ds0, ds0, 0);
   }
@@ -105,7 +96,7 @@ public class DepthSegmentTest extends TestCase {
         depthSeg(922, 557, 930, 570));
   }
   
-  private void checkTransitive(DepthSegment dsA, DepthSegment dsB, DepthSegment dsC) {
+  private static void checkTransitive(DepthSegment dsA, DepthSegment dsB, DepthSegment dsC) {
     assertTrue(dsA.isUpward());
     assertTrue(dsB.isUpward());
     assertTrue(dsC.isUpward());
@@ -118,10 +109,10 @@ public class DepthSegmentTest extends TestCase {
     assertEquals("Comparison is not transitive", compAB, compAC);
   }
 
-  private void checkCompare(
-     SubgraphDepthLocater.DepthSegment ds0,
-     SubgraphDepthLocater.DepthSegment ds1, 
-     int expectedComp) 
+  private static void checkCompare(
+          SubgraphDepthLocater.DepthSegment ds0,
+          SubgraphDepthLocater.DepthSegment ds1,
+          int expectedComp)
   {
     assertTrue(ds0.isUpward());
     assertTrue(ds1.isUpward());
@@ -130,10 +121,10 @@ public class DepthSegmentTest extends TestCase {
     int comp0 = ds0.compareTo(ds1);
     int comp1 = ds1.compareTo(ds0);
     assertEquals("Comparator result", expectedComp, comp0);
-    assertTrue("Symmetric check", comp0 == -comp1);
+      assertEquals("Symmetric check", comp0, -comp1);
   }
 
-  private SubgraphDepthLocater.DepthSegment depthSeg(double x0, double y0, double x1, double y1) {
+  private static SubgraphDepthLocater.DepthSegment depthSeg(double x0, double y0, double x1, double y1) {
     return new SubgraphDepthLocater.DepthSegment(new LineSegment(x0,y0,x1,y1), 0);
   }
 

@@ -116,13 +116,13 @@ public class CoverageValidator {
    * @param gapWidth the maximum width of invalid gaps
    * @return an array of linear geometries indicating coverage errors, or nulls
    */
-  public static Geometry[] validate(Geometry coverage[], double gapWidth) {
+  public static Geometry[] validate(Geometry[] coverage, double gapWidth) {
     CoverageValidator v = new CoverageValidator(coverage);
     v.setGapWidth(gapWidth);
     return v.validate();
   }
   
-  private Geometry[] coverage;
+  private final Geometry[] coverage;
   private double gapWidth;
 
   /**
@@ -154,7 +154,7 @@ public class CoverageValidator {
    * @return an array of nulls or linear geometries
    */
   public Geometry[] validate() {
-    STRtree index = new STRtree();
+    STRtree<Geometry> index = new STRtree<>();
     for (Geometry geom : coverage) {
       index.insert(geom.getEnvelopeInternal(), geom);
     }
@@ -166,7 +166,7 @@ public class CoverageValidator {
     return invalidLines;
   }
 
-  private Geometry validate(Geometry targetGeom, STRtree index) {
+  private Geometry validate(Geometry targetGeom, STRtree<Geometry> index) {
     Envelope queryEnv = targetGeom.getEnvelopeInternal();
     queryEnv.expandBy(gapWidth);
     List<Geometry> nearGeomList = index.query(queryEnv);

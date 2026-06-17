@@ -20,6 +20,7 @@ import org.locationtech.jts.geom.Position;
 import org.locationtech.jts.geom.TopologyException;
 import org.locationtech.jts.geomgraph.DirectedEdge;
 import org.locationtech.jts.geomgraph.DirectedEdgeStar;
+import org.locationtech.jts.geomgraph.EdgeEnd;
 import org.locationtech.jts.geomgraph.GeometryGraph;
 import org.locationtech.jts.geomgraph.Label;
 import org.locationtech.jts.geomgraph.Node;
@@ -35,7 +36,7 @@ import org.locationtech.jts.geomgraph.PlanarGraph;
  */
 public class ConsistentPolygonRingChecker
 {
-  private PlanarGraph graph;
+  private final PlanarGraph graph;
 
   public ConsistentPolygonRingChecker(PlanarGraph graph) {
     this.graph = graph;
@@ -56,17 +57,17 @@ public class ConsistentPolygonRingChecker
    */
   public void check(int opCode)
   {
-    for (Iterator nodeit = graph.getNodeIterator(); nodeit.hasNext(); ) {
-      Node node = (Node) nodeit.next();
+    for (Iterator<Node> nodeit = graph.getNodeIterator(); nodeit.hasNext(); ) {
+      Node node = nodeit.next();
       testLinkResultDirectedEdges((DirectedEdgeStar) node.getEdges(), opCode);
     }
   }
 
-  private List getPotentialResultAreaEdges(DirectedEdgeStar deStar, int opCode)
+  private static List<DirectedEdge> getPotentialResultAreaEdges(DirectedEdgeStar deStar, int opCode)
   {
 //print(System.out);
-    List resultAreaEdgeList = new ArrayList();
-    for (Iterator it = deStar.iterator(); it.hasNext(); ) {
+    List<DirectedEdge> resultAreaEdgeList = new ArrayList<>();
+    for (Iterator<EdgeEnd> it = deStar.iterator(); it.hasNext(); ) {
       DirectedEdge de = (DirectedEdge) it.next();
       if (isPotentialResultAreaEdge(de, opCode) || isPotentialResultAreaEdge(de.getSym(), opCode) )
         resultAreaEdgeList.add(de);
@@ -74,61 +75,56 @@ public class ConsistentPolygonRingChecker
     return resultAreaEdgeList;
   }
 
-  private boolean isPotentialResultAreaEdge(DirectedEdge de, int opCode)
+  private static boolean isPotentialResultAreaEdge(DirectedEdge de, int opCode)
   {
     // mark all dirEdges with the appropriate label
     Label label = de.getLabel();
-    if (label.isArea()
-        && ! de.isInteriorAreaEdge()
-        && OverlayOp.isResultOfOp(
-        label.getLocation(0, Position.RIGHT),
-        label.getLocation(1, Position.RIGHT),
-        opCode)
-      ) {
-        return true;
-//Debug.print("in result "); Debug.println(de);
-      }
-      return false;
-    }
+      //Debug.print("in result "); Debug.println(de);
+      return label.isArea()
+              && !de.isInteriorAreaEdge()
+              && OverlayOp.isResultOfOp(
+              label.getLocation(0, Position.RIGHT),
+              label.getLocation(1, Position.RIGHT),
+              opCode);
+  }
 
   private static final int SCANNING_FOR_INCOMING = 1;
   private static final int LINKING_TO_OUTGOING = 2;
 
-  private void testLinkResultDirectedEdges(DirectedEdgeStar deStar, int opCode)
+  private static void testLinkResultDirectedEdges(DirectedEdgeStar deStar, int opCode)
   {
     // make sure edges are copied to resultAreaEdges list
-    List ringEdges = getPotentialResultAreaEdges(deStar, opCode);
+    List<DirectedEdge> ringEdges = getPotentialResultAreaEdges(deStar, opCode);
     // find first area edge (if any) to start linking at
     DirectedEdge firstOut = null;
     DirectedEdge incoming = null;
     int state = SCANNING_FOR_INCOMING;
     // link edges in CCW order
-    for (int i = 0; i < ringEdges.size(); i++) {
-      DirectedEdge nextOut = (DirectedEdge) ringEdges.get(i);
-      DirectedEdge nextIn = nextOut.getSym();
+      for (DirectedEdge nextOut : ringEdges) {
+          DirectedEdge nextIn = nextOut.getSym();
 
-      // skip de's that we're not interested in
-      if (! nextOut.getLabel().isArea()) continue;
+          // skip de's that we're not interested in
+          if (!nextOut.getLabel().isArea()) continue;
 
-      // record first outgoing edge, in order to link the last incoming edge
-      if (firstOut == null
-          && isPotentialResultAreaEdge(nextOut, opCode))
-        firstOut = nextOut;
-      // assert: sym.isInResult() == false, since pairs of dirEdges should have been removed already
+          // record first outgoing edge, in order to link the last incoming edge
+          if (firstOut == null
+                  && isPotentialResultAreaEdge(nextOut, opCode))
+              firstOut = nextOut;
+          // assert: sym.isInResult() == false, since pairs of dirEdges should have been removed already
 
-      switch (state) {
-      case SCANNING_FOR_INCOMING:
-        if (! isPotentialResultAreaEdge(nextIn, opCode)) continue;
-        incoming = nextIn;
-        state = LINKING_TO_OUTGOING;
-        break;
-      case LINKING_TO_OUTGOING:
-        if (! isPotentialResultAreaEdge(nextOut, opCode)) continue;
-        //incoming.setNext(nextOut);
-        state = SCANNING_FOR_INCOMING;
-        break;
+          switch (state) {
+              case SCANNING_FOR_INCOMING:
+                  if (!isPotentialResultAreaEdge(nextIn, opCode)) continue;
+                  incoming = nextIn;
+                  state = LINKING_TO_OUTGOING;
+                  break;
+              case LINKING_TO_OUTGOING:
+                  if (!isPotentialResultAreaEdge(nextOut, opCode)) continue;
+                  //incoming.setNext(nextOut);
+                  state = SCANNING_FOR_INCOMING;
+                  break;
+          }
       }
-    }
 //Debug.print(this);
     if (state == LINKING_TO_OUTGOING) {
 //Debug.print(firstOut == null, this);

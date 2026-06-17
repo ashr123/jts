@@ -31,9 +31,9 @@ import org.locationtech.jts.simplify.TopologyPreservingSimplifier;
  *
  */
 public class TopologyPreservingSimplifierStabilityTest {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     try {
-      (new TopologyPreservingSimplifierStabilityTest()).run();
+      run();
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -41,7 +41,7 @@ public class TopologyPreservingSimplifierStabilityTest {
   }
 
   // repro case from GEOS bug report
-  String wkt = 
+  static final String wkt =
 "MULTILINESTRING((159612.02323361888 6284563.8677484,159743.35796885678 6284436.870843225,159804.50576514952 6284376.057057197,159943.10966313622 6284232.942543113,160062.97849082242 6284104.710601479,"
 +"160212.85905322648 6283940.435912305,160278.87151126692 6283866.104831385,160358.70985006384 6283774.160091971,160552.72859056742 6283538.077492254,160684.97614562983 6283370.620643681,"
 +"160811.55753861085 6283201.910250149,161138.15779264923 6282756.753832039,161584.226124207 6282147.686750394,161704.9855078195 6281984.995507281,161836.4315625482 6281805.648176685,"
@@ -190,7 +190,7 @@ public class TopologyPreservingSimplifierStabilityTest {
 +"196819.97303796935 6268881.422998699,196631.9766819177 6268913.673198705))"
       ;
   
-  private void run() {
+  private static void run() {
     double prevLen = -1;
     for (int i = 0; i < 1000; i++) {
       double len = simplify();
@@ -204,11 +204,10 @@ public class TopologyPreservingSimplifierStabilityTest {
     
   }
 
-  private double simplify() {
+  private static double simplify() {
     Geometry geom = read(wkt);
     Geometry simp = TopologyPreservingSimplifier.simplify(geom, 1222);
-    double simpLen = simp.getLength();
-    return simpLen;
+      return simp.getLength();
   }
 
   private static Geometry read(String wkt) {

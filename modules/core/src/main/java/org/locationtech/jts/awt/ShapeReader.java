@@ -73,7 +73,7 @@ public class ShapeReader
     return ShapeReader.read(pathIt, geomFact);
   }
 
-  private GeometryFactory geometryFactory;
+  private final GeometryFactory geometryFactory;
   
   public ShapeReader(GeometryFactory geometryFactory) {
     this.geometryFactory = geometryFactory;
@@ -87,21 +87,21 @@ public class ShapeReader
    */
   public Geometry read(PathIterator pathIt)
   {
-    List pathPtSeq = toCoordinates(pathIt);
-    
-    List polys = new ArrayList();
+    List<Coordinate[]> pathPtSeq = toCoordinates(pathIt);
+
+    List<Geometry> polys = new ArrayList<>();
     int seqIndex = 0;
     while (seqIndex < pathPtSeq.size()) {
-      // assume next seq is shell 
+      // assume next seq is shell
       // TODO: test this
-      Coordinate[] pts = (Coordinate[]) pathPtSeq.get(seqIndex);
+      Coordinate[] pts = pathPtSeq.get(seqIndex);
       LinearRing shell = geometryFactory.createLinearRing(pts);
       seqIndex++;
-      
-      List holes = new ArrayList();
+
+      List<LinearRing> holes = new ArrayList<>();
       // add holes as long as rings are CCW
-      while (seqIndex < pathPtSeq.size() && isHole((Coordinate[]) pathPtSeq.get(seqIndex))) {
-        Coordinate[] holePts = (Coordinate[]) pathPtSeq.get(seqIndex);
+      while (seqIndex < pathPtSeq.size() && isHole(pathPtSeq.get(seqIndex))) {
+        Coordinate[] holePts = pathPtSeq.get(seqIndex);
         LinearRing hole = geometryFactory.createLinearRing(holePts);
         holes.add(hole);
         seqIndex++;
@@ -112,7 +112,7 @@ public class ShapeReader
     return geometryFactory.buildGeometry(polys);
   }
   
-  private boolean isHole(Coordinate[] pts)
+  private static boolean isHole(Coordinate[] pts)
   {
     return Orientation.isCCW(pts);
   }
@@ -125,9 +125,9 @@ public class ShapeReader
    * @return a List of Coordinate arrays
    * @throws IllegalArgumentException if a non-linear segment type is encountered
    */
-  public static List toCoordinates(PathIterator pathIt)
+  public static List<Coordinate[]> toCoordinates(PathIterator pathIt)
   {
-    List coordArrays = new ArrayList();
+    List<Coordinate[]> coordArrays = new ArrayList<>();
     while (! pathIt.isDone()) {
       Coordinate[] pts = nextCoordinateArray(pathIt);
       if (pts == null)

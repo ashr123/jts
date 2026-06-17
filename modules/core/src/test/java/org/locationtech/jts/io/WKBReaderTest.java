@@ -30,13 +30,13 @@ import org.locationtech.jts.geom.impl.PackedCoordinateSequenceFactory;
  */
 public class WKBReaderTest  extends TestCase
 {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(WKBReaderTest.class);
   }
 
-  private GeometryFactory geomFactory = new GeometryFactory();
-  private WKTReader rdr = new WKTReader(geomFactory);
-  private WKTReader rdrM =
+  private final GeometryFactory geomFactory = new GeometryFactory();
+  private final WKTReader rdr = new WKTReader(geomFactory);
+  private final WKTReader rdrM =
           new WKTReader(new GeometryFactory(PackedCoordinateSequenceFactory.DOUBLE_FACTORY));
 
   public WKBReaderTest(String name) {
@@ -214,11 +214,9 @@ public class WKBReaderTest  extends TestCase
   /**
    * Tests WKB that requests a huge number of points.
    * Not yet implemented satisfactorily.
-   * 
-   * @throws ParseException
+   *
    */
-  public void testHugeNumberOfPoints() throws ParseException
-  {
+  public void testHugeNumberOfPoints() {
     /*
      * 0: 00 - XDR (Big endian)
      * 1: 00000003 - POLYGON ( 3 ) 
@@ -228,8 +226,7 @@ public class WKBReaderTest  extends TestCase
     checkWKBParseException("00000000030000000140590000000000004069000000000000");
   }
 
-  public void testNumCoordsNegative() throws ParseException
-  {
+  public void testNumCoordsNegative() {
     /*
      * 0: 01 - NDR (Little endian)
      * 1: 02000000 - LINESTRING ( 2 ) 
@@ -238,8 +235,7 @@ public class WKBReaderTest  extends TestCase
     checkWKBParseException("01020000000000FFFF");
   }
   
-  public void testNumElementsNegative() throws ParseException
-  {
+  public void testNumElementsNegative() {
     /*
      * 0: 00 - XDR (Big endian)
      * 1: 00000004 - MULTIPOINT ( 4 ) 
@@ -248,8 +244,7 @@ public class WKBReaderTest  extends TestCase
     checkWKBParseException("0000000004FFFFFFFF000000000140590000000000004059000000000000000000000140690000000000004059000000000000");
   }
   
-  public void testNumRingsNegative() throws ParseException
-  {
+  public void testNumRingsNegative() {
     /*
      * 0: 00 - XDR (Big endian)
      * 1: 00000004 - MULTIPOINT ( 4 ) 
@@ -272,7 +267,7 @@ public class WKBReaderTest  extends TestCase
     fail();
   }
 
-  private static CoordinateSequenceComparator comp2 = new CoordinateSequenceComparator(2);
+  private static final CoordinateSequenceComparator comp2 = new CoordinateSequenceComparator(2);
 
   private void checkWKBGeometry(String wkbHex, String expectedWKT) throws ParseException
   {

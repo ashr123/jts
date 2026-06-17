@@ -15,14 +15,14 @@ package org.locationtech.jts.geomgraph.index;
  * @version 1.7
  */
 public class SweepLineEvent
-  implements Comparable
-{ 
+  implements Comparable<SweepLineEvent>
+{
   private static final int INSERT = 1;
   private static final int DELETE = 2;
 
   private Object label;    // used for red-blue intersection detection
-  private double xValue;
-  private int eventType;
+  private final double xValue;
+  private final int eventType;
   private SweepLineEvent insertEvent = null; // null if this is an INSERT event
   private int deleteEventIndex;
   private Object obj;
@@ -75,13 +75,10 @@ public class SweepLineEvent
    * items whose Insert and Delete events occur at the same x-value will be
    * correctly handled.
    */
-  public int compareTo(Object o) {
-    SweepLineEvent pe = (SweepLineEvent) o;
+  public int compareTo(SweepLineEvent pe) {
     if (xValue < pe.xValue) return  -1;
     if (xValue > pe.xValue) return   1;
-    if (eventType < pe.eventType) return  -1;
-    if (eventType > pe.eventType) return   1;
-    return 0;
+      return Integer.compare(eventType, pe.eventType);
   }
 
 

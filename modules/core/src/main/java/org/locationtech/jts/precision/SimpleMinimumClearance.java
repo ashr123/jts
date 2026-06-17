@@ -50,7 +50,7 @@ public class SimpleMinimumClearance
     return rp.getLine();
   }
   
-  private Geometry inputGeom;
+  private final Geometry inputGeom;
   private double minClearance;
   private Coordinate[] minClearancePts;
   
@@ -102,7 +102,7 @@ public class SimpleMinimumClearance
   private static class VertexCoordinateFilter 
   implements CoordinateFilter
   {
-    SimpleMinimumClearance smc;
+    final SimpleMinimumClearance smc;
     
     public VertexCoordinateFilter(SimpleMinimumClearance smc)
     {
@@ -117,8 +117,8 @@ public class SimpleMinimumClearance
   private static class ComputeMCCoordinateSequenceFilter 
   implements CoordinateSequenceFilter 
   {
-    SimpleMinimumClearance smc;
-    private Coordinate queryPt;
+    final SimpleMinimumClearance smc;
+    private final Coordinate queryPt;
     
     public ComputeMCCoordinateSequenceFilter(SimpleMinimumClearance smc, Coordinate queryPt)
     {

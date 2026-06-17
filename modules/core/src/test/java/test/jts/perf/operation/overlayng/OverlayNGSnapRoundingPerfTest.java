@@ -18,7 +18,6 @@ import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.geom.util.SineStarFactory;
 import org.locationtech.jts.operation.overlayng.OverlayNG;
 import org.locationtech.jts.operation.overlayng.OverlayNGRobust;
-import org.locationtech.jts.precision.GeometryPrecisionReducer;
 
 import test.jts.perf.PerformanceTestCase;
 import test.jts.perf.PerformanceTestRunner;
@@ -34,13 +33,13 @@ extends PerformanceTestCase
 
   private static final int N_ITER = 1;
 
-  static double ORG_X = 100;
-  static double ORG_Y = 100;
-  static double SIZE = 100;
-  static int N_ARMS = 20;
-  static double ARM_RATIO = 0.3;
+  static final double ORG_X = 100;
+  static final double ORG_Y = 100;
+  static final double SIZE = 100;
+  static final int N_ARMS = 20;
+  static final double ARM_RATIO = 0.3;
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     PerformanceTestRunner.run(OverlayNGSnapRoundingPerfTest.class);
   }
 
@@ -70,7 +69,7 @@ extends PerformanceTestCase
   
   public void startRun(int npts)
   {
-    iter = 0;
+      int iter = 0;
     sineStar = SineStarFactory.create(new Coordinate(ORG_X, ORG_Y), SIZE, npts, N_ARMS, ARM_RATIO);
     sineStar2 = SineStarFactory.create(new Coordinate(ORG_X + SIZE/8, ORG_Y + SIZE/8), SIZE, npts, N_ARMS, ARM_RATIO);
     
@@ -80,10 +79,8 @@ extends PerformanceTestCase
     
     if (npts <= 1000) System.out.println(sineStar);
   }
-  
-  private int iter = 0;
-  
-  public void runSR()
+
+    public void runSR()
   {
     Geometry result = OverlayNG.overlay(sineStar,  sineStar2, OverlayNG.INTERSECTION, pm);
   }

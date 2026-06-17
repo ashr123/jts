@@ -30,8 +30,8 @@ import org.locationtech.jts.geom.MultiLineString;
  */
 public class LinearGeometryBuilder
 {
-  private GeometryFactory geomFact;
-  private List lines = new ArrayList();
+  private final GeometryFactory geomFact;
+  private final List<LineString> lines = new ArrayList<>();
   private CoordinateList coordList = null;
 
   private boolean ignoreInvalidLines = false;
@@ -122,11 +122,10 @@ public class LinearGeometryBuilder
     if (line != null) lines.add(line);
   }
 
-  private Coordinate[] validCoordinateSequence(Coordinate[] pts)
+  private static Coordinate[] validCoordinateSequence(Coordinate[] pts)
   {
     if (pts.length >= 2) return pts;
-    Coordinate[] validPts = new Coordinate[] { pts[0], pts[0]};
-    return validPts;
+      return new Coordinate[] { pts[0], pts[0]};
   }
 
   public Geometry getGeometry()

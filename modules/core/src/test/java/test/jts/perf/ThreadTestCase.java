@@ -21,7 +21,7 @@ package test.jts.perf;
  */
 public abstract class ThreadTestCase
 {
-  public int getThreadCount()
+  public static int getThreadCount()
   {
     return ThreadTestRunner.DEFAULT_THREAD_COUNT;
     

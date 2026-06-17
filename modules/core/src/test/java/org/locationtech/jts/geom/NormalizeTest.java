@@ -25,9 +25,9 @@ import junit.framework.TestCase;
  */
 public class NormalizeTest extends TestCase {
 
-  PrecisionModel precisionModel = new PrecisionModel(1);
-  GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
-  WKTReader reader = new WKTReader(geometryFactory);
+  final PrecisionModel precisionModel = new PrecisionModel(1);
+  final GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
+  final WKTReader reader = new WKTReader(geometryFactory);
 
   public NormalizeTest(String Name_) {
     super(Name_);
@@ -47,7 +47,7 @@ public class NormalizeTest extends TestCase {
   public void testNormalizeEmptyPoint() throws Exception {
     Point point = (Point) reader.read("POINT EMPTY");
     point.normalize();
-    assertEquals(null, point.getCoordinate());
+      assertNull(point.getCoordinate());
   }
 
   public void testComparePoint() throws Exception {
@@ -71,7 +71,7 @@ public class NormalizeTest extends TestCase {
     assertEqualsExact(expectedValue, m);
     MultiPoint unexpectedValue = (MultiPoint) reader.read(
           "MULTIPOINT(20 10, 20 20, 30 20, 30 30, 10 10)");
-    assertTrue(! m.equalsExact(unexpectedValue));
+      assertFalse(m.equalsExact(unexpectedValue));
   }
 
   public void testNormalizeLineString1() throws Exception {
@@ -187,11 +187,11 @@ public class NormalizeTest extends TestCase {
     Geometry geom = pcsReader.read("LINESTRING (100 100, 0 0)");
     geom.normalize();
     // force PackedCoordinateSequence to be copied with empty coordinate cache
-    Geometry clone = (Geometry) geom.copy();
+    Geometry clone = geom.copy();
     assertEqualsExact(geom, clone);
   }
 
-  private void assertEqualsExact(Geometry expectedValue, Geometry actualValue) {
+  private static void assertEqualsExact(Geometry expectedValue, Geometry actualValue) {
     assertTrue("Expected " + expectedValue + " but encountered " + actualValue,
           actualValue.equalsExact(expectedValue));
   }

@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
-import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -81,13 +80,12 @@ public class KdTree {
    */
   public static Coordinate[] toCoordinates(Collection<KdNode> kdnodes, boolean includeRepeated) {
     CoordinateList coord = new CoordinateList();
-    for (Iterator<KdNode> it = kdnodes.iterator(); it.hasNext();) {
-      KdNode node = (KdNode) it.next();
-      int count = includeRepeated ? node.getCount() : 1;
-      for (int i = 0; i < count; i++) {
-       coord.add(node.getCoordinate(), true);
+      for (KdNode node : kdnodes) {
+          int count = includeRepeated ? node.getCount() : 1;
+          for (int i = 0; i < count; i++) {
+              coord.add(node.getCoordinate(), true);
+          }
       }
-    }
     return coord.toCoordinateArray();
   }
 
@@ -132,9 +130,7 @@ public class KdTree {
    * @return true if the index does not contain any items
    */
   public boolean isEmpty() {
-    if (root == null)
-      return true;
-    return false;
+      return root == null;
   }
 
   /**
@@ -329,9 +325,9 @@ public class KdTree {
 	 * algorithm.
 	 */
 	private static class NNStackFrame {
-		KdNode node;
-		boolean parentSplitAxis;
-		double parentSplitValue;
+		final KdNode node;
+		final boolean parentSplitAxis;
+		final double parentSplitValue;
 
 		NNStackFrame(KdNode node, boolean parentSplitAxis, double parentSplitValue) {
 			this.node = node;
@@ -359,10 +355,10 @@ public class KdTree {
 
   static private class BestMatchVisitor implements KdNodeVisitor {
 
-    private double tolerance;
+    private final double tolerance;
     private KdNode matchNode = null;
     private double matchDist = 0.0;
-    private Coordinate p;
+    private final Coordinate p;
     
     public BestMatchVisitor(Coordinate p, double tolerance) {
       this.p = p;
@@ -383,15 +379,13 @@ public class KdTree {
       double dist = p.distance(node.getCoordinate());
       boolean isInTolerance =  dist <= tolerance; 
       if (! isInTolerance) return;
-      boolean update = false;
-      if (matchNode == null
-          || dist < matchDist
-          // if distances are the same, record the lesser coordinate
-          || (matchNode != null && dist == matchDist 
-          && node.getCoordinate().compareTo(matchNode.getCoordinate()) < 1))
-        update = true;
+      boolean update = matchNode == null
+              || dist < matchDist
+              // if distances are the same, record the lesser coordinate
+              || (matchNode != null && dist == matchDist
+              && node.getCoordinate().compareTo(matchNode.getCoordinate()) < 1);
 
-      if (update) {
+        if (update) {
         matchNode = node;
         matchDist = dist;
       }
@@ -504,7 +498,7 @@ public class KdTree {
    * @return a list of the KdNodes found
    */
   public List<KdNode> query(Envelope queryEnv) {
-    final List<KdNode> result = new ArrayList<KdNode>();
+    final List<KdNode> result = new ArrayList<>();
     query(queryEnv, result);
     return result;
   }
@@ -518,13 +512,7 @@ public class KdTree {
    *          a list to accumulate the result nodes into
    */
   public void query(Envelope queryEnv, final List<KdNode> result) {
-    query(queryEnv, new KdNodeVisitor() {
-
-      public void visit(KdNode node) {
-        result.add(node);
-      }
-      
-    });
+    query(queryEnv, result::add);
   }
 
   /**
@@ -591,13 +579,13 @@ public class KdTree {
     return depthNode(root);
   }
   
-  private int depthNode(KdNode currentNode) {
+  private static int depthNode(KdNode currentNode) {
     if (currentNode == null)
       return 0;
 
     int dL = depthNode(currentNode.getLeft());
     int dR = depthNode(currentNode.getRight());
-    return 1 + (dL > dR ? dL : dR);
+    return 1 + (Math.max(dL, dR));
   }
   
   /**
@@ -609,7 +597,7 @@ public class KdTree {
     return sizeNode(root);
   }
   
-  private int sizeNode(KdNode currentNode) {
+  private static int sizeNode(KdNode currentNode) {
     if (currentNode == null)
       return 0;
 

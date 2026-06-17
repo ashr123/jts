@@ -41,10 +41,10 @@ public abstract class GraphComponent
    * @param i the Iterator to scan
    * @param visited the state to set the visited flag to
    */
-  public static void setVisited(Iterator i, boolean visited)
+  public static void setVisited(Iterator<? extends GraphComponent> i, boolean visited)
   {
     while (i.hasNext()) {
-      GraphComponent comp = (GraphComponent) i.next();
+      GraphComponent comp = i.next();
       comp.setVisited(visited);
     }
   }
@@ -55,10 +55,10 @@ public abstract class GraphComponent
    * @param i the Iterator to scan
    * @param marked the state to set the Marked flag to
    */
-  public static void setMarked(Iterator i, boolean marked)
+  public static void setMarked(Iterator<? extends GraphComponent> i, boolean marked)
   {
     while (i.hasNext()) {
-      GraphComponent comp = (GraphComponent) i.next();
+      GraphComponent comp = i.next();
       comp.setMarked(marked);
     }
   }
@@ -71,10 +71,10 @@ public abstract class GraphComponent
    * @param visitedState the visited state to test
    * @return the first component found, or <code>null</code> if none found
    */
-  public static GraphComponent getComponentWithVisitedState(Iterator i, boolean visitedState)
+  public static GraphComponent getComponentWithVisitedState(Iterator<? extends GraphComponent> i, boolean visitedState)
   {
     while (i.hasNext()) {
-      GraphComponent comp = (GraphComponent) i.next();
+      GraphComponent comp = i.next();
       if (comp.isVisited() == visitedState)
         return comp;
     }

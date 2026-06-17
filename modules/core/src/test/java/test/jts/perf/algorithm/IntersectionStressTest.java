@@ -53,13 +53,13 @@ public class IntersectionStressTest {
   private static final double ORDINATE_MAGNITUDE = 1000000;
   private static final double SEG_LEN = 100;
   // make results reproducible
-  static Random randGen = new Random(123456);
+  static final Random randGen = new Random(123456);
   
-  Map<String, Double> distMap = new HashMap<String, Double>();
+  final Map<String, Double> distMap = new HashMap<>();
 
-  private boolean verbose = false;
+  private static final boolean verbose = false;
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     IntersectionStressTest test = new IntersectionStressTest();
     test.run();
   }
@@ -144,13 +144,13 @@ public class IntersectionStressTest {
       System.out.println(key + " : " + avg );
     }
   }
-  private Coordinate computeVector(Coordinate basePt, double angle, double len) {
+  private static Coordinate computeVector(Coordinate basePt, double angle, double len) {
     double x = basePt.getX() + len * Math.cos(angle);
     double y = basePt.getY() + len * Math.sin(angle);
     return new Coordinate(x, y);
   }
 
-  private Coordinate randomCoordinate() {
+  private static Coordinate randomCoordinate() {
     double x = ORDINATE_MAGNITUDE * randGen.nextDouble();
     double y = ORDINATE_MAGNITUDE * randGen.nextDouble();
     return new Coordinate(x, y);

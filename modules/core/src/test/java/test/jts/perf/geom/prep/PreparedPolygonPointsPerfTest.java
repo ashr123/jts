@@ -38,8 +38,8 @@ public class PreparedPolygonPointsPerfTest extends PerformanceTestCase
   
   static final int NUM_PTS = 2000;
   
-  static PrecisionModel pm = new PrecisionModel();
-  static GeometryFactory fact = new GeometryFactory(pm, 0);
+  static final PrecisionModel pm = new PrecisionModel();
+  static final GeometryFactory fact = new GeometryFactory(pm, 0);
   static WKTReader wktRdr = new WKTReader(fact);
   static WKTWriter wktWriter = new WKTWriter();
 
@@ -69,7 +69,7 @@ public class PreparedPolygonPointsPerfTest extends PerformanceTestCase
   	sinePoly = createSineStar(new Coordinate(0, 0), 100, nPts);
 //  	System.out.println(poly);
 //  	Geometry target = sinePoly.getBoundary();
-    prepGeom = (new PreparedGeometryFactory()).create(sinePoly);
+    prepGeom = PreparedGeometryFactory.create(sinePoly);
     ipa = new IndexedPointInAreaLocator(sinePoly);
     
     testPoints = createPoints(sinePoly.getEnvelopeInternal(), NUM_PTS);
@@ -77,22 +77,21 @@ public class PreparedPolygonPointsPerfTest extends PerformanceTestCase
     System.out.println("\n-------  Running with polygon size = " + nPts);
   }
 
-  Geometry createSineStar(Coordinate origin, double size, int nPts) {
+  static Geometry createSineStar(Coordinate origin, double size, int nPts) {
 		SineStarFactory gsf = new SineStarFactory();
 		gsf.setCentre(origin);
 		gsf.setSize(size);
 		gsf.setNumPoints(nPts);
 		gsf.setArmLengthRatio(0.1);
 		gsf.setNumArms(50);
-		Geometry poly = gsf.createSineStar();
-		return poly;
+      return gsf.createSineStar();
 	}
   
-  List<Point> createPoints(Envelope env, int nPts)
+  static List<Point> createPoints(Envelope env, int nPts)
   {
     int nCells = (int) Math.sqrt(nPts);
 
-  	List<Point> geoms = new ArrayList<Point>();
+  	List<Point> geoms = new ArrayList<>();
   	double width = env.getWidth();
   	double xInc = width / nCells;
   	double yInc = width / nCells;
@@ -122,7 +121,7 @@ public class PreparedPolygonPointsPerfTest extends PerformanceTestCase
   
   public void runCoversPrepNoCache() {
     for (Point pt : testPoints) {
-      PreparedGeometry pg = (new PreparedGeometryFactory()).create(sinePoly);
+      PreparedGeometry pg = PreparedGeometryFactory.create(sinePoly);
       pg.covers(pt);
     }
   }
@@ -147,7 +146,7 @@ public class PreparedPolygonPointsPerfTest extends PerformanceTestCase
   
   public void runIntersectsPrepNoCache() {
     for (Point pt : testPoints) {
-      PreparedGeometry pg = (new PreparedGeometryFactory()).create(sinePoly);
+      PreparedGeometry pg = PreparedGeometryFactory.create(sinePoly);
       pg.intersects(pt);
     }
   }

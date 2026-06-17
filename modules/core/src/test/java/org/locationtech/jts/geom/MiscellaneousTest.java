@@ -41,11 +41,11 @@ import junit.textui.TestRunner;
  */
 public class MiscellaneousTest extends TestCase {
 
-  PrecisionModel precisionModel = new PrecisionModel(1);
-  GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
-  WKTReader reader = new WKTReader(geometryFactory);
+  final PrecisionModel precisionModel = new PrecisionModel(1);
+  final GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
+  final WKTReader reader = new WKTReader(geometryFactory);
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(MiscellaneousTest.class);
   }
 
@@ -53,13 +53,13 @@ public class MiscellaneousTest extends TestCase {
       Geometry a = reader.read("LINESTRING(0 0, 10 10)");
       //Envelope is lazily initialized [Jon Aquino]
       a.getEnvelopeInternal();
-      Geometry b = (Geometry)a.copy();
-      assertTrue(a.getEnvelopeInternal() != b.getEnvelopeInternal());
+      Geometry b = a.copy();
+      assertNotSame(a.getEnvelopeInternal(), b.getEnvelopeInternal());
   }
 
   public MiscellaneousTest(String name) { super(name); }
 
-  public void testCreateEmptyGeometry() throws Exception {
+  public void testCreateEmptyGeometry() {
     assertTrue(geometryFactory.createPoint((Coordinate)null).isEmpty());
     assertTrue(geometryFactory.createLinearRing(new Coordinate[] { }).isEmpty());
     assertTrue(geometryFactory.createLineString(new Coordinate[] { }).isEmpty());
@@ -119,24 +119,24 @@ public class MiscellaneousTest extends TestCase {
     assertEquals(0, (geometryFactory.createMultiPoint((Point[]) null)).getCoordinates().length);
   }
 
-  public void testBoundaryOfEmptyGeometry() throws Exception {
-    assertTrue(geometryFactory.createPoint((Coordinate)null).getBoundary().getClass() == GeometryCollection.class);
-    assertTrue(geometryFactory.createLinearRing(new Coordinate[] { }).getBoundary().getClass() == MultiPoint.class);
-    assertTrue(geometryFactory.createLineString(new Coordinate[] { }).getBoundary().getClass() == MultiPoint.class);
-    assertTrue(geometryFactory.createPolygon(geometryFactory.createLinearRing(new Coordinate[] { }), new LinearRing[] { }).getBoundary().getClass() == MultiLineString.class);
-    assertTrue(geometryFactory.createMultiPolygon(new Polygon[] { }).getBoundary().getClass() == MultiLineString.class);
-    assertTrue(geometryFactory.createMultiLineString(new LineString[] { }).getBoundary().getClass() == MultiPoint.class);
-    assertTrue(geometryFactory.createMultiPoint(new Point[] { }).getBoundary().getClass() == GeometryCollection.class);
+  public void testBoundaryOfEmptyGeometry() {
+      assertSame(GeometryCollection.class, geometryFactory.createPoint((Coordinate) null).getBoundary().getClass());
+      assertSame(MultiPoint.class, geometryFactory.createLinearRing(new Coordinate[]{}).getBoundary().getClass());
+      assertSame(MultiPoint.class, geometryFactory.createLineString(new Coordinate[]{}).getBoundary().getClass());
+      assertSame(MultiLineString.class, geometryFactory.createPolygon(geometryFactory.createLinearRing(new Coordinate[]{}), new LinearRing[]{}).getBoundary().getClass());
+      assertSame(MultiLineString.class, geometryFactory.createMultiPolygon(new Polygon[]{}).getBoundary().getClass());
+      assertSame(MultiPoint.class, geometryFactory.createMultiLineString(new LineString[]{}).getBoundary().getClass());
+      assertSame(GeometryCollection.class, geometryFactory.createMultiPoint(new Point[]{}).getBoundary().getClass());
     try {
       geometryFactory.createGeometryCollection(new Geometry[] { }).getBoundary();
-      assertTrue(false);
+        fail();
     }
     catch (IllegalArgumentException e) {
     }
   }
 
   public void testToPointArray() {
-    ArrayList list = new ArrayList();
+    ArrayList<Point> list = new ArrayList<>();
     list.add(geometryFactory.createPoint(new Coordinate(0, 0)));
     list.add(geometryFactory.createPoint(new Coordinate(10, 0)));
     list.add(geometryFactory.createPoint(new Coordinate(10, 10)));
@@ -158,20 +158,20 @@ public class MiscellaneousTest extends TestCase {
     assertEquals(new Coordinate(20, 20), coordinates[9]);
   }
 
-  public void testEmptyPoint() throws Exception {
+  public void testEmptyPoint() {
     Point p = geometryFactory.createPoint((Coordinate)null);
     assertEquals(0, p.getDimension());
     assertEquals(new Envelope(), p.getEnvelopeInternal());
     assertTrue(p.isSimple());
     try {
       p.getX();
-      assertTrue(false);
+        fail();
     }
     catch (IllegalStateException e1) {
     }
     try {
       p.getY();
-      assertTrue(false);
+        fail();
     }
     catch (IllegalStateException e2) {
     }
@@ -180,7 +180,7 @@ public class MiscellaneousTest extends TestCase {
     assertEquals("POINT EMPTY", p.toText());
   }
 
-  public void testEmptyLineString() throws Exception {
+  public void testEmptyLineString() {
     LineString l = geometryFactory.createLineString((Coordinate[])null);
     assertEquals(1, l.getDimension());
     assertEquals(new Envelope(), l.getEnvelopeInternal());
@@ -188,38 +188,38 @@ public class MiscellaneousTest extends TestCase {
  * @todo Enable when #isSimple implemented
  */
 //    assertTrue(l.isSimple());
-    assertEquals(null, l.getStartPoint());
-    assertEquals(null, l.getEndPoint());
-    assertTrue(! l.isClosed());
-    assertTrue(! l.isRing());
+      assertNull(l.getStartPoint());
+      assertNull(l.getEndPoint());
+      assertFalse(l.isClosed());
+      assertFalse(l.isRing());
   }
 
-  public void testEmptyLinearRing() throws Exception {
+  public void testEmptyLinearRing() {
     LineString l = geometryFactory.createLinearRing((CoordinateSequence)null);
     assertEquals(1, l.getDimension());
     assertEquals(new Envelope(), l.getEnvelopeInternal());
     assertTrue(l.isSimple());
-    assertEquals(null, l.getStartPoint());
-    assertEquals(null, l.getEndPoint());
+      assertNull(l.getStartPoint());
+      assertNull(l.getEndPoint());
     assertTrue(l.isClosed());
     assertTrue(l.isRing());
   }
 
-  public void testEmptyPolygon() throws Exception {
+  public void testEmptyPolygon() {
     Polygon p = geometryFactory.createPolygon(null, null);
     assertEquals(2, p.getDimension());
     assertEquals(new Envelope(), p.getEnvelopeInternal());
     assertTrue(p.isSimple());
   }
 
-  public void testEmptyGeometryCollection() throws Exception {
+  public void testEmptyGeometryCollection() {
     GeometryCollection g = geometryFactory.createGeometryCollection(null);
     assertEquals(-1, g.getDimension());
     assertEquals(new Envelope(), g.getEnvelopeInternal());
     assertTrue(g.isSimple());
   }
 
-  public void testEmptyMultiPoint() throws Exception {
+  public void testEmptyMultiPoint() {
     MultiPoint g = geometryFactory.createMultiPoint((Point[])null);
     assertEquals(0, g.getDimension());
     assertEquals(new Envelope(), g.getEnvelopeInternal());
@@ -229,7 +229,7 @@ public class MiscellaneousTest extends TestCase {
 //    assertTrue(g.isSimple());
   }
 
-  public void testEmptyMultiLineString() throws Exception {
+  public void testEmptyMultiLineString() {
     MultiLineString g = geometryFactory.createMultiLineString(null);
     assertEquals(1, g.getDimension());
     assertEquals(new Envelope(), g.getEnvelopeInternal());
@@ -237,17 +237,17 @@ public class MiscellaneousTest extends TestCase {
  * @todo Enable when #isSimple implemented
  */
 //    assertTrue(g.isSimple());
-    assertTrue(! g.isClosed());
+      assertFalse(g.isClosed());
   }
 
-  public void testEmptyMultiPolygon() throws Exception {
+  public void testEmptyMultiPolygon() {
     MultiPolygon g = geometryFactory.createMultiPolygon(null);
     assertEquals(2, g.getDimension());
     assertEquals(new Envelope(), g.getEnvelopeInternal());
     assertTrue(g.isSimple());
   }
 
-  public void testGetGeometryType() throws Exception {
+  public void testGetGeometryType() {
     GeometryCollection g = geometryFactory.createMultiPolygon(null);
     assertEquals("MultiPolygon", g.getGeometryType());
   }
@@ -317,7 +317,7 @@ public class MiscellaneousTest extends TestCase {
 //    assertTrue(! g.isSimple());
 //  }
 
-  public void testLinearRingIsSimple() throws Exception {
+  public void testLinearRingIsSimple() {
     Coordinate[] coordinates = { new Coordinate(10, 10, 0),
                                  new Coordinate(10, 20, 0),
                                  new Coordinate(20, 20, 0),
@@ -443,8 +443,8 @@ public class MiscellaneousTest extends TestCase {
 
   public void testCoordinateNaN() {
     Coordinate c1 = new Coordinate();
-    assertTrue(! Double.isNaN(c1.x));
-    assertTrue(! Double.isNaN(c1.y));
+      assertFalse(Double.isNaN(c1.x));
+      assertFalse(Double.isNaN(c1.y));
     assertTrue(Double.isNaN(c1.getZ()));
 
     Coordinate c2 = new Coordinate(3,4);
@@ -458,29 +458,29 @@ public class MiscellaneousTest extends TestCase {
     assertEquals(new Coordinate(),new Coordinate(0,0));
     assertEquals(new Coordinate(3,5),new Coordinate(3,5));
     assertEquals(new Coordinate(3,5,Double.NaN),new Coordinate(3,5,Double.NaN));
-    assertTrue(new Coordinate(3,5,0).equals(new Coordinate(3,5,Double.NaN)));
+      assertEquals(new Coordinate(3, 5, 0), new Coordinate(3, 5, Double.NaN));
   }
 
   public void testPredicatesReturnFalseForEmptyGeometries() {
     Point p1 = new GeometryFactory().createPoint((Coordinate)null);
     Point p2 = new GeometryFactory().createPoint(new Coordinate(5,5));
-    assertEquals(false, p1.equals(p2));
-    assertEquals(true, p1.disjoint(p2));
-    assertEquals(false, p1.intersects(p2));
-    assertEquals(false, p1.touches(p2));
-    assertEquals(false, p1.crosses(p2));
-    assertEquals(false, p1.within(p2));
-    assertEquals(false, p1.contains(p2));
-    assertEquals(false, p1.overlaps(p2));
+      assertFalse(p1.equals(p2));
+      assertTrue(p1.disjoint(p2));
+      assertFalse(p1.intersects(p2));
+      assertFalse(p1.touches(p2));
+      assertFalse(p1.crosses(p2));
+      assertFalse(p1.within(p2));
+      assertFalse(p1.contains(p2));
+      assertFalse(p1.overlaps(p2));
 
-    assertEquals(false, p2.equals(p1));
-    assertEquals(true, p2.disjoint(p1));
-    assertEquals(false, p2.intersects(p1));
-    assertEquals(false, p2.touches(p1));
-    assertEquals(false, p2.crosses(p1));
-    assertEquals(false, p2.within(p1));
-    assertEquals(false, p2.contains(p1));
-    assertEquals(false, p2.overlaps(p1));
+      assertFalse(p2.equals(p1));
+      assertTrue(p2.disjoint(p1));
+      assertFalse(p2.intersects(p1));
+      assertFalse(p2.touches(p1));
+      assertFalse(p2.crosses(p1));
+      assertFalse(p2.within(p1));
+      assertFalse(p2.contains(p1));
+      assertFalse(p2.overlaps(p1));
   }
 
 }

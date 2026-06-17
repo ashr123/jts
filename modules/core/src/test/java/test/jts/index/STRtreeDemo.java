@@ -13,7 +13,6 @@ package test.jts.index;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.geom.Coordinate;
@@ -32,36 +31,35 @@ import org.locationtech.jts.index.strtree.STRtree;
  */
 public class STRtreeDemo {
 
-  public STRtreeDemo() {
+  private STRtreeDemo() {
   }
 
-  public static class TestTree extends STRtree {
+  public static class TestTree extends STRtree<Envelope> {
     public TestTree(int nodeCapacity) {
       super(nodeCapacity);
     }
-    public List boundablesAtLevel(int level) { return super.boundablesAtLevel(level); }
-    public AbstractNode getRoot() { return root; }
-    public List createParentBoundables(List verticalSlice, int newLevel) {
+    public List<Boundable<Envelope>> boundablesAtLevel(int level) { return super.boundablesAtLevel(level); }
+    public AbstractNode<Envelope> getRoot() { return root; }
+    public List<Boundable<Envelope>> createParentBoundables(List<? extends Boundable<Envelope>> verticalSlice, int newLevel) {
       return super.createParentBoundables(verticalSlice, newLevel);
     }
-    public List[] verticalSlices(List childBoundables, int size) {
+    public List<Boundable<Envelope>>[] verticalSlices(List<Boundable<Envelope>> childBoundables, int size) {
       return super.verticalSlices(childBoundables, size);
     }
-    public List createParentBoundablesFromVerticalSlice(List childBoundables, int newLevel) {
+    public List<Boundable<Envelope>> createParentBoundablesFromVerticalSlice(List<Boundable<Envelope>> childBoundables, int newLevel) {
       return super.createParentBoundablesFromVerticalSlice(childBoundables, newLevel);
     }
   }
 
-  private static void initTree(TestTree t, List sourceEnvelopes) {
-    for (Iterator i = sourceEnvelopes.iterator(); i.hasNext(); ) {
-      Envelope sourceEnvelope = (Envelope) i.next();
-      t.insert(sourceEnvelope, sourceEnvelope);
-    }
+  private static void initTree(TestTree t, List<Envelope> sourceEnvelopes) {
+      for (Envelope sourceEnvelope : sourceEnvelopes) {
+          t.insert(sourceEnvelope, sourceEnvelope);
+      }
     t.build();
   }
 
-  public static void main(String[] args) throws Exception {
-    List envelopes = sourceData();
+  public static void main(String[] args) {
+    List<Envelope> envelopes = sourceData();
     TestTree t = new TestTree(NODE_CAPACITY);
     initTree(t, envelopes);
     PrintStream printStream = System.out;
@@ -69,29 +67,27 @@ public class STRtreeDemo {
     printLevels(t, printStream);
   }
 
-  public static void printSourceData(List sourceEnvelopes, PrintStream out) {
+  public static void printSourceData(List<Envelope> sourceEnvelopes, PrintStream out) {
     out.println("============ Source Data ============\n");
     out.print("GEOMETRYCOLLECTION(");
     boolean first = true;
-    for (Iterator i = sourceEnvelopes.iterator(); i.hasNext(); ) {
-      Envelope e = (Envelope) i.next();
-      Geometry g = factory.createPolygon(factory.createLinearRing(new Coordinate[] {
-        new Coordinate(e.getMinX(), e.getMinY()), new Coordinate(e.getMinX(), e.getMaxY()),
-        new Coordinate(e.getMaxX(), e.getMaxY()), new Coordinate(e.getMaxX(), e.getMinY()),
-        new Coordinate(e.getMinX(), e.getMinY()) }), null);
-      if (first) {
-        first = false;
+      for (Envelope e : sourceEnvelopes) {
+          Geometry g = factory.createPolygon(factory.createLinearRing(new Coordinate[]{
+                  new Coordinate(e.getMinX(), e.getMinY()), new Coordinate(e.getMinX(), e.getMaxY()),
+                  new Coordinate(e.getMaxX(), e.getMaxY()), new Coordinate(e.getMaxX(), e.getMinY()),
+                  new Coordinate(e.getMinX(), e.getMinY())}), null);
+          if (first) {
+              first = false;
+          } else {
+              out.print(",");
+          }
+          out.print(g);
       }
-      else {
-        out.print(",");
-      }
-      out.print(g);
-    }
     out.println(")\n");
   }
 
-  private static List sourceData() {
-    ArrayList envelopes = new ArrayList();
+  private static List<Envelope> sourceData() {
+    ArrayList<Envelope> envelopes = new ArrayList<>();
     for (int i = 0; i < ITEM_COUNT; i++) {
       envelopes.add(randomRectangle().getEnvelopeInternal());
     }
@@ -103,7 +99,7 @@ public class STRtreeDemo {
   private static final double MIN_ITEM_EXTENT = 3;
   private static final int ITEM_COUNT = 20;
   private static final int NODE_CAPACITY = 4;
-  private static GeometryFactory factory = new GeometryFactory();
+  private static final GeometryFactory factory = new GeometryFactory();
 
   private static Polygon randomRectangle() {
     double width = MIN_ITEM_EXTENT + ((MAX_ITEM_EXTENT-MIN_ITEM_EXTENT) * Math.random());
@@ -124,24 +120,22 @@ public class STRtreeDemo {
     }
   }
 
-  public static void printBoundables(List boundables, String title, PrintStream out) {
+  public static void printBoundables(List<Boundable<Envelope>> boundables, String title, PrintStream out) {
     out.println("============ " + title + " ============\n");
     out.print("GEOMETRYCOLLECTION(");
     boolean first = true;
-    for (Iterator i = boundables.iterator(); i.hasNext(); ) {
-      Boundable boundable = (Boundable) i.next();
-      if (first) {
-        first = false;
+      for (Boundable<Envelope> boundable : boundables) {
+          if (first) {
+              first = false;
+          } else {
+              out.print(",");
+          }
+          out.print(toString(boundable));
       }
-      else {
-        out.print(",");
-      }
-      out.print(toString(boundable));
-    }
     out.println(")\n");
   }
 
-  private static String toString(Boundable b) {
+  private static String toString(Boundable<Envelope> b) {
     return "POLYGON(("
          + envelope(b).getMinX() + " "
          + envelope(b).getMinY() + ", "
@@ -155,8 +149,8 @@ public class STRtreeDemo {
          + envelope(b).getMinY() + "))";
   }
 
-  private static Envelope envelope(Boundable b) {
-    return (Envelope)b.getBounds();
+  private static Envelope envelope(Boundable<Envelope> b) {
+    return b.getBounds();
   }
 
 }

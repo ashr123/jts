@@ -12,7 +12,6 @@
 package org.locationtech.jts.noding;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.locationtech.jts.algorithm.LineIntersector;
 import org.locationtech.jts.algorithm.RobustLineIntersector;
@@ -27,13 +26,13 @@ import org.locationtech.jts.geom.GeometryFactory;
  */
 public class NodingValidator {
 
-  private LineIntersector li = new RobustLineIntersector();
+  private final LineIntersector li = new RobustLineIntersector();
 
-  private Collection segStrings;
-  
+  private final Collection<? extends SegmentString> segStrings;
+
   private static final GeometryFactory fact = new GeometryFactory();
 
-  public NodingValidator(Collection segStrings)
+  public NodingValidator(Collection<? extends SegmentString> segStrings)
   {
     this.segStrings = segStrings;
   }
@@ -51,13 +50,12 @@ public class NodingValidator {
    */
   private void checkCollapses()
   {
-    for (Iterator i = segStrings.iterator(); i.hasNext(); ) {
-      SegmentString ss = (SegmentString) i.next();
-      checkCollapses(ss);
-    }
+      for (SegmentString ss : segStrings) {
+          checkCollapses(ss);
+      }
   }
 
-  private void checkCollapses(SegmentString ss)
+  private static void checkCollapses(SegmentString ss)
   {
     Coordinate[] pts = ss.getCoordinates();
     for (int i = 0; i < pts.length - 2; i++) {
@@ -65,7 +63,7 @@ public class NodingValidator {
     }
   }
 
-  private void checkCollapse(Coordinate p0, Coordinate p1, Coordinate p2)
+  private static void checkCollapse(Coordinate p0, Coordinate p1, Coordinate p2)
   {
     if (p0.equals(p2))
       throw new RuntimeException("found non-noded collapse at "
@@ -77,14 +75,11 @@ public class NodingValidator {
    */
   private void checkInteriorIntersections()
   {
-    for (Iterator i = segStrings.iterator(); i.hasNext(); ) {
-      SegmentString ss0 = (SegmentString) i.next();
-      for (Iterator j = segStrings.iterator(); j.hasNext(); ) {
-        SegmentString ss1 = (SegmentString) j.next();
-
-          checkInteriorIntersections(ss0, ss1);
+      for (SegmentString ss0 : segStrings) {
+          for (SegmentString ss1 : segStrings) {
+              checkInteriorIntersections(ss0, ss1);
+          }
       }
-    }
   }
 
   private void checkInteriorIntersections(SegmentString ss0, SegmentString ss1)
@@ -123,7 +118,7 @@ public class NodingValidator {
   /**
    *@return true if there is an intersection point which is not an endpoint of the segment p0-p1
    */
-  private boolean hasInteriorIntersection(LineIntersector li, Coordinate p0, Coordinate p1)
+  private static boolean hasInteriorIntersection(LineIntersector li, Coordinate p0, Coordinate p1)
   {
     for (int i = 0; i < li.getIntersectionNum(); i++) {
       Coordinate intPt = li.getIntersection(i);
@@ -139,24 +134,22 @@ public class NodingValidator {
    */
   private void checkEndPtVertexIntersections()
   {
-    for (Iterator i = segStrings.iterator(); i.hasNext(); ) {
-      SegmentString ss = (SegmentString) i.next();
-      Coordinate[] pts = ss.getCoordinates();
-      checkEndPtVertexIntersections(pts[0], segStrings);
-      checkEndPtVertexIntersections(pts[pts.length - 1], segStrings);
-    }
+      for (SegmentString ss : segStrings) {
+          Coordinate[] pts = ss.getCoordinates();
+          checkEndPtVertexIntersections(pts[0], segStrings);
+          checkEndPtVertexIntersections(pts[pts.length - 1], segStrings);
+      }
   }
 
-  private void checkEndPtVertexIntersections(Coordinate testPt, Collection segStrings)
+  private static void checkEndPtVertexIntersections(Coordinate testPt, Collection<? extends SegmentString> segStrings)
   {
-    for (Iterator i = segStrings.iterator(); i.hasNext(); ) {
-      SegmentString ss = (SegmentString) i.next();
-      Coordinate[] pts = ss.getCoordinates();
-      for (int j = 1; j < pts.length - 1; j++) {
-        if (pts[j].equals(testPt))
-          throw new RuntimeException("found endpt/interior pt intersection at index " + j + " :pt " + testPt);
+      for (SegmentString ss : segStrings) {
+          Coordinate[] pts = ss.getCoordinates();
+          for (int j = 1; j < pts.length - 1; j++) {
+              if (pts[j].equals(testPt))
+                  throw new RuntimeException("found endpt/interior pt intersection at index " + j + " :pt " + testPt);
+          }
       }
-    }
   }
 
 

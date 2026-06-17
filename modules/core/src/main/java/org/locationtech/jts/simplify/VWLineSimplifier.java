@@ -33,8 +33,8 @@ class VWLineSimplifier
     return simp.simplify();
   }
 
-  private Coordinate[] pts;
-  private double tolerance;
+  private final Coordinate[] pts;
+  private final double tolerance;
 
   public VWLineSimplifier(Coordinate[] pts, double distanceTolerance)
   {
@@ -88,23 +88,23 @@ class VWLineSimplifier
     {
       VWLineSimplifier.VWVertex first = null;
       VWLineSimplifier.VWVertex prev = null;
-      for (int i = 0; i < pts.length; i++) {
-        VWLineSimplifier.VWVertex v = new VWVertex(pts[i]);
-        if (first == null)
-          first = v;
-        v.setPrev(prev);
-        if (prev != null) {
-          prev.setNext(v);
-          prev.updateArea();
+        for (Coordinate coordinate : pts) {
+            VWVertex v = new VWVertex(coordinate);
+            if (first == null)
+                first = v;
+            v.setPrev(prev);
+            if (prev != null) {
+                prev.setNext(v);
+                prev.updateArea();
+            }
+            prev = v;
         }
-        prev = v;
-      }
       return first;
     }
     
-    public static double MAX_AREA = Double.MAX_VALUE;
+    public static final double MAX_AREA = Double.MAX_VALUE;
     
-    private Coordinate pt;
+    private final Coordinate pt;
     private VWLineSimplifier.VWVertex prev;
     private VWLineSimplifier.VWVertex next;
     private double area = MAX_AREA;

@@ -70,7 +70,10 @@ import org.xml.sax.helpers.DefaultHandler;
 public class GMLReader 
 {
 
-	/**
+    private GMLReader() {
+    }
+
+    /**
 	 * Reads a GML2 Geometry from a <tt>String</tt> into a single {@link Geometry}
 	 *
 	 * If a collection of geometries is found, a {@link GeometryCollection} is returned.
@@ -85,7 +88,7 @@ public class GMLReader
 	 *
 	 * @see #read(Reader, GeometryFactory)
 	 */
-	public Geometry read(String gml, GeometryFactory geometryFactory) throws SAXException, IOException, ParserConfigurationException{
+	public static Geometry read(String gml, GeometryFactory geometryFactory) throws SAXException, IOException, ParserConfigurationException{
 		return read(new StringReader(gml),geometryFactory);
 	}
 
@@ -100,7 +103,7 @@ public class GMLReader
 	 * @throws SAXException
 	 * @throws IOException
 	 */
-	public Geometry read(Reader reader, GeometryFactory geometryFactory) throws SAXException, IOException, ParserConfigurationException{
+	public static Geometry read(Reader reader, GeometryFactory geometryFactory) throws SAXException, IOException, ParserConfigurationException{
 		SAXParserFactory fact = SAXParserFactory.newInstance();
 
 		fact.setNamespaceAware(false);

@@ -23,7 +23,10 @@ import org.locationtech.jts.geom.Coordinate;
  * 
  */
 public class AffineTransformationFactory {
-	/**
+    private AffineTransformationFactory() {
+    }
+
+    /**
 	 * Creates a transformation from a set of three control vectors. A control
 	 * vector consists of a source point and a destination point, which is the
 	 * image of the source point under the desired transformation. Three control
@@ -118,7 +121,7 @@ public class AffineTransformationFactory {
 		if (src.length != dest.length)
 			throw new IllegalArgumentException(
 					"Src and Dest arrays are not the same length");
-		if (src.length <= 0)
+		if (src.length == 0)
 			throw new IllegalArgumentException("Too few control points");
 		if (src.length > 3)
 			throw new IllegalArgumentException("Too many control points");

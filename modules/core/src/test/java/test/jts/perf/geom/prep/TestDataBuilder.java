@@ -25,21 +25,18 @@ import org.locationtech.jts.util.GeometricShapeFactory;
 
 public class TestDataBuilder 
 {
-  private GeometryFactory geomFact = new GeometryFactory();
 
-	private Coordinate origin = new Coordinate(0, 0); 
+    private Coordinate origin = new Coordinate(0, 0);
 	private double size = 100.0;
-	private int testDim = 1;
-	
-	public TestDataBuilder()
+
+    public TestDataBuilder()
 	{
 		
 	}
 	
 	public TestDataBuilder(GeometryFactory geomFact)
 	{
-		this.geomFact = geomFact;
-	}
+    }
 	
 	public void setExtent(Coordinate origin, double size)
 	{
@@ -49,18 +46,16 @@ public class TestDataBuilder
 	
 	public void setTestDimension(int testDim)
 	{
-		this.testDim = testDim;
-	}
+    }
 	
 	public Geometry createCircle(int nPts) {
 		GeometricShapeFactory gsf = new GeometricShapeFactory();
 		gsf.setCentre(origin);
 		gsf.setSize(size);
 		gsf.setNumPoints(nPts);
-		Geometry circle = gsf.createCircle();
-		// Polygon gRect = gsf.createRectangle();
+        // Polygon gRect = gsf.createRectangle();
 		// Geometry g = gRect.getExteriorRing();
-		return circle;
+		return gsf.createCircle();
 	}
   
   public Geometry createSineStar(int nPts) {
@@ -70,15 +65,14 @@ public class TestDataBuilder
 		gsf.setNumPoints(nPts);
 		gsf.setArmLengthRatio(0.1);
 		gsf.setNumArms(20);
-		Geometry poly = gsf.createSineStar();
-		return poly;
+      return gsf.createSineStar();
 	}
   
-  public List createTestGeoms(Envelope env, int nItems, double size, int nPts)
+  public static List<Geometry> createTestGeoms(Envelope env, int nItems, double size, int nPts)
   {
     int nCells = (int) Math.sqrt(nItems);
 
-  	List geoms = new ArrayList();
+  	List<Geometry> geoms = new ArrayList<>();
   	double width = env.getWidth();
   	double xInc = width / nCells;
   	double yInc = width / nCells;
@@ -94,7 +88,7 @@ public class TestDataBuilder
   	return geoms;
   }
   
-  Geometry createLine(Coordinate base, double size, int nPts)
+  static Geometry createLine(Coordinate base, double size, int nPts)
   {
     GeometricShapeFactory gsf = new GeometricShapeFactory();
     gsf.setCentre(base);

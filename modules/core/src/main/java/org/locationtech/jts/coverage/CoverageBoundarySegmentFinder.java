@@ -33,7 +33,7 @@ import org.locationtech.jts.geom.LineSegment;
 class CoverageBoundarySegmentFinder implements CoordinateSequenceFilter {
   
   public static Set<LineSegment> findBoundarySegments(Geometry[] geoms) {
-    Set<LineSegment> segs = new HashSet<LineSegment>();
+    Set<LineSegment> segs = new HashSet<>();
     CoverageBoundarySegmentFinder finder = new CoverageBoundarySegmentFinder(segs);
     for (Geometry geom : geoms) {
       geom.apply(finder);
@@ -46,7 +46,7 @@ class CoverageBoundarySegmentFinder implements CoordinateSequenceFilter {
     return boundarySegs.contains(seg);
   }
   
-  private Set<LineSegment> boundarySegs;
+  private final Set<LineSegment> boundarySegs;
 
   public CoverageBoundarySegmentFinder(Set<LineSegment> segs) {
     this.boundarySegs = segs;

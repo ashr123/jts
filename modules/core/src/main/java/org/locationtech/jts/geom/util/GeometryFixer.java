@@ -104,8 +104,8 @@ public class GeometryFixer {
     return fix.getResult();
   }
 
-  private Geometry geom;
-  private GeometryFactory factory;
+  private final Geometry geom;
+  private final GeometryFactory factory;
   private boolean isKeepCollapsed = false;
   private boolean isKeepMulti = DEFAULT_KEEP_MULTI;
 
@@ -170,13 +170,13 @@ public class GeometryFixer {
   }
 
   private Point fixPoint(Point geom) {
-    Geometry pt = fixPointElement(geom);
+    Point pt = fixPointElement(geom);
     if (pt == null)
       return factory.createPoint();
-    return (Point) pt;
+    return pt;
   }
 
-  private Point fixPointElement(Point geom) {
+  private static Point fixPointElement(Point geom) {
     if (geom.isEmpty() || ! isValidPoint(geom)) {
       return null;
     }
@@ -189,7 +189,7 @@ public class GeometryFixer {
   }
 
   private Geometry fixMultiPoint(MultiPoint geom) {
-    List<Point> pts = new ArrayList<Point>();
+    List<Point> pts = new ArrayList<>();
     for (int i = 0; i < geom.getNumGeometries(); i++) {
       Point pt = (Point) geom.getGeometryN(i);
       if (pt.isEmpty()) continue;
@@ -269,7 +269,7 @@ public class GeometryFixer {
   }
 
   private Geometry fixMultiLineString(MultiLineString geom) {
-    List<Geometry> fixed = new ArrayList<Geometry>();
+    List<Geometry> fixed = new ArrayList<>();
     boolean isMixed = false;
     for (int i = 0; i < geom.getNumGeometries(); i++) {
       LineString line = (LineString) geom.getGeometryN(i);
@@ -320,22 +320,21 @@ public class GeometryFixer {
 
     //--- fix holes, classify, and construct shell-true holes
     List<Geometry> holesFixed = fixHoles(geom);
-    List<Geometry> holes = new ArrayList<Geometry>();
-    List<Geometry> shells = new ArrayList<Geometry>();
+    List<Geometry> holes = new ArrayList<>();
+    List<Geometry> shells = new ArrayList<>();
     classifyHoles(fixShell, holesFixed, holes, shells);
     Geometry polyWithHoles = difference(fixShell, holes);
-    if (shells.size() == 0) {
+    if (shells.isEmpty()) {
       return polyWithHoles;
     }
 
     //--- if some holes converted to shells, union all shells
     shells.add(polyWithHoles);
-    Geometry result = union(shells);
-    return result;
+      return union(shells);
   }
 
   private List<Geometry> fixHoles(Polygon geom) {
-    List<Geometry> holes = new ArrayList<Geometry>();
+    List<Geometry> holes = new ArrayList<>();
     for (int i = 0; i < geom.getNumInteriorRing(); i++) {
       Geometry holeRep = fixRing(geom.getInteriorRingN(i));
       if (holeRep != null) {
@@ -345,7 +344,7 @@ public class GeometryFixer {
     return holes;
   }
 
-  private void classifyHoles(Geometry shell, List<Geometry> holesFixed, List<Geometry> holes, List<Geometry> shells) {
+  private static void classifyHoles(Geometry shell, List<Geometry> holesFixed, List<Geometry> holes, List<Geometry> shells) {
     PreparedGeometry shellPrep = PreparedGeometryFactory.prepare(shell);
     for (Geometry hole : holesFixed) {
       if (shellPrep.intersects(hole)) {
@@ -365,7 +364,7 @@ public class GeometryFixer {
    * @return the result geometry
    */
   private Geometry difference(Geometry shell, List<Geometry> holes) {
-    if (holes == null || holes.size() == 0)
+    if (holes == null || holes.isEmpty())
       return shell;
     Geometry holesUnion = union(holes);
     return OverlayNGRobust.overlay(shell, holesUnion, OverlayNG.DIFFERENCE);
@@ -380,7 +379,7 @@ public class GeometryFixer {
    * @return the union of the inputs
    */
   private Geometry union(List<Geometry> polys) {
-    if (polys.size() == 0) return factory.createPolygon();
+    if (polys.isEmpty()) return factory.createPolygon();
     if (polys.size() == 1) {
       return polys.get(0);
     }
@@ -396,7 +395,7 @@ public class GeometryFixer {
   }
 
   private Geometry fixMultiPolygon(MultiPolygon geom) {
-    List<Geometry> polys = new ArrayList<Geometry>();
+    List<Geometry> polys = new ArrayList<>();
     for (int i = 0; i < geom.getNumGeometries(); i++) {
       Polygon poly = (Polygon) geom.getGeometryN(i);
       Geometry polyFix = fixPolygonElement(poly);
@@ -404,7 +403,7 @@ public class GeometryFixer {
         polys.add(polyFix);
       }
     }
-    if (polys.size() == 0) {
+    if (polys.isEmpty()) {
       return factory.createMultiPolygon();
     }
     // TODO: replace with polys.union() once OverlayNG is the default

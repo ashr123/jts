@@ -38,8 +38,8 @@ import org.locationtech.jts.index.strtree.STRtree;
  */
 class IndexedNestedHoleTester
 {
-  private Polygon polygon;
-  private SpatialIndex index;
+  private final Polygon polygon;
+  private SpatialIndex<LinearRing> index;
   private Coordinate nestedPt;
 
   public IndexedNestedHoleTester(Polygon poly)
@@ -50,10 +50,10 @@ class IndexedNestedHoleTester
 
   private void loadIndex()
   {
-    index = new STRtree();
+    index = new STRtree<>();
 
     for (int i = 0; i < polygon.getNumInteriorRing(); i++) {
-      LinearRing hole = (LinearRing) polygon.getInteriorRingN(i);
+      LinearRing hole = polygon.getInteriorRingN(i);
       Envelope env = hole.getEnvelopeInternal();
       index.insert(env, hole);
     }
@@ -75,7 +75,7 @@ class IndexedNestedHoleTester
   public boolean isNested()
   {
     for (int i = 0; i < polygon.getNumInteriorRing(); i++) {
-      LinearRing hole = (LinearRing) polygon.getInteriorRingN(i);
+      LinearRing hole = polygon.getInteriorRingN(i);
 
       List<LinearRing> results = index.query(hole.getEnvelopeInternal());
       for (LinearRing testHole : results) {

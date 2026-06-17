@@ -62,10 +62,9 @@ public class QuadEdge
     q2.setNext(q2);
     q3.setNext(q1);
 
-    QuadEdge base = q0;
-    base.setOrig(o);
-    base.setDest(d);
-    return base;
+      q0.setOrig(o);
+    q0.setDest(d);
+    return q0;
   }
 
     /**
@@ -370,9 +369,7 @@ public class QuadEdge
     public boolean equalsNonOriented(QuadEdge qe) {
         if (equalsOriented(qe))
             return true;
-        if (equalsOriented(qe.sym()))
-            return true;
-        return false;
+        return equalsOriented(qe.sym());
     }
 
     /**
@@ -383,10 +380,8 @@ public class QuadEdge
      * @return true if the quadedges are based on the same line segment
      */
     public boolean equalsOriented(QuadEdge qe) {
-        if (orig().getCoordinate().equals2D(qe.orig().getCoordinate())
-                && dest().getCoordinate().equals2D(qe.dest().getCoordinate()))
-            return true;
-        return false;
+        return orig().getCoordinate().equals2D(qe.orig().getCoordinate())
+                && dest().getCoordinate().equals2D(qe.dest().getCoordinate());
     }
 
     /**

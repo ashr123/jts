@@ -19,11 +19,11 @@ import org.locationtech.jts.index.strtree.EnvelopeDistance;
 
 public class TestStressEnvelopeMinMaxDistance 
 {
-  static GeometryFactory factory = new GeometryFactory();
+  static final GeometryFactory factory = new GeometryFactory();
   
   public static void main(String[] args) {
     TestStressEnvelopeMinMaxDistance test = new TestStressEnvelopeMinMaxDistance();
-    test.test();
+    TestStressEnvelopeMinMaxDistance.test();
   }
 
   boolean testFailed = false;
@@ -32,7 +32,7 @@ public class TestStressEnvelopeMinMaxDistance
   public TestStressEnvelopeMinMaxDistance() {
   }
 
-  public void test()
+  public static void test()
   {
     int sizeX = 6;
     int sizeY = 6;
@@ -44,16 +44,16 @@ public class TestStressEnvelopeMinMaxDistance
     run(boxes);
   }
 
-  private void run(MultiPoint[] boxes) {
+  private static void run(MultiPoint[] boxes) {
     int n = boxes.length;
-    for (int i = 0; i < n; i++) {
-      for (int j = 0; j < n; j++) {
-        run(boxes[i], boxes[j]);
+      for (MultiPoint multiPoint : boxes) {
+          for (MultiPoint box : boxes) {
+              run(multiPoint, box);
+          }
       }
-    }
   }
 
-  private void run(MultiPoint a, MultiPoint b) {
+  private static void run(MultiPoint a, MultiPoint b) {
     double distance = a.distance(b);
     double minMaxDistance = EnvelopeDistance.minMaxDistance(
         a.getEnvelopeInternal(), b.getEnvelopeInternal());
@@ -67,7 +67,7 @@ public class TestStressEnvelopeMinMaxDistance
     }
   }
 
-  private MultiPoint[] createPointPairs(Coordinate[] pts) {
+  private static MultiPoint[] createPointPairs(Coordinate[] pts) {
     int npts = pts.length;
     MultiPoint[] pairs = new MultiPoint[npts * npts];
     
@@ -82,7 +82,7 @@ public class TestStressEnvelopeMinMaxDistance
     return pairs;
   }
 
-  private Coordinate[] createPoints(int sizeX, int sizeY) {
+  private static Coordinate[] createPoints(int sizeX, int sizeY) {
     int npts = sizeX * sizeY;
     Coordinate[] pts = new Coordinate[npts];
     for (int x = 0; x < sizeX; x++) {
@@ -96,5 +96,3 @@ public class TestStressEnvelopeMinMaxDistance
   
 
 }
-  
-  

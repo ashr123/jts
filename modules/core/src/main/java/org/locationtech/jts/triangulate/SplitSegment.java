@@ -38,8 +38,8 @@ public class SplitSegment {
         return coord;
     }
 
-    private LineSegment seg;
-    private double      segLen;
+    private final LineSegment seg;
+    private final double      segLen;
     private Coordinate  splitPt;
     private double      minimumLen = 0.0;
 
@@ -81,9 +81,7 @@ public class SplitSegment {
     }
 
     private double getConstrainedLength(double len) {
-        if (len < minimumLen)
-            return minimumLen;
-        return len;
+        return Math.max(len, minimumLen);
     }
 
 }

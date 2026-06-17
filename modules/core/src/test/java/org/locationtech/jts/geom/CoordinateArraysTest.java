@@ -25,12 +25,12 @@ import test.jts.GeometryTestCase;
  */
 public class CoordinateArraysTest extends GeometryTestCase {
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(CoordinateArraysTest.class);
   }
 
-  private static Coordinate[] COORDS_1 = new Coordinate[] { new Coordinate(1, 1), new Coordinate(2, 2), new Coordinate(3, 3) };
-  private static Coordinate[] COORDS_EMPTY = new Coordinate[0];
+  private static final Coordinate[] COORDS_1 = new Coordinate[] { new Coordinate(1, 1), new Coordinate(2, 2), new Coordinate(3, 3) };
+  private static final Coordinate[] COORDS_EMPTY = new Coordinate[0];
 
   public CoordinateArraysTest(String name) { super(name); }
 
@@ -44,19 +44,18 @@ public class CoordinateArraysTest extends GeometryTestCase {
   }
   public void testPtNotInList2()
   {
-    assertTrue(CoordinateArrays.ptNotInList(
-        new Coordinate[] { new Coordinate(1, 1), new Coordinate(2, 2), new Coordinate(3, 3) },
-        new Coordinate[] { new Coordinate(1, 1), new Coordinate(2, 2), new Coordinate(3, 3) }
-        ) == null
-        );
+      assertNull(CoordinateArrays.ptNotInList(
+              new Coordinate[]{new Coordinate(1, 1), new Coordinate(2, 2), new Coordinate(3, 3)},
+              new Coordinate[]{new Coordinate(1, 1), new Coordinate(2, 2), new Coordinate(3, 3)}
+      ));
   }
   public void testEnvelope1()
   {
-    assertEquals( CoordinateArrays.envelope(COORDS_1),  new Envelope(1, 3, 1, 3) );
+    assertEquals(new Envelope(1, 3, 1, 3), CoordinateArrays.envelope(COORDS_1));
   }
   public void testEnvelopeEmpty()
   {
-    assertEquals( CoordinateArrays.envelope(COORDS_EMPTY), new Envelope() );
+    assertEquals(new Envelope(), CoordinateArrays.envelope(COORDS_EMPTY));
   }
   public void testIntersection_envelope1()
   {
@@ -105,7 +104,7 @@ public class CoordinateArraysTest extends GeometryTestCase {
     checkReversed(pts);
   }
   
-  private void checkReversed(Coordinate[] pts) {
+  private static void checkReversed(Coordinate[] pts) {
     Coordinate[] ptsRev = CoordinateArrays.copyDeep(pts);
     CoordinateArrays.reverse(ptsRev);
     assertEquals(pts.length, ptsRev.length);
@@ -137,9 +136,9 @@ public class CoordinateArraysTest extends GeometryTestCase {
     Coordinate[] sequence = createCircularString(new Coordinate(20, 20), 7d,
       0.1, 22);
     Coordinate[] scrolled = createCircularString(new Coordinate(20, 20), 7d,
-      0.1, 22);;
+      0.1, 22);
 
-    // act
+      // act
     CoordinateArrays.scroll(scrolled, 12);
 
     // assert
@@ -152,11 +151,11 @@ public class CoordinateArraysTest extends GeometryTestCase {
   }
 
   public void testEnforceConsistency(){
-    Coordinate array[] = new Coordinate[]{
+    Coordinate[] array = new Coordinate[]{
         new Coordinate(1.0, 1.0, 0.0),
         new CoordinateXYM(2.0,2.0,1.0)
     };
-    Coordinate array2[] = new Coordinate[]{
+    Coordinate[] array2 = new Coordinate[]{
             new CoordinateXY(1.0, 1.0),
             new CoordinateXY(2.0,2.0)
     };
@@ -167,13 +166,13 @@ public class CoordinateArraysTest extends GeometryTestCase {
 
     CoordinateArrays.enforceConsistency(array2);
     
-    Coordinate fixed[] = CoordinateArrays.enforceConsistency(array2,2,0);
+    Coordinate[] fixed = CoordinateArrays.enforceConsistency(array2,2,0);
     assertSame( fixed, array2); // no processing required
 
     fixed = CoordinateArrays.enforceConsistency(array,3,0);
-    assertTrue( fixed != array); // copied into new array
-    assertTrue( array[0] != fixed[0] ); // processing needed to CoordinateXYZM
-    assertTrue( array[1] != fixed[1] ); // processing needed to CoordinateXYZM
+      assertNotSame(fixed, array); // copied into new array
+      assertNotSame(array[0], fixed[0]); // processing needed to CoordinateXYZM
+      assertNotSame(array[1], fixed[1]); // processing needed to CoordinateXYZM
   }
 
   public void testOrientCW() {
@@ -200,16 +199,16 @@ public class CoordinateArraysTest extends GeometryTestCase {
     Coordinate[] pts = read(wkt).getCoordinates();
     //-- orient CW
     Coordinate[] ptsCW = CoordinateArrays.orient(pts, true);
-    assertEquals(false, Orientation.isCCW(ptsCW));
+      assertFalse(Orientation.isCCW(ptsCW));
     Coordinate[] ptsCCW = CoordinateArrays.orient(pts, false);
-    assertEquals(true, Orientation.isCCW(ptsCCW));
+      assertTrue(Orientation.isCCW(ptsCCW));
     //-- check that original is unchanged for same orientation
     boolean isCCW = Orientation.isCCW(pts);
     if (isCCW) {
-      assertTrue(pts == ptsCCW);
+        assertSame(pts, ptsCCW);
     }
     else {
-      assertTrue(pts == ptsCW);      
+        assertSame(pts, ptsCW);
     }
   }
 

@@ -157,8 +157,8 @@ public class InteriorPointArea {
    *
    */
   private static class InteriorPointPolygon {
-    private Polygon polygon;
-    private double interiorPointY;
+    private final Polygon polygon;
+    private final double interiorPointY;
     private double interiorSectionWidth = 0.0;
     private Coordinate interiorPoint = null;
 
@@ -207,10 +207,10 @@ public class InteriorPointArea {
        */
       interiorPoint = new Coordinate(polygon.getCoordinate());
       
-      List<Double> crossings = new ArrayList<Double>();
-      scanRing((LinearRing) polygon.getExteriorRing(), crossings);
+      List<Double> crossings = new ArrayList<>();
+      scanRing(polygon.getExteriorRing(), crossings);
       for (int i = 0; i < polygon.getNumInteriorRing(); i++) {
-        scanRing((LinearRing) polygon.getInteriorRingN(i), crossings);
+        scanRing(polygon.getInteriorRingN(i), crossings);
       }
       findBestMidpoint(crossings);
     }
@@ -228,7 +228,7 @@ public class InteriorPointArea {
       }
     }
 
-    private void addEdgeCrossing(Coordinate p0, Coordinate p1, double scanY, List<Double> crossings) {
+    private static void addEdgeCrossing(Coordinate p0, Coordinate p1, double scanY, List<Double> crossings) {
       // skip non-crossing segments
       if ( !intersectsHorizontalLine(p0, p1, scanY) )
         return;
@@ -250,7 +250,7 @@ public class InteriorPointArea {
      */
     private void findBestMidpoint(List<Double> crossings) {
       // zero-area polygons will have no crossings
-      if (crossings.size() == 0) return;
+      if (crossings.isEmpty()) return;
       
       // TODO: is there a better way to verify the crossings are correct?
       Assert.isTrue(0 == crossings.size() % 2, "Interior Point robustness failure: odd number of scanline crossings");
@@ -296,9 +296,7 @@ public class InteriorPointArea {
       if ( y0 == scanY && y1 < scanY )
         return false;
       // upward segment does not include endpoint
-      if ( y1 == scanY && y0 < scanY )
-        return false;
-      return true;
+        return y1 != scanY || !(y0 < scanY);
     }
     
     /**
@@ -324,8 +322,7 @@ public class InteriorPointArea {
       double segDX = x1 - x0;
       double segDY = p1.getY() - p0.getY();
       double m = segDY / segDX;
-      double x = x0 + ((Y - p0.getY()) / m);
-      return x;
+        return x0 + ((Y - p0.getY()) / m);
     }
     
     /**
@@ -338,9 +335,7 @@ public class InteriorPointArea {
     private static boolean intersectsHorizontalLine(Envelope env, double y) {
       if ( y < env.getMinY() )
         return false;
-      if ( y > env.getMaxY() )
-        return false;
-      return true;
+        return !(y > env.getMaxY());
     }
     
     /**
@@ -356,10 +351,8 @@ public class InteriorPointArea {
       if ( p0.getY() > y && p1.getY() > y )
         return false;
       // both ends below?
-      if ( p0.getY() < y && p1.getY() < y )
-        return false;
+        return !(p0.getY() < y) || !(p1.getY() < y);
       // segment must intersect line
-      return true;
     }
     
     /*
@@ -412,9 +405,9 @@ public class InteriorPointArea {
       return finder.getScanLineY();
     }
 
-    private Polygon poly;
+    private final Polygon poly;
 
-    private double centreY;
+    private final double centreY;
     private double hiY = Double.MAX_VALUE;
     private double loY = -Double.MAX_VALUE;
 
@@ -432,8 +425,7 @@ public class InteriorPointArea {
       for (int i = 0; i < poly.getNumInteriorRing(); i++) {
         process(poly.getInteriorRingN(i));
       }
-      double scanLineY = avg(hiY, loY);
-      return scanLineY;
+        return avg(hiY, loY);
     }
 
     private void process(LineString line) {

@@ -24,7 +24,10 @@ import org.locationtech.jts.geom.Polygon;
  */
 public class PolygonalExtracter
 {
-  /**
+    private PolygonalExtracter() {
+    }
+
+    /**
    * Extracts the {@link Polygon} and {@link MultiPolygon} elements from a {@link Geometry}
    * and adds them to the provided list.
    * 
@@ -53,7 +56,7 @@ public class PolygonalExtracter
    */
   public static List<Geometry> getPolygonals(Geometry geom)
   {
-    return getPolygonals(geom, new ArrayList<Geometry>());
+    return getPolygonals(geom, new ArrayList<>());
   }
 
 }

@@ -13,7 +13,6 @@ package org.locationtech.jts.operation.buffer;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.junit.Assert;
@@ -48,8 +47,8 @@ public class BufferValidator
   }
 
 
-  private static abstract class Test implements Comparable {
-    private String name;
+  private static abstract class Test implements Comparable<Test> {
+    private final String name;
     public Test(String name) {
       this(name, 2);
     }
@@ -64,31 +63,29 @@ public class BufferValidator
       return getName();
     }
     public abstract void test() throws Exception;
-    private int priority;
-    public int compareTo(Object o) {
-      return priority - ((Test) o).priority;
+    private final int priority;
+    public int compareTo(Test o) {
+      return priority - o.priority;
     }
   }
 
   private Geometry original;
-  private double bufferDistance;
-  private Map nameToTestMap = new HashMap();
+  private final double bufferDistance;
+  private final Map<String, Test> nameToTestMap = new HashMap<>();
   private Geometry buffer;
   private static final int QUADRANT_SEGMENTS_1 = 100;
   private static final int QUADRANT_SEGMENTS_2 = 50;
-  private String wkt;
-  private GeometryFactory geomFact = new GeometryFactory();
-  private WKTWriter wktWriter = new WKTWriter();
+  private final String wkt;
+  private final GeometryFactory geomFact = new GeometryFactory();
+  private final WKTWriter wktWriter = new WKTWriter();
   private WKTReader wktReader;
 
 
-  public BufferValidator(double bufferDistance, String wkt)
-  throws ParseException {
+  public BufferValidator(double bufferDistance, String wkt) {
     this(bufferDistance, wkt, true);
   }
 
-  public BufferValidator(double bufferDistance, String wkt, boolean addContainsTest)
-  throws ParseException {
+  public BufferValidator(double bufferDistance, String wkt, boolean addContainsTest) {
     // SRID = 888 is to test that SRID is preserved in computed buffers
     setFactory(new PrecisionModel(), 888);
     this.bufferDistance = bufferDistance;
@@ -100,13 +97,10 @@ public class BufferValidator
 
   public void test() throws Exception {
     try {
-      Collection tests = nameToTestMap.values();
-      for (Iterator i = tests.iterator();
-        i.hasNext();
-        ) {
-        Test test = (Test) i.next();
-        test.test();
-      }
+      Collection<Test> tests = nameToTestMap.values();
+        for (Test test : tests) {
+            test.test();
+        }
     } catch (Exception e) {
       throw new Exception(
         supplement(e.toString()) + StringUtil.getStackTrace(e));
@@ -147,12 +141,10 @@ public class BufferValidator
   public BufferValidator setEmptyBufferExpected(final boolean emptyBufferExpected) {
     return addTest(new Test("Empty Buffer Test", 1) {
       public void test() throws Exception {
-        Assert.assertTrue(
-          supplement(
-            "Expected buffer "
-              + (emptyBufferExpected ? "" : "not ")
-              + "to be empty"),
-          emptyBufferExpected == getBuffer().isEmpty());
+          Assert.assertEquals(supplement(
+                  "Expected buffer "
+                          + (emptyBufferExpected ? "" : "not ")
+                          + "to be empty"), emptyBufferExpected, getBuffer().isEmpty());
       }
     });
   }
@@ -160,12 +152,10 @@ public class BufferValidator
   public BufferValidator setBufferHolesExpected(final boolean bufferHolesExpected) {
     return addTest(new Test("Buffer Holes Test") {
       public void test() throws Exception {
-        Assert.assertTrue(
-          supplement(
-            "Expected buffer "
-              + (bufferHolesExpected ? "" : "not ")
-              + "to have holes"),
-          hasHoles(getBuffer()) == bufferHolesExpected);
+          Assert.assertEquals(supplement(
+                  "Expected buffer "
+                          + (bufferHolesExpected ? "" : "not ")
+                          + "to have holes"), hasHoles(getBuffer()), bufferHolesExpected);
       }
       private boolean hasHoles(Geometry buffer) {
         if (buffer.isEmpty()) {
@@ -242,8 +232,7 @@ public class BufferValidator
         if (b.isEmpty()) {
           return true;
         }
-        boolean isContained = a.contains(b);
-        return isContained;
+          return a.contains(b);
       }
     });
   }

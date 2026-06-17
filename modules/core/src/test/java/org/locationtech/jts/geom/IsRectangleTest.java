@@ -25,9 +25,9 @@ import junit.textui.TestRunner;
  */
 public class IsRectangleTest extends TestCase {
 
-  WKTReader rdr = new WKTReader();
+  final WKTReader rdr = new WKTReader();
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(IsRectangleTest.class);
   }
 
@@ -46,32 +46,32 @@ public class IsRectangleTest extends TestCase {
 
   public void testRectangleWithHole() throws Exception
   {
-    assertTrue(! isRectangle("POLYGON ((0 0, 0 100, 100 100, 100 0, 0 0), (10 10, 10 90, 90 90, 90 10, 10 10) ))"));
+      assertFalse(isRectangle("POLYGON ((0 0, 0 100, 100 100, 100 0, 0 0), (10 10, 10 90, 90 90, 90 10, 10 10) ))"));
   }
 
   public void testNotRectilinear() throws Exception
   {
-    assertTrue(! isRectangle("POLYGON ((0 0, 0 100, 99 100, 100 0, 0 0))"));
+      assertFalse(isRectangle("POLYGON ((0 0, 0 100, 99 100, 100 0, 0 0))"));
   }
 
   public void testTooManyPoints() throws Exception
   {
-    assertTrue(! isRectangle("POLYGON ((0 0, 0 100, 100 50, 100 100, 100 0, 0 0))"));
+      assertFalse(isRectangle("POLYGON ((0 0, 0 100, 100 50, 100 100, 100 0, 0 0))"));
   }
 
   public void testTooFewPoints() throws Exception
   {
-    assertTrue(! isRectangle("POLYGON ((0 0, 0 100, 100 0, 0 0))"));
+      assertFalse(isRectangle("POLYGON ((0 0, 0 100, 100 0, 0 0))"));
   }
 
   public void testRectangularLinestring() throws Exception
   {
-    assertTrue(! isRectangle("LINESTRING (0 0, 0 100, 100 100, 100 0, 0 0)"));
+      assertFalse(isRectangle("LINESTRING (0 0, 0 100, 100 100, 100 0, 0 0)"));
   }
 
   public void testPointsInWrongOrder() throws Exception
   {
-    assertTrue(! isRectangle("POLYGON ((0 0, 0 100, 100 0, 100 100, 0 0))"));
+      assertFalse(isRectangle("POLYGON ((0 0, 0 100, 100 0, 100 100, 0 0))"));
   }
 
   public boolean isRectangle(String wkt)

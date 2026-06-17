@@ -24,11 +24,11 @@ import junit.textui.TestRunner;
 
 public class IndexedPointInAreaStressTest extends TestCase {
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(IndexedPointInAreaStressTest.class);
   }
 
-	PrecisionModel pmFixed_1 = new PrecisionModel(1.0);
+	final PrecisionModel pmFixed_1 = new PrecisionModel(1.0);
 	
 	public IndexedPointInAreaStressTest(String name) {
 		super(name);
@@ -57,6 +57,3 @@ public class IndexedPointInAreaStressTest extends TestCase {
 		assertTrue(isCorrect);
 	}
 }
-
-
-

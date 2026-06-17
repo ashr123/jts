@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.CoordinateFilter;
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryComponentFilter;
@@ -56,14 +55,13 @@ class OverlayPoints {
     return overlay.getResult();
   }
 
-  private int opCode;
-  private Geometry geom0;
-  private Geometry geom1;
-  private PrecisionModel pm;
-  private GeometryFactory geometryFactory;
-  private ArrayList<Point> resultList;
+  private final int opCode;
+  private final Geometry geom0;
+  private final Geometry geom1;
+  private final PrecisionModel pm;
+  private final GeometryFactory geometryFactory;
 
-  /**
+    /**
    * Creates an instance of an overlay operation on inputs which are both point geometries.
    * 
    * @param geom0 the first geometry argument
@@ -87,8 +85,8 @@ class OverlayPoints {
   public Geometry getResult() {
     Map<Coordinate, Point> map0 = buildPointMap(geom0);
     Map<Coordinate, Point> map1 = buildPointMap(geom1);
-    
-    resultList = new ArrayList<Point>();
+
+      ArrayList<Point> resultList = new ArrayList<>();
     switch (opCode) {
     case OverlayNG.INTERSECTION: 
       computeIntersection(map0, map1, resultList);
@@ -157,26 +155,21 @@ class OverlayPoints {
   }
 
   private HashMap<Coordinate, Point> buildPointMap(Geometry geoms) {
-    HashMap<Coordinate, Point> map = new HashMap<Coordinate, Point>();
-    geoms.apply(new GeometryComponentFilter() {
+    HashMap<Coordinate, Point> map = new HashMap<>();
+    geoms.apply((GeometryComponentFilter) geom -> {
+      if (! (geom instanceof Point))
+        return;
+      if (geom.isEmpty())
+        return;
 
-      @Override
-      public void filter(Geometry geom) {
-        if (! (geom instanceof Point))
-          return;
-        if (geom.isEmpty())
-          return;
-        
-        Point pt = (Point) geom;
-        Coordinate p = roundCoord(pt, pm);
-        /**
-         * Only add first occurrence of a point.
-         * This provides the merging semantics of overlay
-         */
-        if (! map.containsKey(p))
-          map.put(p, pt);
-      }
-      
+      Point pt = (Point) geom;
+      Coordinate p = roundCoord(pt, pm);
+      /**
+       * Only add first occurrence of a point.
+       * This provides the merging semantics of overlay
+       */
+      if (! map.containsKey(p))
+        map.put(p, pt);
     });
 
     return map;

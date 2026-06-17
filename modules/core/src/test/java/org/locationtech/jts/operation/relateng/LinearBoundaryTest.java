@@ -11,6 +11,7 @@
  */
 package org.locationtech.jts.operation.relateng;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,7 +26,7 @@ import junit.textui.TestRunner;
 import test.jts.GeometryTestCase;
 
 public class LinearBoundaryTest extends GeometryTestCase {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(LinearBoundaryTest.class);
   }
   
@@ -60,7 +61,7 @@ public class LinearBoundaryTest extends GeometryTestCase {
   private void checkLinearBoundary(String wkt, BoundaryNodeRule bnr, String wktBdyExpected) {
     Geometry geom = read(wkt);
     LinearBoundary lb = new LinearBoundary(extractLines(geom), bnr);
-    boolean hasBoundaryExpected = wktBdyExpected == null ? false : true;
+    boolean hasBoundaryExpected = wktBdyExpected != null;
     assertEquals("HasBoundary", hasBoundaryExpected, lb.hasBoundary());
     
     checkBoundaryPoints(lb, geom, wktBdyExpected);
@@ -82,16 +83,14 @@ public class LinearBoundaryTest extends GeometryTestCase {
   }
 
   private Set<Coordinate> extractPoints(String wkt) {
-    Set<Coordinate> ptSet = new HashSet<Coordinate>();
+    Set<Coordinate> ptSet = new HashSet<>();
     if (wkt == null) return ptSet;
     Coordinate[] pts = read(wkt).getCoordinates();
-    for (Coordinate p : pts) {
-      ptSet.add(p);
-    }
+      ptSet.addAll(Arrays.asList(pts));
     return ptSet;
   }
 
-  private List<LineString> extractLines(Geometry geom) {
+  private static List<LineString> extractLines(Geometry geom) {
     return LineStringExtracter.getLines(geom);
   }
 }

@@ -23,7 +23,7 @@ import org.locationtech.jts.shape.GeometricShapeBuilder;
 public class KochSnowflakeBuilder 
 extends GeometricShapeBuilder
 {
-	private CoordinateList coordList = new CoordinateList();
+	private final CoordinateList coordList = new CoordinateList();
 	
 	public KochSnowflakeBuilder(GeometryFactory geomFactory)
 	{

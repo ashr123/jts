@@ -50,7 +50,7 @@ public class Label {
     return lineLabel;
   }
 
-  TopologyLocation elt[] = new TopologyLocation[2];
+  final TopologyLocation[] elt = new TopologyLocation[2];
 
   /**
    * Construct a Label with a single location for both Geometries.
@@ -204,14 +204,14 @@ s   */
   }
   public String toString()
   {
-    StringBuffer buf = new StringBuffer();
+    StringBuilder buf = new StringBuilder();
     if (elt[0] != null) {
       buf.append("A:");
-      buf.append(elt[0].toString());
+      buf.append(elt[0]);
     }
     if (elt[1] != null) {
       buf.append(" B:");
-      buf.append(elt[1].toString());
+      buf.append(elt[1]);
     }
     return buf.toString();
   }

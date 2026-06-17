@@ -23,7 +23,10 @@ import org.locationtech.jts.geom.Quadrant;
  */
 public class PolygonNodeTopology 
 {
-  /**
+    private PolygonNodeTopology() {
+    }
+
+    /**
    * Check if four segments at a node cross.
    * Typically the segments lie in two different rings, or different sections of one ring.
    * The node is topologically valid if the rings do not cross.
@@ -86,9 +89,8 @@ public class PolygonNodeTopology
       isInteriorBetween = false;
     }
     boolean isBetween = isBetween(nodePt, b, aLo, aHi);
-    boolean isInterior = (isBetween && isInteriorBetween)
-        || (! isBetween && ! isInteriorBetween);
-    return isInterior;
+      return (isBetween && isInteriorBetween)
+          || (! isBetween && ! isInteriorBetween);
   }
   
   /**

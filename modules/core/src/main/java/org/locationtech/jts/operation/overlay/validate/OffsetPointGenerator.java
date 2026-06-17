@@ -13,7 +13,6 @@
 package org.locationtech.jts.operation.overlay.validate;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.geom.Coordinate;
@@ -38,7 +37,7 @@ import org.locationtech.jts.math.MathUtil;
  */
 public class OffsetPointGenerator
 {
-  private Geometry g;
+  private final Geometry g;
   private boolean doLeft = true; 
   private boolean doRight = true;
   
@@ -64,19 +63,18 @@ public class OffsetPointGenerator
    *
    * @return List&lt;Coordinate&gt;
    */
-  public List getPoints(double offsetDistance)
+  public List<Coordinate> getPoints(double offsetDistance)
   {
-    List offsetPts = new ArrayList();
-    List lines = LinearComponentExtracter.getLines(g);
-    for (Iterator i = lines.iterator(); i.hasNext(); ) {
-      LineString line = (LineString) i.next();
-      extractPoints(line, offsetDistance, offsetPts);
-    }
+    List<Coordinate> offsetPts = new ArrayList<>();
+    List<LineString> lines = LinearComponentExtracter.getLines(g);
+      for (LineString line : lines) {
+          extractPoints(line, offsetDistance, offsetPts);
+      }
     //System.out.println(toMultiPoint(offsetPts));
     return offsetPts;
   }
 
-  private void extractPoints(LineString line, double offsetDistance, List offsetPts)
+  private void extractPoints(LineString line, double offsetDistance, List<Coordinate> offsetPts)
   {
     Coordinate[] pts = line.getCoordinates();
     for (int i = 0; i < pts.length - 1; i++) {
@@ -92,7 +90,7 @@ public class OffsetPointGenerator
    * @param p0 the first point of the segment to offset from
    * @param p1 the second point of the segment to offset from
    */
-  private void computeOffsetPoints(Coordinate p0, Coordinate p1, double offsetDistance, List offsetPts)
+  private void computeOffsetPoints(Coordinate p0, Coordinate p1, double offsetDistance, List<Coordinate> offsetPts)
   {
     double dx = p1.x - p0.x;
     double dy = p1.y - p0.y;

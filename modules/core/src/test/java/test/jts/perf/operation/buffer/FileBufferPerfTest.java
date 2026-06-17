@@ -12,7 +12,6 @@
 
 package test.jts.perf.operation.buffer;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.geom.Geometry;
@@ -28,16 +27,16 @@ public class FileBufferPerfTest
 {
   static final int MAX_ITER = 1;
 
-  static PrecisionModel pm = new PrecisionModel();
-  static GeometryFactory fact = new GeometryFactory(pm, 0);
-  static WKTReader wktRdr = new WKTReader(fact);
+  static final PrecisionModel pm = new PrecisionModel();
+  static final GeometryFactory fact = new GeometryFactory(pm, 0);
+  static final WKTReader wktRdr = new WKTReader(fact);
 
   GeometryFactory factory = new GeometryFactory();
 
   public static void main(String[] args) {
     FileBufferPerfTest test = new FileBufferPerfTest();
     try {
-      test.test();
+      FileBufferPerfTest.test();
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -49,7 +48,7 @@ public class FileBufferPerfTest
   public FileBufferPerfTest() {
   }
 
-  public void test()
+  public static void test()
   throws Exception
   {
     test(TestFiles.getResourceFilePath("africa.wkt"));
@@ -58,11 +57,11 @@ public class FileBufferPerfTest
     // test(TestFiles.getResourceFilePath("bc_20K.wkt"));
   }
 
-  public void test(String filename)
+  public static void test(String filename)
     throws Exception
   {
     WKTFileReader fileRdr = new WKTFileReader(filename, wktRdr);
-    List polys = fileRdr.read();
+    List<Geometry> polys = fileRdr.read();
 
     runAll(polys, 0.01);
     runAll(polys, 0.1);
@@ -72,15 +71,14 @@ public class FileBufferPerfTest
     runAll(polys, 1000.0);
   }
 
-  void runAll(List polys, double distance)
+  static void runAll(List<? extends Geometry> polys, double distance)
   {
     System.out.println("Geom count = " + polys.size() + "   distance = " + distance);
     Stopwatch sw = new Stopwatch();
-    for (Iterator i = polys.iterator(); i.hasNext(); ) {
-      Geometry g = (Geometry) i.next();
-      g.buffer(distance);
-      System.out.print(".");
-    }
+      for (Geometry g : polys) {
+          g.buffer(distance);
+          System.out.print(".");
+      }
     System.out.println();
     System.out.println("   Time = " + sw.getTimeString());
   }

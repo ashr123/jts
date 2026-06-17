@@ -21,7 +21,7 @@ public class Vector3DTest extends TestCase {
 
   private static final double TOLERANCE = 1E-5;
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(Vector3DTest.class);
   }
 
@@ -77,7 +77,7 @@ public class Vector3DTest extends TestCase {
     return Vector3D.create(x, y, z);
   }
   
-  void assertEquals(Vector3D expected, Vector3D actual)
+  static void assertEquals(Vector3D expected, Vector3D actual)
   {
     boolean isEqual = expected.equals(actual);
     if (! isEqual) {
@@ -86,7 +86,7 @@ public class Vector3DTest extends TestCase {
     assertTrue(isEqual);
   }
   
-  void assertEquals(Vector3D expected, Vector3D actual, double tolerance)
+  static void assertEquals(Vector3D expected, Vector3D actual, double tolerance)
   {
     assertEquals(expected.getX(), actual.getX(), tolerance);
     assertEquals(expected.getY(), actual.getY(), tolerance);

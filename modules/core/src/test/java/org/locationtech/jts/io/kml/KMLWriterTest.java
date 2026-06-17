@@ -13,7 +13,6 @@
 package org.locationtech.jts.io.kml;
 
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
@@ -24,11 +23,11 @@ import junit.textui.TestRunner;
 
 public class KMLWriterTest extends TestCase 
 {
-  PrecisionModel precisionModel = new PrecisionModel(1);
-  GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
-  WKTReader rdr = new WKTReader();
+  final PrecisionModel precisionModel = new PrecisionModel(1);
+//  GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
+  final WKTReader rdr = new WKTReader();
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(KMLWriterTest.class);
   }
 
@@ -128,8 +127,7 @@ public class KMLWriterTest extends TestCase
 
 
   private void checkEqual(String wkt, String expectedKML) {
-    KMLWriter kmlWriter = new KMLWriter();
-    checkEqual(kmlWriter, wkt, expectedKML);
+      checkEqual(new KMLWriter(), wkt, expectedKML);
   }
 
   private void checkEqual(KMLWriter kmlWriter, String wkt, String expectedKML) {
@@ -141,7 +139,7 @@ public class KMLWriterTest extends TestCase
     }
   }
 
-  private void checkEqual(KMLWriter kmlWriter, Geometry geom, String expectedKML) {
+  private static void checkEqual(KMLWriter kmlWriter, Geometry geom, String expectedKML) {
     String kml = kmlWriter.write(geom);
     String kmlNorm = normalizeKML(kml);
     String expectedKMLNorm = normalizeKML(expectedKML);
@@ -158,9 +156,7 @@ public class KMLWriterTest extends TestCase
    * @param expectedKML
    * @return
    */
-  private String normalizeKML(String kml) {
-    String condenseSpace = kml.replaceAll("\\s+", " ").trim();
-    String removeRedundantSpace = condenseSpace.replaceAll("> <", "><");
-    return removeRedundantSpace;
+  private static String normalizeKML(String kml) {
+      return kml.replaceAll("\\s+", " ").trim().replace("> <", "><");
   }
 }

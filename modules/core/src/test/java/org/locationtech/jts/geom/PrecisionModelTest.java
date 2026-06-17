@@ -53,9 +53,9 @@ public class PrecisionModelTest extends TestCase
   	preciseCoordinateTester(pm_10, 1209.4, 1240.4, 1210, 1240);
   }
   
-  private void preciseCoordinateTester(PrecisionModel pm, 
-  		double x1, double y1, 
-  		double x2, double y2)
+  private static void preciseCoordinateTester(PrecisionModel pm,
+                                              double x1, double y1,
+                                              double x2, double y2)
   {
   	Coordinate p = new Coordinate(x1, y1);
   	

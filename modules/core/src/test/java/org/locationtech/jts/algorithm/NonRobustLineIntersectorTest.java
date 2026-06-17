@@ -23,7 +23,7 @@ import junit.framework.TestCase;
  */
 public class NonRobustLineIntersectorTest extends TestCase {
 
-  private NonRobustLineIntersector li = new NonRobustLineIntersector();
+  private final NonRobustLineIntersector li = new NonRobustLineIntersector();
 
   public NonRobustLineIntersectorTest(String Name_) {
     super(Name_);

@@ -12,17 +12,16 @@
 
 package org.locationtech.jts.noding;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.util.LinearComponentExtracter;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -33,7 +32,10 @@ import org.locationtech.jts.geom.util.LinearComponentExtracter;
  */
 public class SegmentStringUtil 
 {
-  /**
+    private SegmentStringUtil() {
+    }
+
+    /**
    * Extracts all linear components from a given {@link Geometry}
    * to {@link SegmentString}s.
    * The SegmentString data item is set to be the source Geometry.
@@ -41,7 +43,7 @@ public class SegmentStringUtil
    * @param geom the geometry to extract from
    * @return a List of SegmentStrings
    */
-  public static List extractSegmentStrings(Geometry geom)
+  public static List<NodedSegmentString> extractSegmentStrings(Geometry geom)
   {
     return extractNodedSegmentStrings(geom);
   }
@@ -54,15 +56,14 @@ public class SegmentStringUtil
    * @param geom the geometry to extract from
    * @return a List of NodedSegmentStrings
    */
-  public static List extractNodedSegmentStrings(Geometry geom)
+  public static List<NodedSegmentString> extractNodedSegmentStrings(Geometry geom)
   {
-    List segStr = new ArrayList();
-    List lines = LinearComponentExtracter.getLines(geom);
-    for (Iterator i = lines.iterator(); i.hasNext(); ) {
-      LineString line = (LineString) i.next();
-      Coordinate[] pts = line.getCoordinates();
-      segStr.add(new NodedSegmentString(pts, geom));
-    }
+    List<NodedSegmentString> segStr = new ArrayList<>();
+    List<LineString> lines = LinearComponentExtracter.getLines(geom);
+      for (LineString o : lines) {
+          Coordinate[] pts = o.getCoordinates();
+          segStr.add(new NodedSegmentString(pts, geom));
+      }
     return segStr;
   }
   
@@ -74,15 +75,14 @@ public class SegmentStringUtil
    * @param geom the geometry to extract from
    * @return a List of BasicSegmentStrings
    */
-  public static List extractBasicSegmentStrings(Geometry geom)
+  public static List<BasicSegmentString> extractBasicSegmentStrings(Geometry geom)
   {
-    List segStr = new ArrayList();
-    List lines = LinearComponentExtracter.getLines(geom);
-    for (Iterator i = lines.iterator(); i.hasNext(); ) {
-      LineString line = (LineString) i.next();
-      Coordinate[] pts = line.getCoordinates();
-      segStr.add(new BasicSegmentString(pts, geom));
-    }
+    List<BasicSegmentString> segStr = new ArrayList<>();
+    List<LineString> lines = LinearComponentExtracter.getLines(geom);
+      for (LineString o : lines) {
+          Coordinate[] pts = o.getCoordinates();
+          segStr.add(new BasicSegmentString(pts, geom));
+      }
     return segStr;
   }
   
@@ -94,28 +94,26 @@ public class SegmentStringUtil
    * @param segStrings a collection of SegmentStrings
    * @return a LineString or MultiLineString
    */
-  public static Geometry toGeometry(Collection segStrings, GeometryFactory geomFact)
+  public static Geometry toGeometry(Collection<? extends SegmentString> segStrings, GeometryFactory geomFact)
   {
     LineString[] lines = new LineString[segStrings.size()];
     int index = 0;
-    for (Iterator i = segStrings.iterator(); i.hasNext(); ) {
-      SegmentString ss = (SegmentString) i.next();
-      LineString line = geomFact.createLineString(ss.getCoordinates());
-      lines[index++] = line;
-    }
+      for (SegmentString ss : segStrings) {
+          LineString line = geomFact.createLineString(ss.getCoordinates());
+          lines[index++] = line;
+      }
     if (lines.length == 1) return lines[0];
     return geomFact.createMultiLineString(lines);
   }
 
-  public static String toString(List segStrings)
+  public static String toString(List<? extends SegmentString> segStrings)
   {
-	StringBuffer buf = new StringBuffer();
-    for (Iterator i = segStrings.iterator(); i.hasNext(); ) {
-        SegmentString segStr = (SegmentString) i.next();
-        buf.append(segStr.toString());
-        buf.append("\n");
-        
-    }
+	StringBuilder buf = new StringBuilder();
+      for (SegmentString segStr : segStrings) {
+          buf.append(segStr.toString());
+          buf.append("\n");
+
+      }
     return buf.toString();
   }
 }

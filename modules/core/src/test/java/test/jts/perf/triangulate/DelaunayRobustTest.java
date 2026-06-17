@@ -34,12 +34,14 @@ import org.locationtech.jts.util.Stopwatch;
  */
 public class DelaunayRobustTest 
 {
-  public static void main(String args[]) {
-  	DelaunayRobustTest test = new DelaunayRobustTest();
-  	test.run();
+    private DelaunayRobustTest() {
+    }
+
+    public static void main(String[] args) {
+      run();
   }
   
-	public void run()
+	public static void run()
 	{
 		run(100000);
 	}
@@ -49,12 +51,12 @@ public class DelaunayRobustTest
   final static double SIDE_LEN = 1.0;
   final static double BASE_OFFSET = 1.0e7;
 	
-	public void run(int nPts)
+	public static void run(int nPts)
 	{
     System.out.println("Base offset: " + BASE_OFFSET);
     
     
-		List pts = randomPointsInGrid(nPts, BASE_OFFSET, BASE_OFFSET);
+		List<Coordinate> pts = randomPointsInGrid(nPts, BASE_OFFSET, BASE_OFFSET);
 		System.out.println("# pts: " + pts.size());
 		Stopwatch sw = new Stopwatch();
 		DelaunayTriangulationBuilder builder = new DelaunayTriangulationBuilder();
@@ -69,9 +71,9 @@ public class DelaunayRobustTest
 //		System.out.println(g);
 	}
 	
-	List randomPointsInGrid(int nPts, double basex, double basey)
+	static List<Coordinate> randomPointsInGrid(int nPts, double basex, double basey)
 	{
-		List pts = new ArrayList();
+		List<Coordinate> pts = new ArrayList<>();
 		
 		int nSide = (int) Math.sqrt(nPts) + 1;
 		
@@ -85,9 +87,9 @@ public class DelaunayRobustTest
 		return pts;
 	}
 	
-	List randomPoints(int nPts)
+	static List<Coordinate> randomPoints(int nPts)
 	{
-		List pts = new ArrayList();
+		List<Coordinate> pts = new ArrayList<>();
 		
 		for (int i = 0; i < nPts; i++) {
 				double x = SIDE_LEN * Math.random();

@@ -51,15 +51,15 @@ class NodeSection implements Comparable<NodeSection>
     return a.dimension() == Dimension.A && b.dimension() == Dimension.A;
   }
   
-  private boolean isA;
-  private int dim;
-  private int id;
-  private int ringId;
-  private boolean isNodeAtVertex;
-  private Coordinate nodePt;
-  private Coordinate v0;
-  private Coordinate v1;
-  private Geometry poly;
+  private final boolean isA;
+  private final int dim;
+  private final int id;
+  private final int ringId;
+  private final boolean isNodeAtVertex;
+  private final Coordinate nodePt;
+  private final Coordinate v0;
+  private final Coordinate v1;
+  private final Geometry poly;
 
   public NodeSection(boolean isA, 
       int dimension, int id, int ringId,  
@@ -145,7 +145,7 @@ class NodeSection implements Comparable<NodeSection>
         geomName, dim, polyId, edgeRep(v0, nodePt), atVertexInd, edgeRep(nodePt, v1));
   }
 
-  private String edgeRep(Coordinate p0, Coordinate p1) {
+  private static String edgeRep(Coordinate p0, Coordinate p1) {
     if (p0 == null || p1 == null)
       return "null";
     return WKTWriter.toLineString(p0, p1);

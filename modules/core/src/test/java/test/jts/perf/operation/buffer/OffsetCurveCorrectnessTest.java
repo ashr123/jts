@@ -27,11 +27,11 @@ import org.locationtech.jts.operation.buffer.OffsetCurveBuilder;
 public class OffsetCurveCorrectnessTest 
 {
 
-  private PrecisionModel precisionModel = new PrecisionModel();
-  private GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
-  WKTReader rdr = new WKTReader(geometryFactory);
+  private final PrecisionModel precisionModel = new PrecisionModel();
+  private final GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
+  final WKTReader rdr = new WKTReader(geometryFactory);
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
   	try {
   		(new OffsetCurveCorrectnessTest()).run7();
   	}
@@ -67,8 +67,7 @@ public class OffsetCurveCorrectnessTest
     else {
       curvePts = ocb.getLineCurve(pts, distance);
     }
-    Geometry curve = g.getFactory().createLineString(curvePts);
-    return curve;
+        return g.getFactory().createLineString(curvePts);
 	}
 
 

@@ -24,9 +24,9 @@ public class ByteOrderDataInStream
   private int byteOrder = ByteOrderValues.BIG_ENDIAN;
   private InStream stream;
   // buffers to hold primitive datatypes
-  private byte[] buf1 = new byte[1];
-  private byte[] buf4 = new byte[4];
-  private byte[] buf8 = new byte[8];
+  private final byte[] buf1 = new byte[1];
+  private final byte[] buf4 = new byte[4];
+  private final byte[] buf8 = new byte[8];
   private byte[] bufLast = null;
   
   private long count = 0;

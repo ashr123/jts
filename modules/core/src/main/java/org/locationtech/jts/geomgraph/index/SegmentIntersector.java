@@ -11,13 +11,14 @@
  */
 package org.locationtech.jts.geomgraph.index;
 
-import java.util.Collection;
-import java.util.Iterator;
-
 import org.locationtech.jts.algorithm.LineIntersector;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geomgraph.Edge;
 import org.locationtech.jts.geomgraph.Node;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -44,9 +45,9 @@ public class SegmentIntersector
   // the proper intersection point found
   private Coordinate properIntersectionPoint = null;
 
-  private LineIntersector li;
-  private boolean includeProper;
-  private boolean recordIsolated;
+  private final LineIntersector li;
+  private final boolean includeProper;
+  private final boolean recordIsolated;
   private boolean isSelfIntersection;
   //private boolean intersectionFound;
   private int numIntersections = 0;
@@ -54,7 +55,7 @@ public class SegmentIntersector
   // testing only
   public int numTests = 0;
 
-  private Collection[] bdyNodes;
+  private List<Collection<Node>> bdyNodes;
 
   public SegmentIntersector(LineIntersector li,  boolean includeProper, boolean recordIsolated)
   {
@@ -63,15 +64,13 @@ public class SegmentIntersector
     this.recordIsolated = recordIsolated;
   }
 
-  public void setBoundaryNodes( Collection bdyNodes0,
-                              Collection bdyNodes1)
+  public void setBoundaryNodes(Collection<Node> bdyNodes0,
+                               Collection<Node> bdyNodes1)
   {
-      bdyNodes = new Collection[2];
-      bdyNodes[0] = bdyNodes0;
-      bdyNodes[1] = bdyNodes1;
+      bdyNodes = Arrays.asList(bdyNodes0, bdyNodes1);
   }
   
-  public boolean isDone() {
+  public static boolean isDone() {
 	  return false;
   }
   /**
@@ -119,10 +118,8 @@ public class SegmentIntersector
           return true;
         if (e0.isClosed()) {
           int maxSegIndex = e0.getNumPoints() - 1;
-          if (    (segIndex0 == 0 && segIndex1 == maxSegIndex)
-              ||  (segIndex1 == 0 && segIndex0 == maxSegIndex) ) {
-            return true;
-          }
+            return (segIndex0 == 0 && segIndex1 == maxSegIndex)
+                    || (segIndex1 == 0 && segIndex0 == maxSegIndex);
         }
       }
     }
@@ -190,21 +187,19 @@ public class SegmentIntersector
     }
   }
 
-  private boolean isBoundaryPoint(LineIntersector li, Collection[] bdyNodes)
+  private static boolean isBoundaryPoint(LineIntersector li, List<Collection<Node>> bdyNodes)
   {
     if (bdyNodes == null) return false;
-    if (isBoundaryPointInternal(li, bdyNodes[0])) return true;
-    if (isBoundaryPointInternal(li, bdyNodes[1])) return true;
-    return false;
+    if (isBoundaryPointInternal(li, bdyNodes.get(0))) return true;
+      return isBoundaryPointInternal(li, bdyNodes.get(1));
   }
 
-  private boolean isBoundaryPointInternal(LineIntersector li, Collection bdyNodes)
+  private static boolean isBoundaryPointInternal(LineIntersector li, Collection<Node> bdyNodes)
   {
-    for (Iterator i = bdyNodes.iterator(); i.hasNext(); ) {
-      Node node = (Node) i.next();
-      Coordinate pt = node.getCoordinate();
-      if (li.isIntersection(pt)) return true;
-    }
+      for (Node node : bdyNodes) {
+          Coordinate pt = node.getCoordinate();
+          if (li.isIntersection(pt)) return true;
+      }
     return false;
   }
 

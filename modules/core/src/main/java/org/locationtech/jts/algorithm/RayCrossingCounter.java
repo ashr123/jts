@@ -98,7 +98,7 @@ public class RayCrossingCounter
     return counter.getLocation();
   }
 
-	private Coordinate p;
+	private final Coordinate p;
 	private int crossingCount = 0;
 	// true if the test point lies on an input segment
 	private boolean isPointOnSegment = false;

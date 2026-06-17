@@ -35,20 +35,20 @@ import org.locationtech.jts.util.Stopwatch;
  */
 public class ValidStressTest  
 {
-  public static void main(String args[]) {
-    (new ValidStressTest()).runComb();
-    (new ValidStressTest()).runStarCrossPoly();
-    (new ValidStressTest()).runStarCrossRing();
+  public static void main(String[] args) {
+    runComb();
+    runStarCrossPoly();
+    runStarCrossRing();
   }
 
-  public ValidStressTest() {
+  private ValidStressTest() {
   }
 
-  public static int SIZE = 10000;
+  public static final int SIZE = 10000;
   
-  static GeometryFactory geomFact = new GeometryFactory();
+  static final GeometryFactory geomFact = new GeometryFactory();
   
-  public void runComb()
+  public static void runComb()
   {
     int size = 400;
     Envelope env =  new Envelope(0,100,0,100);
@@ -57,7 +57,7 @@ public class ValidStressTest
     checkValid("Crossed combs (size = " + size + " )", geom);
   }
 
-  public void runStarCrossPoly()
+  public static void runStarCrossPoly()
   {
     int size = 1000;
     Envelope env =  new Envelope(0,100,0,100);
@@ -66,7 +66,7 @@ public class ValidStressTest
     checkValid("StarCross " + geom.getGeometryType() + "   (size = " + size + " )", geom);
   }
 
-  public void runStarCrossRing()
+  public static void runStarCrossRing()
   {
     int size = 1000;
     Envelope env =  new Envelope(0,100,0,100);
@@ -76,7 +76,7 @@ public class ValidStressTest
     checkValid("StarCross " + geom.getGeometryType() + "   (size = " + size + " )", geom);
   }
 
-  public void checkValid(String name, Geometry g)
+  public static void checkValid(String name, Geometry g)
   {
     System.out.println("Running " + name);
     Stopwatch sw = new Stopwatch();
@@ -90,7 +90,10 @@ public class ValidStressTest
 
 class StarCross 
 {
-  public static Polygon star(Envelope env, int nSeg, GeometryFactory geomFact)
+    private StarCross() {
+    }
+
+    public static Polygon star(Envelope env, int nSeg, GeometryFactory geomFact)
   {     
     Coordinate[] pts = new Coordinate[nSeg + 1];
     Coordinate centre = env.centre();
@@ -118,14 +121,16 @@ class StarCross
  */
 class Comb
 {
-  
-  public static MultiPolygon crossedComb(Envelope env, int size, GeometryFactory geomFact) {
+
+    private Comb() {
+    }
+
+    public static MultiPolygon crossedComb(Envelope env, int size, GeometryFactory geomFact) {
     Polygon comb1 = comb(env, size, geomFact);
     Coordinate centre = env.centre();
     AffineTransformation trans = AffineTransformation.rotationInstance(0.5 * Math.PI, centre.x, centre.y);
-    Polygon comb2 = (Polygon) trans.transform(comb1);    
-    MultiPolygon mp = geomFact.createMultiPolygon(new Polygon[] { comb1, comb2 } );
-    return mp;
+    Polygon comb2 = (Polygon) trans.transform(comb1);
+      return geomFact.createMultiPolygon(new Polygon[] { comb1, comb2 } );
   }
 
   public static Polygon comb(Envelope env, int nArms, GeometryFactory geomFact)

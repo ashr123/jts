@@ -31,8 +31,8 @@ import org.locationtech.jts.geom.Coordinate;
 public class InteriorIntersectionFinderAdder
     implements SegmentIntersector
 {
-  private LineIntersector li;
-  private final List interiorIntersections;
+  private final LineIntersector li;
+  private final List<Coordinate> interiorIntersections;
 
 
   /**
@@ -43,10 +43,10 @@ public class InteriorIntersectionFinderAdder
   public InteriorIntersectionFinderAdder(LineIntersector li)
   {
     this.li = li;
-    interiorIntersections = new ArrayList();
+    interiorIntersections = new ArrayList<>();
   }
 
-  public List getInteriorIntersections()  {    return interiorIntersections;  }
+  public List<Coordinate> getInteriorIntersections()  {    return interiorIntersections;  }
 
   /**
    * This method is called by clients

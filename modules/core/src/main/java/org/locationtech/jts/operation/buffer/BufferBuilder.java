@@ -71,13 +71,12 @@ class BufferBuilder
     return 0;
   }
 
-  private BufferParameters bufParams;
+  private final BufferParameters bufParams;
 
   private PrecisionModel workingPrecisionModel;
   private Noder workingNoder;
   private GeometryFactory geomFact;
-  private PlanarGraph graph;
-  private EdgeList edgeList     = new EdgeList();
+    private final EdgeList edgeList     = new EdgeList();
 
   private boolean isInvertOrientation = false;
 
@@ -138,10 +137,10 @@ class BufferBuilder
     BufferCurveSetBuilder curveSetBuilder = new BufferCurveSetBuilder(g, distance, precisionModel, bufParams);
     curveSetBuilder.setInvertOrientation(isInvertOrientation);
     
-    List bufferSegStrList = curveSetBuilder.getCurves();
+    List<SegmentString> bufferSegStrList = curveSetBuilder.getCurves();
 
     // short-circuit test
-    if (bufferSegStrList.size() <= 0) {
+    if (bufferSegStrList.isEmpty()) {
       return createEmptyResultGeometry();
     }
 
@@ -163,17 +162,17 @@ class BufferBuilder
      */
     boolean isNodingValidated = distance == 0.0;
     computeNodedEdges(bufferSegStrList, precisionModel, isNodingValidated);
-    
-    graph = new PlanarGraph(new BufferNodeFactory());
+
+      PlanarGraph graph = new PlanarGraph(new BufferNodeFactory());
     graph.addEdges(edgeList.getEdges());
 
-    List subgraphList = createSubgraphs(graph);
+    List<BufferSubgraph> subgraphList = createSubgraphs(graph);
     PolygonBuilder polyBuilder = new PolygonBuilder(geomFact);
     buildSubgraphs(subgraphList, polyBuilder);
-    List resultPolyList = polyBuilder.getPolygons();
+    List<Polygon> resultPolyList = polyBuilder.getPolygons();
 
     // just in case...
-    if (resultPolyList.size() <= 0) {
+    if (resultPolyList.isEmpty()) {
       return createEmptyResultGeometry();
     }
 
@@ -188,14 +187,13 @@ class BufferBuilder
     if (distance > 0 && g.getNumGeometries() == 1 && resultPolyList.size() > 1) {
       resultPolyList = keepLargestArea(resultPolyList);
     }
-    
-    Geometry resultGeom = geomFact.buildGeometry(resultPolyList);
-    return resultGeom;
+
+      return geomFact.buildGeometry(resultPolyList);
   }
 
   private static List<Polygon> keepLargestArea(List<Polygon> polyList) {
     Polygon largest = findLargestArea(polyList);
-    List<Polygon> largestPolyList = new ArrayList<Polygon>();
+    List<Polygon> largestPolyList = new ArrayList<>();
     largestPolyList.add(largest);
     return largestPolyList;
   }
@@ -230,35 +228,37 @@ class BufferBuilder
 //                                  precisionModel.getScale());
   }
 
-  private void computeNodedEdges(List bufferSegStrList, PrecisionModel precisionModel, boolean isNodingValidated)
+  private void computeNodedEdges(List<? extends SegmentString> bufferSegStrList, PrecisionModel precisionModel, boolean isNodingValidated)
   {
     Noder noder = getNoder(precisionModel);
     noder.computeNodes(bufferSegStrList);
-    Collection nodedSegStrings = noder.getNodedSubstrings();
-    
+    Collection<SegmentString> nodedSegStrings = noder.getNodedSubstrings();
+
     if (isNodingValidated) {
       FastNodingValidator nv = new FastNodingValidator(nodedSegStrings);
       nv.checkValid();
     }
-    
+
 // DEBUGGING ONLY
 //BufferDebug.saveEdges(nodedEdges, "run" + BufferDebug.runCount + "_nodedEdges");
 
-    for (Iterator i = nodedSegStrings.iterator(); i.hasNext(); ) {
-      SegmentString segStr = (SegmentString) i.next();
-      
       /**
-       * Discard edges which have zero length, 
+       * Discard edges which have zero length,
        * since they carry no information and cause problems with topology building
        */
-      Coordinate[] pts = segStr.getCoordinates();
-      if (pts.length == 2 && pts[0].equals2D(pts[1]))
-        continue;
+      for (SegmentString segStr : nodedSegStrings) {
+          /**
+           * Discard edges which have zero length,
+           * since they carry no information and cause problems with topology building
+           */
+          Coordinate[] pts = segStr.getCoordinates();
+          if (pts.length == 2 && pts[0].equals2D(pts[1]))
+              continue;
 
-      Label oldLabel = (Label) segStr.getData();
-      Edge edge = new Edge(segStr.getCoordinates(), new Label(oldLabel));
-      insertUniqueEdge(edge);
-    }
+          Label oldLabel = (Label) segStr.getData();
+          Edge edge = new Edge(segStr.getCoordinates(), new Label(oldLabel));
+          insertUniqueEdge(edge);
+      }
     //saveEdges(edgeList.getEdges(), "run" + runCount + "_collapsedEdges");
   }
 
@@ -301,24 +301,23 @@ class BufferBuilder
     }
   }
 
-  private List createSubgraphs(PlanarGraph graph)
+  private static List<BufferSubgraph> createSubgraphs(PlanarGraph graph)
   {
-    List subgraphList = new ArrayList();
-    for (Iterator i = graph.getNodes().iterator(); i.hasNext(); ) {
-      Node node = (Node) i.next();
-      if (! node.isVisited()) {
-        BufferSubgraph subgraph = new BufferSubgraph();
-        subgraph.create(node);
-        subgraphList.add(subgraph);
+    List<BufferSubgraph> subgraphList = new ArrayList<>();
+      for (Node node : graph.getNodes()) {
+          if (!node.isVisited()) {
+              BufferSubgraph subgraph = new BufferSubgraph();
+              subgraph.create(node);
+              subgraphList.add(subgraph);
+          }
       }
-    }
     /**
      * Sort the subgraphs in descending order of their rightmost coordinate.
      * This ensures that when the Polygons for the subgraphs are built,
      * subgraphs for shells will have been built before the subgraphs for
      * any holes they contain.
      */
-    Collections.sort(subgraphList, Collections.reverseOrder());
+    subgraphList.sort(Collections.reverseOrder());
     return subgraphList;
   }
 
@@ -330,37 +329,36 @@ class BufferBuilder
    * @param subgraphList the subgraphs to build
    * @param polyBuilder the PolygonBuilder which will build the final polygons
    */
-  private void buildSubgraphs(List subgraphList, PolygonBuilder polyBuilder)
+  private static void buildSubgraphs(List<BufferSubgraph> subgraphList, PolygonBuilder polyBuilder)
   {
-    List processedGraphs = new ArrayList();
-    for (Iterator i = subgraphList.iterator(); i.hasNext(); ) {
-      BufferSubgraph subgraph = (BufferSubgraph) i.next();
-      Coordinate p = subgraph.getRightmostCoordinate();
+    List<BufferSubgraph> processedGraphs = new ArrayList<>();
+      for (BufferSubgraph subgraph : subgraphList) {
+          Coordinate p = subgraph.getRightmostCoordinate();
 //      int outsideDepth = 0;
 //      if (polyBuilder.containsPoint(p))
 //        outsideDepth = 1;
-      SubgraphDepthLocater locater = new SubgraphDepthLocater(processedGraphs);
-      int outsideDepth = locater.getDepth(p);
+          SubgraphDepthLocater locater = new SubgraphDepthLocater(processedGraphs);
+          int outsideDepth = locater.getDepth(p);
 //      try {
-      subgraph.computeDepth(outsideDepth);
+          subgraph.computeDepth(outsideDepth);
 //      }
 //      catch (RuntimeException ex) {
 //        // debugging only
 //        //subgraph.saveDirEdges();
 //        throw ex;
 //      }
-      subgraph.findResultEdges();
-      processedGraphs.add(subgraph);
-      polyBuilder.add(subgraph.getDirectedEdges(), subgraph.getNodes());
-    }
+          subgraph.findResultEdges();
+          processedGraphs.add(subgraph);
+          polyBuilder.add(subgraph.getDirectedEdges(), subgraph.getNodes());
+      }
   }
   
-  private static Geometry convertSegStrings(Iterator it)
+  private static Geometry convertSegStrings(Iterator<SegmentString> it)
   {
   	GeometryFactory fact = new GeometryFactory();
-  	List lines = new ArrayList();
+  	List<LineString> lines = new ArrayList<>();
   	while (it.hasNext()) {
-  		SegmentString ss = (SegmentString) it.next();
+  		SegmentString ss = it.next();
   		LineString line = fact.createLineString(ss.getCoordinates());
   		lines.add(line);
   	}
@@ -376,7 +374,6 @@ class BufferBuilder
    */
   private Geometry createEmptyResultGeometry()
   {
-    Geometry emptyGeom = geomFact.createPolygon();
-    return emptyGeom;
+      return geomFact.createPolygon();
   }
 }

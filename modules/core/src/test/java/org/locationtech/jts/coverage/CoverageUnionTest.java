@@ -19,7 +19,7 @@ import test.jts.GeometryTestCase;
 
 public class CoverageUnionTest extends GeometryTestCase
 {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(CoverageUnionTest.class);
   }
   
@@ -85,7 +85,7 @@ public class CoverageUnionTest extends GeometryTestCase
     Geometry[] coverage = toArray(covGeom);
     Geometry actual = CoverageUnion.union(coverage);
     if (wktExpected == null) {
-      assertTrue(actual == null);
+        assertNull(actual);
       return;
     }
     Geometry expected = read(wktExpected);

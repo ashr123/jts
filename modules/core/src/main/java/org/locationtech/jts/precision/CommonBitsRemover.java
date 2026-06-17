@@ -49,7 +49,7 @@ import org.locationtech.jts.geom.Geometry;
 public class CommonBitsRemover
 {
   private Coordinate commonCoord;
-  private CommonCoordinateFilter ccFilter = new CommonCoordinateFilter();
+  private final CommonCoordinateFilter ccFilter = new CommonCoordinateFilter();
 
   public CommonBitsRemover()
   {
@@ -110,8 +110,8 @@ public class CommonBitsRemover
   static class CommonCoordinateFilter
       implements CoordinateFilter
   {
-    private CommonBits commonBitsX = new CommonBits();
-    private CommonBits commonBitsY = new CommonBits();
+    private final CommonBits commonBitsX = new CommonBits();
+    private final CommonBits commonBitsY = new CommonBits();
 
     public void filter(Coordinate coord)
     {

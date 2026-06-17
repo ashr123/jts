@@ -35,13 +35,13 @@ extends PerformanceTestCase
 
   private static final int N_ITER = 1;
 
-  static double ORG_X = 100;
-  static double ORG_Y = 100;
-  static double SIZE = 100;
-  static int N_ARMS = 20;
-  static double ARM_RATIO = 0.3;
+  static final double ORG_X = 100;
+  static final double ORG_Y = 100;
+  static final double SIZE = 100;
+  static final int N_ARMS = 20;
+  static final double ARM_RATIO = 0.3;
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     PerformanceTestRunner.run(GeometryPrecisionReducerPerfTest.class);
   }
 
@@ -70,7 +70,7 @@ extends PerformanceTestCase
   
   public void startRun(int npts)
   {
-    iter = 0;
+      int iter = 0;
     sineStar = SineStarFactory.create(new Coordinate(ORG_X, ORG_Y), SIZE, npts, N_ARMS, ARM_RATIO);
     
     double scale = npts / SIZE;
@@ -79,10 +79,8 @@ extends PerformanceTestCase
     
     if (npts <= 1000) System.out.println(sineStar);
   }
-  
-  private int iter = 0;
-  
-  public void runReduce()
+
+    public void runReduce()
   {
     Geometry sinePolyCrinkly = GeometryPrecisionReducer.reduce(sineStar, pm);
   }

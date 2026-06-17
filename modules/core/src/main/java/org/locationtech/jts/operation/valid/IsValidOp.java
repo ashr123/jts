@@ -57,14 +57,13 @@ public class IsValidOp
     if (Double.isNaN(coord.x)) return false;
     if (Double.isInfinite(coord.x)) return false;
     if (Double.isNaN(coord.y)) return false;
-    if (Double.isInfinite(coord.y)) return false;
-    return true;
+      return !Double.isInfinite(coord.y);
   }
   
   /**
    * The geometry being validated
    */
-  private Geometry inputGeometry;  
+  private final Geometry inputGeometry;
   /**
    * If the following condition is TRUE JTS will validate inverted shells and exverted holes
    * (the ESRI SDE model)
@@ -175,8 +174,7 @@ public class IsValidOp
   private boolean isValid(Point g)
   {
     checkCoordinatesValid(g.getCoordinates());
-    if (hasInvalidError()) return false;
-    return true;
+      return !hasInvalidError();
   }
   
   /**
@@ -185,8 +183,7 @@ public class IsValidOp
   private boolean isValid(MultiPoint g)
   {
     checkCoordinatesValid(g.getCoordinates());
-    if (hasInvalidError()) return false;
-    return true;
+      return !hasInvalidError();
   }
 
   /**
@@ -198,8 +195,7 @@ public class IsValidOp
     checkCoordinatesValid(g.getCoordinates());
     if (hasInvalidError()) return false;
     checkPointSize(g, MIN_SIZE_LINESTRING);
-    if (hasInvalidError()) return false;
-    return true;
+      return !hasInvalidError();
   }
   
   /**
@@ -247,9 +243,7 @@ public class IsValidOp
     if (hasInvalidError()) return false;
     
     checkInteriorConnected(areaAnalyzer);
-    if (hasInvalidError()) return false;
-    
-    return true;
+      return !hasInvalidError();
   }
 
   /**
@@ -290,9 +284,7 @@ public class IsValidOp
     if (hasInvalidError()) return false;
     
     checkInteriorConnected(areaAnalyzer);
-    if (hasInvalidError()) return false;
-
-    return true;
+      return !hasInvalidError();
   }
 
   /**
@@ -312,12 +304,12 @@ public class IsValidOp
 
   private void checkCoordinatesValid(Coordinate[] coords)
   {
-    for (int i = 0; i < coords.length; i++) {
-      if (! isValid(coords[i])) {
-        logInvalid(TopologyValidationError.INVALID_COORDINATE, coords[i]);
-        return;
+      for (Coordinate coord : coords) {
+          if (!isValid(coord)) {
+              logInvalid(TopologyValidationError.INVALID_COORDINATE, coord);
+              return;
+          }
       }
-    }
   }
 
   private void checkCoordinatesValid(Polygon poly)
@@ -336,7 +328,6 @@ public class IsValidOp
     if (! ring.isClosed() ) {
       Coordinate pt = ring.getNumPoints() >= 1 ? ring.getCoordinateN(0) : null;
       logInvalid( TopologyValidationError.RING_NOT_CLOSED, pt);
-      return;
     }
   }
   
@@ -386,7 +377,7 @@ public class IsValidOp
    * @param minSize the minimum line size
    * @return true if the line has the required number of non-repeated points
    */
-  private boolean isNonRepeatedSizeAtLeast(LineString line, int minSize) {
+  private static boolean isNonRepeatedSizeAtLeast(LineString line, int minSize) {
     int numPts = 0;
     Coordinate prevPt = null;
     for (int i = 0; i < line.getNumPoints(); i++) {
@@ -403,7 +394,6 @@ public class IsValidOp
     if (areaAnalyzer.hasInvalidIntersection()) {
       logInvalid(areaAnalyzer.getInvalidCode(),
                  areaAnalyzer.getInvalidLocation());
-      return;
     }
   }
 
@@ -469,7 +459,7 @@ public class IsValidOp
    * @param shell the polygon shell to test against
    * @return a hole point outside the shell, or null if it is inside
    */
-  private Coordinate findHoleOutsideShellPoint(LinearRing hole, LinearRing shell) {
+  private static Coordinate findHoleOutsideShellPoint(LinearRing hole, LinearRing shell) {
     Coordinate holePt0 = hole.getCoordinateN(0);
     /**
      * If hole envelope is not covered by shell, it must be outside

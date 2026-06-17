@@ -209,8 +209,7 @@ public class OverlayNG
       int opCode, PrecisionModel pm)
   {
     OverlayNG ov = new OverlayNG(geom0, geom1, pm, opCode);
-    Geometry geomOv = ov.getResult();
-    return geomOv;
+      return ov.getResult();
   }
 
   /**
@@ -229,8 +228,7 @@ public class OverlayNG
   {
     OverlayNG ov = new OverlayNG(geom0, geom1, pm, opCode);
     ov.setNoder(noder);
-    Geometry geomOv = ov.getResult();
-    return geomOv;
+      return ov.getResult();
   }
 
   /**
@@ -248,8 +246,7 @@ public class OverlayNG
   {
     OverlayNG ov = new OverlayNG(geom0, geom1, null, opCode);
     ov.setNoder(noder);
-    Geometry geomOv = ov.getResult();
-    return geomOv;
+      return ov.getResult();
   }
 
   /**
@@ -300,8 +297,7 @@ public class OverlayNG
   static Geometry union(Geometry geom, PrecisionModel pm)
   {    
     OverlayNG ov = new OverlayNG(geom, pm);
-    Geometry geomOv = ov.getResult();
-    return geomOv;
+      return ov.getResult();
   }
 
   /**
@@ -322,14 +318,13 @@ public class OverlayNG
     OverlayNG ov = new OverlayNG(geom, pm);
     ov.setNoder(noder);
     ov.setStrictMode(true);
-    Geometry geomOv = ov.getResult();
-    return geomOv;
+      return ov.getResult();
   }
   
-  private int opCode;
-  private InputGeometry inputGeom;
-  private GeometryFactory geomFact;
-  private PrecisionModel pm;
+  private final int opCode;
+  private final InputGeometry inputGeom;
+  private final GeometryFactory geomFact;
+  private final PrecisionModel pm;
   private Noder noder;
   private boolean isStrictMode = STRICT_MODE_DEFAULT;
   private boolean isOptimized = true;
@@ -556,7 +551,7 @@ public class OverlayNG
     return mergedEdges;
   }
 
-  private OverlayGraph buildGraph(Collection<Edge> edges) {
+  private static OverlayGraph buildGraph(Collection<Edge> edges) {
     OverlayGraph graph = new OverlayGraph();
     for (Edge e : edges) {
       graph.addEdge(e.getCoordinates(), e.createLabel());
@@ -596,7 +591,7 @@ public class OverlayNG
     List<OverlayEdge> resultAreaEdges = graph.getResultAreaEdges();
     PolygonBuilder polyBuilder = new PolygonBuilder(resultAreaEdges, geomFact);
     List<Polygon> resultPolyList = polyBuilder.getPolygons();
-    boolean hasResultAreaComponents = resultPolyList.size() > 0;
+    boolean hasResultAreaComponents = !resultPolyList.isEmpty();
     
     List<LineString> resultLineList = null;
     List<Point> resultPointList = null;
@@ -617,7 +612,7 @@ public class OverlayNG
        * Only an Intersection op can produce point results
        * from non-point inputs. 
        */
-      boolean hasResultComponents = hasResultAreaComponents || resultLineList.size() > 0;
+      boolean hasResultComponents = hasResultAreaComponents || !resultLineList.isEmpty();
       boolean allowResultPoints = ! hasResultComponents || isAllowMixedIntResult;
       if ( opCode == INTERSECTION && allowResultPoints ) {
         IntersectionPointBuilder pointBuilder = new IntersectionPointBuilder(graph, geomFact);
@@ -630,13 +625,12 @@ public class OverlayNG
         && isEmpty(resultLineList) 
         && isEmpty(resultPointList))
       return createEmptyResult();
-    
-    Geometry resultGeom = OverlayUtil.createResultGeometry(resultPolyList, resultLineList, resultPointList, geomFact);
-    return resultGeom;
+
+      return OverlayUtil.createResultGeometry(resultPolyList, resultLineList, resultPointList, geomFact);
   }
 
-  private static boolean isEmpty(List list) {
-    return list == null || list.size() == 0;
+  private static boolean isEmpty(List<?> list) {
+    return list == null || list.isEmpty();
   }
   
   private Geometry createEmptyResult() {
@@ -648,5 +642,3 @@ public class OverlayNG
   }
  
 }
-
-

@@ -28,8 +28,11 @@ import org.locationtech.jts.geom.Coordinate;
  *
  */
 public class Intersection {
-  
-  /**
+
+    private Intersection() {
+    }
+
+    /**
    * Computes the intersection point of two lines.
    * If the lines are parallel or collinear this case is detected 
    * and <code>null</code> is returned.
@@ -65,20 +68,20 @@ public class Intersection {
    */
   private static Coordinate intersectionFP(Coordinate p1, Coordinate p2, Coordinate q1, Coordinate q2) {
     // compute midpoint of "kernel envelope"
-    double minX0 = p1.x < p2.x ? p1.x : p2.x;
-    double minY0 = p1.y < p2.y ? p1.y : p2.y;
-    double maxX0 = p1.x > p2.x ? p1.x : p2.x;
-    double maxY0 = p1.y > p2.y ? p1.y : p2.y;
+    double minX0 = Math.min(p1.x, p2.x);
+    double minY0 = Math.min(p1.y, p2.y);
+    double maxX0 = Math.max(p1.x, p2.x);
+    double maxY0 = Math.max(p1.y, p2.y);
 
-    double minX1 = q1.x < q2.x ? q1.x : q2.x;
-    double minY1 = q1.y < q2.y ? q1.y : q2.y;
-    double maxX1 = q1.x > q2.x ? q1.x : q2.x;
-    double maxY1 = q1.y > q2.y ? q1.y : q2.y;
+    double minX1 = Math.min(q1.x, q2.x);
+    double minY1 = Math.min(q1.y, q2.y);
+    double maxX1 = Math.max(q1.x, q2.x);
+    double maxY1 = Math.max(q1.y, q2.y);
 
-    double intMinX = minX0 > minX1 ? minX0 : minX1;
-    double intMaxX = maxX0 < maxX1 ? maxX0 : maxX1;
-    double intMinY = minY0 > minY1 ? minY0 : minY1;
-    double intMaxY = maxY0 < maxY1 ? maxY0 : maxY1;
+    double intMinX = Math.max(minX0, minX1);
+    double intMaxX = Math.min(maxX0, maxX1);
+    double intMinY = Math.max(minY0, minY1);
+    double intMaxY = Math.min(maxY0, maxY1);
 
     double midx = (intMinX + intMaxX) / 2.0;
     double midy = (intMinY + intMaxY) / 2.0;
@@ -165,5 +168,3 @@ public class Intersection {
     return seg2;
   }
 }
-
-

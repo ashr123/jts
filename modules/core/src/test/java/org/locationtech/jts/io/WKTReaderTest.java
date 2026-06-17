@@ -48,9 +48,8 @@ public class WKTReaderTest extends GeometryTestCase {
   private final WKTReader readerXYZ;
   private final WKTReader readerXYM;
   private final WKTReader readerXYZM;
-  private WKTReader readerXYZCloseRings;
 
-  public static void main(String args[]) {
+    public static void main(String[] args) {
     TestRunner.run(suite());
   }
 
@@ -67,8 +66,8 @@ public class WKTReaderTest extends GeometryTestCase {
     readerXYZ = getWKTReader(Ordinate.createXYZ(), 1d);
     readerXYM = getWKTReader(Ordinate.createXYM(), 1d);
     readerXYZM = getWKTReader(Ordinate.createXYZM(), 1d);
-    
-    readerXYZCloseRings = getWKTReader(Ordinate.createXYZM(), 1d);
+
+      WKTReader readerXYZCloseRings = getWKTReader(Ordinate.createXYZM(), 1d);
     readerXYZCloseRings.setFixStructure(true);
   }
 
@@ -238,7 +237,7 @@ public class WKTReaderTest extends GeometryTestCase {
     assertTrue(isEqual(csPoly3DM[2], poly3DM[2].getInteriorRingN(1).getCoordinateSequence()));
   }
 
-  static double[][] mpCoords = new double[][] { 
+  static final double[][] mpCoords = new double[][] {
     new double[] {10, 10}, 
     new double[] {20, 20}};
   
@@ -290,7 +289,7 @@ public class WKTReaderTest extends GeometryTestCase {
     checkCS(cs[1], mp.getGeometryN(1));
   }
 
-  double[][] mLcoords = new double[][] { 
+  final double[][] mLcoords = new double[][] {
     new double[] {10, 10, 20, 20}, 
     new double[] {15, 15, 30, 15}};
 
@@ -335,7 +334,7 @@ public class WKTReaderTest extends GeometryTestCase {
     checkCS(cs[1], mp.getGeometryN(1));
   }
 
-  double[][] mAcoords = new double[][] { 
+  final double[][] mAcoords = new double[][] {
     new double[] {10, 10, 10, 20, 20, 20, 20, 15, 10, 10}, 
     new double[] {11, 11, 12, 11, 12, 12, 12, 11, 11, 11},
     new double[] {60, 60, 70, 70, 80, 60, 60, 60}
@@ -361,7 +360,7 @@ public class WKTReaderTest extends GeometryTestCase {
     CoordinateSequence[] cs = createSequences(Ordinate.createXY(), mAcoords);
     checkCS(cs[0], ((Polygon)mp.getGeometryN(0)).getExteriorRing());
     checkCS(cs[1], ((Polygon)mp.getGeometryN(0)).getInteriorRingN(0));
-    checkEmpty(((Polygon)mp.getGeometryN(1)));
+    checkEmpty(mp.getGeometryN(1));
     checkCS(cs[2], ((Polygon)mp.getGeometryN(2)).getExteriorRing());
   }
 
@@ -497,24 +496,24 @@ public class WKTReaderTest extends GeometryTestCase {
   
 
 
-  private void checkCS(CoordinateSequence cs, Geometry geom) {
+  private static void checkCS(CoordinateSequence cs, Geometry geom) {
     assertTrue( isEqual( cs, extractCS(geom)));
   }
 
-  private CoordinateSequence extractCS(Geometry geom) {
+  private static CoordinateSequence extractCS(Geometry geom) {
     if (geom instanceof Point) return ((Point)geom).getCoordinateSequence();
     if (geom instanceof LineString) return ((LineString)geom).getCoordinateSequence();
     throw new IllegalArgumentException("Can't extract coordinate sequence from geometry of type " + geom.getGeometryType());
   }
   
-  private void checkEmpty(Geometry geom) {
+  private static void checkEmpty(Geometry geom) {
     assertTrue(geom.isEmpty());
     if (geom instanceof GeometryCollection) {
-      assertTrue(geom.getNumGeometries() == 0);
+        assertEquals(0, geom.getNumGeometries());
     }
   }
   
-  private void checkCSDim(CoordinateSequence cs, int expectedCoordDim) {
+  private static void checkCSDim(CoordinateSequence cs, int expectedCoordDim) {
     int dim = cs.getDimension();
     assertEquals(expectedCoordDim, dim);
   }

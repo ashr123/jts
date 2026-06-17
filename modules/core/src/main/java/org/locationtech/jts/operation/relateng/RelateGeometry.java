@@ -11,14 +11,7 @@
  */
 package org.locationtech.jts.operation.relateng;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import org.locationtech.jts.algorithm.BoundaryNodeRule;
-import org.locationtech.jts.algorithm.Orientation;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateArrays;
 import org.locationtech.jts.geom.Dimension;
@@ -36,6 +29,12 @@ import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.util.ComponentCoordinateExtracter;
 import org.locationtech.jts.geom.util.PointExtracter;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 class RelateGeometry {
 
   public static final boolean GEOM_A = true;
@@ -45,20 +44,20 @@ class RelateGeometry {
     return isA ? "A" : "B";
   }
   
-  private Geometry geom;
+  private final Geometry geom;
   private boolean isPrepared = false;
   
-  private Envelope geomEnv;
+  private final Envelope geomEnv;
   private int geomDim = Dimension.FALSE;
   private Set<Coordinate> uniquePoints;
-  private BoundaryNodeRule boundaryNodeRule;
+  private final BoundaryNodeRule boundaryNodeRule;
   private RelatePointLocator locator;
   private int elementId = 0;
   private boolean hasPoints;
   private boolean hasLines;
   private boolean hasAreas;
-  private boolean isLineZeroLen;
-  private boolean isGeomEmpty;
+  private final boolean isLineZeroLen;
+  private final boolean isGeomEmpty;
 
   public RelateGeometry(Geometry input) {
     this(input, false, BoundaryNodeRule.OGC_SFS_BOUNDARY_RULE);
@@ -107,10 +106,10 @@ class RelateGeometry {
       return;
     }
     //-- analyze a (possibly mixed type) collection
-    Iterator geomi = new GeometryCollectionIterator(geom);
+    Iterator<Geometry> geomi = new GeometryCollectionIterator(geom);
     while (geomi.hasNext()) {
-      Geometry elem = (Geometry) geomi.next();
-      if (elem.isEmpty()) 
+      Geometry elem = geomi.next();
+      if (elem.isEmpty())
         continue;
       if (elem instanceof Point) {
         hasPoints = true;
@@ -135,9 +134,9 @@ class RelateGeometry {
    * @return
    */
   private static boolean isZeroLength(Geometry geom) {
-    Iterator geomi = new GeometryCollectionIterator(geom);
+    Iterator<Geometry> geomi = new GeometryCollectionIterator(geom);
     while (geomi.hasNext()) {
-      Geometry elem = (Geometry) geomi.next();
+      Geometry elem = geomi.next();
       if (elem instanceof LineString) {
         if (! isZeroLength((LineString) elem))
           return false;
@@ -245,8 +244,7 @@ class RelateGeometry {
   }
   
   public int locateWithDim(Coordinate pt) {
-    int loc = getLocator().locateWithDim(pt);
-    return loc;
+      return getLocator().locateWithDim(pt);
   }
   
   /**
@@ -269,9 +267,7 @@ class RelateGeometry {
     if (hasAreas && geom.getNumGeometries() == 1) 
       return false;
     //-- GCs with only points do not need noding
-    if (! hasAreas && ! hasLines)
-      return false;
-    return true;
+      return hasAreas || hasLines;
   }
 
   /**
@@ -308,10 +304,7 @@ class RelateGeometry {
   
   private Set<Coordinate> createUniquePoints() {
     //-- only called on P geometries
-    List<Coordinate> pts = ComponentCoordinateExtracter.getCoordinates(geom);
-    Set<Coordinate> set = new HashSet<Coordinate>();
-    set.addAll(pts);
-    return set;
+    return new HashSet<>(ComponentCoordinateExtracter.getCoordinates(geom));
   }
   
   public List<Point> getEffectivePoints() {
@@ -321,7 +314,7 @@ class RelateGeometry {
       return ptListAll;
     
     //-- only return Points not covered by another element
-    List<Point> ptList = new ArrayList<Point>();
+    List<Point> ptList = new ArrayList<>();
     for (Point p : ptListAll) {
       if (p.isEmpty())
         continue;
@@ -343,7 +336,7 @@ class RelateGeometry {
    * @return a list of RelateSegmentStrings
    */
   public List<RelateSegmentString> extractSegmentStrings(boolean isA, Envelope env) {
-    List<RelateSegmentString> segStrings = new ArrayList<RelateSegmentString>();
+    List<RelateSegmentString> segStrings = new ArrayList<>();
     extractSegmentStrings(isA, env, geom, segStrings);
     return segStrings;
   }
@@ -404,12 +397,7 @@ class RelateGeometry {
   }
 
   public static Coordinate[] orient(Coordinate[] pts, boolean orientCW) {
-    boolean isFlipped = orientCW == Orientation.isCCW(pts);
-    if (isFlipped) {
-      pts = pts.clone();
-      CoordinateArrays.reverse(pts);
-    }
-    return pts;
+      return CoordinateArrays.orient(pts, orientCW);
   }
   
   public String toString() {

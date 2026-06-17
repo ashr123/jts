@@ -16,7 +16,7 @@ import test.jts.GeometryTestCase;
 import test.jts.GeometryTestData;
 
 public class GeometryCompareToTest extends GeometryTestCase{
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(GeometryCompareToTest.class);
   }
 

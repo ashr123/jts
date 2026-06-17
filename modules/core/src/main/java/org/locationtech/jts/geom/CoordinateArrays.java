@@ -84,23 +84,22 @@ public class CoordinateArrays {
     int maxDimension = -1;
     int maxMeasures = -1;
     boolean isConsistent = true;
-    for (int i = 0; i < array.length; i++) {
-      Coordinate coordinate = array[i];
-      if (coordinate != null) {
-        int d = Coordinates.dimension(coordinate);
-        int m = Coordinates.measures(coordinate);
-        if( maxDimension == -1){
-           maxDimension = d;
-           maxMeasures = m;
-           continue;
-        }
-        if( d != maxDimension || m != maxMeasures ){
-          isConsistent = false;
-          maxDimension = Math.max(maxDimension, d);
-          maxMeasures = Math.max(maxMeasures, m);
-        }
+      for (Coordinate coordinate : array) {
+          if (coordinate != null) {
+              int d = Coordinates.dimension(coordinate);
+              int m = Coordinates.measures(coordinate);
+              if (maxDimension == -1) {
+                  maxDimension = d;
+                  maxMeasures = m;
+                  continue;
+              }
+              if (d != maxDimension || m != maxMeasures) {
+                  isConsistent = false;
+                  maxDimension = Math.max(maxDimension, d);
+                  maxMeasures = Math.max(maxMeasures, m);
+              }
+          }
       }
-    }
     if (!isConsistent) {
       // step two fix
       Coordinate sample = Coordinates.create(maxDimension, maxMeasures);
@@ -134,19 +133,18 @@ public class CoordinateArrays {
     Coordinate sample = Coordinates.create(dimension,measures);
     Class<?> type = sample.getClass();
     boolean isConsistent = true;
-    for (int i = 0; i < array.length; i++) {
-      Coordinate coordinate = array[i];
-      if (coordinate != null && !coordinate.getClass().equals(type)) {
-        isConsistent = false;
-        break;
+      for (Coordinate coordinate : array) {
+          if (coordinate != null && !coordinate.getClass().equals(type)) {
+              isConsistent = false;
+              break;
+          }
       }
-    }
     if (isConsistent) {
       return array;
     }
     else {
       Class<? extends Coordinate> coordinateType = sample.getClass();
-      Coordinate copy[] = (Coordinate[]) Array.newInstance(coordinateType, array.length);
+      Coordinate[] copy = (Coordinate[]) Array.newInstance(coordinateType, array.length);
       for (int i = 0; i < copy.length; i++) {
         Coordinate coordinate = array[i];
         if (coordinate != null && !coordinate.getClass().equals(type)) {
@@ -172,8 +170,7 @@ public class CoordinateArrays {
    */
   public static boolean isRing(Coordinate[] pts) {
     if (pts.length < 4) return false;
-    if (!pts[0].equals2D(pts[pts.length - 1])) return false;
-    return true;
+      return pts[0].equals2D(pts[pts.length - 1]);
   }
 
   /**
@@ -185,11 +182,10 @@ public class CoordinateArrays {
    * or <code>null</code>
    */
   public static Coordinate ptNotInList(Coordinate[] testPts, Coordinate[] pts) {
-    for (int i = 0; i < testPts.length; i++) {
-      Coordinate testPt = testPts[i];
-      if (CoordinateArrays.indexOf(testPt, pts) < 0)
-        return testPt;
-    }
+      for (Coordinate testPt : testPts) {
+          if (CoordinateArrays.indexOf(testPt, pts) < 0)
+              return testPt;
+      }
     return null;
   }
 
@@ -241,11 +237,8 @@ public class CoordinateArrays {
    * using lexicographic ordering.
    */
   public static class ForwardComparator
-    implements Comparator {
-    public int compare(Object o1, Object o2) {
-      Coordinate[] pts1 = (Coordinate[]) o1;
-      Coordinate[] pts2 = (Coordinate[]) o2;
-
+    implements Comparator<Coordinate[]> {
+    public int compare(Coordinate[] pts1, Coordinate[] pts2) {
       return CoordinateArrays.compare(pts1, pts2);
     }
   }
@@ -304,11 +297,8 @@ public class CoordinateArrays {
    * is the ordering in the forward direction.
    */
   public static class BidirectionalComparator
-    implements Comparator {
-    public int compare(Object o1, Object o2) {
-      Coordinate[] pts1 = (Coordinate[]) o1;
-      Coordinate[] pts2 = (Coordinate[]) o2;
-
+    implements Comparator<Coordinate[]> {
+    public int compare(Coordinate[] pts1, Coordinate[] pts2) {
       if (pts1.length < pts2.length) return -1;
       if (pts1.length > pts2.length) return 1;
 
@@ -321,7 +311,7 @@ public class CoordinateArrays {
       return forwardComp;
     }
 
-    public int OLDcompare(Object o1, Object o2) {
+    public static int OLDcompare(Object o1, Object o2) {
       Coordinate[] pts1 = (Coordinate[]) o1;
       Coordinate[] pts2 = (Coordinate[]) o2;
 
@@ -383,8 +373,8 @@ public class CoordinateArrays {
   /**
    * Converts the given Collection of Coordinates into a Coordinate array.
    */
-  public static Coordinate[] toCoordinateArray(Collection coordList) {
-    return (Coordinate[]) coordList.toArray(coordArrayType);
+  public static Coordinate[] toCoordinateArray(Collection<Coordinate> coordList) {
+    return coordList.toArray(coordArrayType);
   }
 
   /**
@@ -457,10 +447,10 @@ public class CoordinateArrays {
   public static Coordinate[] removeRepeatedOrInvalidPoints(Coordinate[] coord) {
     if (!hasRepeatedOrInvalidPoints(coord)) return coord;
     CoordinateList coordList = new CoordinateList();
-    for (int i = 0; i < coord.length; i++) {
-      if (! coord[i].isValid()) continue;
-      coordList.add(coord[i], false);
-    }
+      for (Coordinate coordinate : coord) {
+          if (!coordinate.isValid()) continue;
+          coordList.add(coordinate, false);
+      }
     return coordList.toCoordinateArray();
   }
   
@@ -472,17 +462,17 @@ public class CoordinateArrays {
    */
   public static Coordinate[] removeNull(Coordinate[] coord) {
     int nonNull = 0;
-    for (int i = 0; i < coord.length; i++) {
-      if (coord[i] != null) nonNull++;
-    }
+      for (Coordinate value : coord) {
+          if (value != null) nonNull++;
+      }
     Coordinate[] newCoord = new Coordinate[nonNull];
     // empty case
     if (nonNull == 0) return newCoord;
 
     int j = 0;
-    for (int i = 0; i < coord.length; i++) {
-      if (coord[i] != null) newCoord[j++] = coord[i];
-    }
+      for (Coordinate coordinate : coord) {
+          if (coordinate != null) newCoord[j++] = coordinate;
+      }
     return newCoord;
   }
 
@@ -531,7 +521,7 @@ public class CoordinateArrays {
   public static boolean equals(
     Coordinate[] coord1,
     Coordinate[] coord2,
-    Comparator coordinateComparator) {
+    Comparator<Coordinate> coordinateComparator) {
     if (coord1 == coord2) return true;
     if (coord1 == null || coord2 == null) return false;
     if (coord1.length != coord2.length) return false;
@@ -551,11 +541,11 @@ public class CoordinateArrays {
    */
   public static Coordinate minCoordinate(Coordinate[] coordinates) {
     Coordinate minCoord = null;
-    for (int i = 0; i < coordinates.length; i++) {
-      if (minCoord == null || minCoord.compareTo(coordinates[i]) > 0) {
-        minCoord = coordinates[i];
+      for (Coordinate coordinate : coordinates) {
+          if (minCoord == null || minCoord.compareTo(coordinate) > 0) {
+              minCoord = coordinate;
+          }
       }
-    }
     return minCoord;
   }
 
@@ -594,20 +584,19 @@ public class CoordinateArrays {
    * @param ensureRing             flag indicating if returned array should form a ring.
    */
   public static void scroll(Coordinate[] coordinates, int indexOfFirstCoordinate, boolean ensureRing) {
-    int i = indexOfFirstCoordinate;
-    if (i <= 0) return;
+      if (indexOfFirstCoordinate <= 0) return;
 
     Coordinate[] newCoordinates = new Coordinate[coordinates.length];
     if (!ensureRing) {
-      System.arraycopy(coordinates, i, newCoordinates, 0, coordinates.length - i);
-      System.arraycopy(coordinates, 0, newCoordinates, coordinates.length - i, i);
+      System.arraycopy(coordinates, indexOfFirstCoordinate, newCoordinates, 0, coordinates.length - indexOfFirstCoordinate);
+      System.arraycopy(coordinates, 0, newCoordinates, coordinates.length - indexOfFirstCoordinate, indexOfFirstCoordinate);
     } else {
       int last = coordinates.length - 1;
 
       // fill in values
       int j;
       for (j = 0; j < last; j++)
-        newCoordinates[j] = coordinates[(i + j) % last];
+        newCoordinates[j] = coordinates[(indexOfFirstCoordinate + j) % last];
 
       // Fix the ring (first == last)
       newCoordinates[j] = newCoordinates[0].copy();
@@ -673,9 +662,9 @@ public class CoordinateArrays {
    */
   public static Envelope envelope(Coordinate[] coordinates) {
     Envelope env = new Envelope();
-    for (int i = 0; i < coordinates.length; i++) {
-      env.expandToInclude(coordinates[i]);
-    }
+      for (Coordinate coordinate : coordinates) {
+          env.expandToInclude(coordinate);
+      }
     return env;
   }
 
@@ -688,10 +677,10 @@ public class CoordinateArrays {
    */
   public static Coordinate[] intersection(Coordinate[] coordinates, Envelope env) {
     CoordinateList coordList = new CoordinateList();
-    for (int i = 0; i < coordinates.length; i++) {
-      if (env.intersects(coordinates[i]))
-        coordList.add(coordinates[i], true);
-    }
+      for (Coordinate coordinate : coordinates) {
+          if (env.intersects(coordinate))
+              coordList.add(coordinate, true);
+      }
     return coordList.toCoordinateArray();
   }
 }

@@ -15,12 +15,12 @@ package test.jts.perf.dissolve;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.dissolve.LineDissolver;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.util.LinearComponentExtracter;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.operation.linemerge.LineMerger;
@@ -33,7 +33,7 @@ import test.jts.util.IOUtil;
 
 public class LineDissolvePerfTest  extends PerformanceTestCase 
 {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     PerformanceTestRunner.run(LineDissolvePerfTest.class);
   }
 
@@ -43,8 +43,8 @@ public class LineDissolvePerfTest  extends PerformanceTestCase
     setRunIterations(1);
   }
 
-  Collection data;
-  
+  Collection<Geometry> data;
+
   public void setUp() throws IOException, ParseException
   {
     System.out.println("Loading data...");
@@ -66,30 +66,28 @@ public class LineDissolvePerfTest  extends PerformanceTestCase
     System.out.println(Memory.allString());
   }
   
-  private Geometry dissolveLines(Collection lines) {
+  private static Geometry dissolveLines(Collection<? extends Geometry> lines) {
     Geometry linesGeom = extractLines(lines);
     return dissolveLines(linesGeom);
   }
-  
-  private Geometry dissolveLines(Geometry lines) {
+
+  private static Geometry dissolveLines(Geometry lines) {
     Geometry dissolved = lines.union();
     LineMerger merger = new LineMerger();
     merger.add(dissolved);
-    Collection mergedColl = merger.getMergedLineStrings();
-    Geometry merged = lines.getFactory().buildGeometry(mergedColl);
-    return merged;
+    Collection<LineString> mergedColl = merger.getMergedLineStrings();
+      return lines.getFactory().buildGeometry(mergedColl);
   }
 
-  Geometry extractLines(Collection geoms)
+  static Geometry extractLines(Collection<? extends Geometry> geoms)
   {
     GeometryFactory factory = null;
-    List lines = new ArrayList();
-    for (Iterator i = geoms.iterator(); i.hasNext(); ) {
-      Geometry g = (Geometry) i.next();
-      if (factory == null)
-          factory = g.getFactory();
-      lines.addAll(LinearComponentExtracter.getLines(g));
-    }
+    List<LineString> lines = new ArrayList<>();
+      for (Geometry g : geoms) {
+          if (factory == null)
+              factory = g.getFactory();
+          lines.addAll(LinearComponentExtracter.getLines(g));
+      }
     return factory.buildGeometry(geoms);
   }
   

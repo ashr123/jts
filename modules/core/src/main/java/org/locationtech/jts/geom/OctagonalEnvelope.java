@@ -42,7 +42,7 @@ public class OctagonalEnvelope
     return x - y;
   }
 
-  private static double SQRT2 = Math.sqrt(2.0);
+  private static final double SQRT2 = Math.sqrt(2.0);
   
   // initialize in the null state
   private double minX = Double.NaN;
@@ -255,8 +255,7 @@ public class OctagonalEnvelope
     if (minA > other.maxA) return false;
     if (maxA < other.minA) return false;
     if (minB > other.maxB) return false;
-    if (maxB < other.minB) return false;
-    return true;
+      return !(maxB < other.minB);
   }
 
   public boolean intersects(Coordinate p)
@@ -271,8 +270,7 @@ public class OctagonalEnvelope
     if (minA > A) return false;
     if (maxA < A) return false;
     if (minB > B) return false;
-    if (maxB < B) return false;
-    return true;
+      return !(maxB < B);
   }
 
   public boolean contains(OctagonalEnvelope other)
@@ -343,7 +341,7 @@ public class OctagonalEnvelope
   private static class BoundingOctagonComponentFilter
   implements GeometryComponentFilter
   {
-    OctagonalEnvelope oe;
+    final OctagonalEnvelope oe;
     
     BoundingOctagonComponentFilter(OctagonalEnvelope oe) {
       this.oe = oe;

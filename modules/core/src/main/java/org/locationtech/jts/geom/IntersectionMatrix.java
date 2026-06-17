@@ -81,7 +81,7 @@ public class IntersectionMatrix implements Cloneable {
   /**
    *  Internal representation of this <code>IntersectionMatrix</code>.
    */
-  private int[][] matrix;
+  private final int[][] matrix;
 
   /**
    *  Creates an <code>IntersectionMatrix</code> with <code>FALSE</code>
@@ -147,10 +147,7 @@ public class IntersectionMatrix implements Cloneable {
    *@return true if the dimension value matches TRUE
    */
   public static boolean isTrue(int actualDimensionValue) {
-    if (actualDimensionValue >= 0 || actualDimensionValue  == Dimension.TRUE) {
-      return true;
-    }
-    return false;
+      return actualDimensionValue >= 0 || actualDimensionValue == Dimension.TRUE;
   }
   
   /**
@@ -181,10 +178,7 @@ public class IntersectionMatrix implements Cloneable {
     if (requiredDimensionSymbol == Dimension.SYM_L && actualDimensionValue == Dimension.L) {
       return true;
     }
-    if (requiredDimensionSymbol == Dimension.SYM_A && actualDimensionValue == Dimension.A) {
-      return true;
-    }
-    return false;
+      return requiredDimensionSymbol == Dimension.SYM_A && actualDimensionValue == Dimension.A;
   }
 
   /**
@@ -599,4 +593,3 @@ public class IntersectionMatrix implements Cloneable {
     return builder.toString();
   }
 }
-

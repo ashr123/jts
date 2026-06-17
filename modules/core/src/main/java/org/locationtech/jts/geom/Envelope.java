@@ -11,9 +11,9 @@
  */
 package org.locationtech.jts.geom;
 
-import java.io.Serializable;
-
 import org.locationtech.jts.math.MathUtil;
+
+import java.io.Serializable;
 
 /**
  *  Defines a rectangular region of the 2D coordinate plane.
@@ -30,7 +30,7 @@ import org.locationtech.jts.math.MathUtil;
  *@version 1.7
  */
 public class Envelope
-    implements Comparable, Serializable
+    implements Comparable<Envelope>, Serializable
 {
     private static final long serialVersionUID = 5873921885273102420L;
 
@@ -55,11 +55,9 @@ public class Envelope
   {
 	//OptimizeIt shows that Math#min and Math#max here are a bottleneck.
     //Replace with direct comparisons. [Jon Aquino]
-    if (((q.x >= (p1.x < p2.x ? p1.x : p2.x)) && (q.x <= (p1.x > p2.x ? p1.x : p2.x))) &&
-        ((q.y >= (p1.y < p2.y ? p1.y : p2.y)) && (q.y <= (p1.y > p2.y ? p1.y : p2.y)))) {
-      return true;
-    }
-    return false;
+      //noinspection ManualMinMaxCalculation
+      return ((q.x >= (p1.x < p2.x ? p1.x : p2.x)) && (q.x <= (p1.x > p2.x ? p1.x : p2.x))) &&
+              ((q.y >= (p1.y < p2.y ? p1.y : p2.y)) && (q.y <= (p1.y > p2.y ? p1.y : p2.y)));
   }
 
   /**
@@ -92,9 +90,7 @@ public class Envelope
 
     if( minp > maxq )
         return false;
-    if( maxp < minq )
-        return false;
-    return true;
+      return !(maxp < minq);
   }
 
   /**
@@ -368,9 +364,8 @@ public class Envelope
 		if (isNull()) return 0.0;
 		double w = getWidth();
 		double h = getHeight();
-		if (w < h) return w;
-		return h;
-	}
+        return Math.min(w, h);
+    }
 	
   /**
    * Gets the maximum extent of this envelope across both dimensions.
@@ -382,9 +377,8 @@ public class Envelope
 		if (isNull()) return 0.0;
 		double w = getWidth();
 		double h = getHeight();
-		if (w > h) return w;
-		return h;
-	}
+        return Math.max(w, h);
+    }
   
   /**
    *  Enlarges this <code>Envelope</code> so that it contains
@@ -533,10 +527,10 @@ public class Envelope
   {
     if (isNull() || env.isNull() || ! intersects(env)) return new Envelope();
 
-    double intMinX = minx > env.minx ? minx : env.minx;
-    double intMinY = miny > env.miny ? miny : env.miny;
-    double intMaxX = maxx < env.maxx ? maxx : env.maxx;
-    double intMaxY = maxy < env.maxy ? maxy : env.maxy;
+    double intMinX = Math.max(minx, env.minx);
+    double intMinY = Math.max(miny, env.miny);
+    double intMaxX = Math.min(maxx, env.maxx);
+    double intMaxY = Math.min(maxy, env.maxy);
     return new Envelope(intMinX, intMaxX, intMinY, intMaxY);
   }
 
@@ -570,19 +564,17 @@ public class Envelope
   public boolean intersects(Coordinate a, Coordinate b) {
     if (isNull()) { return false; }
     
-    double envminx = (a.x < b.x) ? a.x : b.x;
+    double envminx = Math.min(a.x, b.x);
     if (envminx > maxx) return false;
     
-    double envmaxx = (a.x > b.x) ? a.x : b.x;
+    double envmaxx = Math.max(a.x, b.x);
     if (envmaxx < minx) return false;
     
-    double envminy = (a.y < b.y) ? a.y : b.y;
+    double envminy = Math.min(a.y, b.y);
     if (envminy > maxy) return false;
     
-    double envmaxy = (a.y > b.y) ? a.y : b.y;
-    if (envmaxy < miny) return false;
-    
-    return true;
+    double envmaxy = Math.max(a.y, b.y);
+      return !(envmaxy < miny);
   }
   
   /**
@@ -812,28 +804,24 @@ public class Envelope
    * 
    * @param o an Envelope object
    */
-  public int compareTo(Object o) {
-    Envelope env = (Envelope) o;
-    // compare nulls if present
+  public int compareTo(Envelope o) {
+      // compare nulls if present
     if (isNull()) {
-      if (env.isNull()) return 0;
+      if (o.isNull()) return 0;
       return -1;
     }
     else {
-      if (env.isNull()) return 1;
+      if (o.isNull()) return 1;
     }
     // compare based on numerical ordering of ordinates
-    if (minx < env.minx) return -1;
-    if (minx > env.minx) return 1;
-    if (miny < env.miny) return -1;
-    if (miny > env.miny) return 1;
-    if (maxx < env.maxx) return -1;
-    if (maxx > env.maxx) return 1;
-    if (maxy < env.maxy) return -1;
-    if (maxy > env.maxy) return 1;
-    return 0;
-    
-    
+    if (minx < o.minx) return -1;
+    if (minx > o.minx) return 1;
+    if (miny < o.miny) return -1;
+    if (miny > o.miny) return 1;
+    if (maxx < o.maxx) return -1;
+    if (maxx > o.maxx) return 1;
+      return Double.compare(maxy, o.maxy);
+
+
   }
 }
-

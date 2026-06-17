@@ -11,7 +11,6 @@
  */
 package org.locationtech.jts.geom.prep;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.algorithm.PointLocator;
@@ -35,7 +34,7 @@ class BasicPreparedGeometry
   implements PreparedGeometry
 {
   private final Geometry baseGeom;
-  private final List representativePts;  // List<Coordinate>
+  private final List<Coordinate> representativePts;  // List<Coordinate>
 
   public BasicPreparedGeometry(Geometry geom) 
   {
@@ -54,7 +53,7 @@ class BasicPreparedGeometry
    * 
    * @return a List of Coordinate
    */
-  public List getRepresentativePoints()
+  public List<Coordinate> getRepresentativePoints()
   {
 	//TODO wrap in unmodifiable?
     return representativePts;
@@ -71,11 +70,10 @@ class BasicPreparedGeometry
 	public boolean isAnyTargetComponentInTest(Geometry testGeom)
 	{
 		PointLocator locator = new PointLocator();
-    for (Iterator i = representativePts.iterator(); i.hasNext(); ) {
-      Coordinate p = (Coordinate) i.next();
-      if (locator.intersects(p, testGeom))
-        return true;
-    }
+        for (Coordinate p : representativePts) {
+            if (locator.intersects(p, testGeom))
+                return true;
+        }
 		return false;
 	}
 
@@ -88,9 +86,7 @@ class BasicPreparedGeometry
    */
   protected boolean envelopesIntersect(Geometry g)
   {
-    if (! baseGeom.getEnvelopeInternal().intersects(g.getEnvelopeInternal()))
-      return false;
-    return true;
+      return baseGeom.getEnvelopeInternal().intersects(g.getEnvelopeInternal());
   }
   
   /**
@@ -103,9 +99,7 @@ class BasicPreparedGeometry
    */
   protected boolean envelopeCovers(Geometry g)
   {
-    if (! baseGeom.getEnvelopeInternal().covers(g.getEnvelopeInternal()))
-      return false;
-    return true;
+      return baseGeom.getEnvelopeInternal().covers(g.getEnvelopeInternal());
   }
   
   /**

@@ -20,7 +20,7 @@ import test.jts.GeometryTestCase;
 
 public class GeometryEditorTest extends GeometryTestCase {
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(GeometryFixerTest.class);
   }
 
@@ -57,7 +57,7 @@ public class GeometryEditorTest extends GeometryTestCase {
     Geometry g2 = copy(g);
     assertTrue(g.equalsExact(g2));
     // check a copy has been made
-    assertTrue(g != g2);
+      assertNotSame(g, g2);
   }
 
   private static Geometry copy(Geometry g) {
@@ -66,7 +66,7 @@ public class GeometryEditorTest extends GeometryTestCase {
   }
 
   private static class CoordSeqCloneOp extends GeometryEditor.CoordinateSequenceOperation {
-    CoordinateSequenceFactory coordinateSequenceFactory;
+    final CoordinateSequenceFactory coordinateSequenceFactory;
 
     public CoordSeqCloneOp(CoordinateSequenceFactory coordinateSequenceFactory) {
       this.coordinateSequenceFactory = coordinateSequenceFactory;

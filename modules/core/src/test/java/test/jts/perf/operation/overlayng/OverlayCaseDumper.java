@@ -11,14 +11,6 @@
  */
 package test.jts.perf.operation.overlayng;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.TopologyException;
@@ -27,6 +19,13 @@ import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBHexFileReader;
 import org.locationtech.jts.io.WKBReader;
 import org.locationtech.jts.operation.overlayng.OverlayNG;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A utility that reads a WKB file of geometries, 
@@ -44,7 +43,7 @@ public class OverlayCaseDumper {
   
   private static final int MAX_POINTS = 100;
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     OverlayCaseDumper opd = new OverlayCaseDumper();
     
     opd.parseArgs(args);
@@ -56,7 +55,7 @@ public class OverlayCaseDumper {
     }
   }
 
-  private static GeometryFactory geomFact = new GeometryFactory();
+  private static final GeometryFactory geomFact = new GeometryFactory();
 
   private String inFilename = null;
   private String outputFilename = null;
@@ -83,7 +82,7 @@ public class OverlayCaseDumper {
   
   private void run() throws ParseException, IOException {
     if (outputFilename  != null) {
-      outStream = new PrintStream(new File(outputFilename));
+      outStream = new PrintStream(outputFilename);
     }
     
     List<Geometry> geomsIn = readWKBFile(inFilename);
@@ -104,14 +103,14 @@ public class OverlayCaseDumper {
   }
 
 
-  private List<Geometry> flatten(List<Geometry> geoms) {
-    List<Geometry> flat = new ArrayList<Geometry>();
+  private static List<Geometry> flatten(List<Geometry> geoms) {
+    List<Geometry> flat = new ArrayList<>();
     for (Geometry geom : geoms) {
       if (geom.getNumGeometries() == 1) {
         flat.add(geom);
       }
       else {
-        PolygonExtracter.getPolygons(geom, flat);
+        flat.addAll(PolygonExtracter.getPolygons(geom));
       }
     }
     return flat;
@@ -176,8 +175,8 @@ public class OverlayCaseDumper {
         "\n");
   }
 
-  private List<Geometry> filter(List<Geometry> geoms) {
-    List<Geometry> filt = new ArrayList<Geometry>();
+  private static List<Geometry> filter(List<Geometry> geoms) {
+    List<Geometry> filt = new ArrayList<>();
     for (Geometry geom : geoms) {
       if (geom.getNumPoints() > MAX_POINTS) continue;
       filt.add(geom);

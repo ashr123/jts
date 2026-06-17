@@ -14,6 +14,7 @@ package test.jts.perf.operation.union;
 
 import java.util.List;
 
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.io.WKTFileReader;
@@ -26,9 +27,9 @@ public class FileUnionPerfTest
 {
   static final int MAX_ITER = 1;
 
-  static PrecisionModel pm = new PrecisionModel();
-  static GeometryFactory fact = new GeometryFactory(pm, 0);
-  static WKTReader wktRdr = new WKTReader(fact);
+  static final PrecisionModel pm = new PrecisionModel();
+  static final GeometryFactory fact = new GeometryFactory(pm, 0);
+  static final WKTReader wktRdr = new WKTReader(fact);
   static WKTWriter wktWriter = new WKTWriter();
 
   GeometryFactory factory = new GeometryFactory();
@@ -36,7 +37,7 @@ public class FileUnionPerfTest
   public static void main(String[] args) {
     FileUnionPerfTest test = new FileUnionPerfTest();
     try {
-      test.test();
+      test();
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -48,7 +49,7 @@ public class FileUnionPerfTest
   public FileUnionPerfTest() {
   }
 
-  public void test()
+  public static void test()
   throws Exception
   {
     test(TestFiles.getResourceFilePath("africa.wkt"));
@@ -57,11 +58,11 @@ public class FileUnionPerfTest
     // test(TestFiles.getResourceFilePath("bc_20K.wkt"));
   }
 
-  public void test(String filename)
+  public static void test(String filename)
     throws Exception
   {
     WKTFileReader fileRdr = new WKTFileReader(filename, wktRdr);
-    List polys = fileRdr.read();
+    List<Geometry> polys = fileRdr.read();
 
     UnionPerfTester tester = new UnionPerfTester(polys);
     tester.runAll();

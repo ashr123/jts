@@ -15,8 +15,6 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.PrecisionModel;
 
@@ -53,7 +51,7 @@ public class BufferTest extends GeometryTestCase {
     checkPointBufferSegmentCount(g, 80, 129);
   }
   
-  private void checkPointBufferSegmentCount(Geometry g, double dist, int quadSegs) {
+  private static void checkPointBufferSegmentCount(Geometry g, double dist, int quadSegs) {
     Geometry buf = g.buffer(dist, quadSegs);
     int segsExpected = 4 * quadSegs + 1;
     assertEquals(segsExpected, buf.getNumPoints());
@@ -360,7 +358,7 @@ public class BufferTest extends GeometryTestCase {
       "MULTILINESTRING ((80 285, 85.5939933259177 234.65406006674084 ), (85.5939933259177 234.65406006674084, 98 123, 294 92, 344.3694502052736 126.0884157954882 ), (344.3694502052736 126.0884157954882, 393 159 ), (51 235, 85.5939933259177 234.65406006674084 ), (85.5939933259177 234.65406006674084, 251 233, 344.3694502052736 126.0884157954882 ), (344.3694502052736 126.0884157954882, 382 83 ))")
       .test();
   }
-  public void test33() throws Exception {
+  public void test33() {
     //Get side location conflict in #contains, but the geometry is invalid
     // [Jon Aquino 10/29/2003]
     //    new BufferValidator(.0001, new
@@ -601,14 +599,14 @@ public class BufferTest extends GeometryTestCase {
     Geometry b = g.getBoundary();
     Coordinate[] coords = b.getCoordinates();
     assertEquals(33, coords.length);
-    assertEquals(coords[0].x, 1.0);
-    assertEquals(coords[0].y, 0.0);
-    assertEquals(coords[8].x, 0.0);
-    assertEquals(coords[8].y, -1.0);
-    assertEquals(coords[16].x, -1.0);
-    assertEquals(coords[16].y, 0.0);
-    assertEquals(coords[24].x, 0.0);
-    assertEquals(coords[24].y, 1.0);
+    assertEquals(1.0, coords[0].x);
+    assertEquals(0.0, coords[0].y);
+    assertEquals(0.0, coords[8].x);
+    assertEquals(-1.0, coords[8].y);
+    assertEquals(-1.0, coords[16].x);
+    assertEquals(0.0, coords[16].y);
+    assertEquals(0.0, coords[24].x);
+    assertEquals(1.0, coords[24].y);
   }
   
   public void testRingStartSimplified() {
@@ -700,7 +698,7 @@ public class BufferTest extends GeometryTestCase {
   
   public void testInvalidCoordShell() {
     // using Inf ordinates creates a valid ring with equal endpoints
-    Geometry geom = (Polygon) read("POLYGON ((Inf Inf, Inf Inf, Inf Inf, Inf Inf, Inf Inf))");
+    Geometry geom = read("POLYGON ((Inf Inf, Inf Inf, Inf Inf, Inf Inf, Inf Inf))");
     checkBufferPolygonEmpty(geom, 1, true);
   }
   
@@ -757,16 +755,16 @@ public class BufferTest extends GeometryTestCase {
     checkBufferPolygonEmpty(a, dist, isEmptyExpected);
   }
 
-  private void checkBufferPolygonEmpty(Geometry geom, double dist, boolean isEmptyExpected) {
+  private static void checkBufferPolygonEmpty(Geometry geom, double dist, boolean isEmptyExpected) {
     Geometry result = geom.buffer(dist);
     assertTrue(result instanceof Polygon);
-    assertTrue(isEmptyExpected == result.isEmpty());
+      assertEquals(isEmptyExpected, result.isEmpty());
   }
 
   private void checkBufferHasHole(String wkt, double dist, boolean isHoleExpected) {
     Geometry a = read(wkt);
     Geometry result = a.buffer(dist);
-    assertTrue(isHoleExpected == hasHole(result));
+      assertEquals(isHoleExpected, hasHole(result));
   }
 
   private void checkBufferNumGeometries(String wkt, double dist, int numExpected) {
@@ -775,7 +773,7 @@ public class BufferTest extends GeometryTestCase {
     assertEquals(numExpected, result.getNumGeometries());
   }
 
-  private boolean hasHole(Geometry geom) {
+  private static boolean hasHole(Geometry geom) {
     for (int i = 0; i < geom.getNumGeometries(); i++) {
       Polygon poly = (Polygon) geom.getGeometryN(i);
       if (poly.getNumInteriorRing() > 0) return true;

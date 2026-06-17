@@ -14,7 +14,6 @@ package org.locationtech.jts.operation.buffer;
 /**
  * @version 1.7
  */
-import java.util.Iterator;
 import java.util.List;
 
 import org.locationtech.jts.algorithm.Orientation;
@@ -50,18 +49,17 @@ class RightmostEdgeFinder {
   public DirectedEdge getEdge()  {    return orientedDe;  }
   public Coordinate getCoordinate()  {    return minCoord;  }
 
-  public void findEdge(List dirEdgeList)
+  public void findEdge(List<? extends DirectedEdge> dirEdgeList)
   {
     /**
      * Check all forward DirectedEdges only.  This is still general,
      * because each edge has a forward DirectedEdge.
      */
-    for (Iterator i = dirEdgeList.iterator(); i.hasNext();) {
-      DirectedEdge de = (DirectedEdge) i.next();
-      if (! de.isForward())
-        continue;
-      checkForRightmostCoordinate(de);
-    }
+      for (DirectedEdge de : dirEdgeList) {
+          if (!de.isForward())
+              continue;
+          checkForRightmostCoordinate(de);
+      }
 
     /**
      * If the rightmost point is a node, we need to identify which of
@@ -154,10 +152,10 @@ class RightmostEdgeFinder {
     return side;
   }
 
-  private int getRightmostSideOfSegment(DirectedEdge de, int i)
+  private static int getRightmostSideOfSegment(DirectedEdge de, int i)
   {
     Edge e = de.getEdge();
-    Coordinate coord[] = e.getCoordinates();
+    Coordinate[] coord = e.getCoordinates();
 
     if (i < 0 || i + 1 >= coord.length) return -1;
     if (coord[i].y == coord[i + 1].y) return -1;    // indicates edge is parallel to x-axis

@@ -11,8 +11,6 @@
  */
 package test.jts.geom;
 
-import java.io.IOException;
-
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.PrecisionModel;
@@ -25,9 +23,9 @@ import org.locationtech.jts.geom.PrecisionModel;
  * @version 1.7
  */
 public class CoordinateSequenceExperiment2 {
-    GeometryFactory fact = new GeometryFactory(new PrecisionModel(), 0);
+    final GeometryFactory fact = new GeometryFactory(new PrecisionModel(), 0);
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         CoordinateSequenceExperiment2 test = new CoordinateSequenceExperiment2();
 //        System.out.println("Press Enter to begin");
 //        System.in.read();        
@@ -35,7 +33,7 @@ public class CoordinateSequenceExperiment2 {
         System.exit(0);
     }
 
-    public void run() throws IOException {
+    public void run() {
         int factor = 1;
 
         for (int i = 1; i < 15; i++) {
@@ -72,7 +70,7 @@ public class CoordinateSequenceExperiment2 {
         System.out.println("n Pts: " + nPts + "   Executed in " + totalTimeStr);
     }
 
-    public void run2(int nPts) throws IOException {
+    public void run2(int nPts) {
         double size = 100.0;
         double armLen = 50.0;
         int nArms = 10;

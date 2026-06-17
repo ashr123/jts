@@ -24,8 +24,8 @@ import org.locationtech.jts.geom.MultiLineString;
 
 public class PerturbedGridPolygonBuilder 
 {
-	private GeometryFactory geomFactory;
-	private double gridWidth = 1000;
+	private final GeometryFactory geomFactory;
+	private static final double gridWidth = 1000;
 	private int numLines = 10;
 	private double lineWidth = 20;
 		
@@ -84,9 +84,8 @@ public class PerturbedGridPolygonBuilder
 		}
 		
 		MultiLineString ml = geomFactory.createMultiLineString(lines);
-		Geometry grid = ml.buffer(lineWidth);
-		//System.out.println(grid);
-		return grid;
+        //System.out.println(grid);
+		return ml.buffer(lineWidth);
 		
 	}
 	
@@ -103,8 +102,7 @@ public class PerturbedGridPolygonBuilder
 	private double getRandOrdinate()
 	{
 		double randNum = getRand();
-		double ord = geomFactory.getPrecisionModel().makePrecise(randNum * gridWidth);
-		return ord;
+        return geomFactory.getPrecisionModel().makePrecise(randNum * gridWidth);
 	}
 
 }

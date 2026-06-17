@@ -35,8 +35,8 @@ import org.locationtech.jts.math.Vector3D;
  */
 public class PlanarPolygon3D {
 
-	private Plane3D plane;
-	private Polygon poly;
+	private final Plane3D plane;
+	private final Polygon poly;
 	private int facingPlane = -1;
 
 	public PlanarPolygon3D(Polygon poly) {
@@ -57,7 +57,7 @@ public class PlanarPolygon3D {
 	 * @param poly the polygon to determine the plane for
 	 * @return the best-fit plane
 	 */
-	private Plane3D findBestFitPlane(Polygon poly) 
+	private static Plane3D findBestFitPlane(Polygon poly)
 	{
 		CoordinateSequence seq = poly.getExteriorRing().getCoordinateSequence();
 		Coordinate basePt = averagePoint(seq);
@@ -75,7 +75,7 @@ public class PlanarPolygon3D {
 	 * @param seq the sequence of coordinates for the polygon
 	 * @return a normal vector
 	 */
-	private Vector3D averageNormal(CoordinateSequence seq) 
+	private static Vector3D averageNormal(CoordinateSequence seq)
 	{
 		int n = seq.size();
 		Coordinate sum = new Coordinate(0,0,0);
@@ -91,8 +91,7 @@ public class PlanarPolygon3D {
 		sum.x /= n;
 		sum.y /= n;
 		sum.setZ(sum.getZ() / n);
-		Vector3D norm = Vector3D.create(sum).normalize();
-		return norm;
+        return Vector3D.create(sum).normalize();
 	}
 
 	/**
@@ -104,7 +103,7 @@ public class PlanarPolygon3D {
 	 * @param seq a coordinate sequence
 	 * @return a Coordinate with averaged ordinates
 	 */
-	private Coordinate averagePoint(CoordinateSequence seq) {
+	private static Coordinate averagePoint(CoordinateSequence seq) {
 		Coordinate a = new Coordinate(0,0,0);
 		int n = seq.size();
 		for (int i = 0; i < n; i++) {

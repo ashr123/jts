@@ -50,9 +50,9 @@ import org.locationtech.jts.noding.SegmentString;
 public class SnappingNoder
     implements Noder
 {
-  private SnappingPointIndex snapIndex;
-  private double snapTolerance;
-  private List<NodedSegmentString> nodedResult;
+  private final SnappingPointIndex snapIndex;
+  private final double snapTolerance;
+  private Collection<SegmentString> nodedResult;
 
   /**
    * Creates a snapping noder using the given snap distance tolerance.
@@ -69,27 +69,27 @@ public class SnappingNoder
    * 
 	 * @return a Collection of NodedSegmentStrings representing the substrings
 	 */
-  public Collection getNodedSubstrings()
+  public Collection<SegmentString> getNodedSubstrings()
   {
     return nodedResult;
   }
 
   /**
    * Computes the noding of a set of {@link SegmentString}s.
-   * 
+   *
    * @param inputSegStrings a Collection of SegmentStrings
    */
-  public void computeNodes(Collection inputSegStrings)
+  public void computeNodes(Collection<? extends SegmentString> inputSegStrings)
   {
     List<NodedSegmentString> snappedSS = snapVertices(inputSegStrings);
-    nodedResult = (List<NodedSegmentString>) snapIntersections(snappedSS);
+    nodedResult = snapIntersections(snappedSS);
   }
 
-  private List<NodedSegmentString> snapVertices(Collection<SegmentString> segStrings) {
+  private List<NodedSegmentString> snapVertices(Collection<? extends SegmentString> segStrings) {
     //Stopwatch sw = new Stopwatch(); sw.start();
     seedSnapIndex(segStrings);
     
-    List<NodedSegmentString> nodedStrings = new ArrayList<NodedSegmentString>();
+    List<NodedSegmentString> nodedStrings = new ArrayList<>();
     for (SegmentString ss : segStrings) {
       nodedStrings.add( snapVertices(ss) );
     }
@@ -106,7 +106,7 @@ public class SnappingNoder
    *  
    * @param segStrings the segStrings to be noded
    */
-  private void seedSnapIndex(Collection<SegmentString> segStrings) {
+  private void seedSnapIndex(Collection<? extends SegmentString> segStrings) {
     final int SEED_SIZE_FACTOR = 100;
       
     for (SegmentString ss : segStrings) {
@@ -128,10 +128,10 @@ public class SnappingNoder
   
   private Coordinate[] snap(Coordinate[] coords) {
     CoordinateList snapCoords = new CoordinateList();
-    for (int i = 0 ; i < coords.length; i++) {
-      Coordinate pt = snapIndex.snap(coords[i]);
-      snapCoords.add(pt, false);
-    }
+      for (Coordinate coord : coords) {
+          Coordinate pt = snapIndex.snap(coord);
+          snapCoords.add(pt, false);
+      }
     return snapCoords.toCoordinateArray();
   }
   
@@ -143,7 +143,7 @@ public class SnappingNoder
    *
    * @return a list of Coordinates for the intersections
    */
-  private Collection snapIntersections(List<NodedSegmentString> inputSS)
+  private Collection<SegmentString> snapIntersections(List<NodedSegmentString> inputSS)
   {
     SnappingIntersectionAdder intAdder = new SnappingIntersectionAdder(snapTolerance, snapIndex);
     /**

@@ -25,7 +25,7 @@ import junit.textui.TestRunner;
 import test.jts.GeometryTestCase;
 
 public class TPVWSimplifierTest extends GeometryTestCase {
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(TPVWSimplifierTest.class);
   }
   
@@ -92,13 +92,12 @@ public class TPVWSimplifierTest extends GeometryTestCase {
   }
   
   private TPVWSimplifier.Edge[] createEdges(String wkt, int[] freeRingIndex, String wktConstraints, double tolerance) {
-    List<TPVWSimplifier.Edge> edgeList = new ArrayList<TPVWSimplifier.Edge>();
+    List<TPVWSimplifier.Edge> edgeList = new ArrayList<>();
     addEdges(wkt, freeRingIndex, tolerance, edgeList);
     if (wktConstraints != null) {
       addEdges(wktConstraints, null, 0.0, edgeList);
     }
-    TPVWSimplifier.Edge[] edges = edgeList.toArray(new TPVWSimplifier.Edge[0]);
-    return edges;
+      return edgeList.toArray(new Edge[0]);
   }
 
   private void addEdges(String wkt, int[] freeRings, double tolerance, List<Edge> edges) {
@@ -106,13 +105,13 @@ public class TPVWSimplifierTest extends GeometryTestCase {
     for (int i = 0; i < lines.getNumGeometries(); i++) {
       LineString line = (LineString) lines.getGeometryN(i);
       boolean isRemovable = false;
-      boolean isFreeRing = freeRings == null ? false : hasIndex(freeRings, i);
+      boolean isFreeRing = freeRings != null && hasIndex(freeRings, i);
       Edge edge = new Edge(line.getCoordinates(), tolerance, isFreeRing, isRemovable);
       edges.add(edge);
     }
   }
   
-  private boolean hasIndex(int[] freeRings, int i) {
+  private static boolean hasIndex(int[] freeRings, int i) {
     for (int fr : freeRings) {
       if (fr == i)
         return true;

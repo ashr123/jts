@@ -212,8 +212,8 @@ public class DiscreteFrechetDistance {
    * @param distances the distance matrix
    * @param distanceToPair a lookup for coordinate pairs based on a distance
    */
-  private void computeCoordinateDistances(Coordinate[] coords0, Coordinate[] coords1, int[] diagonal,
-                                          MatrixStorage distances, HashMap<Double, int[]> distanceToPair) {
+  private static void computeCoordinateDistances(Coordinate[] coords0, Coordinate[] coords1, int[] diagonal,
+                                                 MatrixStorage distances, HashMap<Double, int[]> distanceToPair) {
     int numDiag = diagonal.length;
     double maxDistOnDiag = 0d;
     int imin = 0, jmin = 0;

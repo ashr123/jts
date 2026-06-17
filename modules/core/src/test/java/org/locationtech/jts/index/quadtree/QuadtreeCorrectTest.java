@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.index.quadtree.Quadtree;
 import org.locationtech.jts.util.Stopwatch;
 
 
@@ -25,8 +24,7 @@ import org.locationtech.jts.util.Stopwatch;
  */
 public class QuadtreeCorrectTest {
 
-  public static void main(String[] args) throws Exception
-  {
+  public static void main(String[] args) {
     //testBinaryPower();
     QuadtreeCorrectTest test = new QuadtreeCorrectTest();
     test.run();
@@ -54,8 +52,8 @@ public class QuadtreeCorrectTest {
   static final double MIN_EXTENT = -1000.0;
   static final double MAX_EXTENT = 1000.0;
 
-  EnvelopeList envList = new EnvelopeList();
-  Quadtree q = new Quadtree();
+  final EnvelopeList envList = new EnvelopeList();
+  final Quadtree<Envelope> q = new Quadtree<>();
 
   public QuadtreeCorrectTest() {
   }
@@ -75,7 +73,7 @@ public class QuadtreeCorrectTest {
 
   void createGrid(int nGridCells)
   {
-    int gridSize = (int) Math.sqrt((double) nGridCells);
+    int gridSize = (int) Math.sqrt(nGridCells);
     gridSize += 1;
     double extent = MAX_EXTENT - MIN_EXTENT;
     double gridInc = extent / gridSize;
@@ -96,7 +94,7 @@ public class QuadtreeCorrectTest {
   void runQueries()
   {
     int nGridCells = 100;
-    int cellSize = (int) Math.sqrt((double) NUM_ITEMS);
+    int cellSize = (int) Math.sqrt(NUM_ITEMS);
     double extent = MAX_EXTENT - MIN_EXTENT;
     double queryCellSize =  2.0 * extent / cellSize;
 
@@ -110,7 +108,7 @@ public class QuadtreeCorrectTest {
     Stopwatch sw = new Stopwatch();
     sw.start();
 
-    int gridSize = (int) Math.sqrt((double) nGridCells);
+    int gridSize = (int) Math.sqrt(nGridCells);
     gridSize += 1;
     double extent = MAX_EXTENT - MIN_EXTENT;
     double gridInc = extent / gridSize;
@@ -132,28 +130,27 @@ public class QuadtreeCorrectTest {
   {
     //List finalList = getOverlapping(q.query(env), env);
 
-    List eList = envList.query(env);
+    List<Envelope> eList = envList.query(env);
   }
 
   void queryTest(Envelope env)
   {
-    List candidateList = q.query(env);
-    List finalList = getOverlapping(candidateList, env);
+    List<Envelope> candidateList = q.query(env);
+    List<Envelope> finalList = getOverlapping(candidateList, env);
 
-    List eList = envList.query(env);
+    List<Envelope> eList = envList.query(env);
 //System.out.println(finalList.size());
 
     if (finalList.size() != eList.size() )
       throw new RuntimeException("queries do not match");
   }
 
-  private List getOverlapping(List items, Envelope searchEnv)
+  private static List<Envelope> getOverlapping(List<? extends Envelope> items, Envelope searchEnv)
   {
-    List result = new ArrayList();
-    for (int i = 0; i < items.size(); i++) {
-      Envelope env = (Envelope) items.get(i);
-      if (env.intersects(searchEnv)) result.add(env);
-    }
+    List<Envelope> result = new ArrayList<>();
+      for (Envelope env : items) {
+          if (env.intersects(searchEnv)) result.add(env);
+      }
     return result;
   }
 

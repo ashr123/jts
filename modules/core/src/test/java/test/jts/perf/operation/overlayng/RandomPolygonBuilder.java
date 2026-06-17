@@ -15,26 +15,25 @@ public class RandomPolygonBuilder {
     RandomPolygonBuilder builder = new RandomPolygonBuilder(npts);
     return builder.createPolygon();
   }
-  
-  private Envelope extent = new Envelope(0,100,0,100);
-  private GeometryFactory geomFact = new GeometryFactory();
-  private int npts;
-  private Geometry voronoi;
+
+    private final GeometryFactory geomFact = new GeometryFactory();
+  private final int npts;
+  private final Geometry voronoi;
   
   public RandomPolygonBuilder(int npts) {
     this.npts = npts;
-    Geometry sites = randomPoints(extent, npts);
+      Envelope extent = new Envelope(0, 100, 0, 100);
+      Geometry sites = randomPoints(extent, npts);
     voronoi = voronoiDiagram(sites, extent);
   }
   
   public Geometry createPolygon() {
     Geometry cellsSelect = select(voronoi, npts / 2);
-    Geometry poly = cellsSelect.union();
-    return poly;
+      return cellsSelect.union();
   }
   
   private Geometry select(Geometry geoms, int n) {
-    List<Geometry> selection = new ArrayList<Geometry>();
+    List<Geometry> selection = new ArrayList<>();
     // add all the geometries
     for (int i = 0; i < geoms.getNumGeometries(); i++) {
       selection.add(geoms.getGeometryN(i));
@@ -54,13 +53,12 @@ public class RandomPolygonBuilder {
     return shapeBuilder.getGeometry();
   }
   
-  public Geometry voronoiDiagram(Geometry sitesGeom, Envelope extent)
+  public static Geometry voronoiDiagram(Geometry sitesGeom, Envelope extent)
   {
     VoronoiDiagramBuilder builder = new VoronoiDiagramBuilder();
     builder.setSites(sitesGeom);
     builder.setClipEnvelope(extent);
     builder.setTolerance(.0001);
-    Geometry diagram = builder.getDiagram( sitesGeom.getFactory() ); 
-    return diagram;
+      return builder.getDiagram( sitesGeom.getFactory() );
   }
 }

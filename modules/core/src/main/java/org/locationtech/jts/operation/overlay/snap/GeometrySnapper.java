@@ -12,9 +12,6 @@
 
 package org.locationtech.jts.operation.overlay.snap;
 
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Envelope;
@@ -23,6 +20,10 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Polygonal;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.geom.util.GeometryTransformer;
+
+import java.util.Collections;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Snaps the vertices and segments of a {@link Geometry} 
@@ -79,8 +80,7 @@ public class GeometrySnapper
   {
     Envelope env = g.getEnvelopeInternal();
     double minDimension = Math.min(env.getHeight(), env.getWidth());
-    double snapTol = minDimension * SNAP_PRECISION_FACTOR;
-    return snapTol;
+      return minDimension * SNAP_PRECISION_FACTOR;
   }
 
   public static double computeOverlaySnapTolerance(Geometry g0, Geometry g1)
@@ -132,7 +132,7 @@ public class GeometrySnapper
     return snapper0.snapToSelf(snapTolerance, cleanResult);
   }
   
-  private Geometry srcGeom;
+  private final Geometry srcGeom;
 
   /**
    * Creates a new snapper acting on the given geometry
@@ -187,15 +187,13 @@ public class GeometrySnapper
     return result;
   }
 
-  private Coordinate[] extractTargetCoordinates(Geometry g)
+  private static Coordinate[] extractTargetCoordinates(Geometry g)
   {
     // TODO: should do this more efficiently.  Use CoordSeq filter to get points, KDTree for uniqueness & queries
-    Set ptSet = new TreeSet();
+    Set<Coordinate> ptSet = new TreeSet<>();
     Coordinate[] pts = g.getCoordinates();
-    for (int i = 0; i < pts.length; i++) {
-      ptSet.add(pts[i]);
-    }
-    return (Coordinate[]) ptSet.toArray(new Coordinate[0]);
+      Collections.addAll(ptSet, pts);
+    return ptSet.toArray(new Coordinate[0]);
   }
   
   /**
@@ -204,15 +202,14 @@ public class GeometrySnapper
    * @param ringPts
    * @return
    */
-  private double computeSnapTolerance(Coordinate[] ringPts)
+  private static double computeSnapTolerance(Coordinate[] ringPts)
   {
     double minSegLen = computeMinimumSegmentLength(ringPts);
     // use a small percentage of this to be safe
-    double snapTol = minSegLen / 10;
-    return snapTol;
+      return minSegLen / 10;
   }
 
-  private double computeMinimumSegmentLength(Coordinate[] pts)
+  private static double computeMinimumSegmentLength(Coordinate[] pts)
   {
     double minSegLen = Double.MAX_VALUE;
     for (int i = 0; i < pts.length - 1; i++) {
@@ -228,8 +225,8 @@ public class GeometrySnapper
 class SnapTransformer
     extends GeometryTransformer
 {
-  private double snapTolerance;
-  private Coordinate[] snapPts;
+  private final double snapTolerance;
+  private final Coordinate[] snapPts;
   private boolean isSelfSnap = false;
 
   SnapTransformer(double snapTolerance, Coordinate[] snapPts)
@@ -259,5 +256,3 @@ class SnapTransformer
     return snapper.snapTo(snapPts);
   }
 }
-
-

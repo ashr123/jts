@@ -31,11 +31,11 @@ public class RelateNGPolygonsAdjacentPerfTest
 extends PerformanceTestCase
 {
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     PerformanceTestRunner.run(RelateNGPolygonsAdjacentPerfTest.class);
   }
   
-  WKTReader rdr = new WKTReader();
+  final WKTReader rdr = new WKTReader();
 
   private static final int N_ITER = 10;
   

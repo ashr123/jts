@@ -47,12 +47,12 @@ import org.locationtech.jts.geomgraph.NodeMap;
  */
 public class RelateNodeGraph {
 
-  private NodeMap nodes = new NodeMap(new RelateNodeFactory());
+  private final NodeMap nodes = new NodeMap(new RelateNodeFactory());
 
   public RelateNodeGraph() {
   }
 
-  public Iterator getNodeIterator() { return nodes.iterator(); }
+  public Iterator<Node> getNodeIterator() { return nodes.iterator(); }
 
   public void build(GeometryGraph geomGraph)
   {
@@ -67,9 +67,7 @@ public class RelateNodeGraph {
     /**
      * Build EdgeEnds for all intersections.
      */
-    EdgeEndBuilder eeBuilder = new EdgeEndBuilder();
-    List eeList = eeBuilder.computeEdgeEnds(geomGraph.getEdgeIterator());
-    insertEdgeEnds(eeList);
+      insertEdgeEnds(EdgeEndBuilder.computeEdgeEnds(geomGraph.getEdgeIterator()));
 
 //Debug.println("==== NodeList ===");
 //Debug.print(nodes);
@@ -86,11 +84,11 @@ public class RelateNodeGraph {
    */
   public void computeIntersectionNodes(GeometryGraph geomGraph, int argIndex)
   {
-    for (Iterator edgeIt = geomGraph.getEdgeIterator(); edgeIt.hasNext(); ) {
-      Edge e = (Edge) edgeIt.next();
+    for (Iterator<Edge> edgeIt = geomGraph.getEdgeIterator(); edgeIt.hasNext(); ) {
+      Edge e = edgeIt.next();
       int eLoc = e.getLabel().getLocation(argIndex);
-      for (Iterator eiIt = e.getEdgeIntersectionList().iterator(); eiIt.hasNext(); ) {
-        EdgeIntersection ei = (EdgeIntersection) eiIt.next();
+      for (Iterator<EdgeIntersection> eiIt = e.getEdgeIntersectionList().iterator(); eiIt.hasNext(); ) {
+        EdgeIntersection ei = eiIt.next();
         RelateNode n = (RelateNode) nodes.addNode(ei.coord);
         if (eLoc == Location.BOUNDARY)
           n.setLabelBoundary(argIndex);
@@ -114,20 +112,19 @@ public class RelateNodeGraph {
      */
   public void copyNodesAndLabels(GeometryGraph geomGraph, int argIndex)
   {
-    for (Iterator nodeIt = geomGraph.getNodeIterator(); nodeIt.hasNext(); ) {
-      Node graphNode = (Node) nodeIt.next();
+    for (Iterator<Node> nodeIt = geomGraph.getNodeIterator(); nodeIt.hasNext(); ) {
+      Node graphNode = nodeIt.next();
       Node newNode = nodes.addNode(graphNode.getCoordinate());
       newNode.setLabel(argIndex, graphNode.getLabel().getLocation(argIndex));
 //node.print(System.out);
     }
   }
 
-  public void insertEdgeEnds(List ee)
+  public void insertEdgeEnds(List<? extends EdgeEnd> ee)
   {
-    for (Iterator i = ee.iterator(); i.hasNext(); ) {
-      EdgeEnd e = (EdgeEnd) i.next();
-      nodes.add(e);
-    }
+      for (EdgeEnd e : ee) {
+          nodes.add(e);
+      }
   }
 
 

@@ -22,7 +22,7 @@ import java.util.LinkedList;
  * @version 1.0
  */
 public class EdgeConnectedTriangleTraversal {
-    private LinkedList triQueue = new LinkedList();
+    private final LinkedList<QuadEdgeTriangle> triQueue = new LinkedList<>();
 
     public EdgeConnectedTriangleTraversal() {}
 
@@ -35,7 +35,7 @@ public class EdgeConnectedTriangleTraversal {
      * 
      * @param tris a collection of QuadEdgeTriangle
      */
-    public void init(Collection tris) {
+    public void init(Collection<? extends QuadEdgeTriangle> tris) {
         triQueue.addAll(tris);
     }
 
@@ -54,7 +54,7 @@ public class EdgeConnectedTriangleTraversal {
      */
     public void visitAll(TraversalVisitor visitor) {
         while (!triQueue.isEmpty()) {
-            QuadEdgeTriangle tri = (QuadEdgeTriangle) triQueue.removeFirst();
+            QuadEdgeTriangle tri = triQueue.removeFirst();
             process(tri, visitor);
         }
     }

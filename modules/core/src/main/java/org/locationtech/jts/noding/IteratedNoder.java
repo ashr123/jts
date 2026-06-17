@@ -36,16 +36,14 @@ public class IteratedNoder
 {
   public static final int MAX_ITER = 5;
 
-  private PrecisionModel pm;
-  private LineIntersector li;
-  private Collection nodedSegStrings;
+    private final LineIntersector li;
+  private Collection<SegmentString> nodedSegStrings;
   private int maxIter = MAX_ITER;
 
   public IteratedNoder(PrecisionModel pm)
   {
     li = new RobustLineIntersector();
-    this.pm = pm;
-    li.setPrecisionModel(pm);
+      li.setPrecisionModel(pm);
   }
 
   /**
@@ -62,7 +60,7 @@ public class IteratedNoder
     this.maxIter = maxIter;
   }
 
-  public Collection getNodedSubstrings()  {    return nodedSegStrings;  }
+  public Collection<SegmentString> getNodedSubstrings()  {    return nodedSegStrings;  }
 
   /**
    * Fully nodes a list of {@link SegmentString}s, i.e. performs noding iteratively
@@ -73,15 +71,16 @@ public class IteratedNoder
    * @param segStrings a collection of SegmentStrings to be noded
    * @throws TopologyException if the iterated noding fails to converge.
    */
-  public void computeNodes(Collection segStrings)
+  public void computeNodes(Collection<? extends SegmentString> segStrings)
     throws TopologyException
   {
     int[] numInteriorIntersections = new int[1];
-    nodedSegStrings = segStrings;
+    Collection<? extends SegmentString> toNode = segStrings;
     int nodingIterationCount = 0;
     int lastNodesCreated = -1;
     do {
-      node(nodedSegStrings, numInteriorIntersections);
+      node(toNode, numInteriorIntersections);
+      toNode = nodedSegStrings;
       nodingIterationCount++;
       int nodesCreated = numInteriorIntersections[0];
 
@@ -107,7 +106,7 @@ public class IteratedNoder
  * Node the input segment strings once
  * and create the split edges between the nodes
  */
-  private void node(Collection segStrings, int[] numInteriorIntersections)
+  private void node(Collection<? extends SegmentString> segStrings, int[] numInteriorIntersections)
   {
     IntersectionAdder si = new IntersectionAdder(li);
     MCIndexNoder noder = new MCIndexNoder();

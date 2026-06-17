@@ -56,7 +56,10 @@ public class Orientation {
    */
   public static final int STRAIGHT = COLLINEAR;
 
-  /**
+    private Orientation() {
+    }
+
+    /**
    * Returns the orientation index of the direction of the point <code>q</code> relative to
    * a directed infinite line specified by <code>p1-p2</code>.
    * The index indicates whether the point lies to the {@link #LEFT} or {@link #RIGHT}

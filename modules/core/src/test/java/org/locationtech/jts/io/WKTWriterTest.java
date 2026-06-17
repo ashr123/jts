@@ -28,13 +28,13 @@ import org.locationtech.jts.geom.impl.PackedCoordinateSequenceFactory;
  */
 public class WKTWriterTest extends TestCase {
 
-  PrecisionModel precisionModel = new PrecisionModel(1);
-  GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
-  WKTWriter writer = new WKTWriter();
-  WKTWriter writer3D = new WKTWriter(3);
-  WKTWriter writer2DM = new WKTWriter(3);
+  final PrecisionModel precisionModel = new PrecisionModel(1);
+  final GeometryFactory geometryFactory = new GeometryFactory(precisionModel, 0);
+  final WKTWriter writer = new WKTWriter();
+  final WKTWriter writer3D = new WKTWriter(3);
+  final WKTWriter writer2DM = new WKTWriter(3);
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(suite());
   }
 
@@ -67,7 +67,7 @@ public class WKTWriterTest extends TestCase {
 
   public void testWritePoint() {
     Point point = geometryFactory.createPoint(new Coordinate(10, 10));
-    assertEquals("POINT (10 10)", writer.write(point).toString());
+    assertEquals("POINT (10 10)", writer.write(point));
   }
 
   public void testWriteLineString() {
@@ -75,10 +75,10 @@ public class WKTWriterTest extends TestCase {
                                  new Coordinate(20, 20, 0),
                                  new Coordinate(30, 40, 0) };
     LineString lineString = geometryFactory.createLineString(coordinates);
-    assertEquals("LINESTRING (10 10, 20 20, 30 40)", writer.write(lineString).toString());
+    assertEquals("LINESTRING (10 10, 20 20, 30 40)", writer.write(lineString));
   }
 
-  public void testWritePolygon() throws Exception {
+  public void testWritePolygon() {
     Coordinate[] coordinates = { new Coordinate(10, 10, 0),
                                  new Coordinate(10, 20, 0),
                                  new Coordinate(20, 20, 0),
@@ -86,14 +86,14 @@ public class WKTWriterTest extends TestCase {
                                  new Coordinate(10, 10, 0) };
     LinearRing linearRing = geometryFactory.createLinearRing(coordinates);
     Polygon polygon = geometryFactory.createPolygon(linearRing, new LinearRing[] { });
-    assertEquals("POLYGON ((10 10, 10 20, 20 20, 20 15, 10 10))", writer.write(polygon).toString());
+    assertEquals("POLYGON ((10 10, 10 20, 20 20, 20 15, 10 10))", writer.write(polygon));
   }
 
   public void testWriteMultiPoint() {
     Point[] points = { geometryFactory.createPoint(new Coordinate(10, 10, 0)),
                        geometryFactory.createPoint(new Coordinate(20, 20, 0)) };
     MultiPoint multiPoint = geometryFactory.createMultiPoint(points);
-    assertEquals("MULTIPOINT ((10 10), (20 20))", writer.write(multiPoint).toString());
+    assertEquals("MULTIPOINT ((10 10), (20 20))", writer.write(multiPoint));
   }
 
   public void testWriteMultiLineString() {
@@ -105,10 +105,10 @@ public class WKTWriterTest extends TestCase {
     LineString lineString2 = geometryFactory.createLineString(coordinates2);
     LineString[] lineStrings = {lineString1, lineString2};
     MultiLineString multiLineString = geometryFactory.createMultiLineString(lineStrings);
-    assertEquals("MULTILINESTRING ((10 10, 20 20), (15 15, 30 15))", writer.write(multiLineString).toString());
+    assertEquals("MULTILINESTRING ((10 10, 20 20), (15 15, 30 15))", writer.write(multiLineString));
   }
 
-  public void testWriteMultiPolygon() throws Exception {
+  public void testWriteMultiPolygon() {
     Coordinate[] coordinates1 = { new Coordinate(10, 10, 0),
                                  new Coordinate(10, 20, 0),
                                  new Coordinate(20, 20, 0),
@@ -126,7 +126,7 @@ public class WKTWriterTest extends TestCase {
     MultiPolygon multiPolygon = geometryFactory.createMultiPolygon(polygons);
 //    System.out.println("MULTIPOLYGON (((10 10, 10 20, 20 20, 20 15, 10 10)), ((60 60, 70 70, 80 60, 60 60)))");
 //    System.out.println(writer.write(multiPolygon).toString());
-    assertEquals("MULTIPOLYGON (((10 10, 10 20, 20 20, 20 15, 10 10)), ((60 60, 70 70, 80 60, 60 60)))", writer.write(multiPolygon).toString());
+    assertEquals("MULTIPOLYGON (((10 10, 10 20, 20 20, 20 15, 10 10)), ((60 60, 70 70, 80 60, 60 60)))", writer.write(multiPolygon));
   }
 
   public void testWriteGeometryCollection() {
@@ -137,7 +137,7 @@ public class WKTWriterTest extends TestCase {
     LineString lineString1 = geometryFactory.createLineString(coordinates);
     Geometry[] geometries = {point1, point2, lineString1};
     GeometryCollection geometryCollection = geometryFactory.createGeometryCollection(geometries);
-    assertEquals("GEOMETRYCOLLECTION (POINT (10 10), POINT (30 30), LINESTRING (15 15, 20 20))", writer.write(geometryCollection).toString());
+    assertEquals("GEOMETRYCOLLECTION (POINT (10 10), POINT (30 30), LINESTRING (15 15, 20 20))", writer.write(geometryCollection));
   }
 
   public void testWriteLargeNumbers1() {

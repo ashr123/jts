@@ -25,7 +25,7 @@ public class TestPerfFastDistanceFile
   public static void main(String[] args) {
     TestPerfFastDistanceFile test = new TestPerfFastDistanceFile();
     try {
-      test.test();
+      test();
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -40,12 +40,12 @@ public class TestPerfFastDistanceFile
   }
 
 
-  public void test()
+  public static void test()
   throws Exception
 {
     
 //    List geoms = loadWKT("C:\\data\\martin\\proj\\jts\\sandbox\\jts\\testdata\\africa.wkt");
-    List geoms = loadWKT("C:\\data\\martin\\proj\\jts\\sandbox\\jts\\testdata\\world.wkt");
+    List<Geometry> geoms = loadWKT("C:\\data\\martin\\proj\\jts\\sandbox\\jts\\testdata\\world.wkt");
     
 //  testAllDistances(geoms, 100);
 
@@ -59,13 +59,13 @@ public class TestPerfFastDistanceFile
   testAllDistances(geoms, 50);
 }
 
-  static List loadWKT(String filename) throws Exception {
+  static List<Geometry> loadWKT(String filename) throws Exception {
     WKTReader rdr = new WKTReader();
     WKTFileReader fileRdr = new WKTFileReader(filename, rdr);
     return fileRdr.read();
   }
 
-  void testAllDistances(List geoms, int maxToScan)
+  static void testAllDistances(List<Geometry> geoms, int maxToScan)
   {
     Stopwatch sw = new Stopwatch();
     
@@ -77,7 +77,7 @@ public class TestPerfFastDistanceFile
         + "   Finished in " + sw.getTimeString());    
   }
 
-  void computeAllDistances(List geoms, int maxToScan) {
+  static void computeAllDistances(List<Geometry> geoms, int maxToScan) {
     int numGeoms1 = geoms.size();
     if (numGeoms1 > maxToScan)
       numGeoms1 = maxToScan;
@@ -87,34 +87,33 @@ public class TestPerfFastDistanceFile
     for (int i = 0; i < numGeoms1; i++) {
       // PreparedGeometry pg = PreparedGeometryFactory.prepare((Geometry)
       // geoms.get(i));
-      for (int j = 0; j < numGeoms2; j++) {
-        // don't compute distance to itself!
-        // if (i == j) continue;
+        for (Geometry geom : geoms) {
+            // don't compute distance to itself!
+            // if (i == j) continue;
 
-        Geometry g1 = (Geometry) geoms.get(i);
-        Geometry g2 = (Geometry) geoms.get(j);
+            Geometry g1 = geoms.get(i);
 
-        // if (g1.getEnvelopeInternal().intersects(g2.getEnvelopeInternal()))
-        // continue;
+            // if (g1.getEnvelopeInternal().intersects(g2.getEnvelopeInternal()))
+            // continue;
 
 //         double dist = g1.distance(g2);
 //        double dist = BranchAndBoundFacetDistance.distance(g1, g2);
-        double dist = CachedFastDistance.getDistance(g1, g2);
-        // double distFast = SortedBoundsFacetDistance.distance(g1, g2);
+            double dist = CachedFastDistance.getDistance(g1, geom);
+            // double distFast = SortedBoundsFacetDistance.distance(g1, g2);
 
-        // pg.intersects(g2);
-      }
+            // pg.intersects(g2);
+        }
     }
   }
 
   
   static final int MAX_ITER = 10;
   
-  void computePairDistance(List geoms, int i, int j) 
+  static void computePairDistance(List<Geometry> geoms, int i, int j)
   {
     for (int n = 0; n < MAX_ITER; n++ ) {
-      Geometry g1 = (Geometry) geoms.get(i);
-      Geometry g2 = (Geometry) geoms.get(j);
+      Geometry g1 = geoms.get(i);
+      Geometry g2 = geoms.get(j);
 
       double dist = g1.distance(g2);
 //      double dist = SortedBoundsFacetDistance.distance(g1, g2);
@@ -125,5 +124,3 @@ public class TestPerfFastDistanceFile
   
 
 }
-  
-  

@@ -32,14 +32,14 @@ import org.locationtech.jts.geom.Envelope;
 public class RectangleLineIntersector
 {
   // for intersection testing, don't need to set precision model
-  private LineIntersector li = new RobustLineIntersector();
+  private final LineIntersector li = new RobustLineIntersector();
 
-  private Envelope rectEnv;
+  private final Envelope rectEnv;
   
-  private Coordinate diagUp0;
-  private Coordinate diagUp1;
-  private Coordinate diagDown0;
-  private Coordinate diagDown1;
+  private final Coordinate diagUp0;
+  private final Coordinate diagUp1;
+  private final Coordinate diagDown0;
+  private final Coordinate diagDown1;
   
   /**
    * Creates a new intersector for the given query rectangle,
@@ -107,11 +107,9 @@ public class RectangleLineIntersector
      * it is sufficient to simply test the Y ordinate.
      * "Upwards" means relative to the left end of the segment.
      */
-    boolean isSegUpwards = false;
-    if (p1.y > p0.y)
-      isSegUpwards = true;
-    
-    /**
+    boolean isSegUpwards = p1.y > p0.y;
+
+      /**
      * Since we now know that neither segment endpoint
      * lies in the rectangle, there are two possible 
      * situations:
@@ -136,10 +134,8 @@ public class RectangleLineIntersector
     else {
       li.computeIntersection(p0, p1, diagUp0, diagUp1);      
     }
-    if (li.hasIntersection())
-      return true;
-    return false;
+      return li.hasIntersection();
 
-      
+
   }
 }

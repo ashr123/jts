@@ -19,35 +19,35 @@ extends TestCase
   }
   
   public void testSize() {
-    assertEquals( size( 0 ), 1);
-    assertEquals( size( 1 ), 4);
-    assertEquals( size( 2 ), 16);
-    assertEquals( size( 3 ), 64);
-    assertEquals( size( 4 ), 256);
-    assertEquals( size( 5 ), 1024);
-    assertEquals( size( 6 ), 4096);
+    assertEquals(1, size( 0 ));
+    assertEquals(4, size( 1 ));
+    assertEquals(16, size( 2 ));
+    assertEquals(64, size( 3 ));
+    assertEquals(256, size( 4 ));
+    assertEquals(1024, size( 5 ));
+    assertEquals(4096, size( 6 ));
   }
   
   public void testLevel() {
-    assertEquals( level( 1 ), 0);
+    assertEquals(0, level( 1 ));
     
-    assertEquals( level( 2 ), 1);
-    assertEquals( level( 3 ), 1);
-    assertEquals( level( 4 ), 1);
+    assertEquals(1, level( 2 ));
+    assertEquals(1, level( 3 ));
+    assertEquals(1, level( 4 ));
     
-    assertEquals( level( 5 ), 2);
-    assertEquals( level( 13 ), 2);
-    assertEquals( level( 15 ), 2);
-    assertEquals( level( 16 ), 2);
+    assertEquals(2, level( 5 ));
+    assertEquals(2, level( 13 ));
+    assertEquals(2, level( 15 ));
+    assertEquals(2, level( 16 ));
     
-    assertEquals( level( 17 ), 3);
-    assertEquals( level( 63 ), 3);
-    assertEquals( level( 64 ), 3);
+    assertEquals(3, level( 17 ));
+    assertEquals(3, level( 63 ));
+    assertEquals(3, level( 64 ));
     
-    assertEquals( level( 65 ), 4);
-    assertEquals( level( 255 ), 4);
-    assertEquals( level( 255 ), 4);
-    assertEquals( level( 256 ), 4);
+    assertEquals(4, level( 65 ));
+    assertEquals(4, level( 255 ));
+    assertEquals(4, level( 255 ));
+    assertEquals(4, level( 256 ));
   }
   
   public void testDecode() {
@@ -72,21 +72,21 @@ extends TestCase
     checkDecodeEncodeForLevel(5);
   }
   
-  private void checkDecode(int order, int index, int x, int y) {
+  private static void checkDecode(int order, int index, int x, int y) {
     Coordinate p = decode(order, index);
     //System.out.println(p);
     assertEquals( (int) p.getX(), x);
     assertEquals( (int) p.getY(), y);
   }
   
-  private void checkDecodeEncodeForLevel(int level) {
+  private static void checkDecodeEncodeForLevel(int level) {
     int n = size(level);
     for (int i = 0; i < n; i++) {
       checkDecodeEncode(level, i);
     }
   }
 
-  private void checkDecodeEncode(int level, int index) {
+  private static void checkDecodeEncode(int level, int index) {
     Coordinate p = decode(level, index);
     int encode = encode(level, (int) p.getX(), (int) p.getY() );
     assertEquals( index, encode);

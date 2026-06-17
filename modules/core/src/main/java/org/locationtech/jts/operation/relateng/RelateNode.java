@@ -22,13 +22,13 @@ import org.locationtech.jts.io.WKTWriter;
 
 class RelateNode {
 
-  private Coordinate nodePt;
+  private final Coordinate nodePt;
   
   /**
    * A list of the edges around the node in CCW order,
    * ordered by their CCW angle with the positive X-axis.
    */
-  private ArrayList<RelateEdge> edges = new ArrayList<RelateEdge>();
+  private final ArrayList<RelateEdge> edges = new ArrayList<>();
 
   public RelateNode(Coordinate pt) {
     this.nodePt = pt;
@@ -209,7 +209,7 @@ class RelateNode {
   
   public String toString() {
     StringBuilder buf = new StringBuilder();
-    buf.append("Node[" + WKTWriter.toPoint(nodePt) + "]:");
+    buf.append("Node[").append(WKTWriter.toPoint(nodePt)).append("]:");
     buf.append("\n");
     for (RelateEdge e : edges) {
       buf.append(e.toString());

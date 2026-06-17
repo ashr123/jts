@@ -12,8 +12,6 @@
 
 package org.locationtech.jts.simplify;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.CoordinateFilter;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
@@ -79,9 +77,12 @@ public class VWSimplifierTest
 
 class VWSimplifierResult
 {
-  private static WKTReader rdr = new WKTReader();
+  private static final WKTReader rdr = new WKTReader();
 
-  public static Geometry[] getResult(String wkt, double tolerance)
+    private VWSimplifierResult() {
+    }
+
+    public static Geometry[] getResult(String wkt, double tolerance)
     throws ParseException
   {
     Geometry[] ioGeom = new Geometry[2];

@@ -26,7 +26,7 @@ import test.jts.GeometryTestCase;
  */
 public class RobustLineIntersectorZTest extends GeometryTestCase {
   
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     TestRunner.run(RobustLineIntersectorZTest.class);
   }
 
@@ -144,8 +144,8 @@ public class RobustLineIntersectorZTest extends GeometryTestCase {
   
   //======================================================
 
-  private void checkIntersection(LineSegment line1, LineSegment line2, 
-      Coordinate p1, Coordinate p2) {
+  private static void checkIntersection(LineSegment line1, LineSegment line2,
+                                        Coordinate p1, Coordinate p2) {
     checkIntersectionDir(line1, line2, p1, p2);
     checkIntersectionDir(line2, line1, p1, p2);
     LineSegment line1Rev = new LineSegment(line1.p1, line1.p0);
@@ -154,7 +154,7 @@ public class RobustLineIntersectorZTest extends GeometryTestCase {
     checkIntersectionDir(line2Rev, line1Rev, p1, p2);
   }
 
-  private void checkIntersectionDir(LineSegment line1, LineSegment line2, Coordinate p1, Coordinate p2) {
+  private static void checkIntersectionDir(LineSegment line1, LineSegment line2, Coordinate p1, Coordinate p2) {
     LineIntersector li = new RobustLineIntersector();
     li.computeIntersection(
         line1.p0, line1.p1,
@@ -174,7 +174,7 @@ public class RobustLineIntersectorZTest extends GeometryTestCase {
     checkEqualXYZ( p2, actual2 );
   }
 
-  private void checkIntersection(LineSegment line1, LineSegment line2, Coordinate pt) {
+  private static void checkIntersection(LineSegment line1, LineSegment line2, Coordinate pt) {
     checkIntersectionDir(line1, line2, pt);
     checkIntersectionDir(line2, line1, pt);
     LineSegment line1Rev = new LineSegment(line1.p1, line1.p0);
@@ -183,7 +183,7 @@ public class RobustLineIntersectorZTest extends GeometryTestCase {
     checkIntersectionDir(line2Rev, line1Rev, pt);
   }
   
-  private void checkIntersectionDir(LineSegment line1, LineSegment line2, Coordinate pt) {
+  private static void checkIntersectionDir(LineSegment line1, LineSegment line2, Coordinate pt) {
     LineIntersector li = new RobustLineIntersector();
     li.computeIntersection(
         line1.p0, line1.p1,

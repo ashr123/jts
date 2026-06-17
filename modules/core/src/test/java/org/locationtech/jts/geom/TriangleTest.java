@@ -24,16 +24,16 @@ import test.jts.GeometryTestCase;
 public class TriangleTest extends GeometryTestCase
 {
 
-  private PrecisionModel precisionModel = new PrecisionModel();
+  private final PrecisionModel precisionModel = new PrecisionModel();
 
-  private GeometryFactory geometryFactory = new GeometryFactory(precisionModel,
+  private final GeometryFactory geometryFactory = new GeometryFactory(precisionModel,
       0);
 
-  WKTReader reader = new WKTReader(geometryFactory);
+  final WKTReader reader = new WKTReader(geometryFactory);
 
   private static final double TOLERANCE = 1E-5;
 
-  public static void main(String args[])
+  public static void main(String[] args)
   {
     TestRunner.run(TriangleTest.class);
   }
@@ -223,7 +223,7 @@ public class TriangleTest extends GeometryTestCase
     checkEqualXY(expectedValue, centreTri, tolerance);
   }
 
-  private void checkEquidistantToEdges(Coordinate centre, Coordinate[] pt, double tolerance) {
+  private static void checkEquidistantToEdges(Coordinate centre, Coordinate[] pt, double tolerance) {
     //-- inCenter must be equidistant from edges
     double radius0 = Distance.pointToLinePerpendicular(centre, pt[0], pt[1]);
     double radius1 = Distance.pointToLinePerpendicular(centre, pt[1], pt[2]);
