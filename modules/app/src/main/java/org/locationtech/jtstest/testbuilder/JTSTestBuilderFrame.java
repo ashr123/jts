@@ -11,6 +11,28 @@
  */
 package org.locationtech.jtstest.testbuilder;
 
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.util.Assert;
+import org.locationtech.jtstest.testbuilder.controller.JTSTestBuilderController;
+import org.locationtech.jtstest.testbuilder.io.XMLTestWriter;
+import org.locationtech.jtstest.testbuilder.model.DisplayParameters;
+import org.locationtech.jtstest.testbuilder.model.GeometryEvent;
+import org.locationtech.jtstest.testbuilder.model.TestBuilderModel;
+import org.locationtech.jtstest.testbuilder.model.TestCaseEdit;
+import org.locationtech.jtstest.testbuilder.ui.SwingUtil;
+import org.locationtech.jtstest.testbuilder.ui.dnd.FileDrop;
+import org.locationtech.jtstest.testbuilder.ui.tools.RectangleTool;
+import org.locationtech.jtstest.util.StringUtil;
+
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -21,31 +43,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.Iterator;
 import java.util.List;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.util.Assert;
-import org.locationtech.jtstest.testbuilder.io.XMLTestWriter;
-import org.locationtech.jtstest.testbuilder.model.DisplayParameters;
-import org.locationtech.jtstest.testbuilder.model.GeometryEvent;
-import org.locationtech.jtstest.testbuilder.model.TestBuilderModel;
-import org.locationtech.jtstest.testbuilder.model.TestCaseEdit;
-import org.locationtech.jtstest.testbuilder.ui.SwingUtil;
-import org.locationtech.jtstest.testbuilder.ui.dnd.FileDrop;
-import org.locationtech.jtstest.testbuilder.ui.tools.RectangleTool;
-import org.locationtech.jtstest.util.StringUtil;
 
 
 /**
@@ -62,36 +60,36 @@ public class JTSTestBuilderFrame extends JFrame
   
   TestBuilderModel tbModel;
 
-  private JTSTestBuilderMenuBar tbMenuBar = new JTSTestBuilderMenuBar(this);
-  private JTSTestBuilderToolBar tbToolBar = new JTSTestBuilderToolBar(this);
+  private final JTSTestBuilderMenuBar tbMenuBar = new JTSTestBuilderMenuBar(this);
+  private final JTSTestBuilderToolBar tbToolBar = new JTSTestBuilderToolBar(this);
   //---------------------------------------------
   JPanel contentPane;
-  BorderLayout contentLayout = new BorderLayout();
+  final BorderLayout contentLayout = new BorderLayout();
   Border border4;
-  JSplitPane jSplitPane1 = new JSplitPane();
-  JPanel panelTop = new JPanel();
-  BorderLayout borderLayout2 = new BorderLayout();
-  TestCasePanel testCasePanel = new TestCasePanel();
-  JPanel panelBottom = new JPanel();
-  JTabbedPane inputTabbedPane = new JTabbedPane();
-  BorderLayout borderLayout3 = new BorderLayout();
-  JPanel testPanel = new JPanel();
-  WKTPanel wktPanel = new WKTPanel(this);
-  CommandPanel commandPanel = new CommandPanel();
-  InspectorPanel inspectPanel = new InspectorPanel();
-  TestListPanel testListPanel = new TestListPanel(this);
-  LayerListPanel layerListPanel = new LayerListPanel();
-  GridBagLayout gridBagLayout2 = new GridBagLayout();
-  GridLayout gridLayout1 = new GridLayout();
-  ResultWKTPanel resultWKTPanel = new ResultWKTPanel();
-  ResultValuePanel resultValuePanel = new ResultValuePanel();
-  StatsPanel statsPanel = new StatsPanel();
-  InfoPanel logPanel = new InfoPanel();
+  final JSplitPane jSplitPane1 = new JSplitPane();
+  final JPanel panelTop = new JPanel();
+  final BorderLayout borderLayout2 = new BorderLayout();
+  final TestCasePanel testCasePanel = new TestCasePanel();
+  final JPanel panelBottom = new JPanel();
+  final JTabbedPane inputTabbedPane = new JTabbedPane();
+  final BorderLayout borderLayout3 = new BorderLayout();
+  final JPanel testPanel = new JPanel();
+  final WKTPanel wktPanel = new WKTPanel(this);
+  final CommandPanel commandPanel = new CommandPanel();
+  final InspectorPanel inspectPanel = new InspectorPanel();
+  final TestListPanel testListPanel = new TestListPanel(this);
+  final LayerListPanel layerListPanel = new LayerListPanel();
+  final GridBagLayout gridBagLayout2 = new GridBagLayout();
+  final GridLayout gridLayout1 = new GridLayout();
+  final ResultWKTPanel resultWKTPanel = new ResultWKTPanel();
+  final ResultValuePanel resultValuePanel = new ResultValuePanel();
+  final StatsPanel statsPanel = new StatsPanel();
+  final InfoPanel logPanel = new InfoPanel();
 
-  private JFileChooser fileChooser = new JFileChooser();
+  private final JFileChooser fileChooser = new JFileChooser();
   private JFileChooser pngFileChooser;
-  private JFileChooser fileAndDirectoryChooser = new JFileChooser();
-  private JFileChooser directoryChooser = new JFileChooser();
+  private final JFileChooser fileAndDirectoryChooser = new JFileChooser();
+  private final JFileChooser directoryChooser = new JFileChooser();
   
   /**
    *  Construct the frame
@@ -104,18 +102,10 @@ public class JTSTestBuilderFrame extends JFrame
       setIconImage(AppIcons.APP.getImage());
       jbInit();
       testCasePanel.cbRevealTopo.addActionListener(
-          new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              displayRevealTopo();
-            }
-          });
+              e -> displayRevealTopo());
       //testCasePanel.editCtlPanel.stretchDist
       testCasePanel.spStretchDist
-      .addChangeListener(new javax.swing.event.ChangeListener() {
-        public void stateChanged(javax.swing.event.ChangeEvent e) {
-          displayRevealTopo();
-        }
-      });
+      .addChangeListener(e -> displayRevealTopo());
 
       showGeomsTab();
       initFileDrop(testCasePanel);
@@ -127,13 +117,11 @@ public class JTSTestBuilderFrame extends JFrame
   }
 
   private void initFileDrop(Component comp) {
-    new FileDrop(comp, new FileDrop.Listener() {
-      public void filesDropped(java.io.File[] files) {
-        try {
-          openXmlFilesAndDirectories(files);
-        } catch (Exception ex) {
-          SwingUtil.reportException(null, ex);
-        }
+    new FileDrop(comp, files -> {
+      try {
+        openXmlFilesAndDirectories(files);
+      } catch (Exception ex) {
+        SwingUtil.reportException(null, ex);
       }
     });
   }
@@ -195,11 +183,7 @@ public class JTSTestBuilderFrame extends JFrame
     statsPanel.setModel(model);
     
     model.getGeometryEditModel().addGeometryListener(
-        new org.locationtech.jtstest.testbuilder.model.GeometryListener() {
-          public void geometryChanged(GeometryEvent e) {
-            model_geometryChanged(e);
-          }
-        });
+            this::model_geometryChanged);
     
     testListPanel.populateList();
     //layerListPanel.init(getModel().getLayers());
@@ -223,7 +207,7 @@ public class JTSTestBuilderFrame extends JFrame
   public void setCurrentTestCase(TestCaseEdit testCase) {
     tbModel.cases().setCurrent(testCase);
     updateTestCaseView();
-    JTSTestBuilder.controller().zoomToInput();
+    JTSTestBuilderController.zoomToInput();
   }
 
   public TestCasePanel getTestCasePanel() {
@@ -249,7 +233,7 @@ public class JTSTestBuilderFrame extends JFrame
   /**
    *  File | Exit action performed
    */
-  public void actionExit() {
+  public static void actionExit() {
     System.exit(0);
   }
 
@@ -286,7 +270,7 @@ public class JTSTestBuilderFrame extends JFrame
     updateTestCaseView();
     testListPanel.populateList();
     updatePrecisionModelDescription();
-    JTSTestBuilder.controller().zoomToInput();
+    JTSTestBuilderController.zoomToInput();
   }
 
   /**
@@ -300,7 +284,7 @@ public class JTSTestBuilderFrame extends JFrame
   }
 
   void model_geometryChanged(GeometryEvent e) {
-    JTSTestBuilder.controller().geometryChanged();
+    JTSTestBuilderController.geometryChanged();
     updateWktPanel();
   }
 
@@ -390,13 +374,13 @@ public class JTSTestBuilderFrame extends JFrame
   private void displayRevealTopo() {
     DisplayParameters.setRevealingTopology(testCasePanel.cbRevealTopo.isSelected());
     DisplayParameters.setTopologyStretchSize(testCasePanel.getStretchSize());
-    JTSTestBuilder.controller().geometryViewChanged();
+    JTSTestBuilderController.geometryViewChanged();
   }
 
   /**
    *  Component initialization
    */
-  private void jbInit() throws Exception {
+  private void jbInit() {
     this.setSize(new Dimension(800, 800));
     this.setTitle("JTS TestBuilder");
     this.setJMenuBar(tbMenuBar.getMenuBar());
@@ -439,12 +423,7 @@ public class JTSTestBuilderFrame extends JFrame
     inputTabbedPane.add(logPanel, AppStrings.TAB_LABEL_LOG);
     inputTabbedPane.add(commandPanel,  AppStrings.TAB_LABEL_COMMAND);
     inputTabbedPane.setSelectedIndex(1);
-    inputTabbedPane.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e)
-      {
-        updateStatsPanelIfVisible();
-        }
-    });   
+    inputTabbedPane.addChangeListener(e -> updateStatsPanelIfVisible());
     
     //--- main frame
   
@@ -510,21 +489,20 @@ public class JTSTestBuilderFrame extends JFrame
     layerListPanel.populateList();
   }
   
-  private void reportProblemsParsingXmlTestFile(List parsingProblems) {
+  private void reportProblemsParsingXmlTestFile(List<String> parsingProblems) {
     if (parsingProblems.isEmpty()) {
       return;
     }
-    for (Iterator i = parsingProblems.iterator(); i.hasNext(); ) {
-      String problem = (String) i.next();
-      System.out.println(problem);
-    }
+      for (String problem : parsingProblems) {
+          System.out.println(problem);
+      }
     JOptionPane.showMessageDialog(this, StringUtil.wrap(parsingProblems.size()
          + " problems occurred parsing the XML test file."
          + " The first problem was: " + parsingProblems.get(0), 80),
         "Error", JOptionPane.ERROR_MESSAGE);
   }
 
-  private Coordinate pickOffset(Geometry a, Geometry b) {
+  private static Coordinate pickOffset(Geometry a, Geometry b) {
     if (a != null && ! a.isEmpty()) {
       return a.getCoordinates()[0];
     }
@@ -535,4 +513,3 @@ public class JTSTestBuilderFrame extends JFrame
   }
 
 }
-

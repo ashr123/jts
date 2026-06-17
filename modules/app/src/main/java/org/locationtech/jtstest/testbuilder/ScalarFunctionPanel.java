@@ -11,31 +11,34 @@
  */
 package org.locationtech.jtstest.testbuilder;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Vector;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.util.Stopwatch;
 import org.locationtech.jtstest.geomfunction.GeometryFunction;
 import org.locationtech.jtstest.geomfunction.GeometryFunctionRegistry;
 import org.locationtech.jtstest.testbuilder.controller.JTSTestBuilderController;
+import org.locationtech.jtstest.testbuilder.controller.ResultController;
 import org.locationtech.jtstest.testbuilder.event.GeometryFunctionEvent;
 import org.locationtech.jtstest.testbuilder.event.GeometryFunctionListener;
 import org.locationtech.jtstest.testbuilder.event.SpatialFunctionPanelEvent;
 import org.locationtech.jtstest.testbuilder.event.SpatialFunctionPanelListener;
 import org.locationtech.jtstest.testbuilder.ui.SwingUtil;
 
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Vector;
 
 
 /**
@@ -46,29 +49,29 @@ extends JPanel implements FunctionPanel
 {
   private static final String[] PARAM_DEFAULT = { "10" };
   
-  JPanel panelRB = new JPanel();
-  GeometryFunctionTreePanel funcListPanel = new GeometryFunctionTreePanel();
-  GridLayout gridLayout1 = new GridLayout();
-  GridLayout gridLayout2 = new GridLayout();
+  final JPanel panelRB = new JPanel();
+  final GeometryFunctionTreePanel funcListPanel = new GeometryFunctionTreePanel();
+  final GridLayout gridLayout1 = new GridLayout();
+  final GridLayout gridLayout2 = new GridLayout();
 
-  BorderLayout borderLayout1 = new BorderLayout();
-  BorderLayout borderLayout2 = new BorderLayout();
+  final BorderLayout borderLayout1 = new BorderLayout();
+  final BorderLayout borderLayout2 = new BorderLayout();
 
-  JPanel panelParam = new JPanel();
-  JPanel panelExec = new JPanel();
-  JPanel panelExecParam = new JPanel();
-  FlowLayout flowLayout = new FlowLayout();
+  final JPanel panelParam = new JPanel();
+  final JPanel panelExec = new JPanel();
+  final JPanel panelExecParam = new JPanel();
+  final FlowLayout flowLayout = new FlowLayout();
   FlowLayout flowLayout1 = new FlowLayout();
   
   JButton execButton = new JButton();
   
-  private transient Vector spatialFunctionPanelListeners;
+  private transient Vector<SpatialFunctionPanelListener> spatialFunctionPanelListeners;
 
-  private JLabel lblDistance = new JLabel();
-  private JTextField txtDistance = new JTextField();
+  private final JLabel lblDistance = new JLabel();
+  private final JTextField txtDistance = new JTextField();
 
-  private JComponent[] paramComp = { txtDistance };
-  private JLabel[] paramLabel = { lblDistance };
+  private final JComponent[] paramComp = { txtDistance };
+  private final JLabel[] paramLabel = { lblDistance };
 
   private GeometryFunction currentFunc = null;
   private Stopwatch timer;
@@ -105,11 +108,7 @@ extends JPanel implements FunctionPanel
     panelParam.add(txtDistance);
     
     execButton = SwingUtil.createButton(AppIcons.EXECUTE, AppStrings.TIP_EXECUTE,
-        new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        execButton_actionPerformed(e);
-      }
-    });
+            this::execButton_actionPerformed);
     
     panelExec.add(execButton);
     
@@ -137,7 +136,7 @@ extends JPanel implements FunctionPanel
     currentFunc = func;
     if (currentFunc == null)
       return;
-    JTSTestBuilderController.resultController().executeScalarFunction();
+    ResultController.executeScalarFunction();
   }
   
   private void functionChanged(GeometryFunction func)
@@ -149,12 +148,12 @@ extends JPanel implements FunctionPanel
   
   public Object getResult() {
     Object result = null;
-    if (currentFunc == null || JTSTestBuilder.controller().getGeometryA() == null)
+    if (currentFunc == null || JTSTestBuilderController.getGeometryA() == null)
       return null;
     
     try {
       timer = new Stopwatch();
-      result = currentFunc.invoke(JTSTestBuilder.controller().getGeometryA(), getFunctionParams());
+      result = currentFunc.invoke(JTSTestBuilderController.getGeometryA(), getFunctionParams());
       timer.stop();
     }
     catch (Exception ex) {
@@ -164,47 +163,45 @@ extends JPanel implements FunctionPanel
     return result;
   }
 
-  private Object[] OLDgetFunctionParams()
+  private List<Object> OLDgetFunctionParams()
   {
   	// TODO: this is somewhat cheesy
-    Class[] paramTypes = currentFunc.getParameterTypes();
-    if (paramTypes.length == 1 
+    Class<?>[] paramTypes = currentFunc.getParameterTypes();
+    if (paramTypes.length == 1
         && paramTypes[0] == Geometry.class)
-      return new Object[] { JTSTestBuilder.controller().getGeometryB() };
-    
-    if (paramTypes.length == 1 
+      return Collections.singletonList(JTSTestBuilderController.getGeometryB());
+
+    if (paramTypes.length == 1
         && (paramTypes[0] == Double.class || paramTypes[0] == double.class))
-      return new Object[] { SwingUtil.getDouble(txtDistance, null) };
-    
-    if (paramTypes.length == 2 
+      return Collections.singletonList(SwingUtil.getDouble(txtDistance, null));
+
+    if (paramTypes.length == 2
         && paramTypes[0] == Geometry.class
       && (paramTypes[1] == Double.class || paramTypes[1] == double.class))
-      return new Object[] { JTSTestBuilder.controller().getGeometryB(), SwingUtil.getDouble(txtDistance, null) };
-    
+      return Arrays.asList(JTSTestBuilderController.getGeometryB(), SwingUtil.getDouble(txtDistance, null));
+
     if (paramTypes.length >= 2)
-      return new Object[] { 
-    		SwingUtil.getDouble(txtDistance, null)
-        };
-    
+      return Collections.singletonList(SwingUtil.getDouble(txtDistance, null));
+
     return null;
   }
-  
-  public Object[] getFunctionParams()
+
+  public List<Object> getFunctionParams()
   {
     if (currentFunc == null) return null;
-    Class[] paramTypes = currentFunc.getParameterTypes();
-    Object[] paramVal = new Object[paramTypes.length];
-    
-    for (int i = 0; i < paramVal.length; i++) {
+    Class<?>[] paramTypes = currentFunc.getParameterTypes();
+    List<Object> paramVal = new ArrayList<>();
+
+    for (int i = 0; i < paramTypes.length; i++) {
       Object valRaw = getParamValue(i);
-      paramVal[i] = SwingUtil.coerce(valRaw, paramTypes[i]);
+      paramVal.add(SwingUtil.coerce(valRaw, paramTypes[i]));
     }
     return paramVal;
   }
   
   private Object getParamValue(int index) {
     if (currentFunc.isBinary() && index == 0)
-      return JTSTestBuilder.controller().getGeometryB();
+      return JTSTestBuilderController.getGeometryB();
     
     int attrIndex = index - SpatialFunctionPanel.attributeParamOffset(currentFunc);
     
@@ -231,14 +228,14 @@ extends JPanel implements FunctionPanel
   
   public synchronized void removeSpatialFunctionPanelListener(SpatialFunctionPanelListener l) {
     if (spatialFunctionPanelListeners != null && spatialFunctionPanelListeners.contains(l)) {
-      Vector v = (Vector) spatialFunctionPanelListeners.clone();
+      Vector<SpatialFunctionPanelListener> v = (Vector<SpatialFunctionPanelListener>) spatialFunctionPanelListeners.clone();
       v.removeElement(l);
       spatialFunctionPanelListeners = v;
     }
   }
 
   public synchronized void addSpatialFunctionPanelListener(SpatialFunctionPanelListener l) {
-    Vector v = spatialFunctionPanelListeners == null ? new Vector(2) : (Vector) spatialFunctionPanelListeners.clone();
+    Vector<SpatialFunctionPanelListener> v = spatialFunctionPanelListeners == null ? new Vector<>(2) : (Vector<SpatialFunctionPanelListener>) spatialFunctionPanelListeners.clone();
     if (!v.contains(l)) {
       v.addElement(l);
       spatialFunctionPanelListeners = v;
@@ -247,14 +244,13 @@ extends JPanel implements FunctionPanel
 
   protected void fireFunctionExecuted(SpatialFunctionPanelEvent e) {
     if (spatialFunctionPanelListeners != null) {
-      Vector listeners = spatialFunctionPanelListeners;
+      Vector<SpatialFunctionPanelListener> listeners = spatialFunctionPanelListeners;
       int count = listeners.size();
       for (int i = 0; i < count; i++) {
-        ((SpatialFunctionPanelListener) listeners.elementAt(i)).functionExecuted(e);
+        listeners.elementAt(i).functionExecuted(e);
       }
     }
   }
 
 
 }
-

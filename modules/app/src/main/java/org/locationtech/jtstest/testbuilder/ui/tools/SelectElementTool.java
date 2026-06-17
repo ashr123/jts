@@ -18,6 +18,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jtstest.testbuilder.JTSTestBuilder;
+import org.locationtech.jtstest.testbuilder.controller.JTSTestBuilderController;
 
 /**
  * Selects elements of a geometry
@@ -38,19 +39,18 @@ public class SelectElementTool extends BoxBandTool {
 
   protected void gestureFinished() 
   {  
-    JTSTestBuilder.controller().selectElements(getBox());
+    JTSTestBuilderController.selectElements(getBox());
   }
   
   public void mouseClicked(MouseEvent e) {
     Geometry box = getBox(e);
-    JTSTestBuilder.controller().selectElements(box);
+    JTSTestBuilderController.selectElements(box);
   }
 
   private Geometry getBox(MouseEvent e) {
     Coordinate pt = toModelSnapped(e.getPoint());
     Envelope env = new Envelope(pt);
-    Geometry box = JTSTestBuilder.getGeometryFactory().toGeometry(env);
-    return box;
+      return JTSTestBuilder.getGeometryFactory().toGeometry(env);
   }
 
 }

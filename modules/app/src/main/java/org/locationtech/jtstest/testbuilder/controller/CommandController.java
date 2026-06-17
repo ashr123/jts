@@ -27,7 +27,10 @@ import org.locationtech.jtstest.util.io.MultiFormatReader;
 
 public class CommandController {
 
-  public static CommandPanel ui() {
+    private CommandController() {
+    }
+
+    public static CommandPanel ui() {
     return JTSTestBuilder.frame().getCommandPanel();
   }
   
@@ -55,7 +58,7 @@ public class CommandController {
       errMsg = e.getClass().getName() + " : " + e.getMessage();
       //showError(e);
     }
-    boolean isSuccess = returnCode == 0 && errMsg.length() == 0;
+    boolean isSuccess = returnCode == 0 && errMsg.isEmpty();
     
     if (isSuccess) {
       /**
@@ -68,7 +71,7 @@ public class CommandController {
       result = loadResult( name, resultStr );
     }
     else {
-      if (errMsg.length() == 0)
+      if (errMsg.isEmpty())
         errMsg = "Return code = " + returnCode;
       //JTSTestBuilder.controller().clearResult();
       ui().setError(errMsg);
@@ -82,12 +85,12 @@ public class CommandController {
       String geomLog = GeometryFunctionInvocation.toString(geom);
       cmdLog += "\n ==> " + geomLog;
     }
-    if (errMsg.length() > 0) {
+    if (!errMsg.isEmpty()) {
       String errLog = limitLength( errMsg, 200);
       cmdLog += "\n ERROR: " + errLog;
     }
     
-    JTSTestBuilder.controller().displayInfo(cmdLog, false);
+    JTSTestBuilderController.displayInfo(cmdLog, false);
   }
   public static final String VAR_A = "#a#";
   public static final String VAR_A_WKB = "#awkb#";
@@ -103,13 +106,13 @@ public class CommandController {
       cmd = cmd.replace(VAR_A, valueWKT(getGeometry(0)));
     }
     if (cmdLine.contains(VAR_A_WKB)) {
-      cmd = cmd.replace(VAR_A_WKB, valueWKB(getGeometry(0)));;
+      cmd = cmd.replace(VAR_A_WKB, valueWKB(getGeometry(0)));
     }
     if (cmdLine.contains(VAR_B_WKB)) {
-      cmd = cmd.replace(VAR_B_WKB, valueWKB(getGeometry(1)));;
+      cmd = cmd.replace(VAR_B_WKB, valueWKB(getGeometry(1)));
     }
     if (cmdLine.contains(VAR_B_WKB)) {
-      cmd = cmd.replace(VAR_B_WKB, valueWKB(getGeometry(1)));;
+      cmd = cmd.replace(VAR_B_WKB, valueWKB(getGeometry(1)));
     }
     return cmd;
   }
@@ -145,7 +148,7 @@ public class CommandController {
     Geometry result = null;
     try {
       result = reader.read(output);
-      JTSTestBuilder.controller().setResult(name, result);
+      JTSTestBuilderController.setResult(name, result);
     } catch (ParseException | IOException e) {
       showError(name, e);
     }
@@ -154,7 +157,7 @@ public class CommandController {
   
   private static void showError(String name, Exception e) {
     //String msg = e.getClass().getName() + " : " + e.getMessage();
-    JTSTestBuilder.controller().setResult(name, e);
+    JTSTestBuilderController.setResult(name, e);
   }
   
   // NOT USED
@@ -202,12 +205,13 @@ public class CommandController {
     StringBuilder output = new StringBuilder();
 
     BufferedReader reader = new BufferedReader(
-        new InputStreamReader(process.getInputStream()));
+            new InputStreamReader(process.getInputStream()));
 
     String line;
     while ((line = reader.readLine()) != null) {
-      output.append(line + "\n");
+      output.append(line).append("\n");
     }
+
 
     int exitVal = process.waitFor();
     if (exitVal != 0) {

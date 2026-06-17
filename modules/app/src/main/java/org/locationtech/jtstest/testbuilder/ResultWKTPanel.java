@@ -17,7 +17,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -29,6 +28,7 @@ import javax.swing.SwingConstants;
 
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.util.Memory;
+import org.locationtech.jtstest.testbuilder.controller.JTSTestBuilderController;
 import org.locationtech.jtstest.testbuilder.model.TestBuilderModel;
 import org.locationtech.jtstest.testbuilder.ui.SwingUtil;
 import org.locationtech.jtstest.util.ExceptionFormatter;
@@ -43,23 +43,23 @@ extends JPanel
 	TestBuilderModel tbModel = null;
 	String opName;
 	
-	JScrollPane jScrollPane1 = new JScrollPane();
-	JTextArea txtResult = new JTextArea();
+	final JScrollPane jScrollPane1 = new JScrollPane();
+	final JTextArea txtResult = new JTextArea();
 	
-  JPanel labelPanel = new JPanel();
-  JLabel functionLabel = new JLabel();
-  JLabel timeLabel = new JLabel();
-  JLabel memoryLabel = new JLabel();
-  GridLayout labelPanelLayout = new GridLayout(1,3);
+  final JPanel labelPanel = new JPanel();
+  final JLabel functionLabel = new JLabel();
+  final JLabel timeLabel = new JLabel();
+  final JLabel memoryLabel = new JLabel();
+  final GridLayout labelPanelLayout = new GridLayout(1,3);
 
-  JPanel panelLHBtns = new JPanel();
+  final JPanel panelLHBtns = new JPanel();
   JButton copyButton = new JButton();
   JButton copyToTestButton = new JButton();
-	JPanel rButtonPanel = new JPanel();
+	final JPanel rButtonPanel = new JPanel();
 //  FlowLayout rButtonPanelLayout = new FlowLayout();
   GridLayout rButtonPanelLayout = new GridLayout();
-  BorderLayout rPanelLayout = new BorderLayout();
-  BorderLayout tabPanelLayout = new BorderLayout();
+  final BorderLayout rPanelLayout = new BorderLayout();
+  final BorderLayout tabPanelLayout = new BorderLayout();
 		
 	public ResultWKTPanel() {
 		try {
@@ -69,30 +69,18 @@ extends JPanel
 		}
 	}
 	
-  void jbInit() throws Exception {
+  void jbInit() {
     
     this.setLayout(tabPanelLayout);
    
     jScrollPane1.setBorder(BorderFactory.createLoweredBevelBorder());
     
-    JButton copyButton = SwingUtil.createButton(AppIcons.COPY, "Copy Result (Ctl-click for formatted)", 
-        new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        rCopyButton_actionPerformed(e);
-      }
-    });
+    JButton copyButton = SwingUtil.createButton(AppIcons.COPY, "Copy Result (Ctl-click for formatted)",
+            this::rCopyButton_actionPerformed);
     JButton copyToTestButton = SwingUtil.createButton(AppIcons.COPY_TO_TEST, "Copy Result to new Test",
-        new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        JTSTestBuilder.controller().resultCopyToTest();
-      }
-    });
-    JButton btnClearResult = SwingUtil.createButton(AppIcons.CUT, "Clear Result",         
-        new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        JTSTestBuilder.controller().resultClear();
-      }
-    });
+            e -> JTSTestBuilderController.resultCopyToTest());
+    JButton btnClearResult = SwingUtil.createButton(AppIcons.CUT, "Clear Result",
+            e -> JTSTestBuilderController.resultClear());
 
     
     rButtonPanelLayout = new GridLayout(3,1);
@@ -133,11 +121,7 @@ extends JPanel
     memoryLabel.setToolTipText("JVM Memory Usage");
 
     //-------------------------------------
-    JButton btnInspect = SwingUtil.createButton(AppIcons.GEOM_INSPECT, "Inspect", new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        JTSTestBuilder.controller().inspectResult();
-      }        
-    });
+    JButton btnInspect = SwingUtil.createButton(AppIcons.GEOM_INSPECT, "Inspect", e -> JTSTestBuilderController.inspectResult());
 
     Box panelRHBtns = Box.createVerticalBox();
     panelRHBtns.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -222,8 +206,8 @@ extends JPanel
     tbModel.copyResult(isFormatted);
   }
   
-  void copyToTestButton_actionPerformed(ActionEvent e) {
-    JTSTestBuilder.controller().resultCopyToTest();
+  static void copyToTestButton_actionPerformed(ActionEvent e) {
+    JTSTestBuilderController.resultCopyToTest();
     //JTSTestBuilderFrame.instance().copyResultToTest();
   }
   

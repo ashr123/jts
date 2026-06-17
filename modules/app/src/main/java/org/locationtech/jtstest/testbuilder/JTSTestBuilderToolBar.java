@@ -29,10 +29,10 @@ import org.locationtech.jtstest.testbuilder.controller.JTSTestBuilderController;
 
 public class JTSTestBuilderToolBar {
 
-  JTSTestBuilderFrame tbFrame;
+  final JTSTestBuilderFrame tbFrame;
 
-  JToolBar toolbar = new JToolBar();
-  ButtonGroup toolButtonGroup = new ButtonGroup();
+  final JToolBar toolbar = new JToolBar();
+  final ButtonGroup toolButtonGroup = new ButtonGroup();
   
   JToggleButton drawRectangleButton;
   JToggleButton drawPolygonButton;
@@ -88,11 +88,7 @@ public class JTSTestBuilderToolBar {
     zoomButton.setSelected(true);
     toolButtonGroup.setSelected(zoomButton.getModel(), true);
   }
-  
-  private JTSTestBuilderController controller() {
-    return JTSTestBuilder.controller();
-  }
-  
+
   public JToolBar getToolBar()
   {
     toolbar.setFloatable(false);
@@ -103,177 +99,88 @@ public class JTSTestBuilderToolBar {
      */
     JButton previousButton = createButton(
         AppStrings.TIP_PREV, leftIcon,
-        new java.awt.event.ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            boolean isZoom = 0 == (e.getModifiers() & ActionEvent.CTRL_MASK);
-            controller().caseMoveTo(-1, isZoom);
-          }
-        });
+            e -> {
+              boolean isZoom = 0 == (e.getModifiers() & ActionEvent.CTRL_MASK);
+              JTSTestBuilderController.caseMoveTo(-1, isZoom);
+            });
     JButton nextButton = createButton(
         AppStrings.TIP_NEXT, rightIcon,
-          new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            e -> {
               boolean isZoom = 0 == (e.getModifiers() & ActionEvent.CTRL_MASK);
-              controller().caseMoveTo(1, isZoom);
-            }
-          });
+              JTSTestBuilderController.caseMoveTo(1, isZoom);
+            });
     JButton newButton = createButton(
         AppStrings.TIP_CASE_ADD_NEW, plusIcon,
-          new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              controller().caseCreateNew();
-            }
-          });
+            e -> JTSTestBuilderController.caseCreateNew());
     JButton copyButton = createButton(
         AppStrings.TIP_CASE_DUP, copyCaseIcon,
-          new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              controller().caseCopy();
-            }
-          });
+            e -> JTSTestBuilderController.caseCopy());
     JButton deleteButton = createButton(
         AppStrings.TIP_CASE_DELETE, deleteIcon,
-          new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              controller().caseDelete();
-            }
-          });
+            e -> JTSTestBuilderController.caseDelete());
     JButton oneToOneButton = createButton(
         AppStrings.TIP_ZOOM_1_1, zoomOneToOneIcon,
-          new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              controller().zoomOneToOne();
-            }
-          });
+            e -> JTSTestBuilderController.zoomOneToOne());
     JButton zoomToInputButton = createButton(
         "Zoom To Input", zoomToInputIcon,
-          new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              controller().zoomToInput();
-            }
-          });
+            e -> JTSTestBuilderController.zoomToInput());
     JButton zoomToInputAButton = createButton(
         AppStrings.TIP_ZOOM_TO_A, zoomToInputAIcon,
-          new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              controller().zoomToInputA();
-            }
-          });
+            e -> JTSTestBuilderController.zoomToInputA());
     JButton zoomToInputBButton = createButton(
         AppStrings.TIP_ZOOM_TO_B, zoomToInputBIcon,
-          new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              controller().zoomToInputB();
-            }
-          });
+            e -> JTSTestBuilderController.zoomToInputB());
     JButton zoomToResultButton = createButton(
         AppStrings.TIP_ZOOM_TO_RESULT, zoomToResultIcon,
-          new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              controller().zoomToResult();
-            }
-          });
+            e -> JTSTestBuilderController.zoomToResult());
     JButton zoomToFullExtentButton = createButton(
         AppStrings.TIP_ZOOM_TO_FULL_EXTENT, zoomToFullExtentIcon,
-          new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              controller().zoomToFullExtent();
-            }
-          });
+            e -> JTSTestBuilderController.zoomToFullExtent());
       
       drawRectangleButton = createToggleButton(
           AppStrings.TIP_DRAW_RECTANGLE, drawRectangleIcon,
-          new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              controller().modeDrawRectangle();
-            }
-          });
+              e -> JTSTestBuilderController.modeDrawRectangle());
       drawPolygonButton = createToggleButton(
           AppStrings.TIP_DRAW_POLY, drawPolygonIcon,
-          new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              controller().modeDrawPolygon();
-            }
-          });
+              e -> JTSTestBuilderController.modeDrawPolygon());
       drawLineStringButton = createToggleButton(
           AppStrings.TIP_DRAW_LINE, drawLineStringIcon,
-          new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              controller().modeDrawLineString();
-            }
-          });
+              e -> JTSTestBuilderController.modeDrawLineString());
       drawPointButton = createToggleButton(
           AppStrings.TIP_DRAW_POINT, drawPointIcon,
-          new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              controller().modeDrawPoint();
-            }
-          });
+              e -> JTSTestBuilderController.modeDrawPoint());
       infoButton = createToggleButton(
           AppStrings.TIP_INFO, infoIcon,
-          new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              controller().modeInfo();
-            }
-          });
+              e -> JTSTestBuilderController.modeInfo());
       zoomButton = createToggleButton(
           AppStrings.TIP_ZOOM, zoomIcon,
-          new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              controller().modeZoomIn();
-            }
-          });
+              e -> JTSTestBuilderController.modeZoomIn());
       panButton = createToggleButton(
           AppStrings.TIP_PAN, panIcon,
-          new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              controller().modePan();
-            }
-          });
+              e -> JTSTestBuilderController.modePan());
       
       btnEditVertex = createToggleButton(
           AppStrings.TIP_MOVE_VERTEX, moveVertexIcon,
-        new java.awt.event.ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            controller().modeEditVertex();
-          }
-        });
+              e -> JTSTestBuilderController.modeEditVertex());
 
       btnMove = createToggleButton(
           AppStrings.TIP_MOVE, AppIcons.MOVE,
-        new java.awt.event.ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            controller().modeMove();
-          }
-        });
+              e -> JTSTestBuilderController.modeMove());
 
       extractComponentButton = createToggleButton(
           AppStrings.TIP_EXTRACT_ELEMENTS,
-          new ImageIcon(this.getClass().getResource("ExtractComponent.png")), 
-          new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e)
-            {
-              controller().modeExtractComponent();
-            }
-          });
+          new ImageIcon(this.getClass().getResource("ExtractComponent.png")),
+              e -> JTSTestBuilderController.modeExtractComponent());
       
       JToggleButton selectComponentButton = createToggleButton(
           AppStrings.TIP_SELECT_ELEMENTS,
-          new ImageIcon(this.getClass().getResource("Select.png")), 
-          new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e)
-            {
-              controller().modeSelectComponent();
-            }
-          });
+          new ImageIcon(this.getClass().getResource("Select.png")),
+              e -> JTSTestBuilderController.modeSelectComponent());
       
       deleteVertexButton = createToggleButton(
           AppStrings.TIP_DELETE_VERTEX_ELEMENT,
-          new ImageIcon(this.getClass().getResource("DeleteVertex.png")), 
-          new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              controller().modeDeleteVertex();
-          }});
+          new ImageIcon(this.getClass().getResource("DeleteVertex.png")),
+              e -> JTSTestBuilderController.modeDeleteVertex());
 
       group(toolButtonGroup,
           drawRectangleButton
