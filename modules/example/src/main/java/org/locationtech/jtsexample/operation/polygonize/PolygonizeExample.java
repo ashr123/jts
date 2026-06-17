@@ -14,6 +14,8 @@ package org.locationtech.jtsexample.operation.polygonize;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.io.WKTReader;
 import org.locationtech.jts.operation.polygonize.Polygonizer;
 
@@ -24,11 +26,10 @@ import org.locationtech.jts.operation.polygonize.Polygonizer;
  */
 public class PolygonizeExample
 {
-  public static void main(String[] args) throws Exception
-  {
+  public static void main(String[] args) {
     PolygonizeExample test = new PolygonizeExample();
     try {
-      test.run();
+      PolygonizeExample.run();
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -36,14 +37,14 @@ public class PolygonizeExample
   }
 
 
-  public PolygonizeExample() {
+  private PolygonizeExample() {
   }
 
-  void run()
+  static void run()
       throws Exception
   {
     WKTReader rdr = new WKTReader();
-    Collection lines = new ArrayList();
+    Collection<Geometry> lines = new ArrayList<>();
 
     lines.add(rdr.read("LINESTRING (0 0 , 10 10)"));   // isolated edge
     lines.add(rdr.read("LINESTRING (185 221, 100 100)"));   //dangling edge
@@ -55,7 +56,7 @@ public class PolygonizeExample
     Polygonizer polygonizer = new Polygonizer();
     polygonizer.add(lines);
 
-    Collection polys = polygonizer.getPolygons();
+    Collection<Polygon> polys = polygonizer.getPolygons();
 
     System.out.println("Polygons formed (" + polys.size() + "):");
     System.out.println(polys);

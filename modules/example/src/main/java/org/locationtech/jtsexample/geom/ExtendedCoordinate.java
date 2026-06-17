@@ -108,7 +108,6 @@ public class ExtendedCoordinate
   
   public String toString()
   {
-    String stringRep = "(" + x + "," + y + "," + getZ() + " m=" + m + ")";
-    return stringRep;
+      return "(" + x + "," + y + "," + getZ() + " m=" + m + ")";
   }
 }

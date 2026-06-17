@@ -32,13 +32,14 @@ import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
  */
 public class PreparedGeometryExample
 {
-	static GeometryFactory geomFact = new GeometryFactory();
+	static final GeometryFactory geomFact = new GeometryFactory();
 	
-	static final int MAX_ITER = 100000; 
-		
-  public static void main(String[] args)
-      throws Exception
-  {
+	static final int MAX_ITER = 100000;
+
+    private PreparedGeometryExample() {
+    }
+
+    public static void main(String[] args) {
   	Geometry circle = createCircle();
   	PreparedGeometry prepCircle = PreparedGeometryFactory.prepare(circle);
   	

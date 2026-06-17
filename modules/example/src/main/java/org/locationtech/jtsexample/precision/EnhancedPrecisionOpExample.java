@@ -23,8 +23,7 @@ import org.locationtech.jts.precision.EnhancedPrecisionOp;
  */
 public class EnhancedPrecisionOpExample
 {
-  public static void main(String[] args) throws Exception
-  {
+  public static void main(String[] args) {
     EnhancedPrecisionOpExample example = new EnhancedPrecisionOpExample();
     try {
       example.run();
@@ -34,7 +33,7 @@ public class EnhancedPrecisionOpExample
     }
   }
 
-  private WKTReader reader = new WKTReader();
+  private final WKTReader reader = new WKTReader();
 
   public EnhancedPrecisionOpExample() {
   }

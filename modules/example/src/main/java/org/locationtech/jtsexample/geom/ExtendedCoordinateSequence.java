@@ -45,7 +45,7 @@ public class ExtendedCoordinateSequence
     return copy;
   }
 
-  private ExtendedCoordinate[] coordinates;
+  private final ExtendedCoordinate[] coordinates;
 
   /**
    * Copy constructor -- simply aliases the input array, for better performance.
@@ -196,15 +196,15 @@ public class ExtendedCoordinateSequence
 
   public Envelope expandEnvelope(Envelope env)
   {
-    for (int i = 0; i < coordinates.length; i++ ) {
-      env.expandToInclude(coordinates[i]);
-    }
+      for (ExtendedCoordinate coordinate : coordinates) {
+          env.expandToInclude(coordinate);
+      }
     return env;
   }
 
   public String toString()
   {
-    StringBuffer strBuf = new StringBuffer();
+    StringBuilder strBuf = new StringBuilder();
     strBuf.append("ExtendedCoordinateSequence [");
     for (int i = 0; i < coordinates.length; i++) {
       if (i > 0) strBuf.append(", ");

@@ -23,7 +23,10 @@ import org.locationtech.jts.io.WKTReader;
  */
 public class BasicExample
 {
-  public static void main(String[] args)
+    private BasicExample() {
+    }
+
+    public static void main(String[] args)
       throws Exception
   {
     // read a geometry from a WKT string (using the default geometry factory)

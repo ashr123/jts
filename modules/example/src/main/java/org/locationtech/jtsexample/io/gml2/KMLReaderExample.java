@@ -44,7 +44,10 @@ import org.xml.sax.helpers.XMLReaderFactory;
  */
 public class KMLReaderExample 
 {
-  public static void main(String[] args)
+    private KMLReaderExample() {
+    }
+
+    public static void main(String[] args)
   throws Exception
   {
   	String filename = "C:\\proj\\JTS\\KML\\usPop-STUS-p06.kml";
@@ -55,7 +58,7 @@ public class KMLReaderExample
 
 class KMLReader
 {
-	private String filename;
+	private final String filename;
 	
 	public KMLReader(String filename)
 	{
@@ -77,24 +80,24 @@ class KMLReader
     LineNumberReader myReader = new LineNumberReader(r);
     xr.parse(new InputSource(myReader));
     
-    List geoms = kmlHandler.getGeometries();
+    List<Geometry> geoms = kmlHandler.getGeometries();
 	}
 }
 
 class KMLHandler extends DefaultHandler
 {
-	private List geoms = new ArrayList();;
-	
-	private GMLHandler currGeomHandler;
+	private final List<Geometry> geoms = new ArrayList<>();
+
+    private GMLHandler currGeomHandler;
 	private String lastEltName = null;
-	private GeometryFactory fact = new FixingGeometryFactory();
+	private final GeometryFactory fact = new FixingGeometryFactory();
 	
 	public KMLHandler()
 	{
 		super();
 	}
 	
-	public List getGeometries()
+	public List<Geometry> getGeometries()
 	{
 		return geoms;
 	}
@@ -110,7 +113,7 @@ class KMLHandler extends DefaultHandler
    *@exception  SAXException  Description of the Exception
    */
   public void startElement(String uri, String name, String qName,
-			Attributes atts) throws SAXException {
+			Attributes atts) {
 		if (name.equalsIgnoreCase(GMLConstants.GML_POLYGON)) {
 			currGeomHandler = new GMLHandler(fact, null);
 		}
@@ -122,21 +125,19 @@ class KMLHandler extends DefaultHandler
 		}
 	}
   
-	public void characters(char[] ch, int start, int length) throws SAXException 
-	{
+	public void characters(char[] ch, int start, int length) {
     if (currGeomHandler != null) {
     	currGeomHandler.characters(ch, start, length);
     }
     else {
     	String content = new String(ch, start, length).trim();
-    	if (content.length() > 0) {
+    	if (!content.isEmpty()) {
     		System.out.println(lastEltName + "= " + content);
     	}
     }
 	}
 	
-	public void ignorableWhitespace(char[] ch, int start, int length)
-	throws SAXException {
+	public void ignorableWhitespace(char[] ch, int start, int length) {
     if (currGeomHandler != null)
     	currGeomHandler.ignorableWhitespace(ch, start, length);
 	}
